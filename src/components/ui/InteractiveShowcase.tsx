@@ -87,6 +87,64 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     setViewStart(idx % total);
   }, [total]);
 
+  // ── Cursor Follower Handlers ──────────────────────────────────────────────
+  const handleCardMouseMove = useCallback((productIdx: number, e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    gsap.to(`.showcase-badge-${productIdx}`, {
+      x,
+      y,
+      duration: 0.22,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  }, []);
+
+  const handleCardMouseEnter = useCallback((productIdx: number, e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    gsap.set(`.showcase-badge-${productIdx}`, { x, y, scale: 0, opacity: 0 });
+    gsap.to(`.showcase-badge-${productIdx}`, {
+      scale: 1,
+      opacity: 1,
+      duration: 0.35,
+      ease: "back.out(1.7)",
+      overwrite: "auto",
+    });
+
+    gsap.set(`.showcase-flood-${productIdx}`, { left: x, top: y, scale: 0, opacity: 0.85 });
+    gsap.to(`.showcase-flood-${productIdx}`, {
+      scale: 60,
+      opacity: 0.75,
+      duration: 0.65,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  }, []);
+
+  const handleCardMouseLeave = useCallback((productIdx: number) => {
+    gsap.to(`.showcase-badge-${productIdx}`, {
+      scale: 0,
+      opacity: 0,
+      duration: 0.2,
+      ease: "power2.in",
+      overwrite: "auto",
+    });
+    gsap.to(`.showcase-flood-${productIdx}`, {
+      scale: 0,
+      opacity: 0,
+      duration: 0.3,
+      ease: "power2.in",
+      overwrite: "auto",
+    });
+  }, []);
+
   // ── Image slideshow on active card ────────────────────────────────────────
   useEffect(() => {
     if (!isActive) return;
@@ -121,23 +179,20 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     if (total === 0) return;
 
     products.forEach((_, productIdx) => {
-      // Offset relative to current viewStart
       const normalizedOffset = ((productIdx - viewStart) % total + total) % total;
 
       let slotIndex = normalizedOffset;
       const rightCapacity = Math.ceil((total - visibleSlots) / 2);
       if (slotIndex >= visibleSlots + rightCapacity) {
-        slotIndex -= total; // Wrap to left
+        slotIndex -= total;
       }
 
       const isVisible = slotIndex >= 0 && slotIndex < visibleSlots;
-      // Physical position offset relative to center
       const xSlot = slotIndex - halfSlots;
       const isSelected = activeProductIdx === productIdx;
 
       const prevX = prevOffsets.current[productIdx];
 
-      // Instant teleport if card jumped across the wrap boundary
       if (prevX !== undefined && Math.abs(xSlot - prevX) > visibleSlots) {
         gsap.set(`.showcase-card-${productIdx}`, {
           xPercent: xSlot * 100,
@@ -147,8 +202,8 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
 
       gsap.to(`.showcase-card-${productIdx}`, {
         xPercent: xSlot * 100,
-        scaleY: isSelected ? 1.09 : 1, // Grow larger downwards from top
-        scaleX: 1, // Keep scaleX at 1 so no horizontal overlap with neighbors
+        scaleY: isSelected ? 1.09 : 1,
+        scaleX: 1,
         transformOrigin: "top center",
         opacity: isVisible ? 1 : 0,
         zIndex: isSelected ? 35 : isVisible ? 10 : 0,
@@ -205,16 +260,22 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
             <div
               key={product.id || productIdx}
               className={`showcase-card-${productIdx}
+                         group
                          absolute top-0
                          w-[48%] md:w-[32%] lg:w-[19.6%] aspect-[2/3]
-                         bg-[#f4f4f4] flex flex-col will-change-transform
+                         bg-[#EAE8E3] flex flex-col will-change-transform
                          cursor-pointer
-                         border-r border-b border-t border-y2k-gunmetal/15 overflow-hidden transition-colors
-                         ${isThisActive ? "ring-2 ring-y2k-gunmetal z-30" : "hover:bg-[#eae8e3]"}`}
+                         border-r border-b border-t border-y2k-gunmetal/15 overflow-hidden transition-colors duration-500
+                         ${isThisActive ? "ring-2 ring-y2k-gunmetal z-30" : "hover:bg-[#E2DFD8]"}`}
               onClick={(e) => onCardClick(productIdx, e)}
             >
-              {/* Image Container */}
-              <div className="relative w-full h-[76%] flex items-center justify-center overflow-hidden bg-[#f4f4f4]">
+              {/* Image Container with Chromatic Green Ripple & Cursor Magnet Badge */}
+              <div
+                onMouseMove={(e) => handleCardMouseMove(productIdx, e)}
+                onMouseEnter={(e) => handleCardMouseEnter(productIdx, e)}
+                onMouseLeave={() => handleCardMouseLeave(productIdx)}
+                className="relative w-full h-[75%] flex items-center justify-center overflow-hidden bg-[#EAE8E3]"
+              >
                 {imgUrl ? (
                   <>
                     <Image
@@ -222,53 +283,75 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                      className={`object-cover mix-blend-multiply transition-transform duration-700 ${
+                      className={`object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 ${
                         product.isSoldOut ? "blur-md scale-105 opacity-80" : ""
                       }`}
                     />
+
+                    {/* Chromatic Green Ripple Expansion Overlay */}
+                    <div
+                      className={`showcase-flood-${productIdx} absolute w-4 h-4 bg-[#00E575] rounded-full pointer-events-none mix-blend-multiply opacity-0 z-10`}
+                      style={{ transform: "translate(-50%, -50%) scale(0)" }}
+                    />
+
+                    {/* Idle Chromatic Green Dot on Right Edge */}
+                    <div className="absolute right-2 bottom-1/4 w-2.5 h-2.5 rounded-full bg-[#00E575] shadow-sm z-20 group-hover:scale-0 transition-transform duration-300 pointer-events-none" />
+
+                    {/* Cursor-Following "VIEW MORE" Magnet Badge */}
+                    <div
+                      className={`showcase-badge-${productIdx} absolute pointer-events-none z-30 opacity-0`}
+                      style={{ transform: "translate(-50%, -50%) scale(0)" }}
+                    >
+                      <div className="w-16 h-16 md:w-18 md:h-18 rounded-full bg-[#00E575] text-y2k-gunmetal flex items-center justify-center text-center text-[8.5px] md:text-[9.5px] font-black uppercase tracking-wider shadow-2xl border border-white/40">
+                        VIEW MORE
+                      </div>
+                    </div>
+
+                    {/* Sold Out Badge */}
                     {product.isSoldOut && (
-                      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <span className="bg-[#EAE8E3] text-y2k-gunmetal text-[10px] md:text-xs font-black px-4 py-1.5 uppercase tracking-wider rounded shadow-sm">
+                      <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+                        <span className="bg-[#EAE8E3] text-y2k-gunmetal text-[10px] md:text-xs font-black px-4 py-1.5 uppercase tracking-wider rounded shadow-sm border border-y2k-gunmetal/20">
                           SOLD OUT
                         </span>
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full bg-[#f4f4f4]" />
+                  <div className="w-full h-full bg-[#EAE8E3]" />
                 )}
 
                 {/* "NEW" Label Top Left */}
                 {product.isNew && (
                   <div className="absolute top-2.5 left-2.5 z-20">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 bg-white/90 px-2 py-0.5 shadow-sm">
+                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal bg-white/95 px-2 py-0.5 shadow-sm border border-y2k-gunmetal/10">
                       NEW
                     </span>
                   </div>
                 )}
 
-                {/* Small category label Bottom Left */}
-                <div className="absolute bottom-2.5 left-2.5 z-20 bg-white px-2 py-0.5 flex items-center shadow-sm rounded-sm">
-                  <span className="text-[9px] md:text-[10px] font-semibold text-y2k-gunmetal tracking-wider uppercase">
-                    {product.category || "ARCHIVE"}
-                  </span>
-                </div>
-
-                {/* Wishlist Button Bottom Right */}
+                {/* Wishlist Button Top Right */}
                 <WishlistButton
                   productId={product.id}
-                  className="!top-auto !bottom-2.5 !right-2.5 !p-1.5 bg-white text-y2k-gunmetal hover:text-red-500 z-20 shadow-sm rounded-sm"
+                  className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-white/90 text-y2k-gunmetal hover:text-[#00E575] z-20 shadow-sm rounded-sm backdrop-blur-sm"
                 />
               </div>
 
-              {/* Text Container at bottom */}
-              <div className="w-full h-[24%] flex flex-col justify-center px-3.5 bg-white border-t border-y2k-gunmetal/10">
-                <h3 className="font-sans text-xs md:text-[13px] font-semibold tracking-normal text-y2k-gunmetal truncate mb-0.5 leading-snug">
-                  {product.name}
-                </h3>
-                <p className="font-sans text-xs md:text-[13px] font-bold text-y2k-gunmetal/85 tracking-normal">
-                  ₹{product.price.toLocaleString("en-IN")}
-                </p>
+              {/* Text Container at bottom (Brand Bluish-Grey & Gunmetal Palette) */}
+              <div className="w-full h-[25%] flex flex-col justify-center px-3 bg-[#EAE8E3] border-t border-y2k-gunmetal/10">
+                <div className="flex items-baseline justify-between gap-1.5">
+                  <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-y2k-deep transition-colors truncate leading-tight tracking-tight">
+                    {product.name}
+                  </h3>
+                  <p className="font-sans text-xs md:text-[13px] font-bold text-y2k-gunmetal shrink-0 tracking-tight">
+                    ₹{product.price.toLocaleString("en-IN")}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#00E575] shrink-0" />
+                  <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
+                    {product.category || "ARCHIVE"}
+                  </span>
+                </div>
               </div>
             </div>
           );
