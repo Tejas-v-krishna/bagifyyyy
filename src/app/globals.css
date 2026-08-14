@@ -1,26 +1,161 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-y2k-ice: #E8EDF2;
+  --color-y2k-pale: #C7D2DE;
+  --color-y2k-soft: #A8B8CB;
+  --color-y2k-mist: #8598B0;
+  --color-y2k-slate: #5F7591;
+  --color-y2k-deep: #3E4E64;
+  --color-y2k-gunmetal: #28323F;
+
+  --color-background: var(--color-y2k-ice);
+  --color-foreground: var(--color-y2k-gunmetal);
+  --color-accent: var(--color-y2k-slate);
+  --color-accent-hover: var(--color-y2k-deep);
+  --color-muted: var(--color-y2k-pale);
+  --color-muted-foreground: var(--color-y2k-mist);
+  --color-border: var(--color-y2k-soft);
+  
+  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-instrument-sans), var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-marquee: marquee 30s linear infinite;
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer utilities {
+  .chrome-gradient {
+    background: linear-gradient(135deg, #E8EDF2 0%, #A8B8CB 40%, #5F7591 70%, #3E4E64 100%);
+  }
+  .text-chrome-gradient {
+    background: linear-gradient(135deg, #E8EDF2 0%, #A8B8CB 40%, #5F7591 70%, #3E4E64 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .btn-bagify {
+    background: #232D3B;
+    color: #F8F5E9;
+    letter-spacing: 0.04em;
+    transition: filter 0.3s ease, transform 0.2s ease;
+  }
+  .btn-bagify:hover {
+    filter: brightness(0.85);
+  }
+  .text-bagify {
+    font-family: var(--font-instrument-sans), sans-serif;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.04em;
+    background: linear-gradient(0deg, #445F83 0%, #0F151D 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  /* When .text-bagify is inside a .btn-bagify, force white so it's visible */
+  .btn-bagify .text-bagify {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: #ffffff;
+    color: #ffffff;
+  }
+  .text-vibe-gradient {
+    background: linear-gradient(180deg, #A9C4D2 0%, #293E59 50%, #A9C4D2 100%);
+    background-size: 100% 400%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: gradient-y 12s ease-in-out infinite alternate;
+  }
+  @keyframes gradient-y {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 100%; }
+  }
+  .text-heading-gradient {
+    background: linear-gradient(0deg, #101A26 0%, #9BC6DD 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .text-animated-vibe {
+    background-image: 
+      radial-gradient(circle at center, rgba(169, 196, 210, 0.35) 0%, rgba(41, 62, 89, 0.35) 50%, transparent 90%),
+      linear-gradient(0deg, #101A26, #101A26);
+    background-size: 150vw 150vw, 100% 100%;
+    background-repeat: no-repeat, no-repeat;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: blob-breathe 8s ease-in-out infinite;
+  }
+  @keyframes blob-breathe {
+    0% { background-position: center calc(50% + 500px), center center; }
+    50% { background-position: center calc(50% - 500px), center center; }
+    100% { background-position: center calc(50% + 500px), center center; }
+  }
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: var(--color-y2k-ice);
+    --foreground: var(--color-y2k-gunmetal);
+  }
+
+  .font-display {
+    font-family: var(--font-instrument-sans), sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar for Y2K Vibe */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-accent);
+  color: #111111;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+.animate-marquee-slow {
+  animation: marquee 40s linear infinite;
 }
