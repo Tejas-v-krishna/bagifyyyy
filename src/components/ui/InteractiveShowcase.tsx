@@ -87,7 +87,7 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     setViewStart(idx % total);
   }, [total]);
 
-  // ── Cursor Follower Handlers ──────────────────────────────────────────────
+  // ── Cursor Follower Handlers (Locked to Cursor Position) ──────────────────
   const handleCardMouseMove = useCallback((productIdx: number, e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
     const rect = target.getBoundingClientRect();
@@ -97,7 +97,9 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     gsap.to(`.showcase-badge-${productIdx}`, {
       x,
       y,
-      duration: 0.22,
+      xPercent: -50,
+      yPercent: -50,
+      duration: 0.12,
       ease: "power2.out",
       overwrite: "auto",
     });
@@ -109,20 +111,27 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    gsap.set(`.showcase-badge-${productIdx}`, { x, y, scale: 0, opacity: 0 });
+    gsap.set(`.showcase-badge-${productIdx}`, {
+      x,
+      y,
+      xPercent: -50,
+      yPercent: -50,
+      scale: 0,
+      opacity: 0,
+    });
     gsap.to(`.showcase-badge-${productIdx}`, {
       scale: 1,
       opacity: 1,
-      duration: 0.35,
+      duration: 0.25,
       ease: "back.out(1.7)",
       overwrite: "auto",
     });
 
-    gsap.set(`.showcase-flood-${productIdx}`, { left: x, top: y, scale: 0, opacity: 0.85 });
+    gsap.set(`.showcase-flood-${productIdx}`, { left: x, top: y, scale: 0, opacity: 0.9 });
     gsap.to(`.showcase-flood-${productIdx}`, {
-      scale: 60,
-      opacity: 0.75,
-      duration: 0.65,
+      scale: 65,
+      opacity: 0.8,
+      duration: 0.55,
       ease: "power2.out",
       overwrite: "auto",
     });
@@ -139,7 +148,7 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     gsap.to(`.showcase-flood-${productIdx}`, {
       scale: 0,
       opacity: 0,
-      duration: 0.3,
+      duration: 0.25,
       ease: "power2.in",
       overwrite: "auto",
     });
@@ -263,19 +272,25 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
                          group
                          absolute top-0
                          w-[48%] md:w-[32%] lg:w-[19.6%] aspect-[2/3]
-                         bg-[#EAE8E3] flex flex-col will-change-transform
+                         bg-[#E8EDF2] flex flex-col will-change-transform
                          cursor-pointer
-                         border-r border-b border-t border-y2k-gunmetal/15 overflow-hidden transition-colors duration-500
-                         ${isThisActive ? "ring-2 ring-y2k-gunmetal z-30" : "hover:bg-[#E2DFD8]"}`}
+                         border-r border-b border-t border-[#A8B8CB]/50 overflow-hidden transition-colors duration-500
+                         ${isThisActive ? "ring-2 ring-[#28323F] z-30" : "hover:bg-[#E8EDF2]"}`}
               onClick={(e) => onCardClick(productIdx, e)}
             >
-              {/* Image Container with Chromatic Green Ripple & Cursor Magnet Badge */}
+              {/* Image Container with Pale Chrome (#C7D2DE) Background on Hover & Cursor Magnet Badge */}
               <div
                 onMouseMove={(e) => handleCardMouseMove(productIdx, e)}
                 onMouseEnter={(e) => handleCardMouseEnter(productIdx, e)}
                 onMouseLeave={() => handleCardMouseLeave(productIdx)}
-                className="relative w-full h-[75%] flex items-center justify-center overflow-hidden bg-[#EAE8E3]"
+                className="relative w-full h-[75%] flex items-center justify-center overflow-hidden bg-[#E8EDF2] group-hover:bg-[#C7D2DE] transition-colors duration-500 cursor-pointer"
               >
+                {/* Pale Chrome (#C7D2DE) Background Ripple Flood (Behind Image) */}
+                <div
+                  className={`showcase-flood-${productIdx} absolute w-4 h-4 bg-[#C7D2DE] rounded-full pointer-events-none opacity-0 z-0`}
+                  style={{ transform: "translate(-50%, -50%) scale(0)" }}
+                />
+
                 {imgUrl ? (
                   <>
                     <Image
@@ -283,26 +298,19 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                      className={`object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 ${
+                      className={`object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 z-[1] ${
                         product.isSoldOut ? "blur-md scale-105 opacity-80" : ""
                       }`}
                     />
 
-                    {/* Chromatic Green Ripple Expansion Overlay */}
-                    <div
-                      className={`showcase-flood-${productIdx} absolute w-4 h-4 bg-[#00E575] rounded-full pointer-events-none mix-blend-multiply opacity-0 z-10`}
-                      style={{ transform: "translate(-50%, -50%) scale(0)" }}
-                    />
+                    {/* Idle Soft Steel (#A8B8CB) Accent Dot on Right Edge */}
+                    <div className="absolute right-2 bottom-1/4 w-2.5 h-2.5 rounded-full bg-[#A8B8CB] border border-[#8598B0]/50 shadow-sm z-10 group-hover:scale-0 transition-transform duration-300 pointer-events-none" />
 
-                    {/* Idle Chromatic Green Dot on Right Edge */}
-                    <div className="absolute right-2 bottom-1/4 w-2.5 h-2.5 rounded-full bg-[#00E575] shadow-sm z-20 group-hover:scale-0 transition-transform duration-300 pointer-events-none" />
-
-                    {/* Cursor-Following "VIEW MORE" Magnet Badge */}
+                    {/* Cursor-Locked "VIEW MORE" Magnet Badge in Gunmetal (#28323F) */}
                     <div
-                      className={`showcase-badge-${productIdx} absolute pointer-events-none z-30 opacity-0`}
-                      style={{ transform: "translate(-50%, -50%) scale(0)" }}
+                      className={`showcase-badge-${productIdx} absolute top-0 left-0 pointer-events-none z-30 opacity-0 will-change-transform`}
                     >
-                      <div className="w-16 h-16 md:w-18 md:h-18 rounded-full bg-[#00E575] text-y2k-gunmetal flex items-center justify-center text-center text-[8.5px] md:text-[9.5px] font-black uppercase tracking-wider shadow-2xl border border-white/40">
+                      <div className="w-16 h-16 md:w-18 md:h-18 rounded-full bg-[#28323F] text-[#E8EDF2] flex items-center justify-center text-center text-[8.5px] md:text-[9.5px] font-bold uppercase tracking-wider shadow-2xl border border-[#A8B8CB]">
                         VIEW MORE
                       </div>
                     </div>
@@ -310,20 +318,20 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
                     {/* Sold Out Badge */}
                     {product.isSoldOut && (
                       <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                        <span className="bg-[#EAE8E3] text-y2k-gunmetal text-[10px] md:text-xs font-black px-4 py-1.5 uppercase tracking-wider rounded shadow-sm border border-y2k-gunmetal/20">
+                        <span className="bg-[#E8EDF2] text-[#28323F] text-[10px] md:text-xs font-black px-4 py-1.5 uppercase tracking-wider rounded shadow-sm border border-[#A8B8CB]">
                           SOLD OUT
                         </span>
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full bg-[#EAE8E3]" />
+                  <div className="w-full h-full bg-[#E8EDF2]" />
                 )}
 
                 {/* "NEW" Label Top Left */}
                 {product.isNew && (
                   <div className="absolute top-2.5 left-2.5 z-20">
-                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal bg-white/95 px-2 py-0.5 shadow-sm border border-y2k-gunmetal/10">
+                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-[#28323F] bg-[#E8EDF2] px-2 py-0.5 shadow-sm border border-[#A8B8CB]">
                       NEW
                     </span>
                   </div>
@@ -332,23 +340,23 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
                 {/* Wishlist Button Top Right */}
                 <WishlistButton
                   productId={product.id}
-                  className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-white/90 text-y2k-gunmetal hover:text-[#00E575] z-20 shadow-sm rounded-sm backdrop-blur-sm"
+                  className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-[#E8EDF2]/90 text-[#28323F] hover:text-[#5F7591] z-20 shadow-sm rounded-sm backdrop-blur-sm border border-[#A8B8CB]/50"
                 />
               </div>
 
               {/* Text Container at bottom (Brand Bluish-Grey & Gunmetal Palette) */}
-              <div className="w-full h-[25%] flex flex-col justify-center px-3 bg-[#EAE8E3] border-t border-y2k-gunmetal/10">
+              <div className="w-full h-[25%] flex flex-col justify-center px-3 bg-[#E8EDF2] border-t border-[#A8B8CB]/40">
                 <div className="flex items-baseline justify-between gap-1.5">
-                  <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-y2k-deep transition-colors truncate leading-tight tracking-tight">
+                  <h3 className="font-sans text-xs md:text-[13px] font-semibold text-[#28323F] group-hover:text-[#3E4E64] transition-colors truncate leading-tight tracking-tight">
                     {product.name}
                   </h3>
-                  <p className="font-sans text-xs md:text-[13px] font-bold text-y2k-gunmetal shrink-0 tracking-tight">
+                  <p className="font-sans text-xs md:text-[13px] font-bold text-[#28323F] shrink-0 tracking-tight">
                     ₹{product.price.toLocaleString("en-IN")}
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00E575] shrink-0" />
-                  <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A8B8CB] shrink-0 border border-[#8598B0]/40" />
+                  <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-[#5F7591]">
                     {product.category || "ARCHIVE"}
                   </span>
                 </div>
@@ -361,9 +369,9 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
       {/* ── Under-Card Navigation Controls ─────────────────────────────────── */}
       <div className="w-full flex items-center justify-between mt-4 px-2 md:px-4">
         {/* Left: Product Counter */}
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-y2k-slate">
-          <span className="text-y2k-gunmetal">{String(viewStart + 1).padStart(2, "0")}</span>
-          <span className="text-y2k-slate/40">/</span>
+        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#5F7591]">
+          <span className="text-[#28323F]">{String(viewStart + 1).padStart(2, "0")}</span>
+          <span className="text-[#8598B0]/60">/</span>
           <span>{String(total).padStart(2, "0")}</span>
         </div>
 
@@ -379,8 +387,8 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
               aria-label={`Go to slide ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 i === viewStart
-                  ? "w-6 bg-y2k-gunmetal"
-                  : "w-2 bg-y2k-gunmetal/20 hover:bg-y2k-gunmetal/50"
+                  ? "w-6 bg-[#28323F]"
+                  : "w-2 bg-[#A8B8CB]/50 hover:bg-[#5F7591]"
               }`}
             />
           ))}
@@ -394,7 +402,7 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
               goPrev();
             }}
             aria-label="Previous products"
-            className="w-10 h-10 flex items-center justify-center bg-white hover:bg-y2k-gunmetal text-y2k-gunmetal hover:text-white border border-y2k-gunmetal/20 shadow-sm transition-all rounded-sm cursor-pointer"
+            className="w-10 h-10 flex items-center justify-center bg-[#E8EDF2] hover:bg-[#28323F] text-[#28323F] hover:text-[#E8EDF2] border border-[#A8B8CB] shadow-sm transition-all rounded-sm cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
@@ -404,7 +412,7 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
               goNext();
             }}
             aria-label="Next products"
-            className="w-10 h-10 flex items-center justify-center bg-white hover:bg-y2k-gunmetal text-y2k-gunmetal hover:text-white border border-y2k-gunmetal/20 shadow-sm transition-all rounded-sm cursor-pointer"
+            className="w-10 h-10 flex items-center justify-center bg-[#E8EDF2] hover:bg-[#28323F] text-[#28323F] hover:text-[#E8EDF2] border border-[#A8B8CB] shadow-sm transition-all rounded-sm cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
@@ -417,9 +425,9 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
         onClick={(e) => e.stopPropagation()}
       >
         {activeProduct && (
-          <div className="w-full pt-6 pb-10 px-4 md:px-8 max-w-[1400px] mx-auto border-t border-y2k-gunmetal/15">
+          <div className="w-full pt-6 pb-10 px-4 md:px-8 max-w-[1400px] mx-auto border-t border-[#A8B8CB]/40">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-5 gap-5">
-              <h3 className="font-display font-medium text-4xl md:text-5xl lg:text-[60px] uppercase tracking-[-0.06em] leading-[0.85] m-0 text-y2k-gunmetal flex flex-wrap gap-x-3">
+              <h3 className="font-display font-medium text-4xl md:text-5xl lg:text-[60px] uppercase tracking-[-0.06em] leading-[0.85] m-0 text-[#28323F] flex flex-wrap gap-x-3">
                 {activeProduct.name.split(" ").map((word, wIdx) => (
                   <span key={wIdx} className="inline-flex">
                     {word.split("").map((char, cIdx) => (
@@ -433,22 +441,22 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
               </h3>
               <Link
                 href={`/product/${activeProduct.id}`}
-                className="reveal-item shrink-0 px-7 py-3.5 border-2 border-y2k-gunmetal
-                           text-y2k-gunmetal text-xs md:text-sm font-bold uppercase tracking-wider
-                           hover:bg-y2k-gunmetal hover:text-y2k-ice transition-colors flex items-center gap-3"
+                className="reveal-item shrink-0 px-7 py-3.5 border-2 border-[#28323F]
+                           text-[#28323F] text-xs md:text-sm font-bold uppercase tracking-wider
+                           hover:bg-[#28323F] hover:text-[#E8EDF2] transition-colors flex items-center gap-3"
               >
                 {activeProduct.isSoldOut ? "SOLD OUT" : "View product"}{" "}
                 <ShoppingBag className="w-4 h-4" />
               </Link>
             </div>
 
-            <hr className="reveal-item border-t border-y2k-gunmetal/20 mb-5" />
+            <hr className="reveal-item border-t border-[#A8B8CB]/40 mb-5" />
 
             <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-20">
-              <div className="reveal-item text-2xl md:text-3xl font-medium tracking-normal text-y2k-gunmetal shrink-0">
+              <div className="reveal-item text-2xl md:text-3xl font-medium tracking-normal text-[#28323F] shrink-0">
                 ₹{activeProduct.price.toLocaleString("en-IN")}
               </div>
-              <p className="reveal-item text-xs md:text-sm text-y2k-slate font-medium leading-relaxed max-w-xl">
+              <p className="reveal-item text-xs md:text-sm text-[#5F7591] font-medium leading-relaxed max-w-xl">
                 {activeProduct.description ||
                   "Archival piece constructed with heavy tailoring and custom distressed hardware."}
               </p>

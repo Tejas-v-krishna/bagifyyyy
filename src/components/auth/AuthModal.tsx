@@ -109,15 +109,18 @@ export default function AuthModal() {
     onSuccess: handleGoogleSuccess,
     onError: (errorResponse) => {
       console.warn("Google popup closed or error:", errorResponse);
-      // If client ID is placeholder, perform simulated test login for developer convenience
       const isPlaceholder = !process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID.includes("placeholder");
       if (isPlaceholder) {
         handleGoogleDevSimulation();
       } else {
-        setError("Google login was cancelled or failed.");
+        setError("Google popup was closed, blocked, or this domain is not yet in Google Cloud Console 'Authorized JavaScript origins'.");
         setGoogleLoading(false);
       }
     },
+    onNonOAuthError: (nonOAuthError) => {
+      console.warn("Google non-OAuth error:", nonOAuthError);
+      setGoogleLoading(false);
+    }
   });
 
   const handleGoogleClick = () => {
@@ -125,10 +128,14 @@ export default function AuthModal() {
     setError("");
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!clientId || clientId.includes("placeholder")) {
-      // Direct local simulation when keys are not configured yet
       handleGoogleDevSimulation();
     } else {
-      triggerGoogleLogin();
+      try {
+        triggerGoogleLogin();
+      } catch (err) {
+        console.error("Trigger error:", err);
+        setGoogleLoading(false);
+      }
     }
   };
 
