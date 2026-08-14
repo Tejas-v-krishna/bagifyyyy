@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@libsql/client": "^0.17.4",
-    "@prisma/adapter-libsql": "^7.9.1",
+    "@libsql/client": "^0.8.0",
+    "@prisma/adapter-libsql": "^5.22.0",
     "@prisma/client": "^5.22.0",
     "@react-oauth/google": "^0.13.5",
     "@stripe/stripe-js": "^9.13.0",
