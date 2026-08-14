@@ -317,11 +317,10 @@ export default function AuthModal() {
           {/* Form Area */}
           <div className="bg-white rounded-b-[6px] px-8 py-6 flex flex-col gap-4">
             {/* Google One-Click Auth Button */}
-            <button
-              type="button"
-              onClick={handleGoogleClick}
-              disabled={googleLoading || loading}
-              className="w-full flex items-center justify-center gap-3 bg-white border border-y2k-gunmetal/25 hover:border-y2k-gunmetal hover:bg-black/5 text-y2k-gunmetal py-3.5 px-4 font-bold text-xs uppercase tracking-widest transition-all shadow-sm active:scale-[0.99] disabled:opacity-60"
+            <a
+              href="/api/auth/google/signin"
+              onClick={() => setGoogleLoading(true)}
+              className="w-full flex items-center justify-center gap-3 bg-white border border-y2k-gunmetal/25 hover:border-y2k-gunmetal hover:bg-black/5 text-y2k-gunmetal py-3.5 px-4 font-bold text-xs uppercase tracking-widest transition-all shadow-sm active:scale-[0.99] cursor-pointer"
             >
               {googleLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-y2k-gunmetal" />
@@ -345,8 +344,8 @@ export default function AuthModal() {
                   />
                 </svg>
               )}
-              <span>{googleLoading ? "Connecting Google…" : "Continue with Google"}</span>
-            </button>
+              <span>{googleLoading ? "Redirecting to Google…" : "Continue with Google"}</span>
+            </a>
 
             {/* Divider */}
             <div className="flex items-center gap-3 my-1">
