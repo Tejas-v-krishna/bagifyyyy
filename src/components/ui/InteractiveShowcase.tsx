@@ -211,15 +211,14 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
 
       gsap.to(`.showcase-card-${productIdx}`, {
         xPercent: xSlot * 100,
-        scaleY: isSelected ? 1.09 : 1,
-        scaleX: 1,
-        transformOrigin: "top center",
+        scale: isSelected ? 1.07 : 1, // Uniform proportional scale - no stretching
+        transformOrigin: "center center",
         opacity: isVisible ? 1 : 0,
         zIndex: isSelected ? 35 : isVisible ? 10 : 0,
         boxShadow: isSelected
           ? "0 25px 50px -12px rgba(40, 50, 63, 0.3)"
           : "0 0 0 0 transparent",
-        duration: 0.55,
+        duration: 0.5,
         ease: "power3.out",
         overwrite: "auto",
       });

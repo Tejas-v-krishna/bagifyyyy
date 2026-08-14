@@ -104,18 +104,15 @@ export default function AuthModal() {
     }
   };
 
-  // Trigger Google Login Popup (or fallback simulation if Client ID is unconfigured)
+  // Trigger Google Login Popup
   const triggerGoogleLogin = useGoogleLogin({
-    onSuccess: handleGoogleSuccess,
+    onSuccess: (tokenResponse) => {
+      handleGoogleSuccess(tokenResponse);
+    },
     onError: (errorResponse) => {
       console.warn("Google popup closed or error:", errorResponse);
-      const isPlaceholder = !process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID.includes("placeholder");
-      if (isPlaceholder) {
-        handleGoogleDevSimulation();
-      } else {
-        setError("Google popup was closed, blocked, or this domain is not yet in Google Cloud Console 'Authorized JavaScript origins'.");
-        setGoogleLoading(false);
-      }
+      setGoogleLoading(false);
+      setError("Google popup was closed or this domain is not yet in Google Cloud Console 'Authorized JavaScript origins'.");
     },
     onNonOAuthError: (nonOAuthError) => {
       console.warn("Google non-OAuth error:", nonOAuthError);
@@ -124,18 +121,20 @@ export default function AuthModal() {
   });
 
   const handleGoogleClick = () => {
-    setGoogleLoading(true);
     setError("");
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (!clientId || clientId.includes("placeholder")) {
-      handleGoogleDevSimulation();
-    } else {
-      try {
-        triggerGoogleLogin();
-      } catch (err) {
-        console.error("Trigger error:", err);
-        setGoogleLoading(false);
-      }
+    setGoogleLoading(true);
+
+    // Safety timeout: Auto-reset loading if popup is closed by user without event after 5s
+    setTimeout(() => {
+      setGoogleLoading(false);
+    }, 5000);
+
+    try {
+      triggerGoogleLogin();
+    } catch (err: any) {
+      console.error("Google trigger error:", err);
+      setError("Could not open Google popup. Please enable popups in your browser.");
+      setGoogleLoading(false);
     }
   };
 
