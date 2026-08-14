@@ -10,7 +10,6 @@ function createPrismaClient(): PrismaClient {
   const tursoUrl = process.env.TURSO_DATABASE_URL;
   const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
 
-  // Use Turso libSQL client in production / when credentials are set
   if (tursoUrl && tursoAuthToken) {
     const libsql = createClient({
       url: tursoUrl,
@@ -20,7 +19,6 @@ function createPrismaClient(): PrismaClient {
     return new PrismaClient({ adapter });
   }
 
-  // Fallback to standard SQLite client
   return new PrismaClient();
 }
 
