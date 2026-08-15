@@ -17,8 +17,8 @@
   --color-muted-foreground: var(--color-y2k-mist);
   --color-border: var(--color-y2k-soft);
   
-  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-instrument-sans), var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 
   --animate-marquee: marquee 30s linear infinite;
 
@@ -202,9 +202,34 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  letter-spacing: -0.06em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Helvetica Global Typography Hierarchy ── */
+p, span, a, button, input, select, textarea, label {
+  font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  letter-spacing: -0.06em;
+}
+
+h1, h2, h3, h4, h5, h6, .font-bold, .font-extrabold, .font-black, .font-display, strong, b {
+  font-family: "Helvetica Neue", Helvetica, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.09em;
+}
+
+.helvetica-bold {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.09em !important;
+}
+
+.helvetica-regular {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.06em !important;
 }
 
 /* Custom Scrollbar for Y2K Vibe */
