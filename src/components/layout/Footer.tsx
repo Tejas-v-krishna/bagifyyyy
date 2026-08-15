@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, Truck, Clock, Sparkles } from "lucide-react";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -39,41 +38,6 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-y2k-ice text-y2k-gunmetal border-t border-y2k-gunmetal/10 font-sans">
-      {/* ── Top Row (Features) ────────────────────────────────────────────────────────── */}
-      <div className="w-full grid grid-cols-2 md:grid-cols-4 border-b border-y2k-gunmetal/10">
-        {/* Feature 1 */}
-        <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
-          <ShieldCheck strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            AUTHENTIC 1-OF-1
-          </span>
-        </div>
-
-        {/* Feature 2 */}
-        <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
-          <Truck strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            ALL INDIA SHIPPING
-          </span>
-        </div>
-
-        {/* Feature 3 */}
-        <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
-          <Clock strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            CONCIERGE CARE
-          </span>
-        </div>
-
-        {/* Feature 4 */}
-        <div className="flex flex-col items-center justify-center p-6 md:p-8 hover:bg-black/[0.02] transition-colors">
-          <Sparkles strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            CURATED DROPS
-          </span>
-        </div>
-      </div>
-
       {/* ── Middle Row (Links & Newsletter) ─────────────────────────────────────────────────────── */}
       <div className="w-full flex flex-col lg:flex-row p-8 lg:p-12 gap-12 lg:gap-8 max-w-[1800px] mx-auto">
         {/* Left Side: Link Columns */}
