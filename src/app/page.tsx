@@ -8,6 +8,7 @@ import NewsletterForm from "@/components/ui/NewsletterForm";
 import GsapMarquee from "@/components/ui/GsapMarquee";
 import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
+import InstagramFeed from "@/components/ui/InstagramFeed";
 
 export const dynamic = 'force-dynamic';
 
@@ -246,71 +247,17 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Fit Checks (UGC Lookbook) - Brutalist Instagram Grid */}
+      {/* 4. Street Vision - Live Instagram Profile Feed Widget */}
       <section className="w-full bg-y2k-ice py-20 md:py-28 flex flex-col border-t border-y2k-gunmetal/10">
         {/* Header */}
-        <div className="flex flex-col items-center justify-center px-4 max-w-[1800px] mx-auto w-full mb-14 text-center">
+        <div className="flex flex-col items-center justify-center px-4 max-w-[1800px] mx-auto w-full mb-10 text-center">
           <h2 className="font-display font-medium text-4xl md:text-6xl lg:text-[72px] uppercase tracking-[-0.03em] text-y2k-gunmetal m-0 leading-none py-1" data-animate="text-down">
             STREET VISION
           </h2>
         </div>
 
-        {/* IG Grid Layout */}
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {[
-            { url: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", handle: "@chrome.drip", caption: "archive delivery 1. heavy." },
-            { url: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", handle: "@bagify.fits", caption: "acid wash rotation" },
-            { url: "/assets/ai/prod_model_3_babytee_1786659519157.jpg", handle: "@yzrk.fits", caption: "y2k uniform" },
-            { url: "/assets/ai/prod_model_4_cyberzip_1786659858926.jpg", handle: "@vibe.check", caption: "hardware" },
-            { url: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", handle: "@aesthetic.y2k", caption: "essentials only" },
-            { url: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg", handle: "@drip.lord", caption: "vintage sourcing" }
-          ].map((post, i) => (
-            <div key={i} className="flex flex-col bg-white border border-y2k-gunmetal/10 shadow-sm overflow-hidden group">
-              {/* IG Header */}
-              <div className="flex items-center justify-between p-3 border-b border-y2k-gunmetal/10">
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden relative">
-                    <Image src={post.url} alt="Profile" fill sizes="28px" className="object-cover grayscale" />
-                  </div>
-                  <span className="text-xs font-bold tracking-wider text-y2k-gunmetal lowercase">{post.handle}</span>
-                </div>
-                <MoreHorizontal className="w-4 h-4 text-y2k-gunmetal/40 hover:text-y2k-gunmetal cursor-pointer transition-colors" />
-              </div>
-
-              {/* IG Image */}
-              <div className="relative w-full aspect-square bg-y2k-pale overflow-hidden">
-                <Image 
-                  src={post.url} 
-                  alt={`Post by ${post.handle}`} 
-                  fill 
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" 
-                  className="object-cover grayscale transition-transform duration-700 ease-out group-hover:scale-[1.03] group-hover:grayscale-0" 
-                />
-              </div>
-
-              {/* IG Footer */}
-              <div className="p-4 flex flex-col gap-2.5">
-                <div className="flex items-center gap-4">
-                  <Heart className="w-4 h-4 text-y2k-gunmetal hover:fill-y2k-gunmetal cursor-pointer transition-all" />
-                  <MessageCircle className="w-4 h-4 text-y2k-gunmetal hover:text-y2k-slate cursor-pointer transition-all" />
-                  <Send className="w-4 h-4 text-y2k-gunmetal hover:text-y2k-slate cursor-pointer transition-all" />
-                </div>
-                <div className="text-xs leading-relaxed">
-                  <span className="font-bold mr-2 text-y2k-gunmetal lowercase">{post.handle}</span>
-                  <span className="text-y2k-slate font-normal">{post.caption}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer Link */}
-        <div className="flex flex-col items-center mt-12">
-          <a href="https://instagram.com" target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 text-y2k-gunmetal hover:text-black transition-colors font-bold text-xs tracking-[0.16em] uppercase border-b border-y2k-gunmetal/40 hover:border-black pb-1">
-            <span>OPEN APP</span>
-            <ArrowRight strokeWidth={1.5} className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform" />
-          </a>
-        </div>
+        {/* Instagram Profile & Feed Widget */}
+        <InstagramFeed />
       </section>
     </div>
   );
