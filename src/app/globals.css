@@ -206,6 +206,15 @@ body {
   letter-spacing: -0.06em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: url('/custom-cursor.svg') 2 2, auto;
+}
+
+html {
+  cursor: url('/custom-cursor.svg') 2 2, auto;
+}
+
+a, button, [role="button"], input[type="submit"], input[type="button"], select, summary, .cursor-pointer {
+  cursor: url('/custom-cursor.svg') 2 2, pointer;
 }
 
 /* ── Helvetica Global Typography Hierarchy ── */
