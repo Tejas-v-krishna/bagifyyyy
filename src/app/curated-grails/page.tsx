@@ -13,8 +13,6 @@ export default function CuratedGrailsPage() {
     <CategoryPageClient
       filter="grails"
       title="CURATED GRAILS"
-      badge="VAULT SELECTION • 1-OF-1 PIECES"
-      subtitle="Hand-selected archival grails, collector-grade vintage, and authenticated provenance."
     />
   );
 }

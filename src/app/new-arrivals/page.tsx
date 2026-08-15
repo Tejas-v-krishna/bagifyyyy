@@ -13,8 +13,6 @@ export default function NewArrivalsPage() {
     <CategoryPageClient
       filter="new"
       title="NEW ARRIVALS"
-      badge="JUST DROPPED • SOURCED WEEKLY"
-      subtitle="Latest hand-picked vintage items, rare deadstock, and archival grails."
     />
   );
 }

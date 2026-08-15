@@ -93,21 +93,11 @@ export default function CategoryPageClient({
       {/* Header with Split Left Info & Right-Side Product Numbering */}
       <div className="mb-8 shrink-0 px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto">
         <div className="flex flex-row items-end justify-between gap-4 border-b border-y2k-gunmetal/10 pb-6">
-          {/* Left: Category Title & Subtitle */}
+          {/* Left: Category Title */}
           <div className="flex flex-col">
-            {badge && (
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-                {badge}
-              </span>
-            )}
-            <h1 className="font-display font-medium text-4xl sm:text-5xl md:text-6xl uppercase tracking-[-0.03em] leading-none mb-2 py-1 text-y2k-gunmetal">
+            <h1 className="font-display font-medium text-4xl sm:text-5xl md:text-6xl uppercase tracking-[-0.03em] leading-none py-1 text-y2k-gunmetal">
               {title}
             </h1>
-            <p className="text-y2k-slate font-bold uppercase tracking-[0.16em] text-xs">
-              {loading
-                ? "Loading archive drops..."
-                : subtitle || "Verified 1-of-1 archive garments"}
-            </p>
           </div>
 
           {/* Right: Clean Minimalist Numbering Counter */}

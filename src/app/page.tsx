@@ -211,15 +211,9 @@ export default async function Home() {
         {/* Minimalist Header with Right-Side Product Numbering */}
         <div className="flex flex-row items-end justify-between gap-4 mb-12 border-b border-y2k-gunmetal/10 pb-6">
           <div className="flex flex-col">
-            <h2 className="font-display font-medium text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none text-y2k-gunmetal mb-2">
+            <h2 className="font-display font-medium text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none text-y2k-gunmetal py-1">
               Vintage Archive
             </h2>
-            <Link
-              href="/curated-grails"
-              className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal/70 hover:text-black border-b border-y2k-gunmetal/30 hover:border-black pb-0.5 transition-colors self-start"
-            >
-              Explore 90s &amp; 00s Vault →
-            </Link>
           </div>
 
           <div className="flex items-baseline gap-1.5 shrink-0 select-none pb-0.5">
@@ -255,16 +249,10 @@ export default async function Home() {
       {/* 4. Fit Checks (UGC Lookbook) - Brutalist Instagram Grid */}
       <section className="w-full bg-y2k-ice py-20 md:py-28 flex flex-col border-t border-y2k-gunmetal/10">
         {/* Header */}
-        <div className="flex flex-col items-center justify-center px-4 max-w-[1800px] mx-auto w-full mb-14 text-center gap-2">
-          <p className="text-y2k-slate text-[11px] font-bold uppercase tracking-[0.16em]" data-animate="text-down">
-            COMMUNITY ARCHIVE
-          </p>
+        <div className="flex flex-col items-center justify-center px-4 max-w-[1800px] mx-auto w-full mb-14 text-center">
           <h2 className="font-display font-medium text-4xl md:text-6xl lg:text-[72px] uppercase tracking-[-0.03em] text-y2k-gunmetal m-0 leading-none py-1" data-animate="text-down">
             STREET VISION
           </h2>
-          <p className="text-y2k-gunmetal/75 text-xs font-semibold uppercase tracking-wider max-w-sm mt-2" data-animate="text-up">
-            Tag @bagifyyyy on instagram to get archived.
-          </p>
         </div>
 
         {/* IG Grid Layout */}

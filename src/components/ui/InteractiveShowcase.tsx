@@ -190,26 +190,6 @@ export default function InteractiveShowcase({
             )}
           </button>
         </div>
-
-        {/* Dynamic Animated Subtitle Link */}
-        <div className="h-7 mt-3 flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Link
-                href={activeTab === "new" ? "/new-arrivals" : "/curated-grails"}
-                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal/70 hover:text-black border-b border-y2k-gunmetal/30 hover:border-black pb-0.5 transition-colors"
-              >
-                Explore All {activeTab === "new" ? "New Arrivals" : "Curated Grails"} →
-              </Link>
-            </motion.div>
-          </AnimatePresence>
-        </div>
       </div>
 
       {/* ── 2. Borderless Card Track Container ─────────────────────────────────── */}
