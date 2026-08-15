@@ -247,16 +247,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Street Vision - Live Instagram Profile Feed Widget */}
-      <section className="w-full bg-y2k-ice py-20 md:py-28 flex flex-col border-t border-y2k-gunmetal/10">
-        {/* Header */}
-        <div className="flex flex-col items-center justify-center px-4 max-w-[1800px] mx-auto w-full mb-10 text-center">
-          <h2 className="font-display font-medium text-4xl md:text-6xl lg:text-[72px] uppercase tracking-[-0.03em] text-y2k-gunmetal m-0 leading-none py-1" data-animate="text-down">
-            STREET VISION
-          </h2>
-        </div>
-
-        {/* Instagram Profile & Feed Widget */}
+      {/* 4. Live Instagram Profile Feed Widget */}
+      <section className="w-full bg-y2k-ice py-16 md:py-24 flex flex-col border-t border-y2k-gunmetal/10">
         <InstagramFeed />
       </section>
     </div>
