@@ -65,10 +65,10 @@ export default function TermsPage() {
 
           <div>
             <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal mb-2">
-              5. RETURNS, CANCELLATIONS &amp; WITHDRAWAL
+              5. ARCHIVE FINAL SALE &amp; CANCELLATIONS
             </h2>
             <p>
-              Our complete return and cancellation guidelines are governed by our <Link href="/shipping" className="font-bold underline text-black">Shipping &amp; Returns Policy</Link> and statutory <Link href="/right-of-withdrawal" className="font-bold underline text-black">Right of Withdrawal</Link>.
+              Due to the unique, one-of-a-kind nature of curated vintage items and archive deadstock, all sales are strictly final. BAGIFYYYY does not offer returns, exchanges, or post-purchase order cancellations. Please refer to our <Link href="/shipping" className="font-bold underline text-black">Shipping &amp; Store Policy</Link> for dispatch guidelines.
             </p>
           </div>
 

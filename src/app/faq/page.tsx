@@ -28,11 +28,11 @@ const faqData = [
     ]
   },
   {
-    category: "Returns",
+    category: "Store Policy",
     items: [
-      { q: "How do I initiate a return?", a: "Visit our Returns Portal and enter your order number and email. You'll receive a prepaid shipping label to print." },
-      { q: "How long do refunds take?", a: "Refunds are processed within 3-5 days of receiving your return at our warehouse, and may take an additional 3-5 days to appear on your bank statement." },
-      { q: "Can I exchange for a different size?", a: "Absolutely. Select 'Exchange' in our Returns Portal to secure your new size before sending back the original item." }
+      { q: "Can I return or exchange an item?", a: "No. Because every piece at BAGIFYYYY is a rare 1-of-1 handpicked vintage or archival item, all sales are strictly final with no returns, exchanges, or cancellations." },
+      { q: "Can I cancel an order after placing it?", a: "Orders enter packaging and fulfillment immediately upon checkout, so orders cannot be cancelled once placed." },
+      { q: "Do you offer Cash on Delivery (COD)?", a: "No. We operate exclusively on secure prepaid digital payments via UPI, Google Pay, Paytm, Cards, and Net Banking." }
     ]
   },
   {

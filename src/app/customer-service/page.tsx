@@ -83,18 +83,18 @@ export default function CustomerServicePage() {
                 <Clock className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
               </div>
               <h3 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal mb-2">
-                SELF-SERVICE PORTAL
+                ORDER DISPATCH &amp; FAQ
               </h3>
               <p className="text-xs text-y2k-gunmetal/75 leading-relaxed mb-4">
-                Initiate a seamless return, exchange, check statutory withdrawal rights, or track a shipment.
+                Check delivery timelines, real-time speed dispatch status, and policy answers.
               </p>
             </div>
             <div className="flex flex-col gap-2">
               <Link
-                href="/return-request"
+                href="/shipping"
                 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:underline flex items-center gap-1.5"
               >
-                Request a Return / Exchange <ArrowRight className="w-3.5 h-3.5" />
+                Shipping &amp; Store Policy <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link
                 href="/faq"
@@ -182,7 +182,7 @@ export default function CustomerServicePage() {
                   className="w-full text-xs font-medium text-black border border-y2k-soft/50 px-3.5 py-2.5 bg-gray-50/50 focus:bg-white focus:border-y2k-gunmetal outline-none transition-all"
                 >
                   <option value="Order Inquiry">Order Inquiry &amp; Tracking</option>
-                  <option value="Return / Exchange">Return, Exchange &amp; Refund</option>
+                  <option value="Shipping & Delivery">Shipping &amp; Delivery Status</option>
                   <option value="Size & Fit Advisory">Size &amp; Fit Advisory</option>
                   <option value="Product Authentication">Product Authentication &amp; Archive Details</option>
                   <option value="Billing / Payment">Billing &amp; Payment Verification</option>

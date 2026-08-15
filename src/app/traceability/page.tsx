@@ -126,10 +126,10 @@ export default function TraceabilityPage() {
             </p>
           </div>
           <Link
-            href="/return-request"
+            href="/contact"
             className="bg-[#F8F5E9] text-y2k-gunmetal text-xs font-bold uppercase tracking-widest px-8 py-3.5 hover:bg-white transition-colors shrink-0 shadow"
           >
-            JOIN CIRCULARITY →
+            INQUIRE VIA CONTACT →
           </Link>
         </div>
       </section>
