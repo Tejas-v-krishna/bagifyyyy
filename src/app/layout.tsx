@@ -44,6 +44,9 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
+      <head>
+        <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/helvetica-neue-55" />
+      </head>
       <body
         className="min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"
         suppressHydrationWarning
