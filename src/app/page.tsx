@@ -222,18 +222,13 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="flex flex-col items-end shrink-0 select-none">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-y2k-slate mb-0.5">
-              VAULT DROP
+          <div className="flex items-baseline gap-1.5 shrink-0 select-none pb-0.5">
+            <span className="font-display font-medium text-3xl sm:text-4xl md:text-5xl text-y2k-gunmetal leading-none tracking-tight">
+              06
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-display font-medium text-3xl sm:text-4xl md:text-5xl text-y2k-gunmetal leading-none tracking-tight">
-                06
-              </span>
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-y2k-gunmetal/60 font-sans">
-                PIECES
-              </span>
-            </div>
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-y2k-gunmetal/60 font-sans">
+              PIECES
+            </span>
           </div>
         </div>
 
