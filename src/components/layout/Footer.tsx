@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Package, Truck, Clock, CornerUpLeft } from "lucide-react";
+import { ShieldCheck, Truck, Clock, Sparkles } from "lucide-react";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -43,9 +43,9 @@ export default function Footer() {
       <div className="w-full grid grid-cols-2 md:grid-cols-4 border-b border-y2k-gunmetal/10">
         {/* Feature 1 */}
         <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
-          <Package strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
+          <ShieldCheck strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            EASY EXCHANGES
+            AUTHENTIC 1-OF-1
           </span>
         </div>
 
@@ -53,7 +53,7 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
           <Truck strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            GLOBAL DISPATCH
+            ALL INDIA SHIPPING
           </span>
         </div>
 
@@ -67,9 +67,9 @@ export default function Footer() {
 
         {/* Feature 4 */}
         <div className="flex flex-col items-center justify-center p-6 md:p-8 hover:bg-black/[0.02] transition-colors">
-          <CornerUpLeft strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
+          <Sparkles strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
-            30-DAY RETURNS
+            CURATED DROPS
           </span>
         </div>
       </div>
@@ -101,18 +101,6 @@ export default function Footer() {
                 className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 FAQ
-              </Link>
-              <Link
-                href="/return-request"
-                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
-              >
-                RETURN REQUEST
-              </Link>
-              <Link
-                href="/right-of-withdrawal"
-                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
-              >
-                RIGHT OF WITHDRAWAL
               </Link>
               <Link
                 href="/traceability"
