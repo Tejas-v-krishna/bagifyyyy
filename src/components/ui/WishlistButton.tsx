@@ -4,14 +4,17 @@ import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useAuthStore } from "@/store/useAuthStore";
 
+import { useRouter } from "next/navigation";
+
 type Props = {
   productId: string;
   className?: string;
 };
 
 export default function WishlistButton({ productId, className = "" }: Props) {
+  const router = useRouter();
   const { toggleItem, isInWishlist } = useWishlistStore();
-  const { isAuthenticated, openAuthModal } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const wishlisted = isInWishlist(productId);
 
   return (
@@ -20,7 +23,7 @@ export default function WishlistButton({ productId, className = "" }: Props) {
         e.preventDefault();
         e.stopPropagation();
         if (!isAuthenticated) {
-          openAuthModal();
+          router.push("/login");
           return;
         }
         toggleItem(productId);

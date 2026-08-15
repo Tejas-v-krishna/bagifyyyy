@@ -12,13 +12,16 @@ import NotifyMeSection from "@/components/product/NotifyMeSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import { Heart } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+
 export default function ProductDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
 
   const { addItem, items } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
-  const { isAuthenticated, openAuthModal } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [product, setProduct] = useState<any>(null);
@@ -66,7 +69,7 @@ export default function ProductDetailPage() {
 
   const handleWishlistClick = () => {
     if (!isAuthenticated) {
-      openAuthModal();
+      router.push(`/login?from=/product/${id}`);
       return;
     }
     toggleItem(id);

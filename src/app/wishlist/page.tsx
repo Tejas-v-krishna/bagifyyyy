@@ -57,14 +57,12 @@ export default function WishlistPage() {
           <h2 className="text-xl md:text-2xl font-display uppercase tracking-tight text-y2k-gunmetal mb-2 text-center">
             SIGN IN TO VIEW YOUR WISHLIST
           </h2>
-          <button
-            onClick={openAuthModal}
-            className="btn-bagify px-8 py-4 rounded-none shadow-xl hover:-translate-y-1 transition-transform mt-4"
+          <Link
+            href="/login?from=/wishlist"
+            className="btn-bagify px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 transition-opacity mt-4 inline-block"
           >
-            <span className="text-bagify font-bold uppercase text-sm tracking-widest">
-              SIGN IN
-            </span>
-          </button>
+            SIGN IN TO VIEW WISHLIST →
+          </Link>
         </div>
       ) : loading ? (
         <div className="w-full flex justify-center py-20 text-y2k-slate uppercase tracking-widest font-bold">

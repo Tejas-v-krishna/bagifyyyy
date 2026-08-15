@@ -271,15 +271,12 @@ export default function CheckoutPage() {
                     <User className="w-5 h-5 mb-4 text-y2k-gunmetal" />
                     <h3 className="text-xs font-bold uppercase tracking-widest mb-2">GOOGLE / SIGN IN</h3>
                     <p className="text-[11px] text-y2k-gunmetal/60 mb-6 h-8">Earn Chrome Points & auto-fill details.</p>
-                    <button 
-                      onClick={() => {
-                        openAuthModal();
-                        setCheckoutMode('account');
-                      }}
-                      className="w-full border border-y2k-gunmetal text-y2k-gunmetal px-4 py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors"
+                    <Link 
+                      href="/login?from=/checkout"
+                      className="w-full border border-y2k-gunmetal text-y2k-gunmetal px-4 py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors text-center inline-block"
                     >
                       SIGN IN →
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-wider">🔒 All transactions are secured via Razorpay India.</p>

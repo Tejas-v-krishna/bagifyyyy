@@ -55,15 +55,13 @@ export default function CartDrawer() {
                   <p className="font-medium uppercase tracking-wide text-center">
                     Sign in to view your bag
                   </p>
-                  <button
-                    onClick={() => {
-                      closeCart();
-                      openAuthModal();
-                    }}
-                    className="btn-bagify rounded-none mt-4 px-6 py-3 font-bold text-xs tracking-widest uppercase"
+                  <Link
+                    href="/login"
+                    onClick={closeCart}
+                    className="btn-bagify px-6 py-3 font-bold text-xs tracking-widest uppercase inline-block text-center text-white hover:opacity-90 transition-opacity"
                   >
-                    Sign In
-                  </button>
+                    SIGN IN →
+                  </Link>
                 </div>
               ) : items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-4">
