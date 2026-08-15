@@ -2,297 +2,165 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Heart, MessageCircle, Check, Video, Layers, ExternalLink, MoreHorizontal } from "lucide-react";
+import { Heart, MessageCircle, Film, Copy, ArrowUpRight } from "lucide-react";
 
-interface InstagramPost {
+interface EditorialPost {
   id: string;
   url: string;
-  type: "video" | "carousel" | "image";
+  type: "reel" | "carousel" | "image";
   likes: string;
   comments: string;
   caption: string;
-  timestamp: string;
   link: string;
 }
 
-const INSTAGRAM_POSTS: InstagramPost[] = [
+const EDITORIAL_POSTS: EditorialPost[] = [
   {
     id: "post-1",
-    url: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg",
-    type: "video",
-    likes: "2,491",
-    comments: "148",
-    caption: "Heavyweight distressed vintage hoodie. DM on Instagram for sizing.",
-    timestamp: "2h ago",
+    url: "/assets/editorial/ig_2_blue.jpg",
+    type: "reel",
+    likes: "3.4K",
+    comments: "182",
+    caption: "Midnight tailoring & structured sky blue archive layers.",
     link: "https://instagram.com/bagifyyyy",
   },
   {
     id: "post-2",
-    url: "/fit.jpg",
-    type: "carousel",
-    likes: "4,820",
-    comments: "315",
-    caption: "Acid wash tactical multi-pocket cargo pants. Unisex archive fit.",
-    timestamp: "1d ago",
+    url: "/assets/editorial/ig_3_split.jpg",
+    type: "reel",
+    likes: "4.9K",
+    comments: "320",
+    caption: "Vivid Spectrum Issue 04: Emerald nylon & coral puffers.",
     link: "https://instagram.com/bagifyyyy",
   },
   {
     id: "post-3",
-    url: "/assets/ai/prod_model_3_babytee_1786659519157.jpg",
-    type: "image",
-    likes: "3,110",
-    comments: "202",
-    caption: "Y2K uniform baby tee. Sourced & verified archive garment.",
-    timestamp: "2d ago",
+    url: "/assets/editorial/ig_1_pink.jpg",
+    type: "carousel",
+    likes: "5.8K",
+    comments: "419",
+    caption: "Astra Moderne / Cosmic Lure editorial lookbook capsule.",
     link: "https://instagram.com/bagifyyyy",
   },
   {
     id: "post-4",
-    url: "/cmmawear.jpg",
-    type: "video",
-    likes: "5,940",
-    comments: "414",
-    caption: "Cyberpunk industrial hardware zip jacket. 1 of 1 piece.",
-    timestamp: "3d ago",
-    link: "https://instagram.com/bagifyyyy",
-  },
-  {
-    id: "post-5",
-    url: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg",
+    url: "/assets/editorial/ig_4_gold.jpg",
     type: "carousel",
-    likes: "2,760",
-    comments: "163",
-    caption: "Everyday tactical archive shoulder bag. Solid metal hardware.",
-    timestamp: "4d ago",
-    link: "https://instagram.com/bagifyyyy",
-  },
-  {
-    id: "post-6",
-    url: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg",
-    type: "video",
-    likes: "4,340",
-    comments: "299",
-    caption: "Hand-distressed 90s wash denim trucker jacket.",
-    timestamp: "5d ago",
-    link: "https://instagram.com/bagifyyyy",
-  },
-  {
-    id: "post-7",
-    url: "/assets/ai/prod_model_7_chromebelt_1786660225515.jpg",
-    type: "carousel",
-    likes: "3,210",
-    comments: "182",
-    caption: "Chrome studded vintage archive belt. Solid zinc buckle.",
-    timestamp: "6d ago",
-    link: "https://instagram.com/bagifyyyy",
-  },
-  {
-    id: "post-8",
-    url: "/hero-1-new.jpg",
-    type: "video",
-    likes: "6,890",
-    comments: "524",
-    caption: "Behind the drops: Tokyo & Milan vintage sourcing capsule.",
-    timestamp: "1w ago",
+    likes: "6.2K",
+    comments: "508",
+    caption: "The Grandmaster's Move: Metallic chainmail archive fitting.",
     link: "https://instagram.com/bagifyyyy",
   },
 ];
 
 export default function InstagramFeed() {
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followerCount, setFollowerCount] = useState(5502);
-  const [followingCount, setFollowingCount] = useState(1);
-  const [postsCount, setPostsCount] = useState(1256);
-  const [posts, setPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
+  const [posts, setPosts] = useState<EditorialPost[]>(EDITORIAL_POSTS);
 
-  // Fetch live Instagram data if API keys/tokens are configured on server
+  // Sync with live API if configured
   useEffect(() => {
     fetch("/api/instagram")
       .then((res) => res.json())
       .then((data) => {
-        if (data.profile) {
-          if (data.profile.followersCount) setFollowerCount(data.profile.followersCount);
-          if (data.profile.followingCount) setFollowingCount(data.profile.followingCount);
-          if (data.profile.postsCount) setPostsCount(data.profile.postsCount);
-        }
-        if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
-          setPosts(data.posts);
+        if (data.posts && Array.isArray(data.posts) && data.posts.length >= 4) {
+          setPosts(
+            data.posts.slice(0, 4).map((p: any) => ({
+              id: p.id,
+              url: p.url,
+              type: p.type === "video" ? "reel" : p.type === "carousel" ? "carousel" : "image",
+              likes: p.likes || "2.4K",
+              comments: p.comments || "120",
+              caption: p.caption || "Archive fit drop.",
+              link: p.link || "https://instagram.com/bagifyyyy",
+            }))
+          );
         }
       })
       .catch((err) => {
-        console.warn("Instagram live sync error, using cached display:", err);
+        console.warn("Instagram live sync error:", err);
       });
   }, []);
 
-  const handleFollowToggle = () => {
-    if (!isFollowing) {
-      setIsFollowing(true);
-      setFollowerCount((prev) => prev + 1);
-    } else {
-      setIsFollowing(false);
-      setFollowerCount((prev) => prev - 1);
-    }
-  };
-
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-      {/* ── 1. Clean Authentic Instagram Profile Card ── */}
-      <div className="bg-white border border-y2k-gunmetal/15 shadow-sm p-6 sm:p-8 mb-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          
-          {/* Left: Avatar + Profile Details */}
-          <div className="flex items-start sm:items-center gap-5 sm:gap-7">
-            {/* Story Gradient Ring Avatar */}
-            <div className="relative p-[3px] rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] via-[#dc2743] via-[#cc2366] to-[#bc1888] shrink-0 shadow-xs">
-              <div className="p-0.5 bg-white rounded-full">
-                <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-black flex items-center justify-center overflow-hidden relative">
-                  <Image
-                    src="/logo.png"
-                    alt="bagifyyyy Profile"
-                    width={80}
-                    height={80}
-                    priority
-                    className="object-contain p-2.5 filter invert"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Profile Info */}
-            <div className="flex flex-col">
-              {/* Username + Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-2">
-                <h3 className="font-sans font-bold text-xl sm:text-2xl lowercase tracking-tight text-y2k-gunmetal">
-                  bagifyyyy
-                </h3>
-
-                <button
-                  type="button"
-                  onClick={handleFollowToggle}
-                  className={`px-4 sm:px-5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
-                    isFollowing
-                      ? "bg-gray-100 text-y2k-gunmetal hover:bg-gray-200 border border-y2k-gunmetal/15"
-                      : "bg-[#0095F6] hover:bg-[#1877F2] text-white"
-                  }`}
-                >
-                  {isFollowing ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Following</span>
-                    </>
-                  ) : (
-                    <span>Follow</span>
-                  )}
-                </button>
-
-                <a
-                  href="https://instagram.com/bagifyyyy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1 text-y2k-gunmetal/60 hover:text-black transition-colors"
-                  title="More actions"
-                >
-                  <MoreHorizontal className="w-5 h-5" />
-                </a>
-              </div>
-
-              {/* Stats Row */}
-              <div className="flex items-center gap-5 sm:gap-7 text-xs sm:text-sm text-y2k-gunmetal mb-2.5">
-                <span>
-                  <strong className="font-bold">{postsCount.toLocaleString()}</strong> posts
-                </span>
-                <span>
-                  <strong className="font-bold">{followerCount.toLocaleString()}</strong> followers
-                </span>
-                <span>
-                  <strong className="font-bold">{followingCount.toLocaleString()}</strong> following
-                </span>
-              </div>
-
-              {/* Exact Bio Lines */}
-              <div className="text-xs sm:text-[13px] font-sans text-y2k-gunmetal leading-snug flex flex-col font-medium space-y-0.5">
-                <span>UNISEX!</span>
-                <span>ALL INDIA SHIPPING 🇮🇳</span>
-                <span>NO COD/RETURN/EXCHANGE/CANCELLATION ❌</span>
-                <span className="font-semibold text-y2k-gunmetal/90">PAYMENT-GPAY/PAYTM/PHONEPAY</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Direct Profile Link CTA */}
-          <div className="shrink-0 self-start md:self-center pt-2 md:pt-0">
-            <a
-              href="https://instagram.com/bagifyyyy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#232D3B] hover:bg-black text-white px-5 py-3 text-xs font-bold uppercase tracking-[0.14em] transition-all shadow-sm"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
-              <span>VIEW ON INSTAGRAM</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
-            </a>
-          </div>
-
-        </div>
+    <section className="w-full bg-white pt-10 sm:pt-14 pb-4">
+      {/* ── Top Header: follow us (Right Aligned Editorial Serif) ── */}
+      <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 lg:px-16 mb-6 sm:mb-8 flex justify-end">
+        <h2 className="font-serif italic font-normal text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-black lowercase tracking-normal select-none">
+          follow us
+        </h2>
       </div>
 
-      {/* ── 2. Instagram 8-Post Photo Grid with Native Hover ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-        {posts.map((post) => (
+      {/* ── 4-Column Editorial High-Fashion Photo Strip ── */}
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2">
+          {posts.map((post) => (
+            <a
+              key={post.id}
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative aspect-square bg-gray-100 overflow-hidden block border border-black/5"
+            >
+              {/* Lookbook Photo */}
+              <Image
+                src={post.url}
+                alt={post.caption}
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+
+              {/* Minimal Top-Right Editorial Badge */}
+              <div className="absolute top-3 right-3 z-10 pointer-events-none">
+                {post.type === "reel" && (
+                  <div className="bg-black/40 backdrop-blur-md p-1.5 rounded text-white/90 shadow-sm">
+                    <Film className="w-3.5 h-3.5" />
+                  </div>
+                )}
+                {post.type === "carousel" && (
+                  <div className="bg-black/40 backdrop-blur-md p-1.5 rounded text-white/90 shadow-sm">
+                    <Copy className="w-3.5 h-3.5" />
+                  </div>
+                )}
+              </div>
+
+              {/* Hover Dark Glass Overlay */}
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-6 text-white text-center z-20">
+                <div className="flex items-center gap-6 mb-3 font-semibold text-sm">
+                  <span className="flex items-center gap-1.5">
+                    <Heart className="w-4 h-4 fill-white text-white" />
+                    {post.likes}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MessageCircle className="w-4 h-4 fill-white text-white" />
+                    {post.comments}
+                  </span>
+                </div>
+                <p className="text-xs text-white/90 line-clamp-2 max-w-[220px] font-sans font-normal leading-snug mb-3">
+                  {post.caption}
+                </p>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-white/80 bg-white/20 px-2.5 py-1 rounded-full">
+                  View on Instagram <ArrowUpRight className="w-3 h-3" />
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* ── Bottom Left Brand Handle Pill / Tag ── */}
+        <div className="pt-3 sm:pt-4 flex justify-start">
           <a
-            key={post.id}
             href="https://instagram.com/bagifyyyy"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative aspect-square bg-gray-100 overflow-hidden block border border-y2k-gunmetal/10"
+            className="inline-flex items-center gap-2 py-3 px-6 bg-white hover:bg-gray-50 border border-black/10 transition-all group"
           >
-            {/* Post Photo */}
-            <Image
-              src={post.url}
-              alt={post.caption}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
-
-            {/* Native Top-Right Video / Carousel Icon Badge */}
-            <div className="absolute top-2.5 right-2.5 z-10 pointer-events-none">
-              {post.type === "video" && (
-                <div className="bg-black/60 backdrop-blur-md p-1.5 rounded-md text-white shadow-md">
-                  <Video className="w-3.5 h-3.5" />
-                </div>
-              )}
-              {post.type === "carousel" && (
-                <div className="bg-black/60 backdrop-blur-md p-1.5 rounded-md text-white shadow-md">
-                  <Layers className="w-3.5 h-3.5" />
-                </div>
-              )}
-            </div>
-
-            {/* Interactive Hover Overlay with Real-Feel Counts */}
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-3 text-white p-4 text-center z-20">
-              <div className="flex items-center gap-5 text-sm font-bold tracking-wider">
-                <div className="flex items-center gap-1.5">
-                  <Heart className="w-4 h-4 fill-white text-white" />
-                  <span>{post.likes}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <MessageCircle className="w-4 h-4 fill-white text-white" />
-                  <span>{post.comments}</span>
-                </div>
-              </div>
-              <p className="text-[11px] text-white/90 line-clamp-2 leading-tight max-w-[200px] font-sans">
-                {post.caption}
-              </p>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-white/60">
-                {post.timestamp}
-              </span>
-            </div>
+            <span className="font-serif italic font-normal text-base sm:text-lg text-black tracking-tight group-hover:text-y2k-slate">
+              @bagifyyyy
+            </span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-black/50 group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </a>
-        ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

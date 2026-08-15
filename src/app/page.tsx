@@ -247,10 +247,8 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. Live Instagram Profile Feed Widget */}
-      <section className="w-full bg-y2k-ice py-16 md:py-24 flex flex-col border-t border-y2k-gunmetal/10">
-        <InstagramFeed />
-      </section>
+      {/* 4. Editorial Instagram Lookbook Feed */}
+      <InstagramFeed />
     </div>
   );
 }
