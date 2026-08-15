@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Heart, MessageCircle, Check, Video, Layers, ExternalLink, MoreHorizontal } from "lucide-react";
 
@@ -101,6 +101,28 @@ const INSTAGRAM_POSTS: InstagramPost[] = [
 export default function InstagramFeed() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(5502);
+  const [followingCount, setFollowingCount] = useState(1);
+  const [postsCount, setPostsCount] = useState(1256);
+  const [posts, setPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
+
+  // Fetch live Instagram data if API keys/tokens are configured on server
+  useEffect(() => {
+    fetch("/api/instagram")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.profile) {
+          if (data.profile.followersCount) setFollowerCount(data.profile.followersCount);
+          if (data.profile.followingCount) setFollowingCount(data.profile.followingCount);
+          if (data.profile.postsCount) setPostsCount(data.profile.postsCount);
+        }
+        if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
+          setPosts(data.posts);
+        }
+      })
+      .catch((err) => {
+        console.warn("Instagram live sync error, using cached display:", err);
+      });
+  }, []);
 
   const handleFollowToggle = () => {
     if (!isFollowing) {
@@ -177,13 +199,13 @@ export default function InstagramFeed() {
               {/* Stats Row */}
               <div className="flex items-center gap-5 sm:gap-7 text-xs sm:text-sm text-y2k-gunmetal mb-2.5">
                 <span>
-                  <strong className="font-bold">1,256</strong> posts
+                  <strong className="font-bold">{postsCount.toLocaleString()}</strong> posts
                 </span>
                 <span>
                   <strong className="font-bold">{followerCount.toLocaleString()}</strong> followers
                 </span>
                 <span>
-                  <strong className="font-bold">1</strong> following
+                  <strong className="font-bold">{followingCount.toLocaleString()}</strong> following
                 </span>
               </div>
 
@@ -218,7 +240,7 @@ export default function InstagramFeed() {
 
       {/* ── 2. Instagram 8-Post Photo Grid with Native Hover ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-        {INSTAGRAM_POSTS.map((post) => (
+        {posts.map((post) => (
           <a
             key={post.id}
             href="https://instagram.com/bagifyyyy"
