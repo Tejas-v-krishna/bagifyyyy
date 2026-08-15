@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { XCircle } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default function CheckoutCancelPage() {
   return (
     <div className="container mx-auto px-4 py-24 text-center max-w-lg animate-fade-in-up">

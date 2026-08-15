@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { LogOut, User, CheckCircle2, Package, Truck, Clock } from "lucide-react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function AccountPage() {
   const { user, isAuthenticated, logout, openAuthModal } = useAuthStore();
@@ -51,7 +52,9 @@ export default function AccountPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-y2k-ice min-h-[70vh] flex flex-col items-center justify-center px-4 py-24 text-center text-y2k-gunmetal">
+      <div
+        className="auth-portal-card bg-y2k-ice min-h-[70vh] flex flex-col items-center justify-center px-4 py-24 text-center text-y2k-gunmetal will-change-[transform,opacity,filter]"
+      >
         <div className="w-16 h-16 rounded-full bg-white border border-y2k-gunmetal/20 flex items-center justify-center mb-6 shadow-sm">
           <User className="w-8 h-8 text-y2k-gunmetal/60" />
         </div>
@@ -61,18 +64,20 @@ export default function AccountPage() {
         <p className="text-sm text-y2k-gunmetal/70 max-w-md mb-8">
           Sign in with Google or your Bagify account to view your orders, Chrome points, and saved addresses.
         </p>
-        <button
-          onClick={openAuthModal}
-          className="btn-bagify px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 transition-opacity"
+        <Link
+          href="/login"
+          className="btn-bagify px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 transition-opacity inline-block"
         >
           SIGN IN / REGISTER →
-        </button>
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="bg-y2k-ice min-h-screen pt-20 pb-24 text-y2k-gunmetal">
+    <div
+      className="auth-portal-card bg-y2k-ice min-h-screen pt-20 pb-24 text-y2k-gunmetal will-change-[transform,opacity,filter]"
+    >
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12">
         {/* User Greeting Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12 border-b border-y2k-gunmetal/15 pb-8">

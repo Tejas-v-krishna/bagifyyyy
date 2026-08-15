@@ -42,10 +42,23 @@
     background: #232D3B;
     color: #F8F5E9;
     letter-spacing: 0.04em;
-    transition: filter 0.3s ease, transform 0.2s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
   }
   .btn-bagify:hover {
-    filter: brightness(0.85);
+    filter: brightness(1.06);
+    box-shadow: 0 4px 16px rgba(35, 45, 59, 0.16);
+  }
+  .btn-bagify:active {
+    transform: scale(0.985);
+    filter: brightness(0.95);
+    box-shadow: 0 1px 4px rgba(35, 45, 59, 0.08);
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                filter 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .text-bagify {
     font-family: var(--font-instrument-sans), sans-serif;
@@ -60,7 +73,6 @@
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
-  /* When .text-bagify is inside a .btn-bagify, force white so it's visible */
   .btn-bagify .text-bagify {
     background: none;
     -webkit-background-clip: unset;
@@ -113,10 +125,77 @@
     --foreground: var(--color-y2k-gunmetal);
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   .font-display {
     font-family: var(--font-instrument-sans), sans-serif;
     font-optical-sizing: auto;
     font-weight: 500;
+  }
+
+  /* Universal Silky Smooth Easing for All Clickable Elements */
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  select,
+  summary {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Cushioned tactile micro-press for buttons */
+  button:active,
+  [role="button"]:active,
+  input[type="submit"]:active,
+  input[type="button"]:active {
+    transform: scale(0.988);
+    opacity: 0.92;
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Gentle opacity ease for text links (no aggressive scale popping) */
+  a:active {
+    opacity: 0.65;
+    transition: opacity 0.15s ease-out;
+  }
+
+  /* Product & Interactive Cards Smooth Click Physics */
+  .product-card,
+  [data-card],
+  .interactive-card {
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .product-card:active,
+  [data-card]:active,
+  .interactive-card:active {
+    transform: scale(0.992);
+    transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Smooth Focus Outline Transition for Inputs */
+  input,
+  textarea,
+  select {
+    transition: border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
@@ -158,4 +237,40 @@ body {
 }
 .animate-marquee-slow {
   animation: marquee 40s linear infinite;
+}
+
+@keyframes pageBlurFadeIn {
+  0% {
+    opacity: 0;
+    filter: blur(22px);
+    transform: translateY(28px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.page-landing-animate {
+  animation: pageBlurFadeIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes portalCardEntrance {
+  0% {
+    opacity: 0;
+    filter: blur(24px);
+    transform: translateY(35px) scale(0.975);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.auth-portal-card {
+  animation: portalCardEntrance 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
 }

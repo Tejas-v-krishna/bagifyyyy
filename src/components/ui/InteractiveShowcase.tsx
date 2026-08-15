@@ -3,247 +3,133 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useAppStore } from "@/store/useAppStore";
 import WishlistButton from "@/components/ui/WishlistButton";
 
-type Product = {
+export type ShowcaseProduct = {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
   isSoldOut: boolean;
   isNew?: boolean;
   category?: string;
+  brand?: string | null;
   images: { url: string }[];
 };
 
-export default function InteractiveShowcase({ products }: { products: Product[] }) {
-  const total = products.length;
+export default function InteractiveShowcase({
+  products,
+  topPicks,
+}: {
+  products: ShowcaseProduct[];
+  topPicks?: ShowcaseProduct[];
+}) {
+  const [activeTab, setActiveTab] = useState<"new" | "top">("new");
+  const isPreloaderFinished = useAppStore((state) => state.isPreloaderFinished);
 
-  // viewStart: which product is the leftmost card in the visible window
-  const [viewStart, setViewStart] = useState(0);
-  // activeProductIdx: which product index is selected (null = idle)
-  const [activeProductIdx, setActiveProductIdx] = useState<number | null>(null);
-  const [imgIdx, setImgIdx] = useState(0);
+  const currentList = activeTab === "new" 
+    ? products 
+    : (topPicks && topPicks.length > 0 ? topPicks : [...products].reverse());
+  const total = currentList.length;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(1200);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const prevOffsets = useRef<Record<number, number>>({});
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const isActive = activeProductIdx !== null;
-  const activeProduct = isActive ? products[activeProductIdx!] : null;
-
-  // ── Window Resize Listener ────────────────────────────────────────────────
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Determine number of visible slots based on responsive width
-  const visibleSlots = windowWidth < 768 ? 2 : windowWidth < 1024 ? 3 : 5;
-  const halfSlots = (visibleSlots - 1) / 2;
+  const visibleSlots = windowWidth < 640 ? 2 : windowWidth < 1024 ? 4 : 6;
+  const maxIndex = Math.max(0, total - visibleSlots);
 
-  // ── Click to Activate ─────────────────────────────────────────────────────
-  const onCardClick = useCallback((productIdx: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (activeProductIdx === productIdx) {
-      setActiveProductIdx(null);
-      setImgIdx(0);
-    } else {
-      setActiveProductIdx(productIdx);
-      setImgIdx(0);
+  // Clamp index on resize or tab change
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
     }
-  }, [activeProductIdx]);
+  }, [maxIndex, currentIndex]);
 
-  const onContainerClick = useCallback(() => {
-    if (activeProductIdx !== null) {
-      setActiveProductIdx(null);
-      setImgIdx(0);
+  const handleTabChange = (newTab: "new" | "top") => {
+    if (newTab === activeTab) return;
+    setActiveTab(newTab);
+    setCurrentIndex(0);
+
+    if (trackRef.current) {
+      gsap.fromTo(
+        trackRef.current,
+        {
+          opacity: 0,
+          x: newTab === "top" ? 30 : -30,
+          filter: "blur(12px)",
+        },
+        {
+          opacity: 1,
+          x: 0,
+          filter: "blur(0px)",
+          duration: 0.55,
+          ease: "power3.out",
+          clearProps: "filter",
+        }
+      );
     }
-  }, [activeProductIdx]);
+  };
 
-  // ── Arrow navigation ──────────────────────────────────────────────────────
+  // ── Smooth slide animation when currentIndex changes ──────────────────────
+  useGSAP(() => {
+    if (!trackRef.current) return;
+    const firstCard = trackRef.current.children[0] as HTMLElement;
+    if (!firstCard) return;
+
+    const gap = windowWidth < 768 ? 16 : 24;
+    const cardWidth = firstCard.offsetWidth;
+    const targetX = -currentIndex * (cardWidth + gap);
+
+    gsap.to(trackRef.current, {
+      x: targetX,
+      duration: 0.55,
+      ease: "power3.out",
+    });
+  }, { dependencies: [currentIndex, windowWidth, activeTab], scope: containerRef });
+
+  // ── Entrance Loading Animation (Staggered Wave) ───────────────────────────
+  useGSAP(() => {
+    if (!isPreloaderFinished) {
+      gsap.set(".showcase-card", { opacity: 0, y: 25 });
+      return;
+    }
+
+    gsap.to(".showcase-card", {
+      opacity: 1,
+      y: 0,
+      duration: 0.65,
+      stagger: 0.04,
+      ease: "power3.out",
+    });
+  }, { dependencies: [isPreloaderFinished, activeTab], scope: containerRef });
+
+  // ── Navigation Handlers ───────────────────────────────────────────────────
   const goNext = useCallback(() => {
-    setActiveProductIdx(null);
-    setImgIdx(0);
-    setViewStart((prev) => (prev + 1) % total);
-  }, [total]);
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+  }, [maxIndex]);
 
   const goPrev = useCallback(() => {
-    setActiveProductIdx(null);
-    setImgIdx(0);
-    setViewStart((prev) => (prev - 1 + total) % total);
-  }, [total]);
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  }, [maxIndex]);
 
   const goTo = useCallback((idx: number) => {
-    setActiveProductIdx(null);
-    setImgIdx(0);
-    setViewStart(idx % total);
-  }, [total]);
-
-  // ── Cursor Follower Handlers (Locked to Cursor Position) ──────────────────
-  const handleCardMouseMove = useCallback((productIdx: number, e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const rect = target.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    gsap.to(`.showcase-badge-${productIdx}`, {
-      x,
-      y,
-      xPercent: -50,
-      yPercent: -50,
-      duration: 0.12,
-      ease: "power2.out",
-      overwrite: "auto",
-    });
-  }, []);
-
-  const handleCardMouseEnter = useCallback((productIdx: number, e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const rect = target.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    gsap.set(`.showcase-badge-${productIdx}`, {
-      x,
-      y,
-      xPercent: -50,
-      yPercent: -50,
-      scale: 0,
-      opacity: 0,
-    });
-    gsap.to(`.showcase-badge-${productIdx}`, {
-      scale: 1,
-      opacity: 1,
-      duration: 0.25,
-      ease: "back.out(1.7)",
-      overwrite: "auto",
-    });
-
-    gsap.set(`.showcase-flood-${productIdx}`, { left: x, top: y, scale: 0, opacity: 0.9 });
-    gsap.to(`.showcase-flood-${productIdx}`, {
-      scale: 65,
-      opacity: 0.8,
-      duration: 0.55,
-      ease: "power2.out",
-      overwrite: "auto",
-    });
-  }, []);
-
-  const handleCardMouseLeave = useCallback((productIdx: number) => {
-    gsap.to(`.showcase-badge-${productIdx}`, {
-      scale: 0,
-      opacity: 0,
-      duration: 0.2,
-      ease: "power2.in",
-      overwrite: "auto",
-    });
-    gsap.to(`.showcase-flood-${productIdx}`, {
-      scale: 0,
-      opacity: 0,
-      duration: 0.25,
-      ease: "power2.in",
-      overwrite: "auto",
-    });
-  }, []);
-
-  // ── Image slideshow on active card ────────────────────────────────────────
-  useEffect(() => {
-    if (!isActive) return;
-    const interval = setInterval(() => setImgIdx((i) => i + 1), 1400);
-    return () => clearInterval(interval);
-  }, [activeProductIdx, isActive]);
-
-  // ── Snap into view when activating ────────────────────────────────────────
-  useEffect(() => {
-    if (activeProductIdx !== null && containerRef.current) {
-      if (typeof window !== "undefined" && (window as any).__lenis) {
-        (window as any).__lenis.scrollTo(containerRef.current, { offset: -80, duration: 0.8 });
-      }
-    }
-  }, [activeProductIdx]);
-
-  // ── Image Blur Transition ─────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isActive || activeProductIdx === null) return;
-    const imgEl = document.querySelector(`.showcase-card-${activeProductIdx} img`) as HTMLElement;
-    if (!imgEl) return;
-    gsap.killTweensOf(imgEl);
-    gsap.fromTo(
-      imgEl,
-      { filter: "blur(8px)", opacity: 0.7 },
-      { filter: "blur(0px)", opacity: 1, duration: 0.5, ease: "power2.out" }
-    );
-  }, [imgIdx, activeProductIdx, isActive]);
-
-  // ── GSAP Layout Positioning: Expand from bottom on select ─────────────────
-  useGSAP(() => {
-    if (total === 0) return;
-
-    products.forEach((_, productIdx) => {
-      const normalizedOffset = ((productIdx - viewStart) % total + total) % total;
-
-      let slotIndex = normalizedOffset;
-      const rightCapacity = Math.ceil((total - visibleSlots) / 2);
-      if (slotIndex >= visibleSlots + rightCapacity) {
-        slotIndex -= total;
-      }
-
-      const isVisible = slotIndex >= 0 && slotIndex < visibleSlots;
-      const xSlot = slotIndex - halfSlots;
-      const isSelected = activeProductIdx === productIdx;
-
-      const prevX = prevOffsets.current[productIdx];
-
-      if (prevX !== undefined && Math.abs(xSlot - prevX) > visibleSlots) {
-        gsap.set(`.showcase-card-${productIdx}`, {
-          xPercent: xSlot * 100,
-          opacity: 0,
-        });
-      }
-
-      gsap.to(`.showcase-card-${productIdx}`, {
-        xPercent: xSlot * 100,
-        scale: isSelected ? 1.07 : 1, // Uniform proportional scale - no stretching
-        transformOrigin: "center center",
-        opacity: isVisible ? 1 : 0,
-        zIndex: isSelected ? 35 : isVisible ? 10 : 0,
-        boxShadow: isSelected
-          ? "0 25px 50px -12px rgba(40, 50, 63, 0.3)"
-          : "0 0 0 0 transparent",
-        duration: 0.5,
-        ease: "power3.out",
-        overwrite: "auto",
-      });
-
-      prevOffsets.current[productIdx] = xSlot;
-    });
-
-    // ── Details panel animation ─────────────────────────────────────────────
-    if (isActive && activeProduct) {
-      gsap.killTweensOf(".reveal-char, .reveal-item");
-      gsap.to(".details-panel", { opacity: 1, height: "auto", duration: 0.5, ease: "power2.out" });
-      gsap.fromTo(
-        ".reveal-char",
-        { y: 25, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.015, duration: 0.6, ease: "power3.out", delay: 0.05 }
-      );
-      gsap.fromTo(
-        ".reveal-item",
-        { y: 15, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.08, duration: 0.6, ease: "power3.out", delay: 0.15 }
-      );
-    } else {
-      gsap.to(".details-panel", { opacity: 0, height: 0, duration: 0.3, ease: "power2.in" });
-    }
-  }, { dependencies: [activeProductIdx, isActive, viewStart, visibleSlots, windowWidth], scope: containerRef });
+    setCurrentIndex(Math.min(idx, maxIndex));
+  }, [maxIndex]);
 
   if (total === 0) return null;
 
@@ -251,143 +137,186 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
     <div
       ref={containerRef}
       className="w-full flex flex-col select-none"
-      onClick={onContainerClick}
     >
-      {/* ── Card track ────────────────────────────────────────────────────── */}
-      <div className="relative w-full h-[85vw] sm:h-[70vw] md:h-[39vw] xl:h-[630px] flex items-start justify-center mt-6 mb-2 overflow-visible">
-        {/* ALL products rendered into fixed relative slots */}
-        {products.map((product, productIdx) => {
-          const isThisActive = isActive && productIdx === activeProductIdx;
+      {/* ── 1. Minimal Header with Magnetic Animated Tabs ── */}
+      <div className="flex flex-col items-center justify-center mb-12 text-center">
+        <div className="flex items-center gap-6 sm:gap-12 select-none relative">
+          
+          {/* Tab 1: New Arrivals */}
+          <button
+            type="button"
+            onClick={() => handleTabChange("new")}
+            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer ${
+              activeTab === "new"
+                ? "text-y2k-gunmetal font-medium scale-[1.02]"
+                : "text-y2k-gunmetal/30 hover:text-y2k-gunmetal/70 font-normal hover:scale-[1.01]"
+            }`}
+          >
+            <span>New Arrivals</span>
+            {activeTab === "new" && (
+              <motion.div
+                layoutId="showcaseTabUnderline"
+                className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-y2k-gunmetal shadow-sm"
+                transition={{
+                  type: "spring",
+                  stiffness: 380,
+                  damping: 30,
+                }}
+              />
+            )}
+          </button>
 
-          const imgUrl =
-            product.images.length > 0
-              ? product.images[(isThisActive ? imgIdx : 0) % product.images.length]?.url
-              : null;
+          {/* Tab 2: Curated Grails */}
+          <button
+            type="button"
+            onClick={() => handleTabChange("top")}
+            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer ${
+              activeTab === "top"
+                ? "text-y2k-gunmetal font-medium scale-[1.02]"
+                : "text-y2k-gunmetal/30 hover:text-y2k-gunmetal/70 font-normal hover:scale-[1.01]"
+            }`}
+          >
+            <span>Curated Grails</span>
+            {activeTab === "top" && (
+              <motion.div
+                layoutId="showcaseTabUnderline"
+                className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-y2k-gunmetal shadow-sm"
+                transition={{
+                  type: "spring",
+                  stiffness: 380,
+                  damping: 30,
+                }}
+              />
+            )}
+          </button>
+        </div>
 
-          return (
-            <div
-              key={product.id || productIdx}
-              className={`showcase-card-${productIdx}
-                         group
-                         absolute top-0
-                         w-[48%] md:w-[32%] lg:w-[19.6%] aspect-[2/3]
-                         bg-[#E8EDF2] flex flex-col will-change-transform
-                         cursor-pointer
-                         border-r border-b border-t border-[#A8B8CB]/50 overflow-hidden transition-colors duration-500
-                         ${isThisActive ? "ring-2 ring-[#28323F] z-30" : "hover:bg-[#E8EDF2]"}`}
-              onClick={(e) => onCardClick(productIdx, e)}
+        {/* Dynamic Animated Subtitle Link */}
+        <div className="h-7 mt-3 flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
-              {/* Image Container with Pale Chrome (#C7D2DE) Background on Hover & Cursor Magnet Badge */}
-              <div
-                onMouseMove={(e) => handleCardMouseMove(productIdx, e)}
-                onMouseEnter={(e) => handleCardMouseEnter(productIdx, e)}
-                onMouseLeave={() => handleCardMouseLeave(productIdx)}
-                className="relative w-full h-[75%] flex items-center justify-center overflow-hidden bg-[#E8EDF2] group-hover:bg-[#C7D2DE] transition-colors duration-500 cursor-pointer"
+              <Link
+                href={activeTab === "new" ? "/new-arrivals" : "/curated-grails"}
+                className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal/70 hover:text-black border-b border-y2k-gunmetal/30 hover:border-black pb-0.5 transition-colors"
               >
-                {/* Pale Chrome (#C7D2DE) Background Ripple Flood (Behind Image) */}
-                <div
-                  className={`showcase-flood-${productIdx} absolute w-4 h-4 bg-[#C7D2DE] rounded-full pointer-events-none opacity-0 z-0`}
-                  style={{ transform: "translate(-50%, -50%) scale(0)" }}
-                />
+                Explore All {activeTab === "new" ? "New Arrivals" : "Curated Grails"} →
+              </Link>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
 
-                {imgUrl ? (
-                  <>
-                    <Image
-                      src={imgUrl}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                      className={`object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105 z-[1] ${
-                        product.isSoldOut ? "blur-md scale-105 opacity-80" : ""
-                      }`}
-                    />
+      {/* ── 2. Borderless Card Track Container ─────────────────────────────────── */}
+      <div className="w-full overflow-hidden mb-4 py-2">
+        <div
+          ref={trackRef}
+          className="flex gap-4 md:gap-6 will-change-transform"
+        >
+          {currentList.map((product, productIdx) => {
+            const imgUrl = product.images[0]?.url || "/placeholder.jpg";
+            const hoverImgUrl = product.images[1]?.url || null;
 
-                    {/* Idle Soft Steel (#A8B8CB) Accent Dot on Right Edge */}
-                    <div className="absolute right-2 bottom-1/4 w-2.5 h-2.5 rounded-full bg-[#A8B8CB] border border-[#8598B0]/50 shadow-sm z-10 group-hover:scale-0 transition-transform duration-300 pointer-events-none" />
-
-                    {/* Cursor-Locked "VIEW MORE" Magnet Badge in Gunmetal (#28323F) */}
-                    <div
-                      className={`showcase-badge-${productIdx} absolute top-0 left-0 pointer-events-none z-30 opacity-0 will-change-transform`}
-                    >
-                      <div className="w-16 h-16 md:w-18 md:h-18 rounded-full bg-[#28323F] text-[#E8EDF2] flex items-center justify-center text-center text-[8.5px] md:text-[9.5px] font-bold uppercase tracking-wider shadow-2xl border border-[#A8B8CB]">
-                        VIEW MORE
-                      </div>
+            return (
+              <Link
+                key={`${activeTab}-${product.id || productIdx}`}
+                href={`/product/${product.id}`}
+                className="showcase-card interactive-card group flex flex-col shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-11px)] md:w-[calc(25%-18px)] lg:w-[calc(16.666%-20px)] cursor-pointer select-none"
+              >
+                {/* Borderless Floating Image Container with Subtle Photographic Depth */}
+                <div className="relative w-full aspect-[4/5] flex items-center justify-center overflow-hidden bg-black/[0.02] group-hover:bg-black/[0.05] transition-colors duration-500 cursor-pointer">
+                  {/* Minimalist Brand "NEW" Label Top Left */}
+                  {product.isNew && (
+                    <div className="absolute top-2.5 left-2.5 z-20">
+                      <span className="text-[8px] font-bold uppercase tracking-[0.14em] bg-[#232D3B] text-white px-1.5 py-0.5 shadow-sm">
+                        NEW
+                      </span>
                     </div>
+                  )}
 
-                    {/* Sold Out Badge */}
-                    {product.isSoldOut && (
-                      <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                        <span className="bg-[#E8EDF2] text-[#28323F] text-[10px] md:text-xs font-black px-4 py-1.5 uppercase tracking-wider rounded shadow-sm border border-[#A8B8CB]">
-                          SOLD OUT
-                        </span>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="w-full h-full bg-[#E8EDF2]" />
-                )}
-
-                {/* "NEW" Label Top Left */}
-                {product.isNew && (
-                  <div className="absolute top-2.5 left-2.5 z-20">
-                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-[#28323F] bg-[#E8EDF2] px-2 py-0.5 shadow-sm border border-[#A8B8CB]">
-                      NEW
-                    </span>
+                  {/* Wishlist Button Top Right */}
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <WishlistButton
+                      productId={product.id}
+                      className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-white/85 hover:bg-white text-y2k-gunmetal z-20 shadow-sm rounded-none border-0"
+                    />
                   </div>
-                )}
 
-                {/* Wishlist Button Top Right */}
-                <WishlistButton
-                  productId={product.id}
-                  className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-[#E8EDF2]/90 text-[#28323F] hover:text-[#5F7591] z-20 shadow-sm rounded-sm backdrop-blur-sm border border-[#A8B8CB]/50"
-                />
-              </div>
+                  {/* Primary Image */}
+                  <Image
+                    src={imgUrl}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                    className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] ${
+                      hoverImgUrl ? "group-hover:opacity-0" : ""
+                    } ${product.isSoldOut ? "blur-sm opacity-70" : "opacity-100"}`}
+                  />
 
-              {/* Text Container at bottom (Brand Bluish-Grey & Gunmetal Palette) */}
-              <div className="w-full h-[25%] flex flex-col justify-center px-3 bg-[#E8EDF2] border-t border-[#A8B8CB]/40">
-                <div className="flex items-baseline justify-between gap-1.5">
-                  <h3 className="font-sans text-xs md:text-[13px] font-semibold text-[#28323F] group-hover:text-[#3E4E64] transition-colors truncate leading-tight tracking-tight">
+                  {/* Alternate Image on Hover */}
+                  {hoverImgUrl && (
+                    <Image
+                      src={hoverImgUrl}
+                      alt={`${product.name} alternate view`}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                      className="object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2]"
+                    />
+                  )}
+
+                  {/* Sold Out Badge */}
+                  {product.isSoldOut && (
+                    <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+                      <span className="bg-[#232D3B] text-white text-[9px] font-bold px-3 py-1 uppercase tracking-widest">
+                        SOLD OUT
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Clean Borderless Product Details Below Image */}
+                <div className="flex flex-col pt-3 pb-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60 truncate">
+                    {product.brand || "BAGIFYYYY ARCHIVE"}
+                  </p>
+                  <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-black transition-colors line-clamp-2 leading-snug mt-0.5">
                     {product.name}
                   </h3>
-                  <p className="font-sans text-xs md:text-[13px] font-bold text-[#28323F] shrink-0 tracking-tight">
+                  <p className="font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
                     ₹{product.price.toLocaleString("en-IN")}
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#A8B8CB] shrink-0 border border-[#8598B0]/40" />
-                  <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-[#5F7591]">
-                    {product.category || "ARCHIVE"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
-      {/* ── Under-Card Navigation Controls ─────────────────────────────────── */}
-      <div className="w-full flex items-center justify-between mt-4 px-2 md:px-4">
+      {/* ── 3. Clean Minimalist Controls Below Track ─────────────────────────── */}
+      <div className="w-full flex items-center justify-between mt-6 px-1">
         {/* Left: Product Counter */}
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#5F7591]">
-          <span className="text-[#28323F]">{String(viewStart + 1).padStart(2, "0")}</span>
-          <span className="text-[#8598B0]/60">/</span>
+        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60">
+          <span className="text-y2k-gunmetal">{String(currentIndex + 1).padStart(2, "0")}</span>
+          <span className="opacity-30">/</span>
           <span>{String(total).padStart(2, "0")}</span>
         </div>
 
-        {/* Center: Clean Progress Bar Dots */}
+        {/* Center: Progress Bar Dots */}
         <div className="flex items-center gap-1.5">
-          {products.map((_, i) => (
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}
-              onClick={(e) => {
-                e.stopPropagation();
-                goTo(i);
-              }}
+              onClick={() => goTo(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === viewStart
-                  ? "w-6 bg-[#28323F]"
-                  : "w-2 bg-[#A8B8CB]/50 hover:bg-[#5F7591]"
+              className={`h-[2px] rounded-full transition-all duration-300 ${
+                i === currentIndex
+                  ? "w-7 bg-y2k-gunmetal"
+                  : "w-2.5 bg-y2k-gunmetal/20 hover:bg-y2k-gunmetal/50"
               }`}
             />
           ))}
@@ -396,72 +325,20 @@ export default function InteractiveShowcase({ products }: { products: Product[] 
         {/* Right: Arrow Buttons */}
         <div className="flex items-center gap-2">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              goPrev();
-            }}
+            onClick={goPrev}
             aria-label="Previous products"
-            className="w-10 h-10 flex items-center justify-center bg-[#E8EDF2] hover:bg-[#28323F] text-[#28323F] hover:text-[#E8EDF2] border border-[#A8B8CB] shadow-sm transition-all rounded-sm cursor-pointer"
+            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
+            <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              goNext();
-            }}
+            onClick={goNext}
             aria-label="Next products"
-            className="w-10 h-10 flex items-center justify-center bg-[#E8EDF2] hover:bg-[#28323F] text-[#28323F] hover:text-[#E8EDF2] border border-[#A8B8CB] shadow-sm transition-all rounded-sm cursor-pointer"
+            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
           >
-            <ChevronRight className="w-4 h-4" strokeWidth={2} />
+            <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>
         </div>
-      </div>
-
-      {/* ── Details panel ─────────────────────────────────────────────────── */}
-      <div
-        className="details-panel w-full overflow-hidden opacity-0 h-0 mt-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {activeProduct && (
-          <div className="w-full pt-6 pb-10 px-4 md:px-8 max-w-[1400px] mx-auto border-t border-[#A8B8CB]/40">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-5 gap-5">
-              <h3 className="font-display font-medium text-4xl md:text-5xl lg:text-[60px] uppercase tracking-[-0.06em] leading-[0.85] m-0 text-[#28323F] flex flex-wrap gap-x-3">
-                {activeProduct.name.split(" ").map((word, wIdx) => (
-                  <span key={wIdx} className="inline-flex">
-                    {word.split("").map((char, cIdx) => (
-                      <span key={cIdx} className="reveal-char inline-block">
-                        {char}
-                      </span>
-                    ))}
-                    <span className="reveal-char inline-block">&nbsp;</span>
-                  </span>
-                ))}
-              </h3>
-              <Link
-                href={`/product/${activeProduct.id}`}
-                className="reveal-item shrink-0 px-7 py-3.5 border-2 border-[#28323F]
-                           text-[#28323F] text-xs md:text-sm font-bold uppercase tracking-wider
-                           hover:bg-[#28323F] hover:text-[#E8EDF2] transition-colors flex items-center gap-3"
-              >
-                {activeProduct.isSoldOut ? "SOLD OUT" : "View product"}{" "}
-                <ShoppingBag className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <hr className="reveal-item border-t border-[#A8B8CB]/40 mb-5" />
-
-            <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-20">
-              <div className="reveal-item text-2xl md:text-3xl font-medium tracking-normal text-[#28323F] shrink-0">
-                ₹{activeProduct.price.toLocaleString("en-IN")}
-              </div>
-              <p className="reveal-item text-xs md:text-sm text-[#5F7591] font-medium leading-relaxed max-w-xl">
-                {activeProduct.description ||
-                  "Archival piece constructed with heavy tailoring and custom distressed hardware."}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

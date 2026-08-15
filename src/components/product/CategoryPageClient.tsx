@@ -6,10 +6,16 @@ import { SlidersHorizontal, LayoutGrid, List, RotateCcw } from "lucide-react";
 
 export default function CategoryPageClient({
   category,
+  filter,
   title,
+  subtitle,
+  badge,
 }: {
   category?: string;
+  filter?: string;
   title: string;
+  subtitle?: string;
+  badge?: string;
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [products, setProducts] = useState<Product[]>([]);
@@ -21,9 +27,13 @@ export default function CategoryPageClient({
   const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
-    const url = category
-      ? `/api/products?category=${category}`
-      : "/api/products";
+    let url = "/api/products";
+    const params = new URLSearchParams();
+    if (category) params.append("category", category);
+    if (filter) params.append("filter", filter);
+    const queryString = params.toString();
+    if (queryString) url += `?${queryString}`;
+
     setLoading(true);
     fetch(url)
       .then((res) => res.json())
@@ -35,7 +45,7 @@ export default function CategoryPageClient({
         console.error("Error fetching products:", err);
         setLoading(false);
       });
-  }, [category]);
+  }, [category, filter]);
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
@@ -80,183 +90,194 @@ export default function CategoryPageClient({
 
   return (
     <div className="w-full min-h-screen flex flex-col pt-12 bg-y2k-ice">
-      {/* Header */}
-      <div className="mb-10 shrink-0 px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto">
-        <h1 className="font-display font-medium text-5xl md:text-6xl uppercase tracking-[-0.06em] leading-[0.85] mb-2">
-          {title}
-        </h1>
-        <p className="text-y2k-gunmetal/70 font-medium uppercase tracking-widest text-sm">
-          {loading
-            ? "Loading archive..."
-            : `${title} — ${filteredAndSortedProducts.length} Items`}
-        </p>
+      {/* Header with Split Left Info & Right-Side Product Numbering */}
+      <div className="mb-8 shrink-0 px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto">
+        <div className="flex flex-row items-end justify-between gap-4 border-b border-y2k-gunmetal/10 pb-6">
+          {/* Left: Category Title & Subtitle */}
+          <div className="flex flex-col">
+            {badge && (
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
+                {badge}
+              </span>
+            )}
+            <h1 className="font-display font-medium text-4xl sm:text-5xl md:text-6xl uppercase tracking-[-0.03em] leading-none mb-2 py-1 text-y2k-gunmetal">
+              {title}
+            </h1>
+            <p className="text-y2k-slate font-bold uppercase tracking-[0.16em] text-xs">
+              {loading
+                ? "Loading archive drops..."
+                : subtitle || "Verified 1-of-1 archive garments"}
+            </p>
+          </div>
+
+          {/* Right: Prominent Minimalist Numbering Counter */}
+          <div className="flex flex-col items-end shrink-0 select-none">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-y2k-slate mb-0.5">
+              CATALOG COUNT
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-display font-medium text-3xl sm:text-4xl md:text-5xl text-y2k-gunmetal leading-none tracking-tight">
+                {loading ? "--" : String(filteredAndSortedProducts.length).padStart(2, "0")}
+              </span>
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-y2k-gunmetal/60 font-sans">
+                {filteredAndSortedProducts.length === 1 ? "PIECE" : "PIECES"}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-y border-y2k-gunmetal/20 mb-12 gap-4 px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 font-bold uppercase tracking-wide text-sm mr-2">
-            <SlidersHorizontal className="w-4 h-4" />
+      <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center py-3.5 border-b border-y2k-gunmetal/10 mb-10 gap-4 px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1.5 font-bold uppercase tracking-[0.14em] text-[11px] text-y2k-gunmetal mr-2">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
             Filter
           </div>
 
+          {/* Size Filter Dropdown */}
           <select
             value={sizeFilter}
             onChange={(e) => setSizeFilter(e.target.value)}
-            className="border border-y2k-gunmetal/30 bg-transparent text-xs font-semibold uppercase tracking-wider px-3.5 py-2.5 rounded-none outline-none cursor-pointer"
+            className="bg-transparent border border-y2k-gunmetal/20 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer"
           >
-            <option value="">All Sizes</option>
-            <option value="XS">XS</option>
+            <option value="">Size: All</option>
             <option value="S">S</option>
             <option value="M">M</option>
             <option value="L">L</option>
             <option value="XL">XL</option>
-            <option value="XXL">XXL</option>
+            <option value="28">28</option>
+            <option value="30">30</option>
+            <option value="32">32</option>
+            <option value="34">34</option>
+            <option value="36">36</option>
           </select>
 
+          {/* Price Filter Dropdown */}
           <select
             value={priceFilter}
             onChange={(e) => setPriceFilter(e.target.value)}
-            className="border border-y2k-gunmetal/30 bg-transparent text-xs font-semibold uppercase tracking-wider px-3.5 py-2.5 rounded-none outline-none cursor-pointer"
+            className="bg-transparent border border-y2k-gunmetal/20 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer"
           >
-            <option value="All Prices">All Prices</option>
+            <option value="All Prices">Price: All</option>
             <option value="Under ₹500">Under ₹500</option>
-            <option value="₹500–₹1500">₹500–₹1500</option>
+            <option value="₹500–₹1500">₹500 – ₹1500</option>
             <option value="Over ₹1500">Over ₹1500</option>
           </select>
 
-          {(sizeFilter || priceFilter !== "All Prices") && (
+          {/* Reset Filters Button */}
+          {(sizeFilter || priceFilter !== "All Prices" || sortBy !== "Newest") && (
             <button
               onClick={resetFilters}
-              className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-y2k-slate hover:text-y2k-gunmetal transition-colors"
+              className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 hover:text-black transition-colors ml-2 cursor-pointer"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-3 h-3" />
               Reset
             </button>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider">
-              Sort By
-            </span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="border border-y2k-gunmetal/30 bg-transparent text-xs font-semibold uppercase tracking-wider px-3.5 py-2.5 rounded-none outline-none cursor-pointer"
-            >
-              <option value="Newest">Newest</option>
-              <option value="Price: Low to High">Price: Low to High</option>
-              <option value="Price: High to Low">Price: High to Low</option>
-            </select>
+        {/* Right Side: Product Count & View Mode & Sort Dropdown */}
+        <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+          {/* Subtle Live Counter */}
+          <div className="hidden sm:flex items-center text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal/60 pr-3 border-r border-y2k-gunmetal/15">
+            <span>{filteredAndSortedProducts.length} AVAILABLE</span>
           </div>
 
-          <div className="flex items-center gap-2 border-l border-y2k-gunmetal/20 pl-6">
+          {/* View Mode Toggle */}
+          <div className="flex items-center border border-y2k-gunmetal/20">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-1 ${
+              className={`p-1.5 transition-colors cursor-pointer ${
                 viewMode === "grid"
-                  ? "text-y2k-gunmetal"
-                  : "text-y2k-gunmetal/50 hover:text-y2k-gunmetal"
+                  ? "bg-y2k-gunmetal text-white"
+                  : "bg-transparent text-y2k-gunmetal hover:bg-black/5"
               }`}
+              title="Grid View"
             >
-              <LayoutGrid className="w-5 h-5" />
-              <span className="sr-only">Grid View</span>
+              <LayoutGrid className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-1 ${
+              className={`p-1.5 transition-colors cursor-pointer ${
                 viewMode === "list"
-                  ? "text-y2k-gunmetal"
-                  : "text-y2k-gunmetal/50 hover:text-y2k-gunmetal"
+                  ? "bg-y2k-gunmetal text-white"
+                  : "bg-transparent text-y2k-gunmetal hover:bg-black/5"
               }`}
+              title="List View"
             >
-              <List className="w-5 h-5" />
-              <span className="sr-only">List View</span>
+              <List className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          {/* Sort Dropdown */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-transparent border border-y2k-gunmetal/20 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer"
+          >
+            <option value="Newest">Sort: Newest First</option>
+            <option value="Price: Low to High">Sort: Price Low → High</option>
+            <option value="Price: High to Low">Sort: Price High → Low</option>
+          </select>
         </div>
       </div>
 
-      {/* Product Grid / Empty State */}
-      <div
-        className={`flex-1 w-full ${
-          viewMode === "grid"
-            ? "border-t border-l border-y2k-gunmetal/15 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-            : "grid grid-cols-1 gap-y-8 max-w-4xl mx-auto px-4 w-full"
-        }`}
-      >
+      {/* Main Content Area */}
+      <div className="px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto pb-24">
         {loading ? (
-          <div className="col-span-full flex items-center justify-center py-32 text-y2k-gunmetal/50 uppercase tracking-widest font-bold">
-            Loading archive...
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-12">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="animate-pulse flex flex-col">
+                <div className="bg-black/5 aspect-[4/5] w-full mb-3" />
+                <div className="h-3 bg-black/5 w-3/4 mb-1" />
+                <div className="h-3 bg-black/5 w-1/4" />
+              </div>
+            ))}
           </div>
         ) : displayedProducts.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-32 opacity-70">
-            <p className="text-y2k-gunmetal uppercase tracking-widest font-bold text-lg mb-2">
-              No drops match your filters
-            </p>
-            <p className="text-y2k-gunmetal/70 text-xs font-medium uppercase tracking-widest mb-6">
-              Try adjusting your price or size filter.
+          <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-y2k-gunmetal/20">
+            <h3 className="font-display font-medium text-2xl uppercase tracking-wider mb-2 text-y2k-gunmetal">
+              No Archive Pieces Found
+            </h3>
+            <p className="text-xs text-y2k-gunmetal/60 mb-6 uppercase tracking-wider">
+              Try adjusting your active filters or clear them to view all items.
             </p>
             <button
               onClick={resetFilters}
-              className="btn-bagify px-6 py-3 font-bold text-xs uppercase tracking-widest"
+              className="btn-bagify px-6 py-2.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-sm cursor-pointer"
             >
-              Clear Filters
+              Clear All Filters
             </button>
           </div>
         ) : (
-          displayedProducts.map((product) => (
+          <>
             <div
-              key={product.id}
               className={
-                viewMode === "list"
-                  ? "flex gap-6 border-b border-y2k-gunmetal/20 pb-8"
-                  : "w-full bg-[#f4f4f4] border-r border-b border-y2k-gunmetal/15"
+                viewMode === "grid"
+                  ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-12"
+                  : "flex flex-col gap-4"
               }
             >
-              {viewMode === "list" ? (
-                <>
-                  <div className="w-48 shrink-0">
-                    <ProductCard product={product} />
-                  </div>
-                  <div className="flex flex-col justify-center flex-1">
-                    <p className="text-xs text-y2k-gunmetal/60 uppercase tracking-widest mb-2">
-                      {product.brand}
-                    </p>
-                    <h3 className="font-bold text-xl uppercase tracking-wide mb-2">
-                      {product.name}
-                    </h3>
-                    <p className="font-medium text-lg mb-4">
-                      ₹{product.price.toFixed(2)}
-                    </p>
-                    <p className="text-y2k-gunmetal/70 text-sm max-w-md mb-6">
-                      {product.description ||
-                        "A staple piece featuring signature Y2K aesthetic details. Designed for a relaxed, oversized fit."}
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <ProductCard product={product} />
-              )}
+              {displayedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
-          ))
+
+            {/* Load More Button */}
+            {visibleCount < filteredAndSortedProducts.length && (
+              <div className="flex justify-center mt-16">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 12)}
+                  className="btn-bagify border border-y2k-gunmetal/30 hover:border-y2k-gunmetal px-10 py-3.5 text-xs font-bold uppercase tracking-widest text-white hover:bg-y2k-gunmetal/90 transition-all shadow-md cursor-pointer"
+                >
+                  Load More Verified Pieces ({filteredAndSortedProducts.length - visibleCount} Remaining)
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
-
-      {/* Load More */}
-      {!loading &&
-        displayedProducts.length < filteredAndSortedProducts.length && (
-          <div className="mt-24 mb-16 shrink-0 text-center">
-            <button
-              onClick={() => setVisibleCount((prev) => prev + 12)}
-              className="bg-[#232D3B] text-[#F8F5E9] rounded-none px-8 py-3 font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
-            >
-              Load More ({filteredAndSortedProducts.length - displayedProducts.length} remaining)
-            </button>
-          </div>
-        )}
     </div>
   );
 }

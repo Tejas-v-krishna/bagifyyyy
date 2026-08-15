@@ -5,8 +5,10 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category')?.toLowerCase().trim();
+    const filter = searchParams.get('filter')?.toLowerCase().trim();
 
-    let whereClause: any = undefined;
+    let whereClause: any = {};
+
     if (category && category !== 'all') {
       const normalizedCategories = Array.from(
         new Set([
@@ -15,21 +17,37 @@ export async function GET(request: Request) {
           category.endsWith('s') ? category : `${category}s`,
         ])
       );
-      whereClause = {
-        category: {
-          in: normalizedCategories,
-        },
+      whereClause.category = {
+        in: normalizedCategories,
       };
     }
 
-    const products = await prisma.product.findMany({
-      where: whereClause,
-      orderBy: { createdAt: 'desc' },
+    if (filter === 'new' || filter === 'new-arrivals') {
+      whereClause.isNew = true;
+    } else if (filter === 'grails' || filter === 'curated' || filter === 'curated-grails') {
+      whereClause.isBestSeller = true;
+    }
+
+    let products = await prisma.product.findMany({
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
+      orderBy: filter === 'grails' || filter === 'curated' ? { price: 'desc' } : { createdAt: 'desc' },
       include: {
         images: true,
         variants: true,
       },
     });
+
+    // Fallback if specific boolean flag has 0 items in test DB
+    if (products.length === 0 && (filter === 'new' || filter === 'new-arrivals' || filter === 'grails' || filter === 'curated')) {
+      products = await prisma.product.findMany({
+        orderBy: filter === 'grails' || filter === 'curated' ? { price: 'desc' } : { createdAt: 'desc' },
+        take: 30,
+        include: {
+          images: true,
+          variants: true,
+        },
+      });
+    }
 
     // Transform to match the frontend shape
     const formattedProducts = products.map((product) => {

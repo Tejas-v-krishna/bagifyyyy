@@ -38,156 +38,186 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-y2k-ice text-black border-t border-black/20 font-sans">
+    <footer className="w-full bg-y2k-ice text-y2k-gunmetal border-t border-y2k-gunmetal/10 font-sans">
       {/* ── Top Row (Features) ────────────────────────────────────────────────────────── */}
-      <div className="w-full grid grid-cols-2 md:grid-cols-4 border-b border-black/20">
+      <div className="w-full grid grid-cols-2 md:grid-cols-4 border-b border-y2k-gunmetal/10">
         {/* Feature 1 */}
-        <div className="flex flex-col items-center justify-center p-8 border-b md:border-b-0 md:border-r border-black/20 hover:bg-black/5 transition-colors">
-          <Package strokeWidth={1.5} className="w-7 h-7 mb-3 opacity-90" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-black/90">
+        <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
+          <Package strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
             EASY EXCHANGES
           </span>
         </div>
 
         {/* Feature 2 */}
-        <div className="flex flex-col items-center justify-center p-8 border-b md:border-b-0 md:border-r border-black/20 hover:bg-black/5 transition-colors">
-          <Truck strokeWidth={1.5} className="w-7 h-7 mb-3 opacity-90" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-black/90">
-            FAST SHIPPING
+        <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
+          <Truck strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
+            GLOBAL DISPATCH
           </span>
         </div>
 
         {/* Feature 3 */}
-        <div className="flex flex-col items-center justify-center p-8 border-b md:border-b-0 md:border-r border-black/20 hover:bg-black/5 transition-colors">
-          <Clock strokeWidth={1.5} className="w-7 h-7 mb-3 opacity-90" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-black/90">
-            24/7 CUSTOMER CARE
+        <div className="flex flex-col items-center justify-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 hover:bg-black/[0.02] transition-colors">
+          <Clock strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
+            CONCIERGE CARE
           </span>
         </div>
 
         {/* Feature 4 */}
-        <div className="flex flex-col items-center justify-center p-8 hover:bg-black/5 transition-colors">
-          <CornerUpLeft strokeWidth={1.5} className="w-7 h-7 mb-3 opacity-90" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-black/90">
-            EASY RETURNS
+        <div className="flex flex-col items-center justify-center p-6 md:p-8 hover:bg-black/[0.02] transition-colors">
+          <CornerUpLeft strokeWidth={1.5} className="w-6 h-6 mb-2.5 opacity-75" />
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
+            30-DAY RETURNS
           </span>
         </div>
       </div>
 
       {/* ── Middle Row (Links & Newsletter) ─────────────────────────────────────────────────────── */}
-      <div className="w-full flex flex-col lg:flex-row p-8 lg:p-12 gap-12 lg:gap-8">
+      <div className="w-full flex flex-col lg:flex-row p-8 lg:p-12 gap-12 lg:gap-8 max-w-[1800px] mx-auto">
         {/* Left Side: Link Columns */}
         <div className="w-full lg:w-2/3 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Column 1 */}
+          {/* Column 1: Help */}
           <div className="flex flex-col">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-5">
-              COMPANY
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal mb-4">
+              HELP
             </h4>
-            <nav className="flex flex-col gap-3.5">
+            <nav className="flex flex-col gap-3">
+              <Link
+                href="/shipping"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                SHIPPING &amp; DELIVERIES
+              </Link>
+              <Link
+                href="/customer-service"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                CUSTOMER SERVICE
+              </Link>
+              <Link
+                href="/faq"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                FAQ
+              </Link>
+              <Link
+                href="/return-request"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                RETURN REQUEST
+              </Link>
+              <Link
+                href="/right-of-withdrawal"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                RIGHT OF WITHDRAWAL
+              </Link>
+              <Link
+                href="/traceability"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                TRACEABILITY
+              </Link>
+            </nav>
+          </div>
+
+          {/* Column 2: Collections & Drops */}
+          <div className="flex flex-col">
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal mb-4">
+              COLLECTIONS
+            </h4>
+            <nav className="flex flex-col gap-3">
+              <Link
+                href="/new-arrivals"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                NEW ARRIVALS
+              </Link>
+              <Link
+                href="/curated-grails"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                CURATED GRAILS
+              </Link>
               <Link
                 href="/products"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 ALL DROPS
               </Link>
               <Link
                 href="/topwears"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
-                TOPWEARS
+                SHIRTS &amp; TEES
               </Link>
               <Link
                 href="/bottomwears"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
-                BOTTOMWEARS
+                PANTS &amp; CARGOS
               </Link>
               <Link
                 href="/about"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 ABOUT
               </Link>
             </nav>
           </div>
 
-          {/* Column 2 */}
+          {/* Column 3: Legal & Account */}
           <div className="flex flex-col">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-5">
-              SUPPORT
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal mb-4">
+              LEGAL &amp; ACCOUNT
             </h4>
-            <nav className="flex flex-col gap-3.5">
+            <nav className="flex flex-col gap-3">
               <Link
-                href="/contact"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                href="/terms"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
-                CONTACT
+                TERMS &amp; CONDITIONS
               </Link>
               <Link
-                href="/faq"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                href="/privacy-policy"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
-                FAQ
+                PRIVACY POLICY
               </Link>
-              <Link
-                href="/shipping"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
-              >
-                SHIPPING & RETURNS
-              </Link>
-              <Link
-                href="/size-guide"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
-              >
-                SIZE GUIDE
-              </Link>
-            </nav>
-          </div>
-
-          {/* Column 3 */}
-          <div className="flex flex-col">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-5">
-              ACCOUNT
-            </h4>
-            <nav className="flex flex-col gap-3.5">
               <Link
                 href="/account"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 MY ACCOUNT
               </Link>
               <Link
                 href="/wishlist"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 WISHLIST
               </Link>
               <Link
-                href="/accessories"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
-              >
-                ACCESSORIES
-              </Link>
-              <Link
                 href="/studio"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 STUDIO / ADMIN
               </Link>
             </nav>
           </div>
 
-          {/* Column 4 */}
+          {/* Column 4: Follow */}
           <div className="flex flex-col">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-5">
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal mb-4">
               FOLLOW US
             </h4>
-            <nav className="flex flex-col gap-3.5">
+            <nav className="flex flex-col gap-3">
               <a
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 INSTAGRAM
               </a>
@@ -195,7 +225,7 @@ export default function Footer() {
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-medium text-black/70 hover:text-black transition-colors uppercase tracking-wider"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 TIKTOK
               </a>
@@ -205,26 +235,26 @@ export default function Footer() {
 
         {/* Right Side: Newsletter */}
         <div className="w-full lg:w-1/3 flex flex-col lg:pl-12">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-3">
+          <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal mb-2">
             NEWSLETTER + 10% OFF
           </h4>
-          <p className="text-xs font-medium text-black/70 leading-relaxed mb-4 max-w-sm">
+          <p className="text-xs font-normal text-y2k-gunmetal/70 leading-relaxed mb-4 max-w-sm">
             Get 10% off on your first order. We&apos;ll only send you updates on new
             releases and exclusive archive drops.
           </p>
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-2.5">
             <input
               type="email"
               placeholder="ENTER YOUR EMAIL"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-white border border-black/20 text-black placeholder:text-black/40 px-4 py-3 text-xs outline-none focus:border-black font-medium transition-colors rounded-none"
+              className="w-full bg-white border border-y2k-gunmetal/20 text-black placeholder:text-y2k-gunmetal/40 px-4 py-3 text-xs outline-none focus:border-y2k-gunmetal font-medium transition-colors rounded-none"
             />
             <button
               type="submit"
               disabled={status === "loading"}
-              className="bg-black text-white text-xs font-bold uppercase tracking-wider px-8 py-3.5 w-full hover:bg-black/85 transition-colors disabled:opacity-50"
+              className="btn-bagify text-white text-[11px] font-bold uppercase tracking-[0.16em] px-8 py-3.5 w-full hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {status === "loading" ? "SUBMITTING..." : "GET 10% OFF"}
             </button>
@@ -242,11 +272,11 @@ export default function Footer() {
       </div>
 
       {/* ── Bottom Row (Copyright) ─────────────────────────────────────────────────────── */}
-      <div className="w-full flex justify-between items-center p-8 pt-12 border-t border-black/10">
-        <span className="text-xs font-medium uppercase tracking-wider text-black/60">
+      <div className="w-full flex justify-between items-center p-6 lg:p-8 pt-8 border-t border-y2k-gunmetal/10 max-w-[1800px] mx-auto">
+        <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-y2k-gunmetal/60">
           © 2026 BAGIFYYYY ARCHIVE. ALL RIGHTS RESERVED.
         </span>
-        <span className="text-xs font-medium uppercase tracking-wider text-black/60">
+        <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-y2k-gunmetal/60">
           EST. 2024
         </span>
       </div>

@@ -27,6 +27,8 @@ import AuthModal from "@/components/auth/AuthModal";
 import GsapScrollAnimations from "@/components/ui/GsapScrollAnimations";
 import LenisProvider from "@/components/ui/LenisProvider";
 import GlobalAnimator from "@/components/ui/GlobalAnimator";
+import PageTransitionLoader from "@/components/ui/PageTransitionLoader";
+import PageTransitionProvider from "@/components/ui/PageTransitionProvider";
 
 import GoogleAuthProvider from "@/components/auth/GoogleAuthProvider";
 
@@ -39,6 +41,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${instrumentSans.variable} ${urbanist.variable} antialiased`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body
@@ -47,12 +50,15 @@ export default function RootLayout({
       >
         <GoogleAuthProvider>
           <LenisProvider>
+            <PageTransitionLoader />
             <GlobalAnimator />
             <GsapScrollAnimations />
             <Preloader />
             <AuthModal />
             <Header />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 flex flex-col">
+              <PageTransitionProvider>{children}</PageTransitionProvider>
+            </main>
             <Footer />
             <CartDrawer />
           </LenisProvider>

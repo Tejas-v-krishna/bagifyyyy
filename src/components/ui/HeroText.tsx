@@ -38,9 +38,9 @@ export default function HeroText() {
   return (
     <h1
       ref={containerRef}
-      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.8] pt-4 md:pt-8 pb-4 select-none"
+      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.8] pt-4 md:pt-8 pb-4 select-none whitespace-nowrap overflow-hidden"
       style={{
-        fontSize: "clamp(3rem, 15vw, 250px)",
+        fontSize: "clamp(1.5rem, 11.2vw, 230px)",
         fontWeight: 500,
         lineHeight: 0.8,
         letterSpacing: "-0.08em",

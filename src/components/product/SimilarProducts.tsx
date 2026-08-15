@@ -64,11 +64,11 @@ export default function SimilarProducts({
             </div>
 
             {/* Product Info */}
-            <div className="p-3 bg-white border-t border-gray-100">
-              <p className="text-[9px] uppercase font-bold tracking-widest text-black truncate mb-1">
+            <div className="p-3 bg-white border-t border-gray-100 flex flex-col justify-between">
+              <p className="text-[10px] md:text-xs uppercase font-medium tracking-wider text-gray-700 line-clamp-1 leading-snug mb-1">
                 {product.name}
               </p>
-              <p className="text-[9px] font-medium tracking-widest text-gray-500">
+              <p className="text-xs md:text-sm font-extrabold tracking-tight text-black">
                 ₹{product.price.toLocaleString("en-IN")}
               </p>
             </div>
