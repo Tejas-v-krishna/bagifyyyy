@@ -127,6 +127,7 @@
 
   html {
     scroll-behavior: smooth;
+    cursor: url('/cursor.svg') 0 0, url('/cursor-32.png') 0 0, auto;
   }
 
   .font-display {
@@ -152,6 +153,7 @@
                 filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform, opacity;
     -webkit-tap-highlight-color: transparent;
+    cursor: url('/cursor.svg') 0 0, url('/cursor-32.png') 0 0, pointer;
   }
 
   /* Cushioned tactile micro-press for buttons */
@@ -205,6 +207,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: url('/cursor.svg') 0 0, url('/cursor-32.png') 0 0, auto;
 }
 
 /* Custom Scrollbar for Y2K Vibe */
