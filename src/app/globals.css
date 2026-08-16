@@ -1,4 +1,18 @@
+@import url("https://db.onlinewebfonts.com/c/88f10bf18a36407ef36bf30bc25a3618?family=SuisseIntl-Regular");
+@import url("https://db.onlinewebfonts.com/c/c446362802681bacaacbad0f39bfc1a5?family=SuisseIntl-Medium");
+@import url("https://db.onlinewebfonts.com/c/653d9381828e9577fb1e417dc047f89d?family=SuisseIntl-SemiBold");
+@import url("https://db.onlinewebfonts.com/c/d1a580023d40c546276decde1c711e60?family=SuisseIntl-Bold");
 @import "tailwindcss";
+
+@font-face {
+  font-family: "SuisseIntl-Medium";
+  src: url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.eot");
+  src: url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.eot?#iefix") format("embedded-opentype"),
+       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.woff2") format("woff2"),
+       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.woff") format("woff"),
+       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.ttf") format("truetype"),
+       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.svg#SuisseIntl-Medium") format("svg");
+}
 
 @theme {
   --color-y2k-ice: #E8EDF2;
@@ -17,8 +31,8 @@
   --color-muted-foreground: var(--color-y2k-mist);
   --color-border: var(--color-y2k-soft);
   
-  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-instrument-sans), var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "SuisseIntl-Regular", "SuisseIntl-Medium", "SuisseIntl", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "SuisseIntl-Bold", "SuisseIntl-SemiBold", "SuisseIntl-Medium", "SuisseIntl", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 
   --animate-marquee: marquee 30s linear infinite;
 
@@ -61,12 +75,11 @@
                 box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .text-bagify {
-    font-family: var(--font-instrument-sans), sans-serif;
+    font-family: var(--font-display);
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
-    letter-spacing: -0.04em;
     background: linear-gradient(0deg, #445F83 0%, #0F151D 100%);
     background-clip: text;
     -webkit-background-clip: text;
@@ -130,9 +143,8 @@
   }
 
   .font-display {
-    font-family: var(--font-instrument-sans), sans-serif;
+    font-family: var(--font-display);
     font-optical-sizing: auto;
-    font-weight: 500;
   }
 
   /* Universal Silky Smooth Easing for All Clickable Elements */
@@ -205,6 +217,10 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-bold, .font-extrabold, .font-black, .font-display, strong, b {
+  font-family: var(--font-display);
 }
 
 /* Hide native OS cursor only on fine pointer devices so smooth cursor is the sole cursor */
