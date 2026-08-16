@@ -7,6 +7,7 @@ import gsap from "gsap";
 export default function SmoothCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
+  const wiggleTlRef = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
     // Only enable on desktop pointer devices
@@ -20,19 +21,51 @@ export default function SmoothCursor() {
 
     let isVisible = false;
     let isHovered = false;
-    let isPressed = false;
 
     // Use GSAP quickTo for ultra-smooth buttery inertia tracking
-    const xTo = gsap.quickTo(cursor, "x", { duration: 0.18, ease: "power3.out" });
-    const yTo = gsap.quickTo(cursor, "y", { duration: 0.18, ease: "power3.out" });
+    const xTo = gsap.quickTo(cursor, "x", { duration: 0.16, ease: "power3.out" });
+    const yTo = gsap.quickTo(cursor, "y", { duration: 0.16, ease: "power3.out" });
 
-    // Center icon offset (32px width/height -> offset 2px to align pointer tip)
     gsap.set(cursor, { xPercent: 0, yPercent: 0, opacity: 0 });
+
+    const startWiggle = () => {
+      if (wiggleTlRef.current) wiggleTlRef.current.kill();
+
+      // Slightly big cursor scale (1.4x) with stylish micro wiggle
+      gsap.to(icon, {
+        scale: 1.4,
+        duration: 0.3,
+        ease: "back.out(2)",
+      });
+
+      const tl = gsap.timeline({ repeat: -1 });
+      tl.to(icon, { rotation: -10, duration: 0.12, ease: "sine.inOut" })
+        .to(icon, { rotation: 10, duration: 0.14, ease: "sine.inOut" })
+        .to(icon, { rotation: -6, duration: 0.12, ease: "sine.inOut" })
+        .to(icon, { rotation: 6, duration: 0.12, ease: "sine.inOut" })
+        .to(icon, { rotation: 0, duration: 0.14, ease: "sine.inOut" });
+
+      wiggleTlRef.current = tl;
+    };
+
+    const stopWiggle = () => {
+      if (wiggleTlRef.current) {
+        wiggleTlRef.current.kill();
+        wiggleTlRef.current = null;
+      }
+
+      gsap.to(icon, {
+        scale: 1,
+        rotation: 0,
+        duration: 0.28,
+        ease: "power2.out",
+      });
+    };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isVisible) {
         isVisible = true;
-        gsap.to(cursor, { opacity: 1, duration: 0.25, ease: "power2.out" });
+        gsap.to(cursor, { opacity: 1, duration: 0.2, ease: "power2.out" });
       }
 
       xTo(e.clientX);
@@ -51,54 +84,51 @@ export default function SmoothCursor() {
           target.closest(".product-card") ||
           target.closest("[data-card]") ||
           target.closest(".cursor-pointer") ||
+          target.closest(".btn-bagify") ||
           window.getComputedStyle(target).cursor === "pointer";
 
         if (isClickable && !isHovered) {
           isHovered = true;
-          gsap.to(icon, {
-            scale: 1.25,
-            rotation: 6,
-            duration: 0.35,
-            ease: "back.out(2)",
-          });
+          startWiggle();
         } else if (!isClickable && isHovered) {
           isHovered = false;
-          gsap.to(icon, {
-            scale: 1,
-            rotation: 0,
-            duration: 0.3,
-            ease: "power2.out",
-          });
+          stopWiggle();
         }
       }
     };
 
     const handleMouseDown = () => {
-      isPressed = true;
       gsap.to(icon, {
-        scale: 0.88,
-        duration: 0.15,
+        scale: 0.9,
+        duration: 0.12,
         ease: "power2.out",
       });
     };
 
     const handleMouseUp = () => {
-      isPressed = false;
-      gsap.to(icon, {
-        scale: isHovered ? 1.25 : 1,
-        duration: 0.25,
-        ease: "back.out(1.8)",
-      });
+      if (isHovered) {
+        gsap.to(icon, {
+          scale: 1.4,
+          duration: 0.2,
+          ease: "back.out(2)",
+        });
+      } else {
+        gsap.to(icon, {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      }
     };
 
     const handleMouseLeave = () => {
       isVisible = false;
-      gsap.to(cursor, { opacity: 0, duration: 0.25, ease: "power2.out" });
+      gsap.to(cursor, { opacity: 0, duration: 0.2, ease: "power2.out" });
     };
 
     const handleMouseEnter = () => {
       isVisible = true;
-      gsap.to(cursor, { opacity: 1, duration: 0.25, ease: "power2.out" });
+      gsap.to(cursor, { opacity: 1, duration: 0.2, ease: "power2.out" });
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
@@ -108,6 +138,7 @@ export default function SmoothCursor() {
     document.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
+      if (wiggleTlRef.current) wiggleTlRef.current.kill();
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
@@ -124,7 +155,7 @@ export default function SmoothCursor() {
     >
       <div
         ref={iconRef}
-        className="relative w-8 h-8 -translate-x-[2px] -translate-y-[2px] transition-filter duration-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.18)]"
+        className="relative w-8 h-8 -translate-x-[2px] -translate-y-[2px] drop-shadow-[0_3px_10px_rgba(0,0,0,0.22)]"
       >
         <Image
           src="/cursor-32.png"
