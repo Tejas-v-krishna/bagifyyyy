@@ -41,50 +41,81 @@ export default function InteractiveShowcase({
   const [maxIndex, setMaxIndex] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  // Drag state
-  const isDownRef = useRef(false);
-  const startXRef = useRef(0);
-  const scrollLeftRef = useRef(0);
+  // Position & Drag Refs
+  const currentXRef = useRef(0);
+  const targetXRef = useRef(0);
+  const minXRef = useRef(0);
+  const isPressedRef = useRef(false);
   const isDraggingRef = useRef(false);
-  const dragDistanceRef = useRef(0);
+  const dragStartXRef = useRef(0);
+  const trackStartXRef = useRef(0);
+  const lastMouseXRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const velocityXRef = useRef(0);
 
-  // Update maxIndex and layout on resize / tab switch
-  const updateMetrics = useCallback(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const card = el.querySelector(".showcase-card") as HTMLElement | null;
-    if (!card) return;
+  // ── 1. Calculate Track Limits & Step Sizes ──────────────────────────────────
+  const calculateLimits = useCallback(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return { cardStep: 280, minX: 0, maxIdx: 0 };
 
-    const cardWidth = card.offsetWidth + 24; // card width + gap
-    const visibleCards = Math.max(1, Math.floor(el.offsetWidth / cardWidth));
-    const calculatedMax = Math.max(0, total - visibleCards);
-    setMaxIndex(calculatedMax);
+    const firstCard = track.children[0] as HTMLElement | null;
+    const cardWidth = firstCard ? firstCard.offsetWidth : 240;
+    const gap = window.innerWidth < 768 ? 16 : 24;
+    const cardStep = cardWidth + gap;
 
-    const currentCardIdx = Math.round(el.scrollLeft / cardWidth);
-    setCurrentIndex(Math.min(calculatedMax, Math.max(0, currentCardIdx)));
+    const totalTrackWidth = total * cardStep - gap;
+    const viewportWidth = viewport.offsetWidth;
+    const minX = Math.min(0, -(totalTrackWidth - viewportWidth));
+
+    const visibleCards = Math.max(1, Math.floor(viewportWidth / cardStep));
+    const maxIdx = Math.max(0, total - visibleCards);
+
+    minXRef.current = minX;
+    setMaxIndex(maxIdx);
+
+    return { cardStep, minX, maxIdx };
   }, [total]);
 
+  // Recalculate on resize
   useEffect(() => {
-    updateMetrics();
-    window.addEventListener("resize", updateMetrics);
-    return () => window.removeEventListener("resize", updateMetrics);
-  }, [updateMetrics, activeTab]);
+    const handleResize = () => {
+      const { minX, cardStep, maxIdx } = calculateLimits();
+      // Clamp current position
+      const clampedX = Math.max(minX, Math.min(0, targetXRef.current));
+      targetXRef.current = clampedX;
+      currentXRef.current = clampedX;
+      if (trackRef.current) {
+        gsap.set(trackRef.current, { x: clampedX });
+      }
+      const idx = Math.round(-clampedX / cardStep);
+      setCurrentIndex(Math.min(maxIdx, Math.max(0, idx)));
+    };
 
+    calculateLimits();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [calculateLimits]);
+
+  // ── 2. Switch Tabs with Clean Fade-in ──────────────────────────────────────
   const handleTabChange = (newTab: "new" | "top") => {
     if (newTab === activeTab) return;
     setActiveTab(newTab);
     setCurrentIndex(0);
+    targetXRef.current = 0;
+    currentXRef.current = 0;
 
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ left: 0, behavior: "instant" });
+    if (trackRef.current) {
+      gsap.killTweensOf(trackRef.current);
       gsap.fromTo(
-        scrollContainerRef.current,
+        trackRef.current,
         {
           opacity: 0,
-          x: newTab === "top" ? 30 : -30,
-          filter: "blur(12px)",
+          x: newTab === "top" ? 40 : -40,
+          filter: "blur(10px)",
         },
         {
           opacity: 1,
@@ -92,89 +123,195 @@ export default function InteractiveShowcase({
           filter: "blur(0px)",
           duration: 0.5,
           ease: "power3.out",
-          clearProps: "filter,x",
+          clearProps: "filter",
         }
       );
     }
   };
 
-  // ── Sync index during native or dragged scrolling ──────────────────────────
-  const handleScroll = () => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const card = el.querySelector(".showcase-card") as HTMLElement | null;
-    if (!card) return;
+  // ── 3. Smooth Navigation to a Specific Index ──────────────────────────────
+  const animateToX = useCallback((newX: number, duration = 0.65) => {
+    const { minX, cardStep, maxIdx } = calculateLimits();
+    const clampedX = Math.max(minX, Math.min(0, newX));
+    targetXRef.current = clampedX;
+    currentXRef.current = clampedX;
 
-    const cardWidth = card.offsetWidth + 24;
-    const currentCardIdx = Math.round(el.scrollLeft / cardWidth);
-    setCurrentIndex(Math.min(maxIndex, Math.max(0, currentCardIdx)));
-  };
-
-  // ── Mouse Drag & Scroll Physics for the Whole Card Track ──────────────────
-  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    isDownRef.current = true;
-    isDraggingRef.current = false;
-    dragDistanceRef.current = 0;
-    startXRef.current = e.pageX - el.offsetLeft;
-    scrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDownRef.current) return;
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const x = e.pageX - el.offsetLeft;
-    const walk = (x - startXRef.current) * 1.25; // 1.25x responsive scroll multiplier
-    dragDistanceRef.current = Math.abs(x - startXRef.current);
-
-    if (dragDistanceRef.current > 5) {
-      isDraggingRef.current = true;
+    if (trackRef.current) {
+      gsap.to(trackRef.current, {
+        x: clampedX,
+        duration: duration,
+        ease: "power3.out",
+        overwrite: "auto",
+        onUpdate: () => {
+          if (trackRef.current) {
+            const x = gsap.getProperty(trackRef.current, "x") as number;
+            currentXRef.current = x;
+            const currentIdx = Math.round(-x / cardStep);
+            setCurrentIndex(Math.min(maxIdx, Math.max(0, currentIdx)));
+          }
+        },
+      });
     }
+  }, [calculateLimits]);
 
-    el.scrollLeft = scrollLeftRef.current - walk;
-  };
-
-  const onMouseUpOrLeave = () => {
-    isDownRef.current = false;
-    setTimeout(() => {
-      isDraggingRef.current = false;
-    }, 50);
-  };
-
-  // ── Keyboard / Arrow Navigation ───────────────────────────────────────────
-  const scrollToCard = useCallback((index: number) => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const card = el.querySelector(".showcase-card") as HTMLElement | null;
-    if (!card) return;
-
-    const cardWidth = card.offsetWidth + 24;
-    const targetScroll = Math.max(0, index * cardWidth);
-    el.scrollTo({ left: targetScroll, behavior: "smooth" });
-  }, []);
+  const goToCard = useCallback((index: number) => {
+    const { cardStep } = calculateLimits();
+    animateToX(-index * cardStep);
+  }, [calculateLimits, animateToX]);
 
   const goNext = useCallback(() => {
     const nextIdx = currentIndex >= maxIndex ? 0 : currentIndex + 1;
-    setCurrentIndex(nextIdx);
-    scrollToCard(nextIdx);
-  }, [currentIndex, maxIndex, scrollToCard]);
+    goToCard(nextIdx);
+  }, [currentIndex, maxIndex, goToCard]);
 
   const goPrev = useCallback(() => {
     const prevIdx = currentIndex <= 0 ? maxIndex : currentIndex - 1;
-    setCurrentIndex(prevIdx);
-    scrollToCard(prevIdx);
-  }, [currentIndex, maxIndex, scrollToCard]);
+    goToCard(prevIdx);
+  }, [currentIndex, maxIndex, goToCard]);
 
-  const goTo = useCallback((idx: number) => {
-    setCurrentIndex(idx);
-    scrollToCard(idx);
-  }, [scrollToCard]);
+  // ── 4. Robust GSAP Mouse / Touch Drag Engine ───────────────────────────────
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Only primary mouse button (0) or touch
+    if (e.button !== 0 && e.pointerType === "mouse") return;
 
-  // ── Entrance Loading Animation (Staggered Wave) ───────────────────────────
+    const track = trackRef.current;
+    if (!track) return;
+
+    calculateLimits();
+    gsap.killTweensOf(track);
+
+    isPressedRef.current = true;
+    isDraggingRef.current = false;
+    dragStartXRef.current = e.clientX;
+    trackStartXRef.current = gsap.getProperty(track, "x") as number || 0;
+    currentXRef.current = trackStartXRef.current;
+    targetXRef.current = trackStartXRef.current;
+    lastMouseXRef.current = e.clientX;
+    lastTimeRef.current = performance.now();
+    velocityXRef.current = 0;
+  };
+
+  useEffect(() => {
+    const handleGlobalPointerMove = (e: PointerEvent) => {
+      if (!isPressedRef.current) return;
+
+      // Absolute safety guard: If user released left mouse button, cancel drag immediately
+      if (e.pointerType === "mouse" && e.buttons !== 1) {
+        isPressedRef.current = false;
+        return;
+      }
+
+      const deltaX = e.clientX - dragStartXRef.current;
+      if (Math.abs(deltaX) > 6) {
+        isDraggingRef.current = true;
+      }
+
+      const now = performance.now();
+      const dt = Math.max(1, now - lastTimeRef.current);
+      velocityXRef.current = (e.clientX - lastMouseXRef.current) / dt;
+      lastMouseXRef.current = e.clientX;
+      lastTimeRef.current = now;
+
+      // Direct dragging position with boundary resistance (rubber-band)
+      const minX = minXRef.current;
+      let rawX = trackStartXRef.current + deltaX;
+
+      if (rawX > 0) {
+        rawX = rawX * 0.3; // Right pull resistance
+      } else if (rawX < minX) {
+        rawX = minX + (rawX - minX) * 0.3; // Left pull resistance
+      }
+
+      targetXRef.current = rawX;
+      currentXRef.current = rawX;
+
+      if (trackRef.current) {
+        gsap.set(trackRef.current, { x: rawX });
+      }
+    };
+
+    const handleGlobalPointerUp = () => {
+      if (!isPressedRef.current) return;
+      isPressedRef.current = false;
+
+      const track = trackRef.current;
+      if (!track) return;
+
+      const { minX, cardStep, maxIdx } = calculateLimits();
+      const currentPos = gsap.getProperty(track, "x") as number;
+
+      // Calculate inertia target based on release velocity
+      const velocity = velocityXRef.current;
+      const momentumDistance = velocity * 180;
+      const projectedX = currentPos + momentumDistance;
+
+      // Snap to nearest card step
+      const nearestCardIdx = Math.round(-projectedX / cardStep);
+      const clampedIdx = Math.min(maxIdx, Math.max(0, nearestCardIdx));
+      const snapTargetX = Math.max(minX, Math.min(0, -clampedIdx * cardStep));
+
+      gsap.to(track, {
+        x: snapTargetX,
+        duration: Math.min(0.85, Math.max(0.4, 0.5 + Math.abs(velocity) * 0.2)),
+        ease: "power3.out",
+        overwrite: "auto",
+        onUpdate: () => {
+          if (trackRef.current) {
+            const x = gsap.getProperty(trackRef.current, "x") as number;
+            currentXRef.current = x;
+            const idx = Math.round(-x / cardStep);
+            setCurrentIndex(Math.min(maxIdx, Math.max(0, idx)));
+          }
+        },
+      });
+
+      // Clear dragging state slightly after release so clicks don't accidentally navigate
+      setTimeout(() => {
+        isDraggingRef.current = false;
+      }, 60);
+    };
+
+    window.addEventListener("pointermove", handleGlobalPointerMove, { passive: true });
+    window.addEventListener("pointerup", handleGlobalPointerUp);
+    window.addEventListener("pointercancel", handleGlobalPointerUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handleGlobalPointerMove);
+      window.removeEventListener("pointerup", handleGlobalPointerUp);
+      window.removeEventListener("pointercancel", handleGlobalPointerUp);
+    };
+  }, [calculateLimits]);
+
+  // ── 5. Trackpad & Wheel Horizontal Scrolling ──────────────────────────────
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    // Only capture if scrolling horizontally or Shift key is held
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+    if (delta === 0) return;
+
+    e.preventDefault();
+    const { minX, cardStep, maxIdx } = calculateLimits();
+    const newTargetX = Math.max(minX, Math.min(0, targetXRef.current - delta * 1.2));
+    targetXRef.current = newTargetX;
+
+    if (trackRef.current) {
+      gsap.to(trackRef.current, {
+        x: newTargetX,
+        duration: 0.45,
+        ease: "power2.out",
+        overwrite: "auto",
+        onUpdate: () => {
+          if (trackRef.current) {
+            const x = gsap.getProperty(trackRef.current, "x") as number;
+            currentXRef.current = x;
+            const idx = Math.round(-x / cardStep);
+            setCurrentIndex(Math.min(maxIdx, Math.max(0, idx)));
+          }
+        },
+      });
+    }
+  };
+
+  // ── 6. Initial Page Load Wave Animation ───────────────────────────────────
   useGSAP(() => {
     if (!isPreloaderFinished) {
       gsap.set(".showcase-card", { opacity: 0, y: 25 });
@@ -197,7 +334,7 @@ export default function InteractiveShowcase({
       ref={containerRef}
       className="w-full flex flex-col select-none"
     >
-      {/* ── 1. Minimal Header with Magnetic Animated Tabs ── */}
+      {/* ── 1. Header with Animated Tabs ── */}
       <div className="flex flex-col items-center justify-center mb-12 text-center">
         <div className="flex items-center gap-6 sm:gap-12 select-none relative">
           
@@ -251,21 +388,17 @@ export default function InteractiveShowcase({
         </div>
       </div>
 
-      {/* ── 2. Draggable & Horizontally Scrollable Card Track ─────────────────── */}
-      <div className="w-full relative group/track mb-4 py-2">
+      {/* ── 2. GSAP Draggable Viewport & Track ──────────────────────────────── */}
+      <div 
+        ref={viewportRef}
+        onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        className="w-full overflow-hidden mb-4 py-2 cursor-grab active:cursor-grabbing touch-pan-y select-none"
+      >
         <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUpOrLeave}
-          onMouseLeave={onMouseUpOrLeave}
-          className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-none scroll-smooth cursor-grab active:cursor-grabbing select-none"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-          }}
+          ref={trackRef}
+          className="flex gap-4 md:gap-6 will-change-transform"
+          style={{ transform: "translate3d(0px, 0px, 0px)" }}
         >
           {currentList.map((product, productIdx) => {
             const imgUrl = product.images[0]?.url || "/placeholder.jpg";
@@ -276,16 +409,18 @@ export default function InteractiveShowcase({
                 key={`${activeTab}-${product.id || productIdx}`}
                 href={`/product/${product.id}`}
                 onClick={(e) => {
-                  // Prevent link navigation if user was dragging the carousel
-                  if (isDraggingRef.current || dragDistanceRef.current > 5) {
+                  // Prevent navigation if the user was actively dragging
+                  if (isDraggingRef.current) {
                     e.preventDefault();
+                    e.stopPropagation();
                   }
                 }}
                 className="showcase-card interactive-card group flex flex-col shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-11px)] md:w-[calc(25%-18px)] lg:w-[calc(16.666%-20px)] select-none"
               >
-                {/* Borderless Floating Image Container with Hover Swap */}
+                {/* Borderless Floating Image Container with Alternate View on Hover */}
                 <div className="relative w-full aspect-[4/5] flex items-center justify-center overflow-hidden bg-black/[0.02] group-hover:bg-black/[0.05] transition-colors duration-500">
-                  {/* Minimalist Brand "NEW" Label Top Left */}
+                  
+                  {/* Minimalist Brand "NEW" Label */}
                   {product.isNew && (
                     <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
                       <span className="text-[8px] font-bold uppercase tracking-[0.14em] bg-[#232D3B] text-white px-1.5 py-0.5 shadow-sm">
@@ -295,14 +430,17 @@ export default function InteractiveShowcase({
                   )}
 
                   {/* Wishlist Button Top Right */}
-                  <div onClick={(e) => e.stopPropagation()}>
+                  <div onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}>
                     <WishlistButton
                       productId={product.id}
                       className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-white/85 hover:bg-white text-y2k-gunmetal z-20 shadow-sm rounded-none border-0"
                     />
                   </div>
 
-                  {/* Primary Base Image (Not individually draggable) */}
+                  {/* Base Product Image */}
                   <Image
                     src={imgUrl}
                     alt={product.name}
@@ -336,7 +474,7 @@ export default function InteractiveShowcase({
                   )}
                 </div>
 
-                {/* Clean Borderless Product Details Below Image */}
+                {/* Product Details Below Image */}
                 <div className="flex flex-col pt-3 pb-1 pointer-events-none">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60 truncate">
                     {product.brand || "BAGIFYYYY ARCHIVE"}
@@ -354,7 +492,7 @@ export default function InteractiveShowcase({
         </div>
       </div>
 
-      {/* ── 3. Clean Minimalist Controls Below Track ─────────────────────────── */}
+      {/* ── 3. Synchronized Controls Below Track ─────────────────────────────── */}
       <div className="w-full flex items-center justify-between mt-6 px-1">
         {/* Left: Product Counter */}
         <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60">
@@ -368,7 +506,7 @@ export default function InteractiveShowcase({
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}
-              onClick={() => goTo(i)}
+              onClick={() => goToCard(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-[2px] rounded-full transition-all duration-300 cursor-pointer ${
                 i === currentIndex
