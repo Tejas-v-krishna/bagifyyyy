@@ -84,7 +84,7 @@ export default function InstagramFeed() {
     <section className="w-full bg-white pt-10 sm:pt-14 pb-4">
       {/* ── Top Header: follow us (Right Aligned Editorial Serif) ── */}
       <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 lg:px-16 mb-6 sm:mb-8 flex justify-end">
-        <h2 className="font-serif italic font-normal text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-black lowercase tracking-normal select-none">
+        <h2 className="font-sans not-italic font-normal text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-black lowercase tracking-tight select-none">
           follow us
         </h2>
       </div>
@@ -154,7 +154,7 @@ export default function InstagramFeed() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 py-3 px-6 bg-white hover:bg-gray-50 border border-black/10 transition-all group"
           >
-            <span className="font-serif italic font-normal text-base sm:text-lg text-black tracking-tight group-hover:text-y2k-slate">
+            <span className="font-sans not-italic font-normal text-base sm:text-lg text-black tracking-tight group-hover:text-y2k-slate">
               @bagifyyyy
             </span>
             <ArrowUpRight className="w-3.5 h-3.5 text-black/50 group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
