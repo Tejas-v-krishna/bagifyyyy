@@ -29,6 +29,7 @@ import LenisProvider from "@/components/ui/LenisProvider";
 import GlobalAnimator from "@/components/ui/GlobalAnimator";
 import PageTransitionLoader from "@/components/ui/PageTransitionLoader";
 import PageTransitionProvider from "@/components/ui/PageTransitionProvider";
+import SmoothCursor from "@/components/ui/SmoothCursor";
 
 import GoogleAuthProvider from "@/components/auth/GoogleAuthProvider";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         className="min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"
         suppressHydrationWarning
       >
+        <SmoothCursor />
         <GoogleAuthProvider>
           <LenisProvider>
             <PageTransitionLoader />
