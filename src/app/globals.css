@@ -1,17 +1,16 @@
 @import url("https://db.onlinewebfonts.com/c/88f10bf18a36407ef36bf30bc25a3618?family=SuisseIntl-Regular");
-@import url("https://db.onlinewebfonts.com/c/c446362802681bacaacbad0f39bfc1a5?family=SuisseIntl-Medium");
-@import url("https://db.onlinewebfonts.com/c/653d9381828e9577fb1e417dc047f89d?family=SuisseIntl-SemiBold");
-@import url("https://db.onlinewebfonts.com/c/d1a580023d40c546276decde1c711e60?family=SuisseIntl-Bold");
 @import "tailwindcss";
 
 @font-face {
-  font-family: "SuisseIntl-Medium";
-  src: url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.eot");
-  src: url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.eot?#iefix") format("embedded-opentype"),
-       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.woff2") format("woff2"),
-       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.woff") format("woff"),
-       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.ttf") format("truetype"),
-       url("https://db.onlinewebfonts.com/t/c446362802681bacaacbad0f39bfc1a5.svg#SuisseIntl-Medium") format("svg");
+  font-family: "SuisseIntl-Regular";
+  src: url("https://db.onlinewebfonts.com/t/88f10bf18a36407ef36bf30bc25a3618.eot");
+  src: url("https://db.onlinewebfonts.com/t/88f10bf18a36407ef36bf30bc25a3618.eot?#iefix") format("embedded-opentype"),
+       url("https://db.onlinewebfonts.com/t/88f10bf18a36407ef36bf30bc25a3618.woff2") format("woff2"),
+       url("https://db.onlinewebfonts.com/t/88f10bf18a36407ef36bf30bc25a3618.woff") format("woff"),
+       url("https://db.onlinewebfonts.com/t/88f10bf18a36407ef36bf30bc25a3618.ttf") format("truetype"),
+       url("https://db.onlinewebfonts.com/t/88f10bf18a36407ef36bf30bc25a3618.svg#SuisseIntl-Regular") format("svg");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @theme {
@@ -31,8 +30,8 @@
   --color-muted-foreground: var(--color-y2k-mist);
   --color-border: var(--color-y2k-soft);
   
-  --font-sans: "SuisseIntl-Regular", "SuisseIntl-Medium", "SuisseIntl", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-display: "SuisseIntl-Bold", "SuisseIntl-SemiBold", "SuisseIntl-Medium", "SuisseIntl", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --font-sans: "SuisseIntl-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "SuisseIntl-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
   --animate-marquee: marquee 30s linear infinite;
 
@@ -75,7 +74,7 @@
                 box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .text-bagify {
-    font-family: var(--font-display);
+    font-family: "SuisseIntl-Regular", sans-serif;
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
@@ -219,6 +218,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* All headings, paragraphs, buttons, and links strictly use SuisseIntl-Regular */
 h1, h2, h3, h4, h5, h6, .font-bold, .font-extrabold, .font-black, .font-display, strong, b {
   font-family: var(--font-display);
 }

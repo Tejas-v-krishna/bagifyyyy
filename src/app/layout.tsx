@@ -47,9 +47,6 @@ export default function RootLayout({
     >
       <head>
         <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/88f10bf18a36407ef36bf30bc25a3618?family=SuisseIntl-Regular" />
-        <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/c446362802681bacaacbad0f39bfc1a5?family=SuisseIntl-Medium" />
-        <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/653d9381828e9577fb1e417dc047f89d?family=SuisseIntl-SemiBold" />
-        <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/d1a580023d40c546276decde1c711e60?family=SuisseIntl-Bold" />
       </head>
       <body
         className="min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"
