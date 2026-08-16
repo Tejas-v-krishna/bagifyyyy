@@ -244,7 +244,7 @@ h6 {
   font-weight: 400;
 }
 
-/* Explicitly Bold Fonts for Buttons, CTAs, Badges & Bold Tags */
+/* Explicitly Bold Fonts for Buttons, CTAs, Prices, Currency & Bold Tags */
 button,
 button span,
 [role="button"],
@@ -256,12 +256,18 @@ a.btn-bagify,
 a.btn-bagify span,
 input[type="submit"],
 input[type="button"],
+.price,
+.product-price,
+[data-price],
+.product-card p:last-child,
+.product-card span.font-extrabold,
 .font-bold,
 .font-extrabold,
 .font-black,
+.font-semibold,
 strong,
 b {
-  font-family: "SuisseIntl-Bold", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+  font-family: "SuisseIntl-Bold", "SuisseIntl-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
   font-weight: 700 !important;
 }
 

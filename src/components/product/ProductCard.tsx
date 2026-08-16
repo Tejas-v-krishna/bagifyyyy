@@ -97,7 +97,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-black transition-colors line-clamp-2 leading-snug mt-0.5">
           {product.name}
         </h3>
-        <p className="font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
+        <p className="text-xs md:text-sm font-bold text-y2k-gunmetal mt-1.5 font-display tracking-tight">
           ₹{product.price.toLocaleString("en-IN")}
         </p>
       </div>
