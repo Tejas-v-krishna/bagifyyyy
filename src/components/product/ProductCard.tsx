@@ -41,8 +41,9 @@ export default function ProductCard({ product }: { product: Product }) {
               src={product.image}
               alt={product.name}
               fill
+              draggable={false}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] ${
+              className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] select-none pointer-events-none ${
                 product.hoverImage ? "group-hover:opacity-0" : ""
               } ${product.isSoldOut ? "blur-sm opacity-70" : "opacity-100"}`}
             />
@@ -53,8 +54,9 @@ export default function ProductCard({ product }: { product: Product }) {
                 src={product.hoverImage}
                 alt={`${product.name} alternate view`}
                 fill
+                draggable={false}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                className="object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2]"
+                className="object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none"
               />
             )}
 
@@ -97,7 +99,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-black transition-colors line-clamp-2 leading-snug mt-0.5">
           {product.name}
         </h3>
-        <p className="text-xs md:text-sm font-bold text-y2k-gunmetal mt-1.5 font-display tracking-tight">
+        <p className="font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
           ₹{product.price.toLocaleString("en-IN")}
         </p>
       </div>
