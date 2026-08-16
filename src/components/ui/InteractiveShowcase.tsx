@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useAppStore } from "@/store/useAppStore";
-import WishlistButton from "@/components/ui/WishlistButton";
+import AddToBagButton from "@/components/ui/AddToBagButton";
 
 export type ShowcaseProduct = {
   id: string;
@@ -429,14 +429,20 @@ export default function InteractiveShowcase({
                     </div>
                   )}
 
-                  {/* Wishlist Button Top Right */}
+                  {/* Add to Bag Button Top Right */}
                   <div onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                   }}>
-                    <WishlistButton
-                      productId={product.id}
-                      className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-white/85 hover:bg-white text-y2k-gunmetal z-20 shadow-sm rounded-none border-0"
+                    <AddToBagButton
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: imgUrl,
+                        isSoldOut: product.isSoldOut,
+                      }}
+                      className="absolute top-2.5 right-2.5 p-2 bg-white/90 hover:bg-white text-y2k-gunmetal hover:text-black z-20 shadow-sm rounded-none border-0"
                     />
                   </div>
 

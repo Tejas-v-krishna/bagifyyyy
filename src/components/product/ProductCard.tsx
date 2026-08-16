@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import WishlistButton from "@/components/ui/WishlistButton";
+import AddToBagButton from "@/components/ui/AddToBagButton";
 
 export interface Product {
   id: string;
@@ -82,11 +82,19 @@ export default function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        {/* Wishlist Button Top Right */}
+        {/* Add to Bag Button Top Right */}
         <div onClick={(e) => e.stopPropagation()}>
-          <WishlistButton
-            productId={product.id}
-            className="!top-2.5 !bottom-auto !right-2.5 !p-1.5 bg-white/85 hover:bg-white text-y2k-gunmetal z-20 shadow-sm rounded-none border-0"
+          <AddToBagButton
+            product={{
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              isSoldOut: product.isSoldOut,
+              sizes: product.sizes,
+              colors: product.colors,
+            }}
+            className="absolute top-2.5 right-2.5 p-2 bg-white/90 hover:bg-white text-y2k-gunmetal hover:text-black z-20 shadow-sm rounded-none border-0"
           />
         </div>
       </div>
