@@ -31,18 +31,18 @@ export default function SmoothCursor() {
     const startWiggle = () => {
       if (wiggleTlRef.current) wiggleTlRef.current.kill();
 
-      // Slightly big cursor scale (1.4x) with stylish micro wiggle
+      // Compact small cursor scale (0.72x) with stylish micro wiggle
       gsap.to(icon, {
-        scale: 1.4,
-        duration: 0.3,
-        ease: "back.out(2)",
+        scale: 0.72,
+        duration: 0.25,
+        ease: "power2.out",
       });
 
       const tl = gsap.timeline({ repeat: -1 });
-      tl.to(icon, { rotation: -10, duration: 0.12, ease: "sine.inOut" })
-        .to(icon, { rotation: 10, duration: 0.14, ease: "sine.inOut" })
-        .to(icon, { rotation: -6, duration: 0.12, ease: "sine.inOut" })
-        .to(icon, { rotation: 6, duration: 0.12, ease: "sine.inOut" })
+      tl.to(icon, { rotation: -8, duration: 0.12, ease: "sine.inOut" })
+        .to(icon, { rotation: 8, duration: 0.14, ease: "sine.inOut" })
+        .to(icon, { rotation: -5, duration: 0.12, ease: "sine.inOut" })
+        .to(icon, { rotation: 5, duration: 0.12, ease: "sine.inOut" })
         .to(icon, { rotation: 0, duration: 0.14, ease: "sine.inOut" });
 
       wiggleTlRef.current = tl;
@@ -57,7 +57,7 @@ export default function SmoothCursor() {
       gsap.to(icon, {
         scale: 1,
         rotation: 0,
-        duration: 0.28,
+        duration: 0.25,
         ease: "power2.out",
       });
     };
@@ -99,7 +99,7 @@ export default function SmoothCursor() {
 
     const handleMouseDown = () => {
       gsap.to(icon, {
-        scale: 0.9,
+        scale: isHovered ? 0.6 : 0.85,
         duration: 0.12,
         ease: "power2.out",
       });
@@ -108,9 +108,9 @@ export default function SmoothCursor() {
     const handleMouseUp = () => {
       if (isHovered) {
         gsap.to(icon, {
-          scale: 1.4,
+          scale: 0.72,
           duration: 0.2,
-          ease: "back.out(2)",
+          ease: "power2.out",
         });
       } else {
         gsap.to(icon, {
