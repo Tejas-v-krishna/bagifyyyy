@@ -25,6 +25,10 @@ function LoginContent() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [forgotMode, setForgotMode] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSuccess, setForgotSuccess] = useState("");
 
   // If already logged in, redirect
   useEffect(() => {
@@ -37,6 +41,28 @@ function LoginContent() {
     setView(v);
     setError("");
     setSuccess("");
+    setForgotMode(false);
+    setForgotSuccess("");
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotSuccess("");
+    setError("");
+    try {
+      await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+      // Always show success to prevent email enumeration
+      setForgotSuccess("If that email is registered, a reset link has been sent.");
+    } catch {
+      setError("Failed to send reset email. Please try again.");
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   // Google Sign-In
@@ -348,22 +374,64 @@ function LoginContent() {
                     {view === "login" && (
                       <button
                         type="button"
-                        onClick={() => alert("Password reset instructions will be sent to your email.")}
+                        onClick={() => { setForgotMode(!forgotMode); setForgotSuccess(""); setError(""); }}
                         className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-slate hover:text-black underline cursor-pointer"
                       >
-                        Forgot?
+                        {forgotMode ? "Cancel" : "Forgot?"}
                       </button>
                     )}
                   </div>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full text-xs font-medium text-black border border-y2k-gunmetal/20 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
-                  />
+                  {!forgotMode && (
+                    <input
+                      type="password"
+                      required={!forgotMode}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full text-xs font-medium text-black border border-y2k-gunmetal/20 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                    />
+                  )}
                 </div>
+
+                {/* Forgot Password Inline Form */}
+                <AnimatePresence>
+                  {forgotMode && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <form onSubmit={handleForgotPassword} className="flex flex-col gap-3 bg-y2k-ice border border-y2k-gunmetal/15 p-4">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70">
+                          Enter your email to receive a reset link
+                        </p>
+                        <input
+                          type="email"
+                          required
+                          placeholder="you@email.com"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                          className="w-full text-xs border border-y2k-gunmetal/20 px-3 py-2.5 bg-white outline-none focus:border-y2k-gunmetal"
+                        />
+                        {forgotSuccess && (
+                          <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> {forgotSuccess}
+                          </p>
+                        )}
+                        <button
+                          type="submit"
+                          disabled={forgotLoading}
+                          className="bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-widest py-2.5 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                          {forgotLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                          {forgotLoading ? "Sending…" : "Send Reset Link →"}
+                        </button>
+                      </form>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Feedback Alerts */}
                 {error && (

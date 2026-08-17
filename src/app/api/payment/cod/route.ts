@@ -6,7 +6,11 @@ import { sendOrderConfirmationEmail } from '@/lib/email';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { items, shippingAddress, customerEmail, customerPhone, shippingMethod } = body;
+    const { items, shippingAddress, customerEmail, customerPhone, shippingMethod, promoCode } = body;
+
+    // Validate promo code server-side
+    const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
+    const promoDiscount = promoCode && VALID_PROMO_CODES[promoCode.toUpperCase()] ? VALID_PROMO_CODES[promoCode.toUpperCase()] : 0;
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -58,7 +62,8 @@ export async function POST(request: Request) {
     // Calculate shipping (COD + Express or Standard)
     const shippingFee = shippingMethod === 'express' ? 99 : (subtotal >= 299 ? 0 : 49);
     const codHandlingFee = 49; // Standard COD verification fee
-    const totalAmount = subtotal + shippingFee + codHandlingFee;
+    const discountAmount = Math.round(subtotal * promoDiscount * 100) / 100;
+    const totalAmount = subtotal - discountAmount + shippingFee + codHandlingFee;
 
     const orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
 
@@ -85,7 +90,7 @@ export async function POST(request: Request) {
         customerPhone,
         totalAmount,
         shippingAmount: shippingFee + codHandlingFee,
-        discountAmount: 0,
+        discountAmount,
         paymentStatus: 'PENDING',
         orderStatus: 'PROCESSING',
         paymentMethod: 'COD',

@@ -6,6 +6,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState } from "react";
 import { X, Menu } from "lucide-react";
+import SearchOverlay from "@/components/ui/SearchOverlay";
 
 export default function Header() {
   const { toggleCart, items } = useCartStore();
@@ -58,6 +59,12 @@ export default function Header() {
             className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
           >
             Pants &amp; Cargos
+          </Link>
+          <Link
+            href="/bundles"
+            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
+          >
+            Bundles
           </Link>
         </nav>
 
@@ -119,6 +126,9 @@ export default function Header() {
             Wishlist
           </Link>
 
+          {/* Search */}
+          <SearchOverlay />
+
           {/* Bag with subtle count */}
           <button
             onClick={toggleCart}
@@ -133,8 +143,9 @@ export default function Header() {
           </button>
         </nav>
 
-        {/* Mobile right: bag + hamburger */}
+        {/* Mobile right: search + bag + hamburger */}
         <div className="flex lg:hidden items-center gap-4">
+          <SearchOverlay />
           <button
             onClick={toggleCart}
             className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-1"
@@ -169,6 +180,7 @@ export default function Header() {
               { href: "/curated-grails", label: "Curated Grails" },
               { href: "/topwears", label: "Shirts & Tees" },
               { href: "/bottomwears", label: "Pants & Cargos" },
+              { href: "/bundles", label: "Bundles" },
               { href: "/products", label: "All Drops" },
               { href: "/wishlist", label: "Wishlist" },
             ].map(({ href, label }) => (

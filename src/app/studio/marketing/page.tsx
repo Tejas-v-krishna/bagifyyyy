@@ -54,10 +54,11 @@ export default function MarketingStudioPage() {
         const prodData = await prodRes.json();
         const statsData = await statsRes.json();
 
-        if (prodData.products) {
-          setProducts(prodData.products);
+        const rawProducts = Array.isArray(prodData) ? prodData : (prodData.products || []);
+        if (rawProducts.length > 0) {
+          setProducts(rawProducts);
           // Default select first 4 products
-          const initialIds = prodData.products.slice(0, 4).map((p: any) => p.id);
+          const initialIds = rawProducts.slice(0, 4).map((p: any) => p.id);
           setSelectedProductIds(initialIds);
         }
 
@@ -319,7 +320,7 @@ export default function MarketingStudioPage() {
                       >
                         <div className="relative w-10 h-12 bg-black/40 rounded overflow-hidden shrink-0">
                           <Image
-                            src={prod.images?.[0]?.url || "/placeholder.jpg"}
+                            src={prod.image || prod.images?.[0]?.url || prod.images?.[0] || "/placeholder.jpg"}
                             alt={prod.name}
                             fill
                             className="object-cover"

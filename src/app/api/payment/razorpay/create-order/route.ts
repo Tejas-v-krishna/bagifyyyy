@@ -6,7 +6,11 @@ import Razorpay from 'razorpay';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { items, shippingAddress, customerEmail, customerPhone, shippingMethod } = body;
+    const { items, shippingAddress, customerEmail, customerPhone, shippingMethod, promoCode } = body;
+
+    // Validate promo code server-side
+    const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
+    const promoDiscount = promoCode && VALID_PROMO_CODES[promoCode.toUpperCase()] ? VALID_PROMO_CODES[promoCode.toUpperCase()] : 0;
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -57,7 +61,8 @@ export async function POST(request: Request) {
 
     // Calculate shipping
     const shippingFee = shippingMethod === 'express' ? 99 : (subtotal >= 299 ? 0 : 49);
-    const totalAmount = subtotal + shippingFee;
+    const discountAmount = Math.round(subtotal * promoDiscount * 100) / 100;
+    const totalAmount = subtotal - discountAmount + shippingFee;
     const amountInPaise = Math.round(totalAmount * 100);
 
     // Generate unique order number (e.g. BGF-58291)
@@ -114,7 +119,7 @@ export async function POST(request: Request) {
         customerPhone,
         totalAmount,
         shippingAmount: shippingFee,
-        discountAmount: 0,
+        discountAmount,
         paymentStatus: 'PENDING',
         orderStatus: 'PROCESSING',
         paymentMethod: 'RAZORPAY',

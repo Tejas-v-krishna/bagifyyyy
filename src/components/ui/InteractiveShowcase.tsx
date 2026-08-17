@@ -6,9 +6,12 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useAppStore } from "@/store/useAppStore";
 import AddToBagButton from "@/components/ui/AddToBagButton";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export type ShowcaseProduct = {
   id: string;
@@ -311,21 +314,56 @@ export default function InteractiveShowcase({
     }
   };
 
-  // ── 6. Initial Page Load Wave Animation ───────────────────────────────────
+  // ── 6. Scroll-Triggered Stagger Card Animation ────────────────────────────
   useGSAP(() => {
     if (!isPreloaderFinished) {
-      gsap.set(".showcase-card", { opacity: 0, y: 25 });
+      gsap.set(".showcase-card", { opacity: 0, y: 60, x: -30 });
       return;
     }
 
-    gsap.to(".showcase-card", {
+    // Kill any previous ScrollTriggers scoped to this container
+    ScrollTrigger.getAll()
+      .filter((st) => st.vars?.id === "showcase-stagger")
+      .forEach((st) => st.kill());
+
+    const cards = gsap.utils.toArray<HTMLElement>(".showcase-card", containerRef.current!);
+    if (cards.length === 0) return;
+
+    // Set all cards hidden initially
+    gsap.set(cards, { opacity: 0, y: 60, x: -30, scale: 0.97 });
+
+    // Create a timeline triggered by the section entering the viewport
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 80%",       // fires when section top reaches 80% of viewport
+        end: "top 30%",
+        toggleActions: "play none none none",
+        id: "showcase-stagger",
+      },
+    });
+
+    tl.to(cards, {
       opacity: 1,
       y: 0,
-      duration: 0.65,
-      stagger: 0.04,
+      x: 0,
+      scale: 1,
+      duration: 0.7,
+      stagger: {
+        each: 0.09,           // 90ms gap between each card
+        from: "start",        // left to right
+        ease: "power2.out",
+      },
       ease: "power3.out",
+      clearProps: "transform",
     });
-  }, { dependencies: [isPreloaderFinished, activeTab], scope: containerRef });
+
+    return () => {
+      ScrollTrigger.getAll()
+        .filter((st) => st.vars?.id === "showcase-stagger")
+        .forEach((st) => st.kill());
+    };
+  }, { dependencies: [isPreloaderFinished], scope: containerRef });
 
   if (total === 0) return null;
 
@@ -415,7 +453,7 @@ export default function InteractiveShowcase({
                     e.stopPropagation();
                   }
                 }}
-                className="showcase-card interactive-card group flex flex-col shrink-0 w-[calc(50%-8px)] sm:w-[calc(33.333%-11px)] md:w-[calc(25%-18px)] lg:w-[calc(16.666%-20px)] select-none"
+                className="showcase-card interactive-card group flex flex-col shrink-0 w-[160px] sm:w-[200px] md:w-[240px] lg:w-[calc(16.666%-20px)] select-none"
               >
                 {/* Borderless Floating Image Container with Alternate View on Hover */}
                 <div className="relative w-full aspect-[4/5] flex items-center justify-center overflow-hidden bg-black/[0.02] group-hover:bg-black/[0.05] transition-colors duration-500">
@@ -452,7 +490,7 @@ export default function InteractiveShowcase({
                     alt={product.name}
                     fill
                     draggable={false}
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                    sizes="(max-width: 640px) 160px, (max-width: 1024px) 240px, 16vw"
                     className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] select-none pointer-events-none ${
                       hoverImgUrl ? "group-hover:opacity-0" : ""
                     } ${product.isSoldOut ? "blur-sm opacity-70" : "opacity-100"}`}
@@ -465,7 +503,7 @@ export default function InteractiveShowcase({
                       alt={`${product.name} alternate view`}
                       fill
                       draggable={false}
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                      sizes="(max-width: 640px) 160px, (max-width: 1024px) 240px, 16vw"
                       className="object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none"
                     />
                   )}
@@ -491,6 +529,9 @@ export default function InteractiveShowcase({
                   <p className="font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
                     ₹{product.price.toLocaleString("en-IN")}
                   </p>
+                  <p className="text-[10px] text-y2k-gunmetal/45 font-medium capitalize mt-0.5 truncate">
+                    {product.category || "Topwears"} · Archive Edition
+                  </p>
                 </div>
               </Link>
             );
@@ -498,8 +539,21 @@ export default function InteractiveShowcase({
         </div>
       </div>
 
-      {/* ── 3. Synchronized Controls Below Track ─────────────────────────────── */}
-      <div className="w-full flex items-center justify-between mt-6 px-1">
+      {/* ── 3. Continuous Scroll Progress Line (Phone & Desktop) ──────────────── */}
+      <div className="w-full mt-2 mb-4 px-1">
+        <div className="relative w-full h-[1.5px] bg-gray-200 overflow-hidden">
+          <div
+            className="absolute top-0 h-full bg-y2k-gunmetal transition-all duration-150 ease-out"
+            style={{
+              width: `${Math.max(15, 100 / Math.max(1, total))}%`,
+              left: `${maxIndex > 0 ? (currentIndex / maxIndex) * (100 - Math.max(15, 100 / Math.max(1, total))) : 0}%`,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ── 4. Synchronized Controls Below Track ─────────────────────────────── */}
+      <div className="w-full flex items-center justify-between px-1">
         {/* Left: Product Counter */}
         <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60">
           <span className="text-y2k-gunmetal">{String(currentIndex + 1).padStart(2, "0")}</span>
@@ -507,7 +561,7 @@ export default function InteractiveShowcase({
           <span>{String(total).padStart(2, "0")}</span>
         </div>
 
-        {/* Center: Progress Bar Dots */}
+        {/* Center: Slide Step Indicators */}
         <div className="flex items-center gap-1.5">
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button

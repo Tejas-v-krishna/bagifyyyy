@@ -39,6 +39,7 @@ model Product {
   variants            Variant[]
   stockNotifications  StockNotification[]
   bundleItems         BundleProduct[]
+  reviews             Review[]
 }
 
 model Image {
@@ -140,6 +141,7 @@ model Order {
   razorpayOrderId   String?     @unique
   paymentId         String?
   signature         String?
+  trackingId        String?
   shippingAddressId String
   shippingAddress   Address     @relation(fields: [shippingAddressId], references: [id])
   items             OrderItem[]
@@ -171,4 +173,36 @@ model MarketingCampaign {
   productIds  String   @default("[]") // JSON stringified array of product IDs
   sentCount   Int      @default(0)
   createdAt   DateTime @default(now())
+}
+
+model SupportTicket {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  orderNumber String?
+  message     String
+  status      String   @default("OPEN") // OPEN, CLOSED
+  createdAt   DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  email     String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId     String?
+  authorName String
+  rating     Int      // 1-5
+  body       String
+  createdAt  DateTime @default(now())
+
+  @@unique([productId, userId])
 }

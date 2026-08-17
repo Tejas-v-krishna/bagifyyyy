@@ -5,10 +5,10 @@ export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Loader2, ArrowRight, User, ShieldCheck, Truck, CreditCard, Banknote } from "lucide-react";
+import { Loader2, ArrowRight, User, ShieldCheck, Truck, CreditCard, Banknote, Tag, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 declare global {
   interface Window {
@@ -45,10 +45,28 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, cartTotal, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user, isAuthenticated, openAuthModal } = useAuthStore();
+  const searchParams = useSearchParams();
   const [checkoutMode, setCheckoutMode] = useState<'select' | 'guest' | 'account'>(isAuthenticated ? 'account' : 'select');
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Promo code state (pre-filled from cart URL param)
+  const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.10 };
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
+  const [promoError, setPromoError] = useState("");
+
+  const handleApplyPromo = () => {
+    const upper = promoInput.trim().toUpperCase();
+    if (VALID_PROMOS[upper]) {
+      setAppliedPromo({ code: upper, discount: VALID_PROMOS[upper] });
+      setPromoError("");
+    } else {
+      setPromoError("Invalid promo code.");
+      setAppliedPromo(null);
+    }
+  };
 
   // Address Form State
   const [formData, setFormData] = useState({
@@ -64,6 +82,17 @@ export default function CheckoutPage() {
   // Shipping & Payment Options
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
+
+  // Auto-apply promo from cart URL param
+  useEffect(() => {
+    const promoFromCart = searchParams.get("promo");
+    if (promoFromCart && VALID_PROMOS[promoFromCart.toUpperCase()]) {
+      const upper = promoFromCart.toUpperCase();
+      setAppliedPromo({ code: upper, discount: VALID_PROMOS[upper] });
+      setPromoInput(upper);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load user details if authenticated
   useEffect(() => {
@@ -85,7 +114,8 @@ export default function CheckoutPage() {
   const total = cartTotal();
   const shipping = shippingMethod === 'express' ? 99 : (total >= 299 ? 0 : 49);
   const codFee = paymentMethod === 'cod' ? 49 : 0;
-  const finalTotal = total + shipping + codFee;
+  const discountAmount = appliedPromo ? Math.round(total * appliedPromo.discount * 100) / 100 : 0;
+  const finalTotal = total - discountAmount + shipping + codFee;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -148,6 +178,7 @@ export default function CheckoutPage() {
             customerEmail: formData.email,
             customerPhone: formData.phone,
             shippingMethod,
+            promoCode: appliedPromo?.code || null,
           }),
         });
         const data = await res.json();
@@ -173,6 +204,7 @@ export default function CheckoutPage() {
           customerEmail: formData.email,
           customerPhone: formData.phone,
           shippingMethod,
+          promoCode: appliedPromo?.code || null,
         }),
       });
 
@@ -627,12 +659,59 @@ export default function CheckoutPage() {
               })}
             </div>
 
+            {/* Promo Code */}
+            <div className="border-t border-y2k-gunmetal/10 pt-4 pb-2">
+              {appliedPromo ? (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 px-3 py-2">
+                  <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
+                  </span>
+                  <button
+                    onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
+                    className="text-[10px] font-bold text-green-700 hover:text-red-600 underline cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <div className="flex-1 flex items-center gap-2 border border-y2k-gunmetal/20 px-3 py-2">
+                    <Tag className="w-3.5 h-3.5 text-y2k-gunmetal/40 shrink-0" />
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
+                      onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
+                      placeholder="Promo code"
+                      className="w-full text-xs font-medium uppercase outline-none bg-transparent tracking-wider placeholder:normal-case placeholder:tracking-normal placeholder:text-y2k-gunmetal/40"
+                    />
+                  </div>
+                  <button
+                    onClick={handleApplyPromo}
+                    className="px-3 py-2 bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity cursor-pointer"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+              {promoError && (
+                <p className="text-[10px] text-red-600 font-bold uppercase tracking-wider mt-1.5">{promoError}</p>
+              )}
+            </div>
+
             {/* Calculations Breakdown */}
             <div className="flex flex-col gap-2.5 text-xs border-t border-y2k-gunmetal/15 pt-4">
               <div className="flex justify-between items-center text-y2k-gunmetal/70">
                 <span>Items Subtotal:</span>
                 <span className="font-semibold">₹{total.toFixed(2)}</span>
               </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center text-green-600 font-bold">
+                  <span>Promo ({appliedPromo!.code}):</span>
+                  <span>−₹{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center text-y2k-gunmetal/70">
                 <span>Shipping ({shippingMethod === 'express' ? 'Express' : 'Standard'}):</span>
                 <span className="font-semibold">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>

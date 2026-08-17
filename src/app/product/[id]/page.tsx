@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import NotifyMeSection from "@/components/product/NotifyMeSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
+import ReviewSection from "@/components/product/ReviewSection";
 import { Heart } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -277,6 +278,9 @@ export default function ProductDetailPage() {
         {product.relatedProducts && product.relatedProducts.length > 0 && (
           <SimilarProducts products={product.relatedProducts} />
         )}
+
+        {/* Reviews */}
+        <ReviewSection productId={id} />
 
         {/* Recently Viewed */}
         <div className="mt-16 pt-8 border-t border-gray-100">
