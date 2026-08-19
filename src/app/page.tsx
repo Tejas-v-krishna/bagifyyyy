@@ -10,6 +10,7 @@ import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
+import HeroCarousel from "@/components/ui/HeroCarousel";
 
 export const dynamic = 'force-dynamic';
 
@@ -85,45 +86,8 @@ export default async function Home() {
         {/* Gradient Line under Text */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-y2k-gunmetal/20 to-transparent" />
 
-        {/* Hero Photo Container (Flex-1 to fill remaining viewport height) */}
-        <div className="w-full relative flex-1 flex flex-col md:flex-row overflow-hidden group/hero">
-          
-          {/* Main Model Shot */}
-          <div className="relative w-full h-[50vh] md:h-full md:flex-[7] hover:md:flex-[8.2] transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] border-b md:border-b-0 md:border-r border-y2k-gunmetal/10 bg-transparent p-2 md:p-3">
-            <Link href="/topwears" className="relative w-full h-full overflow-hidden block group/link cursor-pointer">
-              <div className="absolute inset-0 bg-[url('/hero-1-new.jpg')] bg-cover bg-center" data-parallax-bg data-parallax-speed="0.15" />
-              <div className="absolute inset-0 bg-y2k-gunmetal/5 group-hover/link:bg-transparent transition-colors duration-700" />
-
-              {/* Button (Right aligned on Left Image) */}
-              <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 z-20" data-animate="button">
-                <div 
-                  className="inline-flex items-center justify-center btn-bagify text-white rounded-none font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] px-6 py-3 shadow-md"
-                >
-                  <span>SHIRTS &amp; TEES</span>
-                  <ArrowUpRight className="ml-2 w-3.5 h-3.5 group-hover/link:rotate-45 transition-transform" />
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          {/* Product Close-Up */}
-          <div className="relative w-full h-[40vh] md:h-full md:flex-[3] hover:md:flex-[4.2] transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] bg-transparent p-2 md:p-3">
-            <Link href="/bottomwears" className="relative w-full h-full overflow-hidden block group/link cursor-pointer">
-              <div className="absolute inset-0 bg-[url('/fit.jpg')] bg-cover bg-center" data-parallax-bg data-parallax-speed="0.15" />
-              <div className="absolute inset-0 bg-y2k-gunmetal/5 group-hover/link:bg-transparent transition-colors duration-700" />
-
-              {/* Button (Left aligned on Right Image) */}
-              <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8 z-20" data-animate="button">
-                <div 
-                  className="inline-flex items-center justify-center btn-bagify text-white rounded-none font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] px-6 py-3 shadow-md"
-                >
-                  <span>PANTS &amp; CARGOS</span>
-                  <ArrowUpRight className="ml-2 w-3.5 h-3.5 group-hover/link:rotate-45 transition-transform" />
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
+        {/* Full Width Hero Carousel */}
+        <HeroCarousel />
 
         {/* Ticker Strip */}
         <div className="w-full bg-[#232D3B] text-[#E8EDF2] border-y border-[#232D3B] overflow-hidden h-[44px] md:h-[48px] flex items-center shadow-inner">
