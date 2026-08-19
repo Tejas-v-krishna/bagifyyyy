@@ -2,218 +2,172 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { MessageSquare, Mail, Phone, Clock, HelpCircle, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, Clock, ArrowRight, CheckCircle2, ShieldQuestion } from "lucide-react";
 
 export default function CustomerServicePage() {
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [ticketSubject, setTicketSubject] = useState("Order Inquiry");
+  const [ticketRef, setTicketRef] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setTicketRef(`#BG-${Math.floor(Math.random() * 90000 + 10000)}`);
     setFormSubmitted(true);
   };
 
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen pb-24 font-sans">
-      {/* ── Hero Banner ────────────────────────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 pt-20 pb-12 border-b border-y2k-gunmetal/15">
-        <p className="text-xs font-bold uppercase tracking-widest text-y2k-slate mb-2">
-          HELP &amp; CONCIERGE
-        </p>
-        <h1 className="font-display text-4xl sm:text-6xl lg:text-[72px] uppercase tracking-[-0.03em] font-medium leading-none text-y2k-gunmetal mb-4">
-          CUSTOMER SERVICE
-        </h1>
-        <p className="text-sm md:text-base text-y2k-gunmetal/80 font-medium max-w-2xl leading-relaxed">
-          Need assistance with an archive drop, size fitting, order tracking, or return? Our dedicated support team is at your disposal 7 days a week.
-        </p>
-      </section>
+    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
-      {/* ── Quick Contact Channels ────────────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 md:p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+          <Link href="/" className="hover:text-black">HOME</Link>
+          <span>/</span>
+          <span className="text-y2k-gunmetal">CUSTOMER CONCIERGE</span>
+        </div>
+
+        {/* Header */}
+        <div className="mb-8 pb-4 border-b border-y2k-gunmetal/15">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
+            CLIENT SERVICES &amp; HELP DESK
+          </span>
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            CUSTOMER SERVICE
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-1">
+            Assistance with archive drops, fit advice, orders, and authentication.
+          </p>
+        </div>
+
+        {/* Channels */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center mb-6">
-                <Mail className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-              </div>
-              <h3 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal mb-2">
-                EMAIL SUPPORT
-              </h3>
-              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed mb-4">
-                Reach out for detailed order inquiries, authentication certificates, or custom order requests.
+              <Mail className="w-4 h-4 text-y2k-gunmetal mb-2" />
+              <h3 className="font-bold text-xs uppercase tracking-wider mb-1">EMAIL CONCIERGE</h3>
+              <p className="text-[11px] text-y2k-gunmetal/70 mb-3">
+                Order inquiries, provenance questions, or custom requests.
               </p>
             </div>
-            <div>
-              <a
-                href="mailto:support@bagifyyyy.com"
-                className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:underline flex items-center gap-1.5"
-              >
-                support@bagifyyyy.com <ArrowRight className="w-3.5 h-3.5" />
-              </a>
-              <span className="text-[10px] text-y2k-slate block mt-1">Average response: &lt; 2 hours</span>
-            </div>
+            <a href="mailto:support@bagifyyyy.com" className="text-[11px] font-bold uppercase text-y2k-gunmetal hover:underline flex items-center gap-1">
+              support@bagifyyyy.com <ArrowRight className="w-3 h-3" />
+            </a>
           </div>
 
-          <div className="bg-white p-6 md:p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center mb-6">
-                <Phone className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-              </div>
-              <h3 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal mb-2">
-                PHONE &amp; WHATSAPP
-              </h3>
-              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed mb-4">
-                Speak directly with an archive specialist or message us on WhatsApp for rapid drop assistance.
+              <Phone className="w-4 h-4 text-y2k-gunmetal mb-2" />
+              <h3 className="font-bold text-xs uppercase tracking-wider mb-1">PHONE &amp; WHATSAPP</h3>
+              <p className="text-[11px] text-y2k-gunmetal/70 mb-3">
+                Speak directly with an archive specialist.
               </p>
             </div>
-            <div>
-              <a
-                href="tel:+919876543210"
-                className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:underline flex items-center gap-1.5"
-              >
-                +91 (0) 800-BAGIFY <ArrowRight className="w-3.5 h-3.5" />
-              </a>
-              <span className="text-[10px] text-y2k-slate block mt-1">Mon – Sun: 10:00 AM – 8:00 PM IST</span>
-            </div>
+            <a href="tel:+919876543210" className="text-[11px] font-bold uppercase text-y2k-gunmetal hover:underline flex items-center gap-1">
+              +91 98765 43210 <ArrowRight className="w-3 h-3" />
+            </a>
           </div>
 
-          <div className="bg-white p-6 md:p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center mb-6">
-                <Clock className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-              </div>
-              <h3 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal mb-2">
-                ORDER DISPATCH &amp; FAQ
-              </h3>
-              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed mb-4">
-                Check delivery timelines, real-time speed dispatch status, and policy answers.
+              <Clock className="w-4 h-4 text-y2k-gunmetal mb-2" />
+              <h3 className="font-bold text-xs uppercase tracking-wider mb-1">LIVE DISPATCH &amp; FAQ</h3>
+              <p className="text-[11px] text-y2k-gunmetal/70 mb-3">
+                Check courier speeds, size guides, and policy FAQs.
               </p>
             </div>
-            <div className="flex flex-col gap-2">
-              <Link
-                href="/shipping"
-                className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:underline flex items-center gap-1.5"
-              >
-                Shipping &amp; Store Policy <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <Link
-                href="/faq"
-                className="text-xs font-bold uppercase tracking-wider text-y2k-slate hover:text-y2k-gunmetal flex items-center gap-1.5"
-              >
-                View FAQ Database <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+            <Link href="/faq" className="text-[11px] font-bold uppercase text-y2k-gunmetal hover:underline flex items-center gap-1">
+              Browse FAQ <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         </div>
-      </section>
 
-      {/* ── Direct Support Inquiry Form ────────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-        <div className="bg-white border border-y2k-gunmetal/15 p-8 md:p-12 shadow-sm">
-          <div className="max-w-xl mb-8">
-            <h2 className="font-display font-medium text-2xl md:text-3xl uppercase tracking-tight text-y2k-gunmetal mb-2">
-              SUBMIT A SUPPORT TICKET
-            </h2>
-            <p className="text-xs text-y2k-gunmetal/80 leading-relaxed">
-              Fill out the form below and an assigned concierge specialist will review your case and get back to you promptly.
-            </p>
-          </div>
+        {/* Ticket Form */}
+        <div className="bg-white border border-y2k-gunmetal/15 p-5 sm:p-6 shadow-xs">
+          <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal mb-1">
+            SUBMIT A SERVICE INQUIRY
+          </h2>
+          <p className="text-xs text-y2k-gunmetal/70 mb-5">
+            Fill out the form below to receive a response from our concierge team.
+          </p>
 
           {formSubmitted ? (
-            <div className="p-8 bg-y2k-ice border border-y2k-gunmetal/20 flex flex-col items-center text-center max-w-md mx-auto">
-              <CheckCircle2 className="w-12 h-12 text-y2k-gunmetal mb-3" />
-              <h3 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal mb-1">
-                TICKET SUBMITTED
+            <div className="py-6 text-center">
+              <CheckCircle2 className="w-8 h-8 text-y2k-gunmetal mx-auto mb-2" />
+              <h3 className="font-display font-medium text-base uppercase tracking-tight mb-1">
+                TICKET SUBMITTED ({ticketRef})
               </h3>
-              <p className="text-xs text-y2k-gunmetal/80 mb-6">
-                Your ticket has been logged with reference <strong>#BG-{(Math.random() * 90000 + 10000).toFixed(0)}</strong>. A confirmation email has been dispatched.
+              <p className="text-xs text-y2k-gunmetal/70 mb-4">
+                Our support team will review your message and reply via email.
               </p>
               <button
                 onClick={() => setFormSubmitted(false)}
-                className="btn-bagify text-white text-xs font-bold uppercase tracking-widest px-6 py-2.5"
+                className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-widest cursor-pointer"
               >
-                Submit Another Inquiry
+                Submit Another Request
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
-                  FULL NAME*
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  Full Name *
                 </label>
                 <input
-                  type="text"
                   required
-                  placeholder="e.g. Alex River"
-                  className="w-full text-xs font-medium text-black border border-y2k-soft/50 px-3.5 py-2.5 bg-gray-50/50 focus:bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                  placeholder="Alex Vance"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
                 />
               </div>
 
-              <div className="flex flex-col">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
-                  EMAIL ADDRESS*
+              <div>
+                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  Email Address *
                 </label>
                 <input
+                  required
                   type="email"
-                  required
-                  placeholder="you@email.com"
-                  className="w-full text-xs font-medium text-black border border-y2k-soft/50 px-3.5 py-2.5 bg-gray-50/50 focus:bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                  placeholder="alex@example.com"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
                 />
               </div>
 
-              <div className="flex flex-col">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
-                  ORDER NUMBER (OPTIONAL)
+              <div className="sm:col-span-2">
+                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  Inquiry Category
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. BGF-98234"
-                  className="w-full text-xs font-medium text-black border border-y2k-soft/50 px-3.5 py-2.5 bg-gray-50/50 focus:bg-white focus:border-y2k-gunmetal outline-none transition-all"
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
-                  INQUIRY TYPE*
-                </label>
-                <select
-                  value={ticketSubject}
-                  onChange={(e) => setTicketSubject(e.target.value)}
-                  className="w-full text-xs font-medium text-black border border-y2k-soft/50 px-3.5 py-2.5 bg-gray-50/50 focus:bg-white focus:border-y2k-gunmetal outline-none transition-all"
-                >
-                  <option value="Order Inquiry">Order Inquiry &amp; Tracking</option>
-                  <option value="Shipping & Delivery">Shipping &amp; Delivery Status</option>
-                  <option value="Size & Fit Advisory">Size &amp; Fit Advisory</option>
-                  <option value="Product Authentication">Product Authentication &amp; Archive Details</option>
-                  <option value="Billing / Payment">Billing &amp; Payment Verification</option>
-                  <option value="Other">Other Concierge Request</option>
+                <select className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal">
+                  <option>Order &amp; Shipping Status</option>
+                  <option>Size &amp; Fit Consultation</option>
+                  <option>Authentication &amp; Sourcing</option>
+                  <option>VIP Chrome Club Points</option>
+                  <option>Other Inquiry</option>
                 </select>
               </div>
 
-              <div className="flex flex-col md:col-span-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
-                  MESSAGE / DETAILS*
+              <div className="sm:col-span-2">
+                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  Message *
                 </label>
                 <textarea
-                  rows={5}
                   required
-                  placeholder="Please provide specifics regarding your query..."
-                  className="w-full text-xs font-medium text-black border border-y2k-soft/50 p-3.5 bg-gray-50/50 focus:bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                  rows={4}
+                  placeholder="Describe your inquiry..."
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal resize-none"
                 />
               </div>
 
-              <div className="md:col-span-2 flex justify-start">
+              <div className="sm:col-span-2 pt-1">
                 <button
                   type="submit"
-                  className="btn-bagify text-white font-bold text-xs uppercase tracking-widest px-8 py-3.5 hover:opacity-90 transition-opacity"
+                  className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-widest cursor-pointer"
                 >
-                  TRANSMIT TICKET
+                  Submit Ticket
                 </button>
               </div>
             </form>
           )}
         </div>
-      </section>
+
+      </div>
     </div>
   );
 }

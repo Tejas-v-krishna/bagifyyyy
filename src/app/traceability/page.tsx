@@ -1,138 +1,130 @@
 import Link from "next/link";
-import { Globe, Layers, ShieldCheck, Recycle, CheckCircle2, Factory, Search, ArrowRight } from "lucide-react";
+import { Search, Layers, Factory, Recycle, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function TraceabilityPage() {
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen pb-24 font-sans">
-      {/* ── Hero Banner ────────────────────────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 pt-20 pb-12 border-b border-y2k-gunmetal/15">
-        <p className="text-xs font-bold uppercase tracking-widest text-y2k-slate mb-2">
-          CIRCULARITY &amp; PROVENANCE
-        </p>
-        <h1 className="font-display text-4xl sm:text-6xl lg:text-[72px] uppercase tracking-[-0.03em] font-medium leading-none text-y2k-gunmetal mb-4">
-          TRACEABILITY &amp; PROVENANCE
-        </h1>
-        <p className="text-sm md:text-base text-y2k-gunmetal/80 font-medium max-w-2xl leading-relaxed">
-          From Japanese deadstock selvedge mills to hand-curated Tokyo flea market vaults: every BAGIFYYYY garment carries a transparent lifecycle and authentic heritage.
-        </p>
-      </section>
+    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
-      {/* ── The 4 Pillars of Traceability ────────────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Pillar 1 */}
-          <div className="bg-white p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+          <Link href="/" className="hover:text-black">HOME</Link>
+          <span>/</span>
+          <span className="text-y2k-gunmetal">TRACEABILITY &amp; PROVENANCE</span>
+        </div>
+
+        {/* Header */}
+        <div className="mb-8 pb-4 border-b border-y2k-gunmetal/15">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
+            CIRCULARITY &amp; PROVENANCE
+          </span>
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            TRACEABILITY &amp; SOURCING
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-1">
+            From Japanese deadstock selvedge mills to hand-curated archival vaults: full transparency on every drop piece.
+          </p>
+        </div>
+
+        {/* 4 Stages Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center">
-                  <Search className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2.5 py-1">
+              <div className="flex items-center justify-between mb-3">
+                <Search className="w-5 h-5 text-y2k-gunmetal" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/10">
                   STAGE 01
                 </span>
               </div>
-              <h3 className="font-display font-medium text-2xl uppercase tracking-tight text-y2k-gunmetal mb-3">
+              <h3 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-2">
                 ARCHIVAL SOURCING &amp; AUTHENTICATION
               </h3>
-              <p className="text-xs sm:text-sm text-y2k-gunmetal/80 leading-relaxed">
-                Our archival collection items are physically sourced across verified vintage dealers, estate archives, and private collectors in Harajuku, London, Los Angeles, and Milan. Each piece undergoes an 8-point physical authenticity audit examining stitch density, Talon/YKK hardware codes, wash tags, and fabric weight.
+              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed">
+                Archival items are sourced from verified estate vaults and vintage collectors across Harajuku, London, and Milan. Each piece undergoes physical inspection of stitch density, Talon/YKK hardware, and wash codes.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-y2k-gunmetal/10 text-xs font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-700" /> 100% Verified Authentic Archival Provenance
+            <div className="pt-3 mt-4 border-t border-y2k-gunmetal/10 text-[10px] font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+              <span>100% Verified Authentic Provenance</span>
             </div>
           </div>
 
-          {/* Pillar 2 */}
-          <div className="bg-white p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center">
-                  <Layers className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2.5 py-1">
+              <div className="flex items-center justify-between mb-3">
+                <Layers className="w-5 h-5 text-y2k-gunmetal" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/10">
                   STAGE 02
                 </span>
               </div>
-              <h3 className="font-display font-medium text-2xl uppercase tracking-tight text-y2k-gunmetal mb-3">
-                CIRCULAR DEADSTOCK &amp; RAW MATERIALS
+              <h3 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-2">
+                DEADSTOCK &amp; RAW MATERIALS
               </h3>
-              <p className="text-xs sm:text-sm text-y2k-gunmetal/80 leading-relaxed">
-                For our signature cut-and-sew capsule drops, we salvage unused rolls of premium deadstock heavyweight cotton (380–450 GSM), surplus military canvas, and selvedge denim that would otherwise end in landfills. No fast fashion synthetics, no disposable blends.
+              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed">
+                For capsule drops, we salvage surplus rolls of premium heavyweight cotton (380–450 GSM) and selvedge denim that would otherwise end in landfills. No fast fashion synthetics.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-y2k-gunmetal/10 text-xs font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-700" /> Zero Overproduction / Micro-Batch Drops Only
+            <div className="pt-3 mt-4 border-t border-y2k-gunmetal/10 text-[10px] font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+              <span>Zero Overproduction · Micro-Batches</span>
             </div>
           </div>
 
-          {/* Pillar 3 */}
-          <div className="bg-white p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center">
-                  <Factory className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2.5 py-1">
+              <div className="flex items-center justify-between mb-3">
+                <Factory className="w-5 h-5 text-y2k-gunmetal" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/10">
                   STAGE 03
                 </span>
               </div>
-              <h3 className="font-display font-medium text-2xl uppercase tracking-tight text-y2k-gunmetal mb-3">
-                ETHICAL ATELIER MANUFACTURING
+              <h3 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-2">
+                ETHICAL ATELIER PRODUCTION
               </h3>
-              <p className="text-xs sm:text-sm text-y2k-gunmetal/80 leading-relaxed">
-                Crafted in certified boutique ateliers where master artisans receive dignified living wages, strict safety protections, and healthcare benefits. We publish our tier-1 and tier-2 production partners annually to maintain complete supply chain transparency.
+              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed">
+                Cut and constructed in certified boutique partner ateliers where artisans receive verified living wages, safety standards, and fair workplace protections.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-y2k-gunmetal/10 text-xs font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-700" /> Fair Labor Association Aligned
+            <div className="pt-3 mt-4 border-t border-y2k-gunmetal/10 text-[10px] font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+              <span>Fair Labor Aligned Manufacturing</span>
             </div>
           </div>
 
-          {/* Pillar 4 */}
-          <div className="bg-white p-8 border border-y2k-gunmetal/15 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between mb-6">
-                <div className="w-12 h-12 bg-y2k-ice flex items-center justify-center">
-                  <Recycle className="w-6 h-6 text-y2k-gunmetal" strokeWidth={1.5} />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2.5 py-1">
+              <div className="flex items-center justify-between mb-3">
+                <Recycle className="w-5 h-5 text-y2k-gunmetal" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/10">
                   STAGE 04
                 </span>
               </div>
-              <h3 className="font-display font-medium text-2xl uppercase tracking-tight text-y2k-gunmetal mb-3">
-                PLASTIC-FREE PACKAGING &amp; LOGISTICS
+              <h3 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-2">
+                CIRCULAR CARE &amp; LONGEVITY
               </h3>
-              <p className="text-xs sm:text-sm text-y2k-gunmetal/80 leading-relaxed">
-                Orders are dispatched in 100% recycled unbleached kraft boxes with water-activated reinforced paper tape and plant-based biodegradable protective dust bags. Carbon offsets are calculated on every domestic and international parcel.
+              <p className="text-xs text-y2k-gunmetal/75 leading-relaxed">
+                Garments are designed to age with wear and maintain value over decades. We build heirloom archive pieces that resist disposable wardrobe cycles.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-y2k-gunmetal/10 text-xs font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-700" /> 100% Recyclable &amp; Plastic-Free Mailers
+            <div className="pt-3 mt-4 border-t border-y2k-gunmetal/10 text-[10px] font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+              <span>Lifetime Durability Guarantee</span>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ── Anti-Fast Fashion Manifesto Callout ─────────────────────────────────── */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-8">
-        <div className="bg-y2k-gunmetal text-[#F8F5E9] p-8 md:p-12 border border-y2k-gunmetal shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          <div className="max-w-2xl">
-            <h2 className="font-display font-medium text-2xl md:text-3xl uppercase tracking-tight mb-2">
-              OUR LIFELONG BUY-BACK GUARANTEE
-            </h2>
-            <p className="text-xs md:text-sm text-[#F8F5E9]/80 leading-relaxed">
-              When you are ready to pass on a BAGIFYYYY piece, return it through our Archive Circularity Program to receive 30% store credit. We clean, restore, and re-archive it for the next generation.
-            </p>
-          </div>
+        {/* CTA */}
+        <div className="text-center">
           <Link
-            href="/contact"
-            className="bg-[#F8F5E9] text-y2k-gunmetal text-xs font-bold uppercase tracking-widest px-8 py-3.5 hover:bg-white transition-colors shrink-0 shadow"
+            href="/products"
+            className="btn-bagify inline-flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-widest"
           >
-            INQUIRE VIA CONTACT →
+            <span>Explore Sustainable Archive Drops</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-      </section>
+
+      </div>
     </div>
   );
 }

@@ -1,131 +1,167 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { Search, Plus, Minus, HelpCircle } from "lucide-react";
 
-const faqData = [
+const FAQ_DATA = [
   {
-    category: "Orders",
+    category: "Orders & Shipping",
     items: [
-      { q: "How do I track my order?", a: "Once your order ships, you'll receive a confirmation email with a tracking link. You can also view tracking information in your account dashboard." },
-      { q: "Can I cancel or change my order?", a: "We process orders quickly, but if you contact us within 1 hour of placing your order, we will do our best to accommodate changes or cancellations." },
-      { q: "I received the wrong item.", a: "We apologize for the mix-up! Please reach out to our support team with your order number and a photo of the item, and we'll send a replacement immediately." }
-    ]
+      {
+        q: "How do I track my shipment?",
+        a: "You can track your order live using our Track Shipment page (/track) by entering your order number (e.g. 1001) or Airway Bill ID. Real-time updates are also dispatched via SMS and Email.",
+      },
+      {
+        q: "What are your delivery timelines?",
+        a: "Orders are dispatched within 24–48 hours. Standard delivery across India takes 3–5 business days, while Express Air takes 1–3 business days.",
+      },
+      {
+        q: "Do you ship internationally?",
+        a: "Yes. International courier transit takes 7–14 business days. Duties and local import charges are calculated based on your jurisdiction.",
+      },
+    ],
   },
   {
-    category: "Shipping",
+    category: "Archive & Sizing",
     items: [
-      { q: "How long does shipping take?", a: "Standard shipping within India takes 5-7 business days. Express shipping takes 2-3 business days. International shipping takes 10-21 days." },
-      { q: "Do you ship internationally?", a: "Yes, we ship globally! International shipping rates and times apply at checkout based on your location." },
-      { q: "What if my package is lost?", a: "If your tracking shows delivered but you haven't received it, please check with neighbors. If it's still missing after 3 days, contact us and we'll open an investigation with the carrier." }
-    ]
+      {
+        q: "Are the pieces authentic vintage?",
+        a: "Yes. Every item in the BAGIFYYYY vault is authenticated, condition-graded, steam-sterilized, and inspected for heavyweight fabric integrity.",
+      },
+      {
+        q: "How does sizing work?",
+        a: "Our silhouettes feature signature boxy, slightly drop-shouldered fits. Use the Size Guide linked on each product page to review exact chest, shoulder, and length measurements.",
+      },
+    ],
   },
   {
-    category: "Sizing",
+    category: "Store Policy & Payments",
     items: [
-      { q: "How do I know my size?", a: "Every product page features a detailed size chart and fit notes. We recommend measuring a similar bag you own to compare dimensions." },
-      { q: "Do items run true to size?", a: "Yes, our bags are designed precisely to the dimensions listed. For apparel drops, items generally have an oversized, relaxed fit." },
-      { q: "Where can I find the size guide?", a: "The size guide is linked just below the size selector on every product page." }
-    ]
+      {
+        q: "What is your return policy?",
+        a: "Because our garments are 1-of-1 vintage and deadstock archive pieces, all sales are strictly final. Please check sizing and garment photos carefully.",
+      },
+      {
+        q: "What payment methods are supported?",
+        a: "We accept UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, and Net Banking via Razorpay. We also support Cash on Delivery (COD) for eligible pin codes.",
+      },
+    ],
   },
-  {
-    category: "Store Policy",
-    items: [
-      { q: "Can I return or exchange an item?", a: "No. Because every piece at BAGIFYYYY is a rare 1-of-1 handpicked vintage or archival item, all sales are strictly final with no returns, exchanges, or cancellations." },
-      { q: "Can I cancel an order after placing it?", a: "Orders enter packaging and fulfillment immediately upon checkout, so orders cannot be cancelled once placed." },
-      { q: "Do you offer Cash on Delivery (COD)?", a: "No. We operate exclusively on secure prepaid digital payments via UPI, Google Pay, Paytm, Cards, and Net Banking." }
-    ]
-  },
-  {
-    category: "Payments",
-    items: [
-      { q: "What payment methods do you accept?", a: "We accept all major credit cards, UPI, Net Banking, and select digital wallets including Apple Pay and Google Pay." },
-      { q: "Is my payment information secure?", a: "Yes. Our checkout process is fully encrypted and securely handled by Razorpay and Stripe. We do not store your card details." },
-      { q: "Do you offer EMI?", a: "Yes, EMI options are available on orders above ₹3000 through select credit cards and partners at checkout." }
-    ]
-  }
 ];
 
 export default function FAQPage() {
   const [search, setSearch] = useState("");
-  const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({});
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>({ "0-0": true });
 
-  const toggleItem = (catIdx: number, itemIdx: number) => {
-    const key = `${catIdx}-${itemIdx}`;
-    setOpenItems(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggle = (key: string) => {
+    setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Filter logic
-  const filteredData = faqData.map(category => {
-    const filteredItems = category.items.filter(item => 
-      item.q.toLowerCase().includes(search.toLowerCase()) || 
-      item.a.toLowerCase().includes(search.toLowerCase())
-    );
-    return { ...category, items: filteredItems };
-  }).filter(category => category.items.length > 0);
+  const filteredCategories = FAQ_DATA.map((cat, catIdx) => ({
+    ...cat,
+    items: cat.items
+      .map((item, itemIdx) => ({ ...item, key: `${catIdx}-${itemIdx}` }))
+      .filter(
+        (it) =>
+          it.q.toLowerCase().includes(search.toLowerCase()) ||
+          it.a.toLowerCase().includes(search.toLowerCase())
+      ),
+  })).filter((c) => c.items.length > 0);
 
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen">
-      {/* Header */}
-      <header className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-12 py-24 text-center">
-        <h1 className="font-display text-5xl md:text-7xl uppercase tracking-tighter font-black mb-8">
-          FAQ
-        </h1>
-        <div className="relative max-w-xl mx-auto">
+    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+          <Link href="/" className="hover:text-black">HOME</Link>
+          <span>/</span>
+          <span className="text-y2k-gunmetal">FAQ</span>
+        </div>
+
+        {/* Header */}
+        <div className="mb-6 pb-4 border-b border-y2k-gunmetal/15">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
+            KNOWLEDGE BASE
+          </span>
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            FREQUENTLY ASKED QUESTIONS
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-1">
+            Answers regarding drops, fulfillment, sizing matrix, and archive sourcing.
+          </p>
+        </div>
+
+        {/* Search */}
+        <div className="relative mb-6">
           <input
             type="text"
-            placeholder="SEARCH QUESTIONS..."
+            placeholder="Search questions (e.g. tracking, sizing, returns)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white/80 border-2 border-y2k-gunmetal p-4 pl-12 font-bold uppercase tracking-widest focus:outline-none placeholder:text-y2k-gunmetal/50"
+            className="w-full bg-white border border-y2k-gunmetal/20 px-3.5 py-2.5 pl-9 text-xs outline-none focus:border-y2k-gunmetal shadow-xs"
           />
-          <svg className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2 text-y2k-gunmetal/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="square" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Search className="w-3.5 h-3.5 text-y2k-gunmetal/50 absolute left-3 top-1/2 -translate-y-1/2" />
         </div>
-      </header>
 
-      {/* Accordion FAQ */}
-      <section className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-12 pb-24 space-y-16">
-        {filteredData.length > 0 ? (
-          filteredData.map((category, catIdx) => (
-            <div key={catIdx}>
-              <h2 className="font-display text-3xl uppercase tracking-tighter font-black mb-6 border-b-4 border-y2k-gunmetal pb-2">
-                {category.category}
-              </h2>
-              <div className="space-y-4">
-                {category.items.map((item, itemIdx) => {
-                  const key = `${catIdx}-${itemIdx}`;
-                  const isOpen = openItems[key];
+        {/* FAQ Accordion Groups */}
+        <div className="space-y-6">
+          {filteredCategories.map((group) => (
+            <div key={group.category} className="space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-y2k-slate block">
+                {group.category}
+              </span>
+
+              <div className="divide-y divide-y2k-gunmetal/10 border border-y2k-gunmetal/15 bg-white shadow-xs">
+                {group.items.map((item) => {
+                  const isOpen = !!openMap[item.key];
                   return (
-                    <div key={itemIdx} className="border border-y2k-gunmetal/30 bg-white/50">
+                    <div key={item.key}>
                       <button
-                        onClick={() => toggleItem(catIdx, itemIdx)}
-                        className="w-full text-left p-4 font-bold text-lg flex justify-between items-center outline-none hover:bg-black/5 transition-colors"
+                        type="button"
+                        onClick={() => toggle(item.key)}
+                        className="w-full text-left p-3.5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-y2k-ice/30 transition-colors cursor-pointer"
                       >
-                        <span className="pr-4">{item.q}</span>
-                        <span className="text-2xl font-normal leading-none w-6 text-center">
-                          {isOpen ? "−" : "+"}
-                        </span>
+                        <span>{item.q}</span>
+                        {isOpen ? (
+                          <Minus className="w-3.5 h-3.5 shrink-0 text-y2k-gunmetal" />
+                        ) : (
+                          <Plus className="w-3.5 h-3.5 shrink-0 text-y2k-gunmetal/60" />
+                        )}
                       </button>
-                      <div 
-                        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
-                      >
-                        <div className="p-4 pt-0 text-lg border-t border-y2k-gunmetal/10 mt-2">
-                          <p className="pt-2">{item.a}</p>
+
+                      {isOpen && (
+                        <div className="px-3.5 pb-3.5 text-xs text-y2k-gunmetal/75 leading-relaxed bg-y2k-ice/15">
+                          <p>{item.a}</p>
                         </div>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
-          ))
-        ) : (
-          <div className="text-center text-xl font-bold uppercase tracking-widest opacity-50 py-12">
-            No results found for "{search}"
-          </div>
-        )}
-      </section>
+          ))}
+
+          {filteredCategories.length === 0 && (
+            <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs text-y2k-gunmetal/60">
+              No answers matching "{search}". Contact our concierge team directly.
+            </div>
+          )}
+        </div>
+
+        {/* Support Help Card */}
+        <div className="mt-8 p-4 bg-white border border-y2k-gunmetal/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <span className="text-y2k-gunmetal/80">Still have questions regarding an archive piece?</span>
+          <Link
+            href="/contact"
+            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-widest shrink-0"
+          >
+            Contact Support →
+          </Link>
+        </div>
+
+      </div>
     </div>
   );
 }

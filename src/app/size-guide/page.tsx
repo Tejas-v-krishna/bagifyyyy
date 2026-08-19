@@ -2,63 +2,74 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Ruler, ArrowRight, Check } from "lucide-react";
 
 export default function SizeGuidePage() {
-  const [activeTab, setActiveTab] = useState("tops");
+  const [activeTab, setActiveTab] = useState<"tops" | "bottoms" | "footwear">("tops");
   const [unit, setUnit] = useState<"cm" | "in">("cm");
 
-  const convert = (cm: number) => unit === "cm" ? cm : (cm / 2.54).toFixed(1);
-
-  const tabs = [
-    { id: "tops", label: "TOPS" },
-    { id: "bottoms", label: "BOTTOMS" },
-    { id: "footwear", label: "FOOTWEAR" },
-  ];
+  const convert = (cm: number) => (unit === "cm" ? `${cm} cm` : `${(cm / 2.54).toFixed(1)} in`);
 
   const topsData = [
-    { size: "XS", chest: 86, waist: 71, length: 66, shoulder: 40 },
-    { size: "S", chest: 91, waist: 76, length: 68, shoulder: 42 },
-    { size: "M", chest: 96, waist: 81, length: 70, shoulder: 44 },
-    { size: "L", chest: 101, waist: 86, length: 72, shoulder: 46 },
-    { size: "XL", chest: 106, waist: 91, length: 74, shoulder: 48 },
-    { size: "XXL", chest: 111, waist: 96, length: 76, shoulder: 50 },
+    { size: "S", chest: 104, length: 70, shoulder: 52 },
+    { size: "M", chest: 110, length: 72, shoulder: 54 },
+    { size: "L", chest: 116, length: 74, shoulder: 56 },
+    { size: "XL", chest: 122, length: 76, shoulder: 58 },
   ];
 
   const bottomsData = [
-    { size: "XS", waist: 71, hip: 86, inseam: 76, rise: 25 },
-    { size: "S", waist: 76, hip: 91, inseam: 78, rise: 26 },
-    { size: "M", waist: 81, hip: 96, inseam: 80, rise: 27 },
-    { size: "L", waist: 86, hip: 101, inseam: 82, rise: 28 },
-    { size: "XL", waist: 91, hip: 106, inseam: 84, rise: 29 },
-    { size: "XXL", waist: 96, hip: 111, inseam: 86, rise: 30 },
+    { size: "30", waist: 78, length: 104, thigh: 64 },
+    { size: "32", waist: 83, length: 106, thigh: 66 },
+    { size: "34", waist: 88, length: 108, thigh: 68 },
+    { size: "36", waist: 93, length: 110, thigh: 70 },
   ];
 
   const footwearData = [
-    { uk: 6, eu: 40, us: 7, cm: 25 },
-    { uk: 7, eu: 41, us: 8, cm: 26 },
-    { uk: 8, eu: 42, us: 9, cm: 27 },
-    { uk: 9, eu: 43, us: 10, cm: 28 },
-    { uk: 10, eu: 44, us: 11, cm: 29 },
-    { uk: 11, eu: 45, us: 12, cm: 30 },
-    { uk: 12, eu: 46, us: 13, cm: 31 },
-    { uk: 13, eu: 47, us: 14, cm: 32 },
+    { uk: "UK 7", eu: "EU 41", us: "US 8", cm: 26 },
+    { uk: "UK 8", eu: "EU 42", us: "US 9", cm: 27 },
+    { uk: "UK 9", eu: "EU 43", us: "US 10", cm: 28 },
+    { uk: "UK 10", eu: "EU 44", us: "US 11", cm: 29 },
   ];
 
   return (
-    <div className="bg-y2k-ice min-h-screen pt-24 pb-24 text-y2k-gunmetal">
-      <div className="max-w-[800px] mx-auto px-4 sm:px-6">
-        <h1 className="font-display text-5xl md:text-6xl uppercase tracking-tighter mb-12 text-center">
-          SIZE GUIDE
-        </h1>
+    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 border-b border-y2k-gunmetal/20 pb-4">
-          <div className="flex gap-8">
-            {tabs.map(tab => (
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+          <Link href="/" className="hover:text-black">HOME</Link>
+          <span>/</span>
+          <span className="text-y2k-gunmetal">SIZE MATRIX</span>
+        </div>
+
+        {/* Header */}
+        <div className="mb-6 pb-4 border-b border-y2k-gunmetal/15">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
+            FITTING &amp; PROPORTIONS
+          </span>
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            SIZE GUIDE
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-1">
+            Exact garment dimensions for our signature oversized boxy streetwear silhouettes.
+          </p>
+        </div>
+
+        {/* Tab & Unit Selector */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div className="flex border border-y2k-gunmetal/20 bg-white p-0.5">
+            {[
+              { id: "tops", label: "SHIRTS & TEES" },
+              { id: "bottoms", label: "PANTS & CARGOS" },
+              { id: "footwear", label: "FOOTWEAR" },
+            ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`text-sm font-bold uppercase tracking-widest transition-all ${
-                  activeTab === tab.id ? "underline underline-offset-8" : "opacity-50 hover:opacity-100"
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-3 py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer ${
+                  activeTab === tab.id
+                    ? "bg-y2k-gunmetal text-white"
+                    : "text-y2k-gunmetal/70 hover:text-black"
                 }`}
               >
                 {tab.label}
@@ -66,114 +77,114 @@ export default function SizeGuidePage() {
             ))}
           </div>
 
-          <div className="flex bg-white border border-y2k-gunmetal">
-            <button 
+          <div className="flex border border-y2k-gunmetal/20 bg-white p-0.5">
+            <button
               onClick={() => setUnit("cm")}
-              className={`px-4 py-2 text-xs font-bold uppercase tracking-widest ${unit === "cm" ? "bg-y2k-gunmetal text-[#F8F5E9]" : "text-y2k-gunmetal"}`}
+              className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider cursor-pointer ${
+                unit === "cm" ? "bg-y2k-gunmetal text-white" : "text-y2k-gunmetal/60"
+              }`}
             >
               CM
             </button>
-            <button 
+            <button
               onClick={() => setUnit("in")}
-              className={`px-4 py-2 text-xs font-bold uppercase tracking-widest ${unit === "in" ? "bg-y2k-gunmetal text-[#F8F5E9]" : "text-y2k-gunmetal"}`}
+              className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider cursor-pointer ${
+                unit === "in" ? "bg-y2k-gunmetal text-white" : "text-y2k-gunmetal/60"
+              }`}
             >
               IN
             </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto bg-white border border-y2k-gunmetal/20 mb-12 shadow-sm">
-          <table className="w-full text-center border-collapse text-sm">
-            <thead className="bg-[#232D3B] text-[#F8F5E9] font-bold uppercase tracking-widest text-xs">
-              {activeTab === "tops" && (
-                <tr>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Size</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Chest</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Waist</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Length</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Shoulder</th>
-                </tr>
-              )}
-              {activeTab === "bottoms" && (
-                <tr>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Size</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Waist</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Hip</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Inseam</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">Rise</th>
-                </tr>
-              )}
-              {activeTab === "footwear" && (
-                <tr>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">UK</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">EU</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">US</th>
-                  <th className="py-4 px-4 border border-y2k-gunmetal/20">CM</th>
-                </tr>
-              )}
+        {/* Table */}
+        <div className="bg-white border border-y2k-gunmetal/15 overflow-hidden mb-6 shadow-xs">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-widest">
+                <th className="p-3">SIZE</th>
+                {activeTab === "tops" && (
+                  <>
+                    <th className="p-3">CHEST</th>
+                    <th className="p-3">LENGTH</th>
+                    <th className="p-3">SHOULDER</th>
+                  </>
+                )}
+                {activeTab === "bottoms" && (
+                  <>
+                    <th className="p-3">WAIST</th>
+                    <th className="p-3">LENGTH</th>
+                    <th className="p-3">THIGH</th>
+                  </>
+                )}
+                {activeTab === "footwear" && (
+                  <>
+                    <th className="p-3">EU</th>
+                    <th className="p-3">US</th>
+                    <th className="p-3">INSOLE (CM)</th>
+                  </>
+                )}
+              </tr>
             </thead>
-            <tbody>
-              {activeTab === "tops" && topsData.map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-y2k-ice"}>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20 font-bold">{row.size}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.chest)}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.waist)}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.length)}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.shoulder)}</td>
-                </tr>
-              ))}
-              {activeTab === "bottoms" && bottomsData.map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-y2k-ice"}>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20 font-bold">{row.size}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.waist)}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.hip)}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.inseam)}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.rise)}</td>
-                </tr>
-              ))}
-              {activeTab === "footwear" && footwearData.map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-y2k-ice"}>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20 font-bold">{row.uk}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{row.eu}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{row.us}</td>
-                  <td className="py-4 px-4 border border-y2k-gunmetal/20">{convert(row.cm)}</td>
-                </tr>
-              ))}
+            <tbody className="divide-y divide-y2k-gunmetal/10 font-mono text-[11px]">
+              {activeTab === "tops" &&
+                topsData.map((row) => (
+                  <tr key={row.size} className="hover:bg-y2k-ice/30">
+                    <td className="p-3 font-bold font-sans">{row.size}</td>
+                    <td className="p-3">{convert(row.chest)}</td>
+                    <td className="p-3">{convert(row.length)}</td>
+                    <td className="p-3">{convert(row.shoulder)}</td>
+                  </tr>
+                ))}
+
+              {activeTab === "bottoms" &&
+                bottomsData.map((row) => (
+                  <tr key={row.size} className="hover:bg-y2k-ice/30">
+                    <td className="p-3 font-bold font-sans">{row.size}</td>
+                    <td className="p-3">{convert(row.waist)}</td>
+                    <td className="p-3">{convert(row.length)}</td>
+                    <td className="p-3">{convert(row.thigh)}</td>
+                  </tr>
+                ))}
+
+              {activeTab === "footwear" &&
+                footwearData.map((row) => (
+                  <tr key={row.uk} className="hover:bg-y2k-ice/30">
+                    <td className="p-3 font-bold font-sans">{row.uk}</td>
+                    <td className="p-3">{row.eu}</td>
+                    <td className="p-3">{row.us}</td>
+                    <td className="p-3">{row.cm} cm</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
 
-        <div className="bg-white border border-y2k-gunmetal/20 p-8 mb-12">
-          <h2 className="font-bold uppercase tracking-widest mb-6">How To Measure</h2>
-          <dl className="space-y-4 text-sm">
+        {/* Measuring Guide Notes */}
+        <div className="bg-white border border-y2k-gunmetal/15 p-4 text-xs space-y-2 shadow-xs">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate block mb-1">
+            HOW TO MEASURE
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-y2k-gunmetal/80">
             <div>
-              <dt className="font-bold uppercase inline">Chest:</dt>
-              <dd className="inline ml-2 opacity-80">Measure under your arms, around the fullest part of your chest.</dd>
+              <strong className="text-y2k-gunmetal block uppercase font-bold">Chest (Pit to Pit):</strong>
+              Measure straight across chest from armpit to armpit, doubled.
             </div>
             <div>
-              <dt className="font-bold uppercase inline">Waist:</dt>
-              <dd className="inline ml-2 opacity-80">Measure around your natural waistline, keeping the tape a bit loose.</dd>
+              <strong className="text-y2k-gunmetal block uppercase font-bold">Length:</strong>
+              Measure from highest shoulder point down to bottom hem.
             </div>
             <div>
-              <dt className="font-bold uppercase inline">Hip:</dt>
-              <dd className="inline ml-2 opacity-80">Measure around the fullest part of your body at the top of your leg.</dd>
+              <strong className="text-y2k-gunmetal block uppercase font-bold">Waist:</strong>
+              Measure horizontally across the waistband, doubled.
             </div>
             <div>
-              <dt className="font-bold uppercase inline">Inseam:</dt>
-              <dd className="inline ml-2 opacity-80">Measure from the top of your inner leg along the inside seam to the bottom of your leg.</dd>
+              <strong className="text-y2k-gunmetal block uppercase font-bold">Fit Note:</strong>
+              Silhouettes are cut with signature boxy drape. Order true to size.
             </div>
-          </dl>
+          </div>
         </div>
 
-        <div className="text-center">
-          <p className="text-sm font-medium mb-4">Still unsure? Chat with us</p>
-          <Link 
-            href="/contact"
-            className="inline-block bg-[#232D3B] text-[#F8F5E9] px-8 py-3 rounded-none font-bold uppercase tracking-widest text-sm hover:opacity-90"
-          >
-            CONTACT SUPPORT
-          </Link>
-        </div>
       </div>
     </div>
   );
