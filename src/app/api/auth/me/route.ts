@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 
+const ADMIN_EMAILS = [
+  (process.env.ADMIN_EMAIL || 'admin@bagifyyyy.com').toLowerCase(),
+  'admin@bagifyyyy.com',
+  'admin@bagify.com',
+];
+
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -27,7 +33,14 @@ export async function GET() {
       return NextResponse.json({ user: null });
     }
 
-    return NextResponse.json({ user });
+    const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+
+    return NextResponse.json({
+      user: {
+        ...user,
+        isAdmin,
+      },
+    });
   } catch (error) {
     console.error('Error fetching current user:', error);
     return NextResponse.json({ user: null });

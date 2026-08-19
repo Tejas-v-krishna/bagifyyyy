@@ -150,12 +150,6 @@ export default function Footer() {
               >
                 WISHLIST
               </Link>
-              <Link
-                href="/studio"
-                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
-              >
-                STUDIO / ADMIN
-              </Link>
             </nav>
           </div>
 
@@ -172,14 +166,6 @@ export default function Footer() {
                 className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >
                 INSTAGRAM
-              </a>
-              <a
-                href="https://tiktok.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
-              >
-                TIKTOK
               </a>
             </nav>
           </div>

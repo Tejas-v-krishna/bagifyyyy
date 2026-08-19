@@ -35,7 +35,12 @@ export default function AccountPage() {
   const { addItem } = useCartStore();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<"orders" | "loyalty" | "addresses" | "wishlist" | "profile">("orders");
+  const isAdmin = Boolean(
+    user?.isAdmin ||
+    (user?.email && ["admin@bagifyyyy.com", "admin@bagify.com"].includes(user.email.toLowerCase()))
+  );
+
+  const [activeTab, setActiveTab] = useState<"orders" | "loyalty" | "addresses" | "wishlist" | "profile" | "admin">("orders");
   const [loyaltyData, setLoyaltyData] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
@@ -255,6 +260,11 @@ export default function AccountPage() {
                     <span className="text-[9px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/15 px-2.5 py-1 text-y2k-gunmetal">
                       {memberId}
                     </span>
+                    {isAdmin && (
+                      <span className="text-[9px] font-black uppercase tracking-wider bg-black text-white px-2.5 py-1 flex items-center gap-1 border border-black shadow-xs">
+                        <ShieldCheck className="w-3 h-3 text-emerald-400" /> Store Admin
+                      </span>
+                    )}
                     {user?.googleId ? (
                       <span className="text-[9px] font-bold uppercase tracking-wider bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> Google Linked
@@ -268,6 +278,37 @@ export default function AccountPage() {
                 </div>
               </div>
             </div>
+
+            {/* Admin Management Quick Bar */}
+            {isAdmin && (
+              <div className="mt-5 p-3.5 bg-black text-white border border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                <div className="flex items-center gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-white">
+                      Bagify Studio Administration
+                    </p>
+                    <p className="text-[9px] text-gray-400 font-normal">
+                      Authorized to manage orders, product inventory &amp; print shipping labels
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href="/studio/orders"
+                    className="bg-white/10 hover:bg-white text-white hover:text-black px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors border border-white/20 text-center"
+                  >
+                    Orders &amp; Labels →
+                  </Link>
+                  <Link
+                    href="/studio"
+                    className="bg-white text-black hover:bg-gray-200 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors text-center"
+                  >
+                    Open Studio →
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Quick action bar */}
             <div className="mt-6 pt-5 border-t border-y2k-gunmetal/10 flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -416,6 +457,7 @@ export default function AccountPage() {
             { id: "wishlist", label: "Saved Pieces", count: wishlistIds.length, icon: Heart },
             { id: "loyalty", label: "Chrome Club", count: points, icon: Award },
             { id: "profile", label: "Security & Info", icon: ShieldCheck },
+            ...(isAdmin ? [{ id: "admin", label: "Studio Admin", count: undefined, icon: ShieldCheck }] : []),
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1054,6 +1096,105 @@ export default function AccountPage() {
                   </p>
                 </div>
 
+              </div>
+            </div>
+          )}
+
+          {/* 6. STUDIO ADMIN TAB */}
+          {activeTab === "admin" && isAdmin && (
+            <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-y2k-gunmetal/10 gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="bg-black text-white text-[9px] font-black uppercase px-2 py-0.5 tracking-wider">
+                      SUPERUSER PORTAL
+                    </span>
+                    <span className="text-[10px] text-emerald-700 font-bold uppercase">
+                      ✓ AUTHENTICATED
+                    </span>
+                  </div>
+                  <h3 className="font-display text-2xl uppercase tracking-tight">
+                    BAGIFYYYY STUDIO ADMIN
+                  </h3>
+                  <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
+                    Full access to fulfill orders, print shipping labels, manage inventory &amp; launch drops.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/studio"
+                    className="bg-black text-white hover:bg-gray-800 text-[10px] font-black uppercase tracking-widest px-5 py-3 transition-colors shadow-xs"
+                  >
+                    Open Studio Dashboard →
+                  </Link>
+                </div>
+              </div>
+
+              {/* Admin Portal Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* 1. Orders & Logistics */}
+                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                      <ShoppingBag className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                      Order Management
+                    </h4>
+                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
+                      Review customer orders, update tracking IDs, and generate thermal 4x6 / A6 packaging labels for parcel shipping bags.
+                    </p>
+                  </div>
+                  <Link
+                    href="/studio/orders"
+                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                  >
+                    Manage Orders &amp; Print Labels →
+                  </Link>
+                </div>
+
+                {/* 2. Product Catalog */}
+                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                      <Package className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                      Product Catalog &amp; Stock
+                    </h4>
+                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
+                      Add new apparel drops, upload product photos, edit descriptions, adjust prices, and toggle sold-out statuses.
+                    </p>
+                  </div>
+                  <Link
+                    href="/studio"
+                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                  >
+                    Manage Catalog &amp; Drops →
+                  </Link>
+                </div>
+
+                {/* 3. Marketing & Broadcasts */}
+                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                      Marketing &amp; Campaigns
+                    </h4>
+                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
+                      Broadcast drop announcements, send promo codes, and review newsletter subscriber engagement.
+                    </p>
+                  </div>
+                  <Link
+                    href="/studio/marketing"
+                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                  >
+                    Marketing Studio →
+                  </Link>
+                </div>
               </div>
             </div>
           )}
