@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useState } from "react";
 import { X, Menu, Heart, ShoppingBag, User } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Header() {
   const { toggleCart, items } = useCartStore();
@@ -170,50 +171,90 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── Mobile slide-down menu ─────────────────────────────────────────── */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-y2k-gunmetal/15 bg-y2k-ice">
-          <nav className="flex flex-col px-6 py-6 gap-5">
-            {[
-              { href: "/topwears", label: "Shirts & Tees" },
-              { href: "/bottomwears", label: "Pants & Cargos" },
-              { href: "/accessories", label: "Accessories" },
-              { href: "/bundles", label: "Bundles & Sets" },
-              { href: "/products", label: "All Drops" },
-              { href: "/wishlist", label: "Wishlist" },
-            ].map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal border-b border-y2k-gunmetal/10 pb-4"
-              >
-                {label}
-              </Link>
-            ))}
-            {isAuthenticated ? (
-              <Link
-                href="/account"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal border-b border-y2k-gunmetal/10 pb-4 flex items-center justify-between"
-              >
-                <span>My Account ({user?.name || user?.email})</span>
-                {user?.avatar && (
-                  <img src={user.avatar} alt="Avatar" className="w-5 h-5 rounded-full" />
+      {/* ── Mobile side drawer menu ─────────────────────────────────────────── */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm lg:hidden"
+            />
+            
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 z-[70] w-4/5 max-w-sm bg-y2k-ice border-r border-y2k-gunmetal/15 shadow-2xl flex flex-col lg:hidden"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-y2k-gunmetal/10">
+                <span className="font-display text-xl uppercase tracking-tighter text-y2k-gunmetal">
+                  Menu
+                </span>
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-1 hover:bg-black/5 rounded-full transition-colors cursor-pointer"
+                >
+                  <X className="h-5 w-5 text-y2k-gunmetal" />
+                </button>
+              </div>
+
+              <nav className="flex flex-col px-6 py-6 gap-6 flex-1 overflow-y-auto">
+                {[
+                  { href: "/topwears", label: "Shirts & Tees" },
+                  { href: "/bottomwears", label: "Pants & Cargos" },
+                  { href: "/accessories", label: "Accessories" },
+                  { href: "/bundles", label: "Bundles & Sets" },
+                  { href: "/products", label: "All Drops" },
+                  { href: "/wishlist", label: "Wishlist" },
+                ].map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal border-b border-y2k-gunmetal/10 pb-4"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+
+              <div className="p-6 border-t border-y2k-gunmetal/10">
+                {isAuthenticated ? (
+                  <Link
+                    href="/account"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal"
+                  >
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full border border-y2k-gunmetal/20" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs">
+                        {user?.name ? user.name[0].toUpperCase() : "U"}
+                      </div>
+                    )}
+                    <span>My Account</span>
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="btn-bagify flex items-center justify-center w-full py-4 text-[11px] font-bold uppercase tracking-[0.15em] gap-2"
+                  >
+                    <User className="w-4 h-4" />
+                    Sign In
+                  </Link>
                 )}
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal border-b border-y2k-gunmetal/10 pb-4 block"
-              >
-                Account / Sign In
-              </Link>
-            )}
-          </nav>
-        </div>
-      )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
