@@ -139,9 +139,9 @@ export default function SearchOverlay() {
                 {loading && <Loader2 className="w-4 h-4 text-y2k-gunmetal/40 animate-spin shrink-0" />}
                 <button
                   onClick={close}
-                  className="text-y2k-gunmetal/50 hover:text-black transition-colors shrink-0 cursor-pointer"
+                  className="text-y2k-gunmetal/50 hover:text-black transition-colors shrink-0 cursor-pointer p-2 -mr-2"
                 >
-                  <X className="w-5 h-5" strokeWidth={1.5} />
+                  <X className="w-6 h-6 sm:w-5 sm:h-5" strokeWidth={1.5} />
                 </button>
               </div>
 
@@ -215,7 +215,7 @@ export default function SearchOverlay() {
                 )}
 
                 {/* Empty state */}
-                {!loading && query.length >= 2 && results.length === 0 && (
+                {!loading && debouncedQuery === query && debouncedQuery.length >= 2 && results.length === 0 && (
                   <motion.div
                     key="empty"
                     initial={{ opacity: 0 }}

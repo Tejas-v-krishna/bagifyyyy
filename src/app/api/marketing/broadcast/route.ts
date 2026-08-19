@@ -1,8 +1,18 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { sendDropCampaignBroadcast } from '@/lib/email';
 
+async function isStudioAuthed(): Promise<boolean> {
+  const cookieStore = await cookies();
+  return cookieStore.get('studio-auth')?.value === 'authenticated';
+}
+
 export async function POST(request: Request) {
+  if (!(await isStudioAuthed())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { title, subject, headline, subheadline, promoBadge, productIds, bannerImage, testRecipient } = body;

@@ -12,6 +12,8 @@ export default function PageTransitionProvider({
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  const isStudioRoute = pathname?.startsWith("/studio") || pathname?.startsWith("/admin");
+
   useEffect(() => {
     // Reset scroll smoothly to top on every route change
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -19,9 +21,9 @@ export default function PageTransitionProvider({
       window.__lenis.scrollTo(0, { immediate: true });
     }
 
-    if (!containerRef.current) return;
+    if (isStudioRoute || !containerRef.current) return;
 
-    // Trigger deterministic GSAP Blur Fade-In on the container element on every route change
+    // Trigger deterministic GSAP Blur Fade-In on the container element on storefront route changes
     gsap.killTweensOf(containerRef.current);
     gsap.fromTo(
       containerRef.current,
@@ -38,16 +40,20 @@ export default function PageTransitionProvider({
         scale: 1,
         duration: 0.65,
         ease: "power2.out",
-        clearProps: "filter,transform",
+        clearProps: "filter,transform,willChange",
       }
     );
-  }, [pathname]);
+  }, [pathname, isStudioRoute]);
+
+  if (isStudioRoute) {
+    return <>{children}</>;
+  }
 
   return (
     <div
       key={pathname}
       ref={containerRef}
-      className="page-landing-animate w-full flex-1 flex flex-col will-change-[transform,opacity,filter]"
+      className="page-landing-animate w-full flex-1 flex flex-col"
     >
       {children}
     </div>

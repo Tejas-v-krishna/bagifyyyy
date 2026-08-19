@@ -12,7 +12,7 @@ import NotifyMeSection from "@/components/product/NotifyMeSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import ReviewSection from "@/components/product/ReviewSection";
 import SizeGuideModal from "@/components/product/SizeGuideModal";
-import { Heart, Ruler, Sparkles, ShoppingBag, ShieldCheck, Truck } from "lucide-react";
+import { Heart, Ruler, Sparkles, ShoppingBag, ShieldCheck, Truck, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function ProductDetailPage() {
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function ProductDetailPage() {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0]?.url || product.images?.[0] || product.image || "/placeholder.jpg",
+      image: product.images?.[activeImageIndex]?.url || product.images?.[0]?.url || product.images?.[0] || product.image || "/placeholder.jpg",
       quantity: 1,
       size: selectedSize || (product.sizes?.[0] ?? "One Size"),
       color: selectedColor || (product.colors?.[0] ?? "Default"),
@@ -72,11 +72,7 @@ export default function ProductDetailPage() {
   };
 
   const handleWishlistClick = () => {
-    if (!isAuthenticated) {
-      router.push(`/login?from=/product/${id}`);
-      return;
-    }
-    toggleItem(id);
+    if (id) toggleItem(id);
   };
 
   const totalBagValue = items.reduce(
@@ -87,7 +83,7 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="w-full min-h-[70vh] flex items-center justify-center bg-y2k-ice text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/60 font-sans">
-        Loading drop archive piece…
+        Loading product details…
       </div>
     );
   }
@@ -96,20 +92,21 @@ export default function ProductDetailPage() {
     return (
       <div className="w-full min-h-[70vh] flex flex-col items-center justify-center bg-y2k-ice font-sans px-4 text-center">
         <h1 className="font-display font-medium text-3xl uppercase tracking-tight mb-2 text-y2k-gunmetal">
-          PIECE NOT FOUND
+          PRODUCT NOT FOUND
         </h1>
-        <p className="text-xs text-y2k-gunmetal/70 mb-5">This drop piece is either archived or unavailable.</p>
+        <p className="text-xs text-y2k-gunmetal/70 mb-5">This product is currently unavailable.</p>
         <Link
           href="/products"
           className="btn-bagify px-6 py-3 text-xs font-bold uppercase tracking-widest"
         >
-          Browse Active Drops →
+          Browse All Products →
         </Link>
       </div>
     );
   }
 
-  const collectionTag = product.brand || "BAGIFYYYY ARCHIVE";
+  const collectionTag = product.brand || "BAGIFYYYY";
+  const productImages = product.images || [];
 
   return (
     <div className="w-full bg-white text-y2k-gunmetal min-h-screen pt-8 pb-24 font-sans">
@@ -123,7 +120,7 @@ export default function ProductDetailPage() {
             <Link href="/products" className="hover:text-black transition-colors">DROPS</Link>
             <span>/</span>
             <Link href={`/${product.category?.toLowerCase() || "products"}`} className="hover:text-black transition-colors">
-              {product.category || "ARCHIVE"}
+              {product.category || "COLLECTION"}
             </Link>
             <span>/</span>
             <span className="text-y2k-gunmetal truncate max-w-[200px]">{product.name}</span>
@@ -148,13 +145,13 @@ export default function ProductDetailPage() {
 
             <p className="text-xs sm:text-sm text-y2k-gunmetal/80 leading-relaxed font-normal mb-6">
               {product.description ||
-                "A signature archival piece crafted with heavyweight construction and tailored modern silhouette."}
+                "A signature piece crafted with heavyweight construction and tailored modern streetwear silhouette."}
             </p>
 
             {/* Scarcity Low Stock Indicator */}
             <div className="flex items-center gap-2 py-2 px-3 bg-y2k-ice border border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal mb-6">
               <span className="w-2 h-2 rounded-full bg-y2k-gunmetal animate-pulse" />
-              <span>LIMITED QUANTITY · AUTHENTIC 1-OF-1 ARCHIVE</span>
+              <span>LIMITED QUANTITY · 100% AUTHENTIC QUALITY</span>
             </div>
 
             {/* Size Selector with Inline Size Guide Trigger */}
@@ -220,7 +217,7 @@ export default function ProductDetailPage() {
             <div className="text-[11px] text-y2k-gunmetal/70 space-y-1.5 pt-4 border-t border-y2k-gunmetal/10">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" />
-                <span>100% Verified Heavyweight Archive Quality</span>
+                <span>100% Verified Heavyweight Quality Standard</span>
               </div>
               <div className="flex items-center gap-2">
                 <Truck className="w-3.5 h-3.5 text-y2k-gunmetal" />
@@ -231,21 +228,51 @@ export default function ProductDetailPage() {
 
           {/* Center Column: Image & Gallery */}
           <div className="flex flex-col items-center order-1 lg:order-2">
-            <div className="w-full aspect-[3/4] md:aspect-[4/5] relative bg-[#FAFAFA] border border-y2k-gunmetal/10 overflow-hidden">
-              {product.images && product.images.length > 0 ? (
-                <Image
-                  src={
-                    product.images[activeImageIndex]?.url ||
-                    product.images[activeImageIndex] ||
-                    product.images[0]?.url ||
-                    product.images[0]
-                  }
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                  className="object-contain object-center"
-                />
+            <div className="w-full aspect-[3/4] md:aspect-[4/5] relative bg-[#FAFAFA] border border-y2k-gunmetal/10 overflow-hidden group">
+              {productImages.length > 0 ? (
+                <>
+                  <Image
+                    src={
+                      productImages[activeImageIndex]?.url ||
+                      productImages[activeImageIndex] ||
+                      productImages[0]?.url ||
+                      productImages[0]
+                    }
+                    alt={product.name}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                    className="object-contain object-center transition-all duration-300"
+                  />
+
+                  {/* Previous / Next Arrow Controls */}
+                  {productImages.length > 1 && (
+                    <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : productImages.length - 1));
+                        }}
+                        className="w-9 h-9 rounded-full bg-white/90 text-y2k-gunmetal flex items-center justify-center shadow-md hover:bg-white transition-all cursor-pointer"
+                        title="Previous Photo"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex((prev) => (prev < productImages.length - 1 ? prev + 1 : 0));
+                        }}
+                        className="w-9 h-9 rounded-full bg-white/90 text-y2k-gunmetal flex items-center justify-center shadow-md hover:bg-white transition-all cursor-pointer"
+                        title="Next Photo"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-y2k-gunmetal/40 text-xs uppercase tracking-wider">
                   No Image Available
@@ -254,15 +281,16 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Pagination Thumbnails */}
-            {product.images && product.images.length > 1 && (
-              <div className="flex items-center gap-3 mt-4 text-xs font-bold uppercase tracking-wider">
-                {product.images.map((_: any, idx: number) => (
+            {productImages.length > 1 && (
+              <div className="flex items-center gap-3 mt-4 text-xs font-bold uppercase tracking-wider flex-wrap justify-center">
+                {productImages.map((img: any, idx: number) => (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => setActiveImageIndex(idx)}
                     className={`px-3 py-1.5 border transition-all cursor-pointer font-mono text-[11px] ${
                       activeImageIndex === idx
-                        ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
+                        ? "bg-y2k-gunmetal text-white border-y2k-gunmetal ring-2 ring-y2k-gunmetal/20 shadow-xs"
                         : "bg-white text-y2k-gunmetal/60 border-y2k-gunmetal/15 hover:border-y2k-gunmetal"
                     }`}
                   >
@@ -309,9 +337,9 @@ export default function ProductDetailPage() {
 
             {/* Quick Policy Notice */}
             <div className="mt-8 p-4 bg-y2k-ice/60 border border-y2k-gunmetal/15 text-[10px] text-y2k-gunmetal/80 space-y-2">
-              <p className="font-bold uppercase tracking-wider text-y2k-gunmetal">7-DAY RETURNS &amp; VERIFIED AUTHENTIC</p>
+              <p className="font-bold uppercase tracking-wider text-y2k-gunmetal">7-DAY RETURNS &amp; VERIFIED QUALITY</p>
               <p className="leading-relaxed">
-                Every drop piece is inspected for fabric density, hardware integrity, and provenance.
+                Every piece is inspected for fabric density, hardware integrity, and provenance.
               </p>
             </div>
           </div>

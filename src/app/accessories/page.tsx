@@ -6,7 +6,7 @@ export default function AccessoriesPage() {
   return (
     <CategoryPageClient
       category="accessories"
-      title="Accessories"
+      title="ACCESSORIES"
       badge="COMING SOON • ARCHIVE SOURCING"
       subtitle="Accessories archive drops are currently being sourced."
     />

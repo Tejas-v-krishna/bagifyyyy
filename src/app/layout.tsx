@@ -17,17 +17,17 @@ const urbanist = Urbanist({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.com"),
   title: {
-    default: "BAGIFYYYY | Y2K Streetwear & Archive",
+    default: "BAGIFYYYY | Streetwear & Apparel",
     template: "%s | BAGIFYYYY",
   },
-  description: "Y2K-era streetwear drop culture. No restocks, no replicas. 1-of-1 curated vintage archive garments.",
-  keywords: ["Y2K fashion", "streetwear", "archive fashion", "vintage clothing", "bagifyyyy", "oversized tees", "cargos"],
-  authors: [{ name: "BAGIFYYYY ARCHIVE" }],
+  description: "Streetwear drop culture. Premium oversized tees, cargos, jackets, and accessories.",
+  keywords: ["streetwear", "fashion", "bagifyyyy", "oversized tees", "cargos"],
+  authors: [{ name: "BAGIFYYYY" }],
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://bagifyyyy.com",
-    title: "BAGIFYYYY | Y2K Streetwear & Archive",
+    title: "BAGIFYYYY | Streetwear & Apparel",
     description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
     siteName: "BAGIFYYYY",
     images: [

@@ -88,7 +88,7 @@ function SuccessContent() {
 
             {/* Loyalty Points Banner */}
             <div className="mt-5 inline-flex items-center gap-2 bg-[#232D3B] text-white px-4 py-2 text-[11px] font-bold uppercase tracking-wider shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <Sparkles className="w-3.5 h-3.5 text-white" />
               <span>+{earnedPoints} Chrome Points Credited to Your Account</span>
             </div>
           </div>

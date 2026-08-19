@@ -55,35 +55,49 @@ export default function BundlesPage() {
   };
 
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen">
-      {/* Hero */}
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 pt-20 pb-12">
-        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-y2k-gunmetal/50 mb-3">BAGIFYYYY</p>
-        <h1 className="font-display text-5xl md:text-7xl uppercase tracking-tighter font-black leading-none">
-          BUNDLE<br />& SAVE
-        </h1>
-        <p className="mt-5 text-base text-y2k-gunmetal/70 max-w-lg leading-relaxed">
-          Curated archive combinations at an exclusive discount. Save more when you shop the full look.
-        </p>
+    <div className="w-full min-h-screen flex flex-col pt-12 bg-y2k-ice text-y2k-gunmetal">
+      {/* Standardized Header matching CategoryPageClient */}
+      <div className="mb-8 shrink-0 px-4 sm:px-6 lg:px-12 w-full max-w-[1800px] mx-auto">
+        <div className="flex flex-row items-end justify-between gap-4 border-b border-y2k-gunmetal/10 pb-6">
+          {/* Left: Category Title */}
+          <div className="flex flex-col">
+            <h1 className="font-display font-medium text-4xl sm:text-5xl md:text-6xl uppercase tracking-[-0.03em] leading-none py-1 text-y2k-gunmetal">
+              BUNDLES
+            </h1>
+            <p className="text-xs text-y2k-gunmetal/70 mt-2 font-sans max-w-xl">
+              Curated archive combinations at an exclusive discount. Save more when you shop the full look.
+            </p>
+          </div>
+
+          {/* Right: Count */}
+          <div className="flex flex-col items-end shrink-0">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate mb-1">
+              ARCHIVE SETS
+            </span>
+            <span className="font-display text-xl sm:text-2xl font-bold text-y2k-gunmetal">
+              [{bundles.length} SETS]
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Bundles grid */}
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 pb-24">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-12 pb-24 w-full">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[1, 2].map((i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
               <div key={i} className="bg-white/60 animate-pulse h-96 border border-y2k-gunmetal/10" />
             ))}
           </div>
         ) : bundles.length === 0 ? (
-          <div className="text-center py-24 border border-y2k-gunmetal/15">
+          <div className="text-center py-24 border border-y2k-gunmetal/15 bg-white">
             <Zap className="w-10 h-10 mx-auto opacity-20 mb-4" />
             <p className="font-bold uppercase tracking-widest text-sm text-y2k-gunmetal/40">
               No bundles available yet — check back soon!
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {bundles.map((bundle) => (
               <div
                 key={bundle.id}
@@ -146,7 +160,7 @@ export default function BundlesPage() {
                           ₹{bundle.originalTotal.toLocaleString("en-IN")}
                         </span>
                       </div>
-                      <p className="text-[10px] text-green-600 font-bold uppercase tracking-widest mt-0.5">
+                      <p className="text-[10px] text-y2k-slate font-bold uppercase tracking-widest mt-0.5">
                         You save ₹{(bundle.originalTotal - bundle.bundlePrice).toLocaleString("en-IN")}
                       </p>
                     </div>
@@ -155,7 +169,7 @@ export default function BundlesPage() {
                   <button
                     onClick={() => handleAddBundle(bundle)}
                     disabled={bundle.products.every((p) => p.isSoldOut)}
-                    className="w-full bg-[#232D3B] text-[#F8F5E9] text-[11px] font-bold uppercase tracking-widest py-4 hover:opacity-90 transition-opacity disabled:opacity-40 flex items-center justify-center gap-2"
+                    className="w-full btn-bagify text-white text-[11px] font-bold uppercase tracking-widest py-4 hover:opacity-90 transition-opacity disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     {addedId === bundle.id ? "Added to Bag ✓" : "Add Bundle to Bag"}

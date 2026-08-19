@@ -156,41 +156,41 @@ export default function ShippingLabelModal({
   const totalItemsCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto font-sans">
       {/* Container */}
-      <div className="bg-[#121212] border border-white/20 max-w-2xl w-full text-white shadow-2xl flex flex-col max-h-[94vh]">
+      <div className="bg-white border border-y2k-gunmetal/20 max-w-2xl w-full text-y2k-gunmetal shadow-2xl flex flex-col max-h-[94vh]">
         
         {/* Modal Top Header (Screen Only) */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0 bg-[#181818]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-y2k-gunmetal/15 shrink-0 bg-y2k-ice print:hidden">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-bold">
-              <Printer className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center font-bold">
+              <Printer className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-white">Shipping Bag Thermal Label</h2>
-              <p className="text-[10px] text-gray-400">Order #{order.orderNumber} • 100% Pure Black &amp; White Print Ready</p>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">Thermal Shipping Sticker</h2>
+              <p className="text-[10px] text-y2k-gunmetal/60">Order #{order.orderNumber} • Standard 100% Black &amp; White Sticker Format</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyAddress}
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-white/20 hover:border-white text-gray-300 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/20 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
               title="Copy delivery address to clipboard"
             >
-              {copied ? <Check className="w-3 h-3 text-white" /> : <Copy className="w-3 h-3" />}
+              {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
               {copied ? "Copied!" : "Copy Address"}
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 bg-white text-black px-4 py-1.5 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors shadow-sm"
+              className="btn-bagify px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <Printer className="w-3.5 h-3.5" />
-              Print Label (Ctrl+P)
+              Print Sticker (Ctrl+P)
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-white transition-colors ml-2"
+              className="p-2 text-y2k-gunmetal/60 hover:text-black transition-colors ml-1 cursor-pointer"
               title="Close (Esc)"
             >
               <X className="w-5 h-5" />

@@ -10,14 +10,22 @@ import { useState } from "react";
 
 const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.10 };
 
+import { usePathname } from "next/navigation";
+
 export default function CartDrawer() {
+  const pathname = usePathname();
   const { isOpen, closeCart, items, removeItem, updateQuantity, cartTotal } =
     useCartStore();
   const { isAuthenticated } = useAuthStore();
 
+  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
   const [promoError, setPromoError] = useState("");
+  const [removingItemKey, setRemovingItemKey] = useState<string | null>(null);
 
   const handleApplyPromo = () => {
     const upper = promoInput.trim().toUpperCase();
@@ -44,7 +52,7 @@ export default function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeCart}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm"
           />
 
           {/* Drawer */}
@@ -53,7 +61,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-background border-l border-border shadow-2xl flex flex-col"
+            className="fixed inset-y-0 right-0 z-[10000] w-full max-w-md bg-background border-l border-border shadow-2xl flex flex-col h-[100dvh]"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-border">
@@ -152,12 +160,30 @@ export default function CartDrawer() {
                                   <Plus className="w-4 h-4" />
                                 </button>
                               </div>
-                              <button
-                                onClick={() => removeItem(key)}
-                                className="text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground underline underline-offset-2 cursor-pointer"
-                              >
-                                Remove
-                              </button>
+                              {removingItemKey === key ? (
+                                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                                  <span className="text-red-500">Remove?</span>
+                                  <button
+                                    onClick={() => removeItem(key)}
+                                    className="text-black underline cursor-pointer"
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    onClick={() => setRemovingItemKey(null)}
+                                    className="text-gray-400 hover:text-black cursor-pointer"
+                                  >
+                                    No
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setRemovingItemKey(key)}
+                                  className="text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground underline underline-offset-2 cursor-pointer"
+                                >
+                                  Remove
+                                </button>
+                              )}
                             </div>
                           </div>
                         </li>
@@ -188,14 +214,14 @@ export default function CartDrawer() {
 
                 {/* Promo Code Row */}
                 {appliedPromo ? (
-                  <div className="flex items-center justify-between bg-green-50 border border-green-200 px-3 py-2">
-                    <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest flex items-center gap-1.5">
+                  <div className="flex items-center justify-between bg-y2k-ice border border-y2k-gunmetal/20 px-3 py-2">
+                    <span className="text-[10px] font-bold text-y2k-gunmetal uppercase tracking-widest flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                     </span>
                     <button
                       onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
-                      className="text-[10px] font-bold text-green-700 hover:text-red-600 underline cursor-pointer"
+                      className="text-[10px] font-bold text-y2k-slate hover:text-black underline cursor-pointer"
                     >
                       Remove
                     </button>

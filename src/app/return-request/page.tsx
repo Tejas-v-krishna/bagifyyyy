@@ -16,7 +16,7 @@ export default function ReturnRequestPage() {
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Store
         </Link>
-        <div className="w-14 h-14 bg-amber-100 border border-amber-300 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-800">
+        <div className="w-14 h-14 bg-y2k-gunmetal/5 border border-y2k-gunmetal/20 rounded-full flex items-center justify-center mx-auto mb-6 text-y2k-gunmetal">
           <ShieldAlert className="w-7 h-7" />
         </div>
         <h1 className="font-display text-3xl sm:text-5xl uppercase tracking-tight font-medium text-y2k-gunmetal mb-4">

@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -29,35 +32,49 @@ function LoginForm() {
         router.push(from);
         router.refresh();
       } else {
-        setError("Incorrect password. Try again.");
+        setError("Incorrect password. Access denied.");
         setPassword("");
       }
     } catch {
-      setError("Something went wrong. Try again.");
+      setError("Authentication error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="text-center mb-12">
-          <p className="text-[8px] uppercase tracking-[0.4em] text-gray-500 mb-3">
-            BAGIFYYYY
-          </p>
-          <h1 className="text-white font-medium text-2xl tracking-tight">
-            Studio
-          </h1>
-          <div className="w-8 h-px bg-gray-700 mx-auto mt-4" />
+    <div className="w-full min-h-screen bg-y2k-ice text-y2k-gunmetal flex flex-col items-center justify-center px-4 font-sans relative">
+      {/* Return to Public Store link */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-y2k-slate hover:text-black transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span>Return to Public Store</span>
+      </Link>
+
+      <div className="w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-8 shadow-xl">
+        {/* Brand Header */}
+        <div className="text-center mb-8 pb-6 border-b border-y2k-gunmetal/15">
+          <Image
+            src="/logo.png"
+            alt="Bagifyyyy Logo"
+            width={160}
+            height={36}
+            className="object-contain mx-auto mb-3"
+            priority
+          />
+          <div className="inline-flex items-center gap-1.5 bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>STUDIO CONTROL PASSPORT</span>
+          </div>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-[9px] font-bold uppercase tracking-widest text-gray-500">
-              Password
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70">
+              Admin Access Password *
             </label>
             <input
               type="password"
@@ -65,13 +82,13 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoFocus
-              placeholder="Enter admin password"
-              className="bg-transparent border border-gray-700 text-white px-4 py-3 text-sm outline-none focus:border-white transition-colors placeholder:text-gray-700"
+              placeholder="Enter studio key"
+              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal font-medium transition-colors placeholder:text-y2k-gunmetal/30"
             />
           </div>
 
           {error && (
-            <p className="text-[9px] font-bold uppercase tracking-widest text-red-500">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-red-600 bg-red-50 p-2.5 border border-red-200">
               {error}
             </p>
           )}
@@ -79,14 +96,15 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="mt-2 bg-white text-black px-6 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors disabled:opacity-40"
+            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 shadow-sm"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            <span>{loading ? "Authenticating…" : "Unlock Studio Operations"}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        <p className="text-center text-[8px] uppercase tracking-widest text-gray-700 mt-8">
-          This page is not linked publicly.
+        <p className="text-center text-[9px] uppercase tracking-widest text-y2k-gunmetal/40 mt-6 pt-4 border-t border-y2k-gunmetal/10">
+          Internal Restricted Control Interface
         </p>
       </div>
     </div>
@@ -95,7 +113,13 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
+          Loading Control Portal...
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   );

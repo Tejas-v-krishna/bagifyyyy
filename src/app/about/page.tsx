@@ -16,7 +16,7 @@ export default function AboutPage() {
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 text-center px-4 flex flex-col items-center">
-          <h1 className="font-display text-[#F8F5E9] text-5xl md:text-7xl uppercase tracking-tighter font-black max-w-4xl leading-tight">
+          <h1 className="font-display text-[#F8F5E9] text-3xl sm:text-5xl uppercase tracking-tighter font-black max-w-4xl leading-tight">
             "STYLE ISN'T LOUD. IT'S CHROME."
           </h1>
           <p className="mt-6 text-[#F8F5E9] text-xl font-bold tracking-widest uppercase">
@@ -26,10 +26,10 @@ export default function AboutPage() {
       </section>
 
       {/* Founder Story */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-24">
+      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-16 sm:py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tighter font-black leading-none">
+            <h2 className="font-display text-3xl sm:text-5xl uppercase tracking-tighter font-black leading-none">
               WE BUILD FOR THE FREE THINKERS.
             </h2>
           </div>
@@ -67,9 +67,9 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline / Lookbook strip */}
-      <section className="py-24 overflow-hidden">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 mb-12">
-          <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tighter font-black text-center">
+      <section className="py-16 overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 mb-8">
+          <h2 className="font-display text-3xl sm:text-5xl uppercase tracking-tighter font-black text-center">
             THE ARCHIVE
           </h2>
         </div>
@@ -99,8 +99,8 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-24 text-center">
-        <Link href="/products" className="inline-block bg-[#232D3B] text-[#F8F5E9] rounded-none font-bold uppercase tracking-widest px-8 py-4 hover:bg-black transition-colors">
+      <section className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-16 text-center">
+        <Link href="/products" className="btn-bagify inline-block text-xs font-bold uppercase tracking-widest px-8 py-4">
           SHOP THE LATEST DROP →
         </Link>
       </section>

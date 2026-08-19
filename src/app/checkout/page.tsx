@@ -112,7 +112,7 @@ function CheckoutContent() {
   }, []);
 
   const total = cartTotal();
-  const shipping = shippingMethod === 'express' ? 99 : (total >= 299 ? 0 : 49);
+  const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
   const codFee = paymentMethod === 'cod' ? 49 : 0;
   const discountAmount = appliedPromo ? Math.round(total * appliedPromo.discount * 100) / 100 : 0;
   const finalTotal = total - discountAmount + shipping + codFee;
@@ -273,8 +273,8 @@ function CheckoutContent() {
         {/* Breadcrumb / Top Title */}
         <div className="mb-8 border-b border-y2k-gunmetal/15 pb-4 flex items-center justify-between">
           <h1 className="font-display text-3xl md:text-4xl uppercase tracking-tight">SECURE CHECKOUT</h1>
-          <div className="flex items-center gap-2 text-xs font-bold text-green-700">
-            <ShieldCheck className="w-4 h-4" /> 256-Bit Encrypted (Razorpay)
+          <div className="flex items-center gap-2 text-xs font-bold text-y2k-gunmetal/80">
+            <ShieldCheck className="w-4 h-4 text-y2k-gunmetal" /> 256-Bit Encrypted (Razorpay)
           </div>
         </div>
 
@@ -500,7 +500,7 @@ function CheckoutContent() {
                           <p className="text-[11px] text-y2k-gunmetal/60">Estimated 4-6 business days</p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold uppercase">{total >= 299 ? 'FREE' : '₹49'}</span>
+                      <span className="text-xs font-bold uppercase">{total >= 2000 ? 'FREE' : '₹49'}</span>
                     </label>
 
                     <label className={`flex items-center justify-between p-4 border cursor-pointer transition-all ${shippingMethod === 'express' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/20'}`}>
@@ -662,14 +662,14 @@ function CheckoutContent() {
             {/* Promo Code */}
             <div className="border-t border-y2k-gunmetal/10 pt-4 pb-2">
               {appliedPromo ? (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 px-3 py-2">
-                  <span className="text-[10px] font-bold text-green-700 uppercase tracking-widest flex items-center gap-1.5">
+                <div className="flex items-center justify-between bg-y2k-ice border border-y2k-gunmetal/20 px-3 py-2">
+                  <span className="text-[10px] font-bold text-y2k-gunmetal uppercase tracking-widest flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                   </span>
                   <button
                     onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
-                    className="text-[10px] font-bold text-green-700 hover:text-red-600 underline cursor-pointer"
+                    className="text-[10px] font-bold text-y2k-slate hover:text-black underline cursor-pointer"
                   >
                     Remove
                   </button>
@@ -707,7 +707,7 @@ function CheckoutContent() {
                 <span className="font-semibold">₹{total.toFixed(2)}</span>
               </div>
               {discountAmount > 0 && (
-                <div className="flex justify-between items-center text-green-600 font-bold">
+                <div className="flex justify-between items-center text-y2k-gunmetal font-bold">
                   <span>Promo ({appliedPromo!.code}):</span>
                   <span>−₹{discountAmount.toFixed(2)}</span>
                 </div>

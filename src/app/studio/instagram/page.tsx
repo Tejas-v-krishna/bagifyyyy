@@ -127,17 +127,19 @@ export default function StudioInstagramPage() {
   };
 
   return (
-    <div className="min-h-screen bg-y2k-ice text-y2k-gunmetal px-6 sm:px-10 py-10">
+    <div className="space-y-8 font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-6 border-b border-y2k-gunmetal/15">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-gunmetal/50 mb-2">
-            BAGIFYYYY / STUDIO
-          </p>
-          <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-[-0.03em]">Instagram Feed</h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-1 max-w-lg">
-            Curate and update the 4 featured Instagram drop posts shown on the store homepage.
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
+            SOCIAL MEDIA
+          </span>
+          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            INSTAGRAM FEED
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
+            Curate and update the featured Instagram posts on your homepage.
           </p>
         </div>
 

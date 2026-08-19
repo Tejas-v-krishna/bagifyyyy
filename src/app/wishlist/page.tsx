@@ -51,20 +51,19 @@ export default function WishlistPage() {
         </p>
       </div>
 
-      {!isAuthenticated ? (
-        <div className="w-full flex flex-col items-center justify-center py-20 border border-y2k-soft bg-y2k-ice">
-          <Heart strokeWidth={1} className="w-16 h-16 text-y2k-slate mb-6 opacity-50" />
-          <h2 className="text-xl md:text-2xl font-display uppercase tracking-tight text-y2k-gunmetal mb-2 text-center">
-            SIGN IN TO VIEW YOUR WISHLIST
-          </h2>
+      {!isAuthenticated && (
+        <div className="mb-8 p-4 bg-y2k-ice border border-y2k-gunmetal/15 text-xs text-y2k-gunmetal/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span>Wishlist items are saved in this browser. Sign in to sync across device sessions.</span>
           <Link
             href="/login?from=/wishlist"
-            className="btn-bagify px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 transition-opacity mt-4 inline-block"
+            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white hover:opacity-90 shrink-0"
           >
-            SIGN IN TO VIEW WISHLIST →
+            SIGN IN TO SYNC →
           </Link>
         </div>
-      ) : loading ? (
+      )}
+
+      {loading ? (
         <div className="w-full flex justify-center py-20 text-y2k-slate uppercase tracking-widest font-bold">
           LOADING WISHLIST...
         </div>

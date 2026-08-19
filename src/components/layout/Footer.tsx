@@ -3,10 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 
+import { usePathname } from "next/navigation";
+
 export default function Footer() {
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+
+  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,7 +211,7 @@ export default function Footer() {
             {message && (
               <p
                 className={`text-xs font-bold uppercase tracking-wider mt-1 ${
-                  status === "success" ? "text-emerald-700" : "text-red-600"
+                  status === "success" ? "text-y2k-gunmetal" : "text-red-600"
                 }`}
               >
                 {message}

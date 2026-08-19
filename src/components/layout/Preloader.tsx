@@ -5,9 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useAppStore } from "@/store/useAppStore";
 
+import { usePathname } from "next/navigation";
+
 export default function Preloader() {
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
+
+  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   useEffect(() => {
     // Atmospheric brand reveal

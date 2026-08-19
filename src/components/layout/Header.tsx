@@ -10,11 +10,18 @@ import { X, Menu, Heart, ShoppingBag, User } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { usePathname } from "next/navigation";
+
 export default function Header() {
+  const pathname = usePathname();
   const { toggleCart, items } = useCartStore();
   const { openAuthModal, isAuthenticated, user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -157,17 +164,19 @@ export default function Header() {
         </nav>
 
         {/* Mobile right: search + bag + hamburger */}
-        <div className="flex lg:hidden items-center gap-5">
-          <SearchOverlay />
+        <div className="flex lg:hidden items-center gap-2">
+          <div className="p-2">
+            <SearchOverlay />
+          </div>
           
           <button
             onClick={toggleCart}
-            className="relative text-y2k-gunmetal hover:text-black transition-colors cursor-pointer"
+            className="relative text-y2k-gunmetal hover:text-black transition-colors cursor-pointer p-2"
             aria-label="Bag"
           >
             <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
             {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 text-[9px] font-black text-white bg-y2k-gunmetal w-[18px] h-[18px] flex items-center justify-center rounded-full leading-none">
+              <span className="absolute top-0 right-0 text-[9px] font-black text-white bg-y2k-gunmetal w-[18px] h-[18px] flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
@@ -176,13 +185,13 @@ export default function Header() {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-y2k-gunmetal p-1 -mr-1"
+            className="text-y2k-gunmetal p-2 -mr-2 cursor-pointer"
             aria-label="Menu"
           >
             {isMobileMenuOpen ? (
-              <X strokeWidth={1.5} className="h-5 w-5" />
+              <X strokeWidth={1.5} className="h-6 w-6" />
             ) : (
-              <Menu strokeWidth={1.5} className="h-5 w-5" />
+              <Menu strokeWidth={1.5} className="h-6 w-6" />
             )}
           </button>
         </div>
@@ -209,7 +218,7 @@ export default function Header() {
                   animate={{ x: 0 }}
                   exit={{ x: "-100%" }}
                   transition={{ type: "spring", damping: 28, stiffness: 240 }}
-                  className="fixed inset-y-0 left-0 z-[9999] w-[82vw] max-w-sm bg-[#E8EDF2] text-y2k-gunmetal border-r border-y2k-gunmetal/20 shadow-2xl flex flex-col lg:hidden h-full max-h-screen"
+                  className="fixed inset-y-0 left-0 z-[9999] w-[82vw] max-w-sm bg-[#E8EDF2] text-y2k-gunmetal border-r border-y2k-gunmetal/20 shadow-2xl flex flex-col lg:hidden h-[100dvh]"
                   style={{ backgroundColor: "#E8EDF2" }}
                 >
                   {/* Drawer Header */}

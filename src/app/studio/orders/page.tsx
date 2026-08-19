@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, ChevronDown, Package, Truck, CheckCircle2, XCircle, Clock, RefreshCw, Printer } from "lucide-react";
+import { Search, ChevronDown, Package, Truck, CheckCircle2, XCircle, Clock, RefreshCw, Printer, ShieldCheck } from "lucide-react";
 import ShippingLabelModal from "./ShippingLabelModal";
 
 type OrderItem = {
@@ -40,13 +40,6 @@ type Order = {
   shippingAddress: ShippingAddress;
 };
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  PROCESSING: { label: "Processing", color: "bg-amber-50 border-amber-200 text-amber-700", icon: Clock },
-  SHIPPED: { label: "Shipped", color: "bg-blue-50 border-blue-200 text-blue-700", icon: Truck },
-  DELIVERED: { label: "Delivered", color: "bg-green-50 border-green-200 text-green-700", icon: CheckCircle2 },
-  CANCELLED: { label: "Cancelled", color: "bg-red-50 border-red-200 text-red-700", icon: XCircle },
-};
-
 const FILTER_TABS = ["ALL", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
 
 export default function StudioOrdersPage() {
@@ -75,7 +68,6 @@ export default function StudioOrdersPage() {
       const data = await res.json();
       if (data.orders) {
         setOrders(data.orders);
-        // Init local state from fetched orders
         const tracking: Record<string, string> = {};
         const statuses: Record<string, string> = {};
         data.orders.forEach((o: Order) => {
@@ -143,30 +135,30 @@ export default function StudioOrdersPage() {
     const matchPincode = (o.shippingAddress?.pincode || "").toLowerCase().includes(q);
     const matchItems = o.items?.some((item) => item.name?.toLowerCase().includes(q));
 
-    const matchesSearch =
-      matchOrderNum ||
-      matchEmail ||
-      matchPhone ||
-      matchTracking ||
-      matchName ||
-      matchCity ||
-      matchState ||
-      matchPincode ||
-      matchItems;
-
-    return matchesTab && matchesSearch;
+    return (
+      matchesTab &&
+      (matchOrderNum ||
+        matchEmail ||
+        matchPhone ||
+        matchTracking ||
+        matchName ||
+        matchCity ||
+        matchState ||
+        matchPincode ||
+        matchItems)
+    );
   });
 
   if (unauthorized) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white p-8 flex flex-col items-center justify-center">
-        <div className="bg-[#111] border border-white/10 p-8 max-w-md w-full text-center">
-          <Package className="w-10 h-10 text-amber-400 mx-auto mb-4" />
-          <h2 className="text-base font-bold uppercase tracking-widest mb-2">Studio Authentication Required</h2>
-          <p className="text-xs text-gray-400 mb-6">Please sign in to access order management and customer details.</p>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center font-sans">
+        <div className="bg-white border border-y2k-gunmetal/15 p-8 max-w-md w-full text-center shadow-xl text-y2k-gunmetal">
+          <ShieldCheck className="w-10 h-10 text-y2k-gunmetal mx-auto mb-4" />
+          <h2 className="font-display font-medium text-lg uppercase tracking-tight mb-2">Studio Authentication Required</h2>
+          <p className="text-xs text-y2k-gunmetal/70 mb-6">Please sign in to access order management and customer details.</p>
           <a
             href="/studio/login?from=/studio/orders"
-            className="inline-block w-full bg-white text-black text-[10px] font-bold uppercase tracking-widest py-3 hover:bg-gray-200 transition-colors"
+            className="btn-bagify inline-block w-full py-3 text-xs font-bold uppercase tracking-widest shadow-sm"
           >
             Sign In to Studio →
           </a>
@@ -176,251 +168,255 @@ export default function StudioOrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-6 font-sans">
+      {/* ── Page Header ───────────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between pb-4 border-b border-y2k-gunmetal/15">
         <div>
-          <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 mb-1">BAGIFYYYY STUDIO</p>
-          <h1 className="text-2xl font-bold tracking-tight">Orders</h1>
-          <p className="text-xs text-gray-500 mt-1">{orders.length} total orders recorded</p>
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
+            FULFILLMENT
+          </span>
+          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            ORDERS
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">{orders.length} total orders recorded</p>
         </div>
         <button
           onClick={fetchOrders}
-          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white border border-white/10 px-4 py-2 hover:border-white/30 transition-all"
+          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-white border border-y2k-gunmetal/20 px-4 py-2.5 hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
-          Refresh
+          <span>Refresh Data</span>
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-white/5 pb-0">
-        {FILTER_TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setFilterTab(tab)}
-            className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2 ${
-              filterTab === tab
-                ? "text-white border-white"
-                : "text-gray-600 border-transparent hover:text-gray-400"
-            }`}
-          >
-            {tab}
-            {tab !== "ALL" && (
-              <span className="ml-1.5 text-[9px] opacity-60">
-                ({orders.filter((o) => o.orderStatus === tab).length})
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Search */}
-      <div className="flex items-center gap-3 border border-white/10 bg-white/5 px-4 py-3 mb-6 max-w-md">
-        <Search className="w-4 h-4 text-gray-500 shrink-0" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by order #, name, email, phone, city..."
-          className="w-full bg-transparent text-xs text-white outline-none placeholder:text-gray-600"
-        />
-      </div>
-
-      {/* Orders Table */}
-      {loading ? (
-        <div className="text-center text-xs text-gray-500 uppercase tracking-widest py-24">Loading orders…</div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center text-xs text-gray-500 uppercase tracking-widest py-24 border border-white/5">
-          <Package className="w-8 h-8 mx-auto mb-3 opacity-20" />
-          {orders.length === 0 ? "No orders placed yet" : "No matching orders found"}
+      {/* ── Filter Tabs & Search Row ────────────────────────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Tabs */}
+        <div className="flex items-center gap-1 border-b border-y2k-gunmetal/15 pb-0 overflow-x-auto">
+          {FILTER_TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setFilterTab(tab)}
+              className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                filterTab === tab
+                  ? "border-y2k-gunmetal text-y2k-gunmetal bg-white"
+                  : "border-transparent text-y2k-gunmetal/60 hover:text-black hover:bg-white/50"
+              }`}
+            >
+              {tab === "ALL" ? `All (${orders.length})` : `${tab} (${orders.filter((o) => o.orderStatus === tab).length})`}
+            </button>
+          ))}
         </div>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {filtered.map((order) => {
-            const isExpanded = expandedId === order.id;
-            const StatusIcon = STATUS_CONFIG[order.orderStatus]?.icon || Clock;
 
-            return (
-              <div key={order.id} className="border border-white/8 bg-white/3 hover:bg-white/5 transition-colors">
-                {/* Row Header */}
-                <div
-                  onClick={() => setExpandedId(isExpanded ? null : order.id)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-none"
-                >
-                  <div className="flex items-center gap-6">
-                    <div>
-                      <p className="text-xs font-bold tracking-wider">#{order.orderNumber}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium">
-                        {order.shippingAddress?.fullName || order.customerEmail}
-                      </p>
-                      <p className="text-[9px] text-gray-600">{order.customerEmail}</p>
-                    </div>
-                    <div className="hidden sm:block">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Date</p>
-                      <p className="text-xs font-medium">
-                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Total</p>
-                      <p className="text-xs font-bold">₹{order.totalAmount.toFixed(2)}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Payment</p>
-                      <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-xs border ${
-                        order.paymentStatus === "PAID"
-                          ? "bg-green-900/30 border-green-700/40 text-green-400"
-                          : "bg-amber-900/30 border-amber-700/40 text-amber-400"
-                      }`}>
-                        {order.paymentMethod === "COD" ? "COD" : order.paymentStatus}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Status</p>
-                      <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-xs border flex items-center gap-1 w-fit ${
-                        order.orderStatus === "PROCESSING" ? "bg-amber-900/30 border-amber-700/40 text-amber-400" :
-                        order.orderStatus === "SHIPPED" ? "bg-blue-900/30 border-blue-700/40 text-blue-400" :
-                        order.orderStatus === "DELIVERED" ? "bg-green-900/30 border-green-700/40 text-green-400" :
-                        "bg-red-900/30 border-red-700/40 text-red-400"
-                      }`}>
-                        <StatusIcon className="w-2.5 h-2.5" />
-                        {order.orderStatus}
-                      </span>
-                    </div>
-                  </div>
+        {/* Search Input */}
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 text-y2k-gunmetal/40 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search order #, email, phone…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white border border-y2k-gunmetal/20 pl-9 pr-4 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40 shadow-2xs"
+          />
+        </div>
+      </div>
 
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPrintingOrder(order);
-                      }}
-                      className="flex items-center gap-1.5 bg-white/10 hover:bg-white text-gray-300 hover:text-black border border-white/15 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-all cursor-pointer"
-                      title="Print Shipping Label Sticker"
-                    >
-                      <Printer className="w-3 h-3" />
-                      <span className="hidden sm:inline">Print Label</span>
-                    </button>
-                    <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                  </div>
-                </div>
+      {/* ── Orders Table ───────────────────────────────────────────────────────── */}
+      <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
+        {loading ? (
+          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-widest text-y2k-slate animate-pulse">
+            Fetching order records…
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="py-20 text-center text-y2k-gunmetal/50 text-xs font-bold uppercase tracking-widest">
+            No matching orders found.
+          </div>
+        ) : (
+          <div className="divide-y divide-y2k-gunmetal/10">
+            {filtered.map((order) => {
+              const isExpanded = expandedId === order.id;
 
-                {/* Expanded Detail */}
-                {isExpanded && (
-                  <div className="border-t border-white/5 px-5 py-5 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Left: Items + Address */}
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">Items ({order.items.length})</p>
-                      <div className="flex flex-col gap-2 mb-5">
-                        {order.items.map((item) => (
-                          <div key={item.id} className="flex items-center gap-3 bg-white/3 px-3 py-2">
-                            <div className="w-9 h-11 bg-white/5 shrink-0 overflow-hidden">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={item.image || "/placeholder.jpg"} alt={item.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-xs font-bold">{item.name}</p>
-                              <p className="text-[10px] text-gray-500">{item.color} | {item.size} | Qty: {item.quantity}</p>
-                            </div>
-                            <p className="text-xs font-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
-                          </div>
-                        ))}
+              return (
+                <div key={order.id} className="transition-colors">
+                  {/* Summary Bar */}
+                  <div
+                    onClick={() => setExpandedId(isExpanded ? null : order.id)}
+                    className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-y2k-ice/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="w-10 h-12 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 overflow-hidden relative">
+                        <img
+                          src={order.items?.[0]?.image || "/placeholder.jpg"}
+                          alt={order.items?.[0]?.name || "Item"}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono text-sm font-bold text-y2k-gunmetal">#{order.orderNumber}</span>
+                          <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal">
+                            {order.paymentMethod === "COD" ? "COD" : order.paymentStatus}
+                          </span>
+                        </div>
+                        <p className="text-xs text-y2k-gunmetal/80 font-medium truncate mt-0.5">
+                          {order.shippingAddress?.fullName || order.customerEmail} ({order.customerPhone})
+                        </p>
+                        <p className="text-[10px] text-y2k-slate font-mono mt-0.5">
+                          {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-6 justify-between md:justify-end shrink-0">
+                      <div className="text-right">
+                        <p className="font-display font-medium text-base text-y2k-gunmetal">
+                          ₹{order.totalAmount?.toLocaleString("en-IN")}
+                        </p>
+                        <span className="text-[8px] font-bold uppercase px-2.5 py-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal block mt-0.5">
+                          {order.orderStatus}
+                        </span>
                       </div>
 
-                      {/* Delivery Address Header + Print Button */}
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Delivery Address</p>
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => setPrintingOrder(order)}
-                          className="flex items-center gap-1.5 bg-white text-black hover:bg-gray-200 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors shadow-sm cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPrintingOrder(order);
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/20 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
+                          title="Print Thermal Shipping Sticker"
                         >
                           <Printer className="w-3.5 h-3.5" />
-                          Print Shipping Label
+                          <span>Label</span>
                         </button>
-                      </div>
 
-                      <div className="bg-white/3 px-3 py-3 text-xs text-gray-300 leading-relaxed">
-                        <p className="font-bold text-white">{order.shippingAddress?.fullName}</p>
-                        <p>{order.shippingAddress?.phone}</p>
-                        <p>{order.shippingAddress?.street}</p>
-                        <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} — {order.shippingAddress?.pincode}</p>
-                      </div>
-                    </div>
-
-                    {/* Right: Status Update Controls */}
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-4">Update Order</p>
-
-                      <div className="flex flex-col gap-4">
-                        {/* Status select */}
-                        <div>
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-gray-600 block mb-1.5">Order Status</label>
-                          <select
-                            value={statusSelects[order.id] || order.orderStatus}
-                            onChange={(e) => setStatusSelects((prev) => ({ ...prev, [order.id]: e.target.value }))}
-                            className="w-full bg-white/5 border border-white/10 text-white text-xs font-bold uppercase px-3 py-2.5 outline-none appearance-none cursor-pointer"
-                          >
-                            {Object.keys(STATUS_CONFIG).map((s) => (
-                              <option key={s} value={s} className="bg-[#1a1a1a] text-white">{STATUS_CONFIG[s].label}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {/* Tracking ID */}
-                        <div>
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-gray-600 block mb-1.5">
-                            Tracking ID
-                            {order.trackingId && (
-                              <span className="ml-2 text-blue-400 normal-case font-normal">({order.trackingId})</span>
-                            )}
-                          </label>
-                          <input
-                            type="text"
-                            value={trackingInputs[order.id] || ""}
-                            onChange={(e) => setTrackingInputs((prev) => ({ ...prev, [order.id]: e.target.value }))}
-                            placeholder="e.g. EA123456789IN"
-                            className="w-full bg-white/5 border border-white/10 text-white text-xs px-3 py-2.5 outline-none placeholder:text-gray-600 focus:border-white/30 transition-colors"
-                          />
-                        </div>
-
-                        {/* Price Breakdown */}
-                        <div className="bg-white/3 px-3 py-3 text-[10px] text-gray-400 space-y-1.5">
-                          <div className="flex justify-between"><span>Subtotal</span><span>₹{(order.totalAmount + order.discountAmount - order.shippingAmount).toFixed(2)}</span></div>
-                          {order.discountAmount > 0 && <div className="flex justify-between text-green-400"><span>Discount</span><span>−₹{order.discountAmount.toFixed(2)}</span></div>}
-                          <div className="flex justify-between"><span>Shipping</span><span>₹{order.shippingAmount.toFixed(2)}</span></div>
-                          <div className="flex justify-between font-bold text-white border-t border-white/10 pt-1.5 mt-1.5"><span>Total</span><span>₹{order.totalAmount.toFixed(2)}</span></div>
-                        </div>
-
-                        <button
-                          onClick={() => handleSaveOrder(order.id)}
-                          disabled={saving === order.id}
-                          className="w-full bg-white text-black text-[10px] font-bold uppercase tracking-widest py-3 hover:bg-gray-100 transition-colors disabled:opacity-50"
-                        >
-                          {saving === order.id ? "Saving…" : "Save Changes"}
-                        </button>
-                        {saveSuccess === order.id && (
-                          <p className="text-[10px] font-bold text-green-400 text-center uppercase tracking-wider">
-                            ✓ Order updated successfully!
-                          </p>
-                        )}
+                        <ChevronDown
+                          className={`w-5 h-5 text-y2k-slate transition-transform ${
+                            isExpanded ? "rotate-180 text-y2k-gunmetal" : ""
+                          }`}
+                        />
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
 
-      {/* Printable Shipping Label Modal */}
+                  {/* Expanded Detail Panel */}
+                  {isExpanded && (
+                    <div className="bg-y2k-ice/50 border-t border-y2k-gunmetal/10 p-6 space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Delivery Address */}
+                        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
+                          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-2">
+                            DELIVERY DESTINATION
+                          </span>
+                          <p className="text-xs font-bold text-y2k-gunmetal mb-1">
+                            {order.shippingAddress?.fullName}
+                          </p>
+                          <p className="text-xs text-y2k-gunmetal/80 leading-relaxed font-sans">
+                            {order.shippingAddress?.street}<br />
+                            {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.pincode}
+                          </p>
+                          <p className="text-xs font-mono text-y2k-gunmetal/70 mt-2">
+                            📞 {order.shippingAddress?.phone || order.customerPhone}
+                          </p>
+                        </div>
+
+                        {/* Order Items Breakdown */}
+                        <div className="bg-white border border-y2k-gunmetal/15 p-4 md:col-span-2 shadow-2xs">
+                          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-3">
+                            ORDERED ITEMS ({order.items?.length || 0})
+                          </span>
+                          <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                            {order.items?.map((item) => (
+                              <div key={item.id} className="flex items-center justify-between text-xs py-1 border-b border-y2k-gunmetal/5 last:border-b-0">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-10 bg-y2k-ice border border-y2k-gunmetal/10 shrink-0 relative overflow-hidden">
+                                    <img src={item.image || "/placeholder.jpg"} alt={item.name} className="w-full h-full object-cover" />
+                                  </div>
+                                  <div>
+                                    <p className="font-bold text-y2k-gunmetal">{item.name}</p>
+                                    <p className="text-[9px] uppercase tracking-widest text-y2k-slate">
+                                      Size: {item.size} • Color: {item.color} • Qty: {item.quantity}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className="font-bold text-y2k-gunmetal font-mono">₹{item.price * item.quantity}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Status Update Controls */}
+                      <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-4 flex-1">
+                          {/* Order Status Select */}
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">
+                              Fulfillment Status
+                            </label>
+                            <select
+                              value={statusSelects[order.id] || order.orderStatus}
+                              onChange={(e) =>
+                                setStatusSelects((prev) => ({ ...prev, [order.id]: e.target.value }))
+                              }
+                              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+                            >
+                              <option value="PROCESSING">PROCESSING</option>
+                              <option value="SHIPPED">SHIPPED</option>
+                              <option value="DELIVERED">DELIVERED</option>
+                              <option value="CANCELLED">CANCELLED</option>
+                            </select>
+                          </div>
+
+                          {/* Tracking ID Input */}
+                          <div className="flex flex-col gap-1 flex-1">
+                            <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">
+                              Tracking ID / India Post Reference
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="e.g. IN9827401928"
+                              value={trackingInputs[order.id] ?? ""}
+                              onChange={(e) =>
+                                setTrackingInputs((prev) => ({ ...prev, [order.id]: e.target.value }))
+                              }
+                              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs font-mono uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          {saveSuccess === order.id && (
+                            <span className="text-[10px] font-bold uppercase text-y2k-gunmetal flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-y2k-gunmetal" /> Saved!
+                            </span>
+                          )}
+                          <button
+                            onClick={() => handleSaveOrder(order.id)}
+                            disabled={saving === order.id}
+                            className="btn-bagify px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest cursor-pointer disabled:opacity-50"
+                          >
+                            {saving === order.id ? "Saving…" : "Update Order"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Thermal Print Modal */}
       {printingOrder && (
         <ShippingLabelModal
           order={printingOrder}

@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     // Calculate shipping
-    const shippingFee = shippingMethod === 'express' ? 99 : (subtotal >= 299 ? 0 : 49);
+    const shippingFee = shippingMethod === 'express' ? 99 : (subtotal >= 2000 ? 0 : 49);
     const discountAmount = Math.round(subtotal * promoDiscount * 100) / 100;
     const totalAmount = subtotal - discountAmount + shippingFee;
     const amountInPaise = Math.round(totalAmount * 100);

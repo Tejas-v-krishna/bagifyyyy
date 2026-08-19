@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, CheckCircle2, ChevronRight, Printer, Layers } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, ChevronRight, Printer, Layers } from "lucide-react";
 import ShippingLabelModal from "./orders/ShippingLabelModal";
 
 interface Product {
@@ -72,27 +72,25 @@ function ConfirmModal({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center px-4">
-      <div className="bg-[#111] border border-white/10 p-8 max-w-sm w-full">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
+      <div className="bg-white border border-y2k-gunmetal/20 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
         <div className="flex items-center gap-3 mb-4">
-          <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-          <h2 className="text-white font-medium text-lg">Delete Product?</h2>
+          <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+          <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">Delete Product?</h2>
         </div>
-        <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-          You are about to permanently delete{" "}
-          <span className="text-white font-medium">"{productName}"</span>. This
-          action cannot be undone and will remove all images and variants.
+        <p className="text-y2k-gunmetal/70 text-xs mb-6 leading-relaxed">
+          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">"{productName}"</span>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 border border-white/20 text-gray-400 hover:text-white py-3 text-[10px] font-bold uppercase tracking-widest transition-colors"
+            className="flex-1 bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-widest transition-colors"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer shadow-xs"
           >
             Delete
           </button>
@@ -116,19 +114,19 @@ function StatCard({
   subtitle?: string;
 }) {
   return (
-    <div className="bg-[#111] border border-white/5 p-6 flex flex-col justify-between">
+    <div className="bg-white border border-y2k-gunmetal/15 p-6 flex flex-col justify-between shadow-xs">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[8px] font-bold uppercase tracking-widest text-gray-500">
+        <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate">
           {label}
         </p>
-        <Icon className={`w-4 h-4 ${accent || "text-gray-600"}`} />
+        <Icon className={`w-4 h-4 ${accent || "text-y2k-gunmetal/50"}`} />
       </div>
       <div>
-        <p className={`text-2xl lg:text-3xl font-medium ${accent || "text-white"}`}>
+        <p className={`text-2xl lg:text-3xl font-display font-medium tracking-tight ${accent || "text-y2k-gunmetal"}`}>
           {value}
         </p>
         {subtitle && (
-          <p className="text-[9px] text-gray-500 mt-1 uppercase tracking-wider">{subtitle}</p>
+          <p className="text-[9px] text-y2k-gunmetal/60 mt-1 uppercase tracking-wider font-sans">{subtitle}</p>
         )}
       </div>
     </div>
@@ -154,7 +152,6 @@ export default function StudioDashboard() {
 
   const fetchData = useCallback(async () => {
     try {
-      // 1. Fetch Products
       const [prodRes, orderRes] = await Promise.allSettled([
         fetch("/api/products").then((r) => r.json()),
         fetch("/api/studio/orders").then((r) => r.json()),
@@ -239,89 +236,94 @@ export default function StudioDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-[9px] font-bold uppercase tracking-widest text-gray-600 animate-pulse">
-          Loading…
+      <div className="min-h-[60vh] flex items-center justify-center font-sans">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate animate-pulse">
+          Loading Dashboard…
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white px-8 py-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+    <div className="space-y-8 font-sans">
+      {/* ── Page Header (Title matches sidebar nav link) ──────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
         <div>
-          <p className="text-[8px] uppercase tracking-[0.3em] text-gray-600 mb-2">
-            BAGIFYYYY / STUDIO
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
+            OVERVIEW
+          </span>
+          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            DASHBOARD
+          </h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
+            Store performance and recent customer orders.
           </p>
-          <h1 className="text-2xl font-medium tracking-tight">Dashboard</h1>
         </div>
+
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/studio/bundles"
-            className="flex items-center gap-2 border border-white/20 text-white px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:bg-white/5 transition-colors"
+            className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <Layers className="w-3.5 h-3.5" />
-            Bundle Combos
+            <span>Bundles ({stats.total})</span>
           </Link>
           <Link
             href="/studio/orders"
-            className="flex items-center gap-2 border border-white/20 text-white px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:bg-white/5 transition-colors"
+            className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            Manage Orders ({orders.length})
+            <span>Orders ({orders.length})</span>
           </Link>
           <Link
             href="/studio/products/new"
-            className="flex items-center gap-2 bg-white text-black px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            Add Product
+            <span>Add Product</span>
           </Link>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
+      {/* ── Metric Cards ─────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <StatCard
           label="Total Revenue"
           value={`₹${stats.totalRevenue.toLocaleString("en-IN")}`}
           icon={ShoppingBag}
-          accent="text-emerald-400"
+          accent="text-y2k-gunmetal font-bold"
           subtitle="Gross sales"
         />
         <StatCard
           label="Total Orders"
           value={stats.totalOrders}
           icon={ShoppingBag}
-          accent="text-white"
-          subtitle={`${orders.length} placed`}
+          subtitle={`${orders.length} in database`}
         />
         <StatCard
           label="Processing"
           value={stats.pendingOrders}
           icon={Clock}
-          accent={stats.pendingOrders > 0 ? "text-amber-400" : "text-gray-400"}
-          subtitle="Pending action"
+          accent={stats.pendingOrders > 0 ? "text-y2k-gunmetal font-bold" : "text-y2k-gunmetal/50"}
+          subtitle="Pending fulfillment"
         />
-        <StatCard label="Total Products" value={stats.total} icon={Package} subtitle="In catalog" />
-        <StatCard label="Sold Out" value={stats.soldOut} icon={AlertCircle} accent="text-red-400" subtitle="Needs restock" />
-        <StatCard label="New Arrivals" value={stats.newArrivals} icon={Sparkles} accent="text-cyan-400" subtitle="Active badges" />
+        <StatCard label="Total Catalog" value={stats.total} icon={Package} subtitle="Active products" />
+        <StatCard label="Sold Out" value={stats.soldOut} icon={AlertCircle} accent="text-red-600" subtitle="Out of stock" />
+        <StatCard label="New Items" value={stats.newArrivals} icon={Sparkles} accent="text-y2k-gunmetal font-bold" subtitle="New badges" />
       </div>
 
-      {/* Recent Orders Section */}
-      <div className="mb-10 bg-[#111] border border-white/5 overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+      {/* ── Recent Orders Table (Entire Box Area is Clickable to Open Orders) ── */}
+      <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
+        <div className="px-6 py-4 border-b border-y2k-gunmetal/15 flex items-center justify-between bg-y2k-ice/30">
           <div className="flex items-center gap-3">
-            <ShoppingBag className="w-4 h-4 text-emerald-400" />
-            <p className="text-[9px] font-bold uppercase tracking-widest text-white">
-              Recent Orders ({orders.length})
-            </p>
+            <ShoppingBag className="w-4 h-4 text-y2k-gunmetal" />
+            <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal">
+              Recent Fulfillment Orders ({orders.length})
+            </h2>
           </div>
           <Link
             href="/studio/orders"
-            className="text-[9px] font-bold uppercase tracking-widest text-gray-400 hover:text-white flex items-center gap-1.5 transition-colors"
+            className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate hover:text-black flex items-center gap-1 transition-colors"
           >
             <span>View All Orders</span>
             <ArrowRight className="w-3 h-3" />
@@ -329,40 +331,36 @@ export default function StudioDashboard() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="py-12 text-center text-gray-600 text-xs uppercase tracking-widest">
+          <div className="py-12 text-center text-y2k-gunmetal/50 text-xs uppercase tracking-widest">
             No orders placed yet
           </div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-y2k-gunmetal/10">
             {orders.slice(0, 5).map((order) => (
-              <div
+              <Link
                 key={order.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-white/2 transition-colors"
+                href="/studio/orders"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-y2k-ice/60 transition-colors cursor-pointer group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-9 h-11 bg-white/5 shrink-0 overflow-hidden relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-10 h-12 bg-y2k-ice shrink-0 overflow-hidden relative border border-y2k-gunmetal/10">
                     <img
                       src={order.items?.[0]?.image || "/placeholder.jpg"}
                       alt={order.items?.[0]?.name || "Order item"}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs font-bold text-white">#{order.orderNumber}</p>
-                      <span className={`text-[8px] font-bold uppercase px-2 py-0.5 rounded-xs border ${
-                        order.paymentStatus === "PAID"
-                          ? "bg-green-900/30 border-green-700/40 text-green-400"
-                          : "bg-amber-900/30 border-amber-700/40 text-amber-400"
-                      }`}>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-xs font-bold text-y2k-gunmetal group-hover:underline">#{order.orderNumber}</p>
+                      <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal">
                         {order.paymentMethod === "COD" ? "COD" : order.paymentStatus}
                       </span>
                     </div>
-                    <p className="text-[10px] text-gray-400 mt-0.5">
+                    <p className="text-[10px] text-y2k-gunmetal/80 mt-0.5 font-medium truncate">
                       {order.shippingAddress?.fullName || order.customerEmail} • {order.items?.length || 1} item(s)
                     </p>
-                    <p className="text-[9px] text-gray-600">
+                    <p className="text-[9px] text-y2k-slate font-mono">
                       {new Date(order.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -374,59 +372,48 @@ export default function StudioDashboard() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 justify-between sm:justify-end">
+                <div className="flex items-center gap-4 justify-between sm:justify-end shrink-0">
                   <div className="text-right">
-                    <p className="text-sm font-bold text-white">
+                    <p className="text-sm font-bold text-y2k-gunmetal">
                       ₹{order.totalAmount?.toLocaleString("en-IN")}
                     </p>
-                    <span className={`text-[8px] font-bold uppercase px-2 py-0.5 inline-block mt-0.5 border ${
-                      order.orderStatus === "PROCESSING" ? "bg-amber-900/30 border-amber-700/40 text-amber-400" :
-                      order.orderStatus === "SHIPPED" ? "bg-blue-900/30 border-blue-700/40 text-blue-400" :
-                      order.orderStatus === "DELIVERED" ? "bg-green-900/30 border-green-700/40 text-green-400" :
-                      "bg-red-900/30 border-red-700/40 text-red-400"
-                    }`}>
+                    <span className="text-[8px] font-bold uppercase px-2 py-0.5 inline-block mt-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal">
                       {order.orderStatus}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       onClick={() => setPrintingOrder(order)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 border border-white/10 hover:border-white text-gray-300 hover:text-white text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/20 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
                       title="Print Shipping Label Sticker"
                     >
                       <Printer className="w-3 h-3" />
                       <span className="hidden md:inline">Print Label</span>
                     </button>
-                    <Link
-                      href="/studio/orders"
-                      className="p-2 border border-white/10 text-gray-400 hover:text-white hover:border-white/30 transition-colors"
-                      title="Manage Order"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
+                    <ChevronRight className="w-4 h-4 text-y2k-slate group-hover:text-black transition-colors" />
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
       </div>
 
-      {/* Category Breakdown */}
+      {/* ── Category Spread ───────────────────────────────────────────────── */}
       {Object.keys(stats.categories).length > 0 && (
-        <div className="mb-10 bg-[#111] border border-white/5 p-6">
-          <p className="text-[8px] font-bold uppercase tracking-widest text-gray-500 mb-4">
-            By Category
+        <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs">
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate mb-3">
+            PRODUCTS BY CATEGORY
           </p>
           <div className="flex flex-wrap gap-3">
             {Object.entries(stats.categories).map(([cat, count]) => (
-              <div key={cat} className="flex items-center gap-2">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-white">
+              <div key={cat} className="flex items-center gap-2 border border-y2k-gunmetal/15 bg-y2k-ice/40 px-3 py-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal">
                   {cat}
                 </span>
-                <span className="bg-white/10 text-gray-400 text-[9px] font-bold px-2 py-0.5">
+                <span className="bg-y2k-gunmetal text-white text-[9px] font-bold px-1.5 py-0.5">
                   {count}
                 </span>
               </div>
@@ -435,122 +422,150 @@ export default function StudioDashboard() {
         </div>
       )}
 
-      {/* Product Table */}
-      <div className="bg-[#111] border border-white/5 overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500">
-            All Products ({stats.total})
-          </p>
+      {/* ── Products List with Icon Tooltips ──────────────────────────────── */}
+      <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
+        <div className="px-6 py-4 border-b border-y2k-gunmetal/15 flex items-center justify-between bg-y2k-ice/30">
+          <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal">
+            Catalog Items ({stats.total})
+          </h2>
+          <Link
+            href="/studio/products/new"
+            className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate hover:text-black flex items-center gap-1"
+          >
+            <span>+ Add Product</span>
+          </Link>
         </div>
 
         {products.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-gray-600 mb-4">
-              No products yet
+          <div className="py-16 text-center">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-4">
+              No products in catalog
             </p>
             <Link
               href="/studio/products/new"
-              className="text-[9px] font-bold uppercase tracking-widest text-white hover:text-gray-300 transition-colors"
+              className="btn-bagify inline-block px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest"
             >
-              Add your first product →
+              Add First Product →
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-y2k-gunmetal/10">
             {products.map((product) => (
               <div
                 key={product.id}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-white/2 transition-colors group"
+                className="flex items-center gap-4 px-6 py-3.5 hover:bg-y2k-ice/30 transition-colors group"
               >
                 {/* Thumbnail */}
-                <div className="w-12 h-12 bg-white/5 shrink-0 relative overflow-hidden">
+                <Link
+                  href={`/studio/products/${product.id}`}
+                  className="w-12 h-14 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
+                >
                   {product.images?.[0] && (
                     <img
                       src={product.images[0].url || (product.images[0] as any)}
                       alt={product.name}
-                      className="w-full h-full object-contain mix-blend-lighten"
+                      className="w-full h-full object-cover"
                     />
                   )}
-                </div>
+                </Link>
 
                 {/* Name + meta */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
+                  <Link
+                    href={`/studio/products/${product.id}`}
+                    className="text-xs font-bold text-y2k-gunmetal hover:underline truncate block"
+                  >
                     {product.name}
-                  </p>
-                  <p className="text-[9px] uppercase tracking-widest text-gray-600 mt-0.5">
+                  </Link>
+                  <p className="text-[9px] uppercase tracking-widest text-y2k-slate mt-0.5">
                     {product.category} · {product.brand || "BAGIFYYYY"}
                   </p>
                 </div>
 
                 {/* Price */}
                 <div className="w-28 text-right shrink-0">
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-xs font-bold text-y2k-gunmetal">
                     ₹{product.price?.toLocaleString("en-IN")}
                   </p>
                 </div>
 
                 {/* Status badges */}
-                <div className="flex gap-2 w-36 shrink-0">
+                <div className="flex gap-2 w-36 shrink-0 justify-center">
                   {product.isSoldOut && (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-1 bg-red-500/10 text-red-400 border border-red-500/20">
+                    <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-red-50 text-red-600 border border-red-200">
                       Sold Out
                     </span>
                   )}
                   {product.isNew && (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/20">
                       New
                     </span>
                   )}
                 </div>
 
-                {/* Quick toggles */}
+                {/* Quick toggles with Tooltips */}
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => handleToggle(product, "isSoldOut")}
                     disabled={toggling === product.id + "isSoldOut"}
                     title={product.isSoldOut ? "Mark In Stock" : "Mark Sold Out"}
-                    className="p-2 text-gray-600 hover:text-red-400 transition-colors disabled:opacity-40"
+                    className="p-2 text-y2k-slate hover:text-black transition-colors cursor-pointer disabled:opacity-40 relative group/tooltip"
                   >
                     {product.isSoldOut ? (
-                      <ToggleRight className="w-4 h-4 text-red-400" />
+                      <ToggleRight className="w-5 h-5 text-red-600" />
                     ) : (
-                      <ToggleLeft className="w-4 h-4" />
+                      <ToggleLeft className="w-5 h-5 text-y2k-slate" />
                     )}
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                      {product.isSoldOut ? "Mark In Stock" : "Mark Sold Out"}
+                    </span>
                   </button>
+
                   <button
                     onClick={() => handleToggle(product, "isNew")}
                     disabled={toggling === product.id + "isNew"}
                     title={product.isNew ? "Remove New tag" : "Mark as New"}
-                    className="p-2 text-gray-600 hover:text-emerald-400 transition-colors disabled:opacity-40"
+                    className="p-2 text-y2k-slate hover:text-black transition-colors cursor-pointer disabled:opacity-40 relative group/tooltip"
                   >
-                    <Sparkles className={`w-4 h-4 ${product.isNew ? "text-emerald-400" : ""}`} />
+                    <Sparkles className={`w-4 h-4 ${product.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                      {product.isNew ? "Remove New Badge" : "Add New Badge"}
+                    </span>
                   </button>
                 </div>
 
-                {/* Actions */}
+                {/* Actions with Tooltips */}
                 <div className="flex items-center gap-2 shrink-0">
                   <Link
                     href={`/product/${product.id}`}
                     target="_blank"
-                    className="p-2 text-gray-600 hover:text-white transition-colors"
-                    title="View on site"
+                    className="p-2 text-y2k-slate hover:text-black transition-colors relative group/tooltip"
+                    title="View on store website"
                   >
                     <Eye className="w-4 h-4" />
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                      View on Store
+                    </span>
                   </Link>
                   <Link
                     href={`/studio/products/${product.id}`}
-                    className="p-2 text-gray-600 hover:text-white transition-colors"
-                    title="Edit"
+                    className="p-2 text-y2k-slate hover:text-black transition-colors relative group/tooltip"
+                    title="Edit Product"
                   >
                     <Edit2 className="w-4 h-4" />
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                      Edit Product
+                    </span>
                   </Link>
                   <button
                     onClick={() => setDeleteTarget(product)}
-                    className="p-2 text-gray-600 hover:text-red-400 transition-colors"
-                    title="Delete"
+                    className="p-2 text-y2k-slate hover:text-red-600 transition-colors cursor-pointer relative group/tooltip"
+                    title="Delete Product"
                   >
                     <Trash2 className="w-4 h-4" />
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-red-600 text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                      Delete Product
+                    </span>
                   </button>
                 </div>
               </div>
