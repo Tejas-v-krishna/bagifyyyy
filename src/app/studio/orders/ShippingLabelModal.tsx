@@ -174,7 +174,7 @@ export default function ShippingLabelModal({
                   BAGIFYYYY
                 </h1>
                 <p className="text-[9px] font-mono tracking-[0.2em] uppercase text-white mt-0.5">
-                  ARCHIVE APPAREL LOGISTICS
+                  APPAREL LOGISTICS
                 </p>
               </div>
               <div className="text-right">
@@ -304,7 +304,7 @@ export default function ShippingLabelModal({
                 </span>
                 <span className="font-mono text-[9px] font-black">PIN: 144411</span>
               </div>
-              <p className="font-black text-xs uppercase text-black">BAGIFYYYY ARCHIVE</p>
+              <p className="font-black text-xs uppercase text-black">BAGIFYYYY</p>
               <p className="font-bold text-black uppercase">
                 Lakshmi Niwas, Bhutani&apos;s Colony, near Freshmart, Green Valley
               </p>
@@ -318,7 +318,7 @@ export default function ShippingLabelModal({
 
             {/* Bottom Footer Code */}
             <div className="mt-1.5 text-center text-[8px] uppercase tracking-widest text-black font-mono font-bold">
-              BAGIFYYYY STREETWEAR ARCHIVE • VERIFIED PACKAGE
+              BAGIFYYYY • OFFICIAL DISPATCH • VERIFIED PACKAGE
             </div>
           </div>
           {/* ========================================================================= */}
