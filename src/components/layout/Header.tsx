@@ -232,49 +232,89 @@ export default function Header() {
                   </div>
 
                   {/* Navigation Links */}
-                  <nav className="flex flex-col px-6 py-6 gap-5 flex-1 overflow-y-auto bg-[#E8EDF2]">
-                    {[
-                      { href: "/topwears", label: "Shirts & Tees" },
-                      { href: "/bottomwears", label: "Pants & Cargos" },
-                      { href: "/accessories", label: "Accessories" },
-                      { href: "/bundles", label: "Bundles & Sets" },
-                      { href: "/products", label: "All Drops" },
-                      { href: "/wishlist", label: "Wishlist" },
-                    ].map(({ href, label }) => (
-                      <Link
-                        key={href}
-                        href={href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-[13px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors border-b border-y2k-gunmetal/10 pb-4 flex items-center justify-between"
-                      >
-                        <span>{label}</span>
-                        <span className="text-y2k-gunmetal/30 text-xs">→</span>
-                      </Link>
-                    ))}
+                  <nav className="flex flex-col px-6 py-5 gap-6 flex-1 overflow-y-auto bg-[#E8EDF2]">
+                    {/* Collection Category Group */}
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-3">
+                        COLLECTIONS
+                      </span>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          { href: "/topwears", label: "Shirts & Tees" },
+                          { href: "/bottomwears", label: "Pants & Cargos" },
+                          { href: "/accessories", label: "Accessories" },
+                          { href: "/bundles", label: "Bundles & Sets" },
+                        ].map(({ href, label }) => (
+                          <Link
+                            key={href}
+                            href={href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-[13px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors flex items-center justify-between py-1.5"
+                          >
+                            <span>{label}</span>
+                            <span className="text-y2k-gunmetal/30 text-xs">→</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Discover & VIP Group */}
+                    <div className="border-t border-y2k-gunmetal/10 pt-4">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-3">
+                        DISCOVER &amp; ARCHIVE
+                      </span>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          { href: "/products", label: "All Drops & Archive" },
+                          { href: "/wishlist", label: "Saved Wishlist" },
+                          { href: "/account", label: "Chrome Club VIP" },
+                        ].map(({ href, label }) => (
+                          <Link
+                            key={href}
+                            href={href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-[13px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors flex items-center justify-between py-1.5"
+                          >
+                            <span>{label}</span>
+                            <span className="text-y2k-gunmetal/30 text-xs">→</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* VIP Brand Notice */}
+                    <div className="mt-auto p-3 bg-white/60 border border-y2k-gunmetal/15">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/80">
+                        AUTHENTIC VINTAGE SOURCING
+                      </p>
+                      <p className="text-[9px] text-y2k-gunmetal/60 mt-0.5 leading-tight">
+                        Complimentary shipping on orders over ₹2000.
+                      </p>
+                    </div>
                   </nav>
 
                   {/* Drawer Footer / Account */}
-                  <div className="p-6 border-t border-y2k-gunmetal/15 bg-[#E8EDF2] shrink-0">
+                  <div className="p-5 border-t border-y2k-gunmetal/15 bg-[#E8EDF2] shrink-0">
                     {isAuthenticated ? (
                       <Link
                         href="/account"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="flex items-center gap-3 p-3 rounded-none bg-white/70 border border-y2k-gunmetal/15 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-white transition-colors"
+                        className="flex items-center gap-3 p-3 bg-white border border-y2k-gunmetal/15 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-white/80 transition-colors shadow-xs"
                       >
                         {user?.avatar ? (
                           <img
                             src={user.avatar}
                             alt="Avatar"
-                            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 object-cover"
+                            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 object-cover shrink-0"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs font-bold">
+                          <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs font-bold shrink-0">
                             {user?.name ? user.name[0].toUpperCase() : "U"}
                           </div>
                         )}
-                        <div className="flex flex-col truncate">
+                        <div className="flex flex-col truncate min-w-0">
                           <span className="text-[11px] font-bold tracking-wider truncate">
-                            {user?.name || "Member"}
+                            {user?.name || "Member Passport"}
                           </span>
                           <span className="text-[9px] text-y2k-gunmetal/60 lowercase font-normal truncate">
                             {user?.email}
@@ -288,7 +328,7 @@ export default function Header() {
                         className="btn-bagify flex items-center justify-center w-full py-4 text-[11px] font-bold uppercase tracking-[0.15em] gap-2 shadow-md"
                       >
                         <User className="w-4 h-4" />
-                        Sign In / Register
+                        <span>Sign In / Passport</span>
                       </Link>
                     )}
                   </div>

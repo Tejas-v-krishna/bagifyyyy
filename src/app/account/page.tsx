@@ -9,10 +9,8 @@ import { useCartStore } from "@/store/useCartStore";
 import {
   LogOut,
   User,
-  CheckCircle2,
   Package,
   Truck,
-  Clock,
   MapPin,
   Award,
   Heart,
@@ -24,7 +22,7 @@ import {
   Sparkles,
   ShoppingBag,
   Tag,
-  AlertCircle
+  Check,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -168,15 +166,15 @@ export default function AccountPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-y2k-ice min-h-[75vh] flex items-center justify-center px-4 py-20 text-y2k-gunmetal">
-        <div className="w-full max-w-md bg-white border border-y2k-gunmetal/15 shadow-xl p-8 sm:p-10 text-center">
-          <div className="w-16 h-16 rounded-full bg-y2k-ice border border-y2k-gunmetal/20 flex items-center justify-center mx-auto mb-5 shadow-xs">
-            <User className="w-7 h-7 text-y2k-gunmetal/70" />
+      <div className="bg-y2k-ice min-h-[75vh] flex items-center justify-center px-4 py-16 sm:py-24 text-y2k-gunmetal font-sans">
+        <div className="w-full max-w-md bg-white border border-y2k-gunmetal/15 shadow-xl p-6 sm:p-10 text-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-y2k-ice border border-y2k-gunmetal/20 flex items-center justify-center mx-auto mb-5 shadow-xs">
+            <User className="w-6 h-6 sm:w-7 sm:h-7 text-y2k-gunmetal" />
           </div>
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
             ARCHIVE PASSPORT
           </span>
-          <h1 className="font-display text-3xl uppercase tracking-tight mb-3">
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] mb-3 text-y2k-gunmetal">
             AUTHENTICATION REQUIRED
           </h1>
           <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-7">
@@ -184,9 +182,10 @@ export default function AccountPage() {
           </p>
           <Link
             href="/login"
-            className="btn-bagify text-white w-full py-4 text-xs font-bold uppercase tracking-widest hover:opacity-90 inline-block shadow-md"
+            className="btn-bagify w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-md"
           >
-            SIGN IN / REGISTER →
+            <span>SIGN IN / REGISTER</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
@@ -200,42 +199,50 @@ export default function AccountPage() {
   const tierProgress = Math.min(100, Math.round((points / 500) * 100));
 
   return (
-    <div className="bg-y2k-ice min-h-screen text-y2k-gunmetal py-8 sm:py-12">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-10">
+    <div className="bg-y2k-ice min-h-screen text-y2k-gunmetal py-6 sm:py-10 lg:py-12 font-sans">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
 
-        {/* ── Breadcrumb & Top Bar ────────────────────────────────────────── */}
-        <div className="flex items-center justify-between mb-6 pb-3 border-b border-y2k-gunmetal/10 text-[11px] font-bold uppercase tracking-widest text-y2k-gunmetal/60">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="hover:text-black">HOME</Link>
-            <span>/</span>
-            <span className="text-y2k-gunmetal">MEMBER PASSPORT</span>
+        {/* ── Top Header / Passport Identity Bar ─────────────────────────── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-y2k-gunmetal/15">
+          <div>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate mb-1">
+              <Link href="/" className="hover:text-black">HOME</Link>
+              <span>/</span>
+              <span className="text-y2k-gunmetal">MEMBER PASSPORT</span>
+            </div>
+            <h1 className="font-display font-medium text-2xl sm:text-3xl md:text-4xl uppercase tracking-[-0.03em] leading-none text-y2k-gunmetal">
+              ACCOUNT DASHBOARD
+            </h1>
           </div>
-          <span className="font-mono text-[10px] text-y2k-gunmetal/40">ID: {memberId}</span>
+          
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[10px] sm:text-xs font-bold text-y2k-gunmetal bg-white border border-y2k-gunmetal/15 px-3 py-1.5 shadow-xs">
+              ID: {memberId}
+            </span>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/80 hover:text-black bg-white hover:bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1.5 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
+            </button>
+          </div>
         </div>
 
-        {/* ── Top Dashboard Zone: Member ID + VIP Chrome Pass ─────────────── */}
+        {/* ── Dashboard Cards Grid: Member Identity + VIP Pass ───────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-8">
           
           {/* Member Profile Identity Card (7 cols) */}
-          <div className="lg:col-span-7 bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 flex flex-col justify-between shadow-xs relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-y2k-gunmetal/3 -mr-10 -mt-10 rounded-full pointer-events-none" />
-            
+          <div className="lg:col-span-7 bg-white border border-y2k-gunmetal/15 p-5 sm:p-8 flex flex-col justify-between shadow-xs relative overflow-hidden">
             <div>
-              <div className="flex items-center justify-between gap-4 mb-5">
+              <div className="flex items-center justify-between gap-4 mb-4">
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-y2k-gunmetal" />
                   AUTHENTICATED ARCHIVE MEMBER
                 </span>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 transition-colors"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  Sign Out
-                </button>
               </div>
 
-              <div className="flex items-start gap-4 sm:gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                 {user?.avatar ? (
                   <img
                     src={user.avatar}
@@ -249,9 +256,9 @@ export default function AccountPage() {
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl uppercase tracking-tight text-y2k-gunmetal truncate">
+                  <h2 className="font-display font-medium text-xl sm:text-2xl lg:text-3xl uppercase tracking-tight text-y2k-gunmetal truncate">
                     {user?.name || "BAGIFYYYY MEMBER"}
-                  </h1>
+                  </h2>
                   <p className="text-xs text-y2k-gunmetal/70 font-medium truncate mt-0.5">
                     {user?.email}
                   </p>
@@ -261,19 +268,13 @@ export default function AccountPage() {
                       {memberId}
                     </span>
                     {isAdmin && (
-                      <span className="text-[9px] font-black uppercase tracking-wider bg-black text-white px-2.5 py-1 flex items-center gap-1 border border-black shadow-xs">
-                        <ShieldCheck className="w-3 h-3 text-emerald-400" /> Store Admin
+                      <span className="text-[9px] font-black uppercase tracking-wider bg-y2k-gunmetal text-white px-2.5 py-1 flex items-center gap-1 border border-y2k-gunmetal shadow-xs">
+                        <ShieldCheck className="w-3 h-3 text-white" /> Store Admin
                       </span>
                     )}
-                    {user?.googleId ? (
-                      <span className="text-[9px] font-bold uppercase tracking-wider bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Google Linked
-                      </span>
-                    ) : (
-                      <span className="text-[9px] font-bold uppercase tracking-wider bg-green-50 border border-green-200 text-green-700 px-2.5 py-1 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Verified Member
-                      </span>
-                    )}
+                    <span className="text-[9px] font-bold uppercase tracking-wider bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-2.5 py-1 flex items-center gap-1">
+                      <Check className="w-3 h-3 text-y2k-gunmetal" /> {user?.googleId ? "Google Linked" : "Verified Account"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -281,28 +282,28 @@ export default function AccountPage() {
 
             {/* Admin Management Quick Bar */}
             {isAdmin && (
-              <div className="mt-5 p-3.5 bg-black text-white border border-white/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+              <div className="mt-5 p-3.5 bg-y2k-gunmetal text-white border border-y2k-gunmetal flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
                 <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-white shrink-0" />
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-wider text-white">
                       Bagify Studio Administration
                     </p>
-                    <p className="text-[9px] text-gray-400 font-normal">
-                      Authorized to manage orders, product inventory &amp; print shipping labels
+                    <p className="text-[9px] text-white/70 font-normal">
+                      Authorized to manage orders, catalog &amp; print shipping labels
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Link
                     href="/studio/orders"
-                    className="bg-white/10 hover:bg-white text-white hover:text-black px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors border border-white/20 text-center"
+                    className="bg-white/10 hover:bg-white text-white hover:text-y2k-gunmetal px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors border border-white/20 text-center"
                   >
                     Orders &amp; Labels →
                   </Link>
                   <Link
                     href="/studio"
-                    className="bg-white text-black hover:bg-gray-200 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors text-center"
+                    className="bg-white text-y2k-gunmetal hover:bg-y2k-ice px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors text-center"
                   >
                     Open Studio →
                   </Link>
@@ -311,90 +312,85 @@ export default function AccountPage() {
             )}
 
             {/* Quick action bar */}
-            <div className="mt-6 pt-5 border-t border-y2k-gunmetal/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <span className="text-y2k-gunmetal/60 text-[11px]">
-                Active Session: <b>{new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}</b>
+            <div className="mt-6 pt-4 border-t border-y2k-gunmetal/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <span className="text-y2k-gunmetal/60 text-[10px] sm:text-[11px] uppercase tracking-wider">
+                Session Active: <b>{new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}</b>
               </span>
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/products"
-                  className="text-[10px] font-bold uppercase tracking-widest underline underline-offset-4 hover:text-black"
-                >
-                  Explore Drops →
-                </Link>
-              </div>
+              <Link
+                href="/products"
+                className="text-[10px] font-bold uppercase tracking-widest underline underline-offset-4 hover:text-black"
+              >
+                Explore Active Drops →
+              </Link>
             </div>
           </div>
 
           {/* VIP Chrome Pass Card (5 cols) */}
-          <div className="lg:col-span-5 bg-[#1B232E] text-[#F8F5E9] p-6 sm:p-8 flex flex-col justify-between shadow-lg relative overflow-hidden border border-white/10">
-            {/* Metallic Watermark Pattern */}
-            <div className="absolute -right-8 -bottom-8 opacity-5 text-white pointer-events-none select-none">
-              <Award className="w-48 h-48" />
-            </div>
-
+          <div className="lg:col-span-5 bg-y2k-gunmetal text-[#F8F5E9] p-5 sm:p-8 flex flex-col justify-between shadow-lg relative overflow-hidden border border-y2k-gunmetal">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-amber-300" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
+                  <Award className="w-4 h-4 text-white" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
                     CHROME CLUB VIP PASS
                   </span>
                 </div>
-                <span className="text-[9px] font-black uppercase tracking-widest bg-white/10 border border-white/20 px-2 py-0.5 text-amber-300">
+                <span className="text-[9px] font-black uppercase tracking-widest bg-white/15 border border-white/25 px-2 py-0.5 text-white">
                   TIER: {tier}
                 </span>
               </div>
 
               <div className="flex items-baseline justify-between mb-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">Chrome Balance</p>
-                  <p className="font-display text-4xl sm:text-5xl text-white tracking-tight">{points} <span className="text-lg font-sans text-white/60 font-normal">PTS</span></p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Chrome Balance</p>
+                  <p className="font-display text-4xl sm:text-5xl text-white tracking-tight leading-none mt-1">
+                    {points} <span className="text-sm font-sans text-white/60 font-normal">PTS</span>
+                  </p>
                 </div>
                 <button
                   onClick={() => setActiveTab("loyalty")}
-                  className="text-[10px] font-bold uppercase tracking-widest text-amber-300 hover:text-white underline underline-offset-2"
+                  className="text-[10px] font-bold uppercase tracking-widest text-white hover:underline underline-offset-4 cursor-pointer"
                 >
                   View Perks →
                 </button>
               </div>
 
               {/* Progress bar */}
-              <div className="w-full bg-white/10 h-1.5 mb-2 overflow-hidden">
+              <div className="w-full bg-white/15 h-1.5 mb-2 overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-amber-200 to-amber-400 transition-all duration-500"
+                  className="h-full bg-white transition-all duration-500"
                   style={{ width: `${tierProgress}%` }}
                 />
               </div>
 
-              <p className="text-[10px] font-medium text-white/60">
+              <p className="text-[10px] font-medium text-white/70">
                 {pointsToNextTier > 0
                   ? `Earn ${pointsToNextTier} more points to reach STEEL VIP status`
                   : "Maximum VIP tier unlocked"}
               </p>
             </div>
 
-            <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-white/70">
-              <span className="flex items-center gap-1.5"><Truck className="w-3 h-3 text-amber-300" /> Free Shipping on ₹2000+</span>
-              <span className="flex items-center gap-1.5"><Tag className="w-3 h-3 text-amber-300" /> Drop Presales</span>
+            <div className="mt-5 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-wider text-white/80">
+              <span className="flex items-center gap-1.5"><Truck className="w-3.5 h-3.5 text-white" /> Free Shipping ₹2000+</span>
+              <span className="flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 text-white" /> Drop Presales</span>
             </div>
           </div>
 
         </div>
 
         {/* ── Interactive Metric Chips Row ─────────────────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
           <button
             onClick={() => setActiveTab("orders")}
-            className={`p-4 text-left border transition-all ${
+            className={`p-4 text-left border transition-all cursor-pointer ${
               activeTab === "orders"
                 ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
                 : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <Package className="w-4 h-4 text-y2k-gunmetal/60" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/40 uppercase">ORDERS</span>
+              <Package className="w-4 h-4 text-y2k-gunmetal/70" />
+              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">ORDERS</span>
             </div>
             <p className="font-display text-2xl font-bold text-y2k-gunmetal">{orders.length}</p>
             <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Total drop purchases</p>
@@ -402,15 +398,15 @@ export default function AccountPage() {
 
           <button
             onClick={() => setActiveTab("addresses")}
-            className={`p-4 text-left border transition-all ${
+            className={`p-4 text-left border transition-all cursor-pointer ${
               activeTab === "addresses"
                 ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
                 : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <MapPin className="w-4 h-4 text-y2k-gunmetal/60" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/40 uppercase">ADDRESSES</span>
+              <MapPin className="w-4 h-4 text-y2k-gunmetal/70" />
+              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">ADDRESSES</span>
             </div>
             <p className="font-display text-2xl font-bold text-y2k-gunmetal">{addresses.length}</p>
             <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Saved destinations</p>
@@ -418,15 +414,15 @@ export default function AccountPage() {
 
           <button
             onClick={() => setActiveTab("wishlist")}
-            className={`p-4 text-left border transition-all ${
+            className={`p-4 text-left border transition-all cursor-pointer ${
               activeTab === "wishlist"
                 ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
                 : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <Heart className="w-4 h-4 text-y2k-gunmetal/60" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/40 uppercase">SAVED</span>
+              <Heart className="w-4 h-4 text-y2k-gunmetal/70" />
+              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">SAVED</span>
             </div>
             <p className="font-display text-2xl font-bold text-y2k-gunmetal">{wishlistIds.length}</p>
             <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Wishlist archive</p>
@@ -434,15 +430,15 @@ export default function AccountPage() {
 
           <button
             onClick={() => setActiveTab("loyalty")}
-            className={`p-4 text-left border transition-all ${
+            className={`p-4 text-left border transition-all cursor-pointer ${
               activeTab === "loyalty"
                 ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
                 : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <Award className="w-4 h-4 text-y2k-gunmetal/60" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/40 uppercase">POINTS</span>
+              <Award className="w-4 h-4 text-y2k-gunmetal/70" />
+              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">POINTS</span>
             </div>
             <p className="font-display text-2xl font-bold text-y2k-gunmetal">{points}</p>
             <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Chrome reward credits</p>
@@ -450,7 +446,7 @@ export default function AccountPage() {
         </div>
 
         {/* ── Segmented Navigation Tabs Bar ───────────────────────────────── */}
-        <div className="flex items-center gap-1 mb-6 border-b border-y2k-gunmetal/15 pb-0 overflow-x-auto select-none">
+        <div className="flex items-center gap-1 mb-6 border-b border-y2k-gunmetal/15 pb-0 overflow-x-auto select-none no-scrollbar">
           {[
             { id: "orders", label: "Orders", count: orders.length, icon: Package },
             { id: "addresses", label: "Addresses", count: addresses.length, icon: MapPin },
@@ -495,9 +491,9 @@ export default function AccountPage() {
                   Loading your drop orders…
                 </div>
               ) : orders.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-10 sm:p-14 text-center">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 sm:p-14 text-center">
                   <ShoppingBag className="w-12 h-12 text-y2k-gunmetal/30 mx-auto mb-4" />
-                  <h3 className="font-display text-2xl uppercase tracking-tight mb-2">
+                  <h3 className="font-display font-medium text-2xl uppercase tracking-tight mb-2 text-y2k-gunmetal">
                     NO ORDERS IN YOUR ARCHIVE YET
                   </h3>
                   <p className="text-xs text-y2k-gunmetal/70 max-w-md mx-auto mb-6">
@@ -505,9 +501,10 @@ export default function AccountPage() {
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify text-white px-8 py-3.5 text-xs font-bold uppercase tracking-widest inline-flex items-center gap-2 hover:opacity-90"
+                    className="btn-bagify px-8 py-3.5 text-xs font-bold uppercase tracking-widest inline-flex items-center gap-2 shadow-md"
                   >
-                    EXPLORE ACTIVE DROPS <ArrowRight className="w-3.5 h-3.5" />
+                    <span>EXPLORE ACTIVE DROPS</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               ) : (
@@ -535,7 +532,7 @@ export default function AccountPage() {
                                 })}
                               </span>
                             </div>
-                            <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-wider">
+                            <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-wider mt-0.5">
                               Payment: <b>{ord.paymentMethod}</b> ({ord.paymentStatus})
                             </p>
                           </div>
@@ -543,12 +540,12 @@ export default function AccountPage() {
 
                         <div className="flex flex-wrap items-center gap-2">
                           <span
-                            className={`text-[9px] font-black uppercase px-2.5 py-1 border ${
+                            className={`text-[9px] font-bold uppercase px-2.5 py-1 border ${
                               ord.orderStatus === "DELIVERED"
-                                ? "bg-green-50 border-green-300 text-green-700"
+                                ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
                                 : ord.orderStatus === "SHIPPED"
-                                ? "bg-blue-50 border-blue-300 text-blue-700"
-                                : "bg-amber-50 border-amber-300 text-amber-700"
+                                ? "bg-y2k-ice text-y2k-gunmetal border-y2k-gunmetal/30"
+                                : "bg-white text-y2k-gunmetal/80 border-y2k-gunmetal/20"
                             }`}
                           >
                             {ord.orderStatus}
@@ -557,10 +554,10 @@ export default function AccountPage() {
                           {ord.trackingId && (
                             <button
                               onClick={() => handleCopyTracking(ord.trackingId)}
-                              className="text-[9px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/20 px-2.5 py-1 text-y2k-gunmetal flex items-center gap-1 hover:bg-white"
+                              className="text-[9px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/20 px-2.5 py-1 text-y2k-gunmetal flex items-center gap-1.5 hover:bg-white cursor-pointer"
                               title="Click to copy tracking ID"
                             >
-                              <Truck className="w-3 h-3 text-blue-600" />
+                              <Truck className="w-3 h-3 text-y2k-gunmetal" />
                               <span>{copiedTrackingId === ord.trackingId ? "Copied!" : ord.trackingId}</span>
                               <Copy className="w-2.5 h-2.5 opacity-60" />
                             </button>
@@ -609,7 +606,7 @@ export default function AccountPage() {
 
                         <div className="flex items-center gap-4">
                           {ord.discountAmount > 0 && (
-                            <span className="text-[11px] text-green-600 font-bold uppercase">
+                            <span className="text-[11px] text-y2k-gunmetal font-bold uppercase bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/15">
                               Saved ₹{ord.discountAmount.toFixed(2)}
                             </span>
                           )}
@@ -628,20 +625,20 @@ export default function AccountPage() {
           {/* 2. SAVED ADDRESSES TAB */}
           {activeTab === "addresses" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-display text-xl uppercase tracking-tight">Delivery Addresses</h3>
-                  <p className="text-xs text-y2k-gunmetal/60">Saved addresses for one-click checkout fulfillment.</p>
+                  <h3 className="font-display font-medium text-xl uppercase tracking-tight">Delivery Addresses</h3>
+                  <p className="text-xs text-y2k-gunmetal/60">Saved destinations for one-click checkout fulfillment.</p>
                 </div>
                 <button
                   onClick={() => {
                     setShowAddressForm(!showAddressForm);
                     setAddressError("");
                   }}
-                  className="btn-bagify text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 flex items-center gap-1.5"
+                  className="btn-bagify text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 flex items-center justify-center gap-1.5 self-start sm:self-auto cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  {showAddressForm ? "Cancel" : "Add Address"}
+                  <span>{showAddressForm ? "Cancel" : "Add Address"}</span>
                 </button>
               </div>
 
@@ -653,7 +650,7 @@ export default function AccountPage() {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     onSubmit={handleAddAddress}
-                    className="bg-white border-2 border-y2k-gunmetal p-6 sm:p-8 flex flex-col gap-4 shadow-md overflow-hidden"
+                    className="bg-white border-2 border-y2k-gunmetal p-5 sm:p-8 flex flex-col gap-4 shadow-md overflow-hidden"
                   >
                     <div className="flex items-center justify-between border-b border-y2k-gunmetal/10 pb-3">
                       <p className="text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
@@ -671,7 +668,7 @@ export default function AccountPage() {
                           required
                           value={addressForm.fullName}
                           onChange={(e) => setAddressForm((p) => ({ ...p, fullName: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal"
+                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="e.g. Alex Vance"
                         />
                       </div>
@@ -684,7 +681,7 @@ export default function AccountPage() {
                           type="tel"
                           value={addressForm.phone}
                           onChange={(e) => setAddressForm((p) => ({ ...p, phone: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal"
+                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="9876543210"
                         />
                       </div>
@@ -698,7 +695,7 @@ export default function AccountPage() {
                         required
                         value={addressForm.street}
                         onChange={(e) => setAddressForm((p) => ({ ...p, street: e.target.value }))}
-                        className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal"
+                        className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                         placeholder="Flat 402, Lotus Heights, MG Road"
                       />
                     </div>
@@ -713,7 +710,7 @@ export default function AccountPage() {
                           maxLength={6}
                           value={addressForm.pincode}
                           onChange={(e) => setAddressForm((p) => ({ ...p, pincode: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal font-mono"
+                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal font-mono bg-white"
                           placeholder="400001"
                         />
                       </div>
@@ -725,7 +722,7 @@ export default function AccountPage() {
                           required
                           value={addressForm.city}
                           onChange={(e) => setAddressForm((p) => ({ ...p, city: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal"
+                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="Mumbai"
                         />
                       </div>
@@ -737,7 +734,7 @@ export default function AccountPage() {
                           required
                           value={addressForm.state}
                           onChange={(e) => setAddressForm((p) => ({ ...p, state: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal"
+                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="Maharashtra"
                         />
                       </div>
@@ -753,14 +750,14 @@ export default function AccountPage() {
                       <button
                         type="button"
                         onClick={() => setShowAddressForm(false)}
-                        className="px-5 py-2.5 border border-y2k-gunmetal/30 text-xs font-bold uppercase tracking-wider"
+                        className="px-5 py-2.5 border border-y2k-gunmetal/30 text-xs font-bold uppercase tracking-wider cursor-pointer"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={savingAddress}
-                        className="btn-bagify text-white px-6 py-2.5 text-xs font-bold uppercase tracking-wider disabled:opacity-50"
+                        className="btn-bagify px-6 py-2.5 text-xs font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer"
                       >
                         {savingAddress ? "Saving Address…" : "Save Destination →"}
                       </button>
@@ -775,7 +772,7 @@ export default function AccountPage() {
                   Loading addresses…
                 </div>
               ) : addresses.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-10 text-center">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 sm:p-10 text-center">
                   <MapPin className="w-10 h-10 text-y2k-gunmetal/30 mx-auto mb-3" />
                   <p className="font-bold text-sm text-y2k-gunmetal uppercase tracking-wider mb-2">
                     No Saved Addresses Found
@@ -785,7 +782,7 @@ export default function AccountPage() {
                   </p>
                   <button
                     onClick={() => setShowAddressForm(true)}
-                    className="btn-bagify text-white px-6 py-3 text-xs font-bold uppercase tracking-widest inline-block"
+                    className="btn-bagify px-6 py-3 text-xs font-bold uppercase tracking-widest inline-block cursor-pointer"
                   >
                     + Add Your First Address
                   </button>
@@ -799,12 +796,12 @@ export default function AccountPage() {
                     >
                       <div>
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-[10px] font-black uppercase tracking-widest bg-y2k-ice border border-y2k-gunmetal/15 px-2 py-0.5 text-y2k-gunmetal">
+                          <span className="text-[10px] font-bold uppercase tracking-widest bg-y2k-ice border border-y2k-gunmetal/15 px-2 py-0.5 text-y2k-gunmetal">
                             {idx === 0 ? "PRIMARY DESTINATION" : `SAVED LOCATION #${idx + 1}`}
                           </span>
                           <button
                             onClick={() => handleDeleteAddress(addr.id)}
-                            className="text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-700 flex items-center gap-1"
+                            className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
                           >
                             <Trash2 className="w-3 h-3" /> Remove
                           </button>
@@ -822,7 +819,7 @@ export default function AccountPage() {
 
                       <div className="mt-4 pt-3 border-t border-y2k-gunmetal/10 flex items-center justify-between text-[10px] font-bold text-y2k-gunmetal/60 uppercase">
                         <span>Standard & Express Eligible</span>
-                        <span className="text-green-700">✦ Verified Pincode</span>
+                        <span className="text-y2k-gunmetal font-bold">✦ Verified Pincode</span>
                       </div>
                     </div>
                   ))}
@@ -836,7 +833,7 @@ export default function AccountPage() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-display text-xl uppercase tracking-tight">Saved Archive Pieces</h3>
+                  <h3 className="font-display font-medium text-xl uppercase tracking-tight">Saved Archive Pieces</h3>
                   <p className="text-xs text-y2k-gunmetal/60">Pieces you have bookmarked from our collections.</p>
                 </div>
                 <Link
@@ -852,7 +849,7 @@ export default function AccountPage() {
                   Loading saved pieces…
                 </div>
               ) : wishlistProducts.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-10 text-center">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 sm:p-10 text-center">
                   <Heart className="w-10 h-10 text-y2k-gunmetal/30 mx-auto mb-3" />
                   <p className="font-bold text-sm text-y2k-gunmetal uppercase tracking-wider mb-2">
                     Your Wishlist Is Empty
@@ -862,7 +859,7 @@ export default function AccountPage() {
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify text-white px-6 py-3 text-xs font-bold uppercase tracking-widest inline-block"
+                    className="btn-bagify px-6 py-3 text-xs font-bold uppercase tracking-widest inline-block"
                   >
                     Browse Collections →
                   </Link>
@@ -904,16 +901,16 @@ export default function AccountPage() {
                               color: p.colors?.[0] || "Default",
                             });
                           }}
-                          className="flex-1 bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-wider py-2 hover:opacity-90 transition-opacity"
+                          className="flex-1 btn-bagify text-[9px] font-bold uppercase tracking-wider py-2 transition-opacity cursor-pointer text-center"
                         >
                           Add to Bag
                         </button>
                         <button
                           onClick={() => toggleItem(p.id)}
-                          className="p-2 border border-y2k-gunmetal/20 hover:border-red-500 hover:text-red-500 transition-colors"
+                          className="p-2 border border-y2k-gunmetal/20 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer"
                           title="Remove from wishlist"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -927,25 +924,25 @@ export default function AccountPage() {
           {activeTab === "loyalty" && (
             <div className="space-y-6">
               {/* VIP Tier Ladder Card */}
-              <div className="bg-[#1B232E] text-[#F8F5E9] p-6 sm:p-8 border border-white/10 shadow-lg">
+              <div className="bg-y2k-gunmetal text-[#F8F5E9] p-6 sm:p-8 border border-y2k-gunmetal shadow-lg">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-300">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
                       LOYALTY TIERS & PROGRESSION
                     </span>
-                    <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight">
+                    <h3 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-tight text-white mt-1">
                       YOUR VIP STATUS: {tier}
                     </h3>
                   </div>
                   <div className="text-left sm:text-right">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Total Points</p>
-                    <p className="font-display text-4xl text-amber-300">{points} PTS</p>
+                    <p className="font-display text-4xl text-white font-medium">{points} PTS</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-white/10 pt-6">
-                  <div className={`p-4 border ${tier === "CHROME" ? "bg-white/10 border-amber-300" : "bg-white/5 border-white/10"}`}>
-                    <p className="text-xs font-black uppercase tracking-widest text-amber-300">TIER 1: CHROME</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-white/15 pt-6">
+                  <div className={`p-4 border ${tier === "CHROME" ? "bg-white/15 border-white" : "bg-white/5 border-white/10"}`}>
+                    <p className="text-xs font-black uppercase tracking-widest text-white">TIER 1: CHROME</p>
                     <p className="text-[10px] text-white/60 mb-2">0 – 499 Points</p>
                     <ul className="text-[11px] text-white/80 space-y-1">
                       <li>✦ Early Drop Access</li>
@@ -953,8 +950,8 @@ export default function AccountPage() {
                     </ul>
                   </div>
 
-                  <div className={`p-4 border ${tier === "STEEL" ? "bg-white/10 border-amber-300" : "bg-white/5 border-white/10"}`}>
-                    <p className="text-xs font-black uppercase tracking-widest text-amber-300">TIER 2: STEEL</p>
+                  <div className={`p-4 border ${tier === "STEEL" ? "bg-white/15 border-white" : "bg-white/5 border-white/10"}`}>
+                    <p className="text-xs font-black uppercase tracking-widest text-white">TIER 2: STEEL</p>
                     <p className="text-[10px] text-white/60 mb-2">500 – 1999 Points</p>
                     <ul className="text-[11px] text-white/80 space-y-1">
                       <li>✦ Free Express Shipping</li>
@@ -963,13 +960,13 @@ export default function AccountPage() {
                     </ul>
                   </div>
 
-                  <div className={`p-4 border ${tier === "GOLD" ? "bg-white/10 border-amber-300" : "bg-white/5 border-white/10"}`}>
-                    <p className="text-xs font-black uppercase tracking-widest text-amber-300">TIER 3: GOLD VIP</p>
+                  <div className={`p-4 border ${tier === "GOLD" ? "bg-white/15 border-white" : "bg-white/5 border-white/10"}`}>
+                    <p className="text-xs font-black uppercase tracking-widest text-white">TIER 3: PLATINUM VIP</p>
                     <p className="text-[10px] text-white/60 mb-2">2000+ Points</p>
                     <ul className="text-[11px] text-white/80 space-y-1">
                       <li>✦ 2x Points Multiplier</li>
                       <li>✦ Custom Archive Access</li>
-                      <li>✦ Free Worldwide Priority</li>
+                      <li>✦ Free Priority Fulfillment</li>
                     </ul>
                   </div>
                 </div>
@@ -977,7 +974,7 @@ export default function AccountPage() {
 
               {/* Points History Card */}
               <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs">
-                <h4 className="font-display text-lg uppercase tracking-tight mb-4">Recent Point Activity</h4>
+                <h4 className="font-display font-medium text-lg uppercase tracking-tight mb-4 text-y2k-gunmetal">Recent Point Activity</h4>
                 {loyaltyData?.history && loyaltyData.history.length > 0 ? (
                   <div className="divide-y divide-y2k-gunmetal/10">
                     {loyaltyData.history.map((h: any) => (
@@ -992,7 +989,7 @@ export default function AccountPage() {
                             })}
                           </p>
                         </div>
-                        <span className="font-display text-sm font-bold text-green-700">+{h.points} PTS</span>
+                        <span className="font-display text-sm font-bold text-y2k-gunmetal">+{h.points} PTS</span>
                       </div>
                     ))}
                   </div>
@@ -1013,13 +1010,13 @@ export default function AccountPage() {
                 {/* Account Details */}
                 <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs flex flex-col justify-between">
                   <div>
-                    <h4 className="font-display text-lg uppercase tracking-tight mb-4">Account Information</h4>
+                    <h4 className="font-display font-medium text-lg uppercase tracking-tight mb-4 text-y2k-gunmetal">Account Information</h4>
                     <div className="space-y-4 text-xs">
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
                           Display Name
                         </label>
-                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium">
+                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium text-y2k-gunmetal">
                           {user?.name || "Not Set"}
                         </div>
                       </div>
@@ -1028,7 +1025,7 @@ export default function AccountPage() {
                         <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
                           Email Address
                         </label>
-                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium">
+                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium text-y2k-gunmetal">
                           {user?.email}
                         </div>
                       </div>
@@ -1037,9 +1034,9 @@ export default function AccountPage() {
                         <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
                           Authentication Method
                         </label>
-                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium flex items-center justify-between">
+                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium flex items-center justify-between text-y2k-gunmetal">
                           <span>{user?.googleId ? "Google OAuth 2.0 Linked" : "Email & Password Account"}</span>
-                          <span className="text-green-700 font-bold uppercase text-[10px]">Active</span>
+                          <span className="bg-y2k-gunmetal text-white font-bold uppercase text-[9px] px-2 py-0.5">Active</span>
                         </div>
                       </div>
                     </div>
@@ -1053,7 +1050,7 @@ export default function AccountPage() {
                 {/* Security & Password */}
                 <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs flex flex-col justify-between">
                   <div>
-                    <h4 className="font-display text-lg uppercase tracking-tight mb-4">Security & Password</h4>
+                    <h4 className="font-display font-medium text-lg uppercase tracking-tight mb-4 text-y2k-gunmetal">Security & Password</h4>
                     <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-6">
                       Your account credentials and payment sessions are encrypted with industry-standard TLS 1.3 protocol.
                     </p>
@@ -1068,7 +1065,7 @@ export default function AccountPage() {
                         </p>
                         <Link
                           href="/login"
-                          className="btn-bagify text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 inline-block"
+                          className="btn-bagify text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 inline-block"
                         >
                           Request Password Reset →
                         </Link>
@@ -1083,7 +1080,7 @@ export default function AccountPage() {
                         </p>
                         <button
                           onClick={handleSignOut}
-                          className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 underline underline-offset-4"
+                          className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 underline underline-offset-4 cursor-pointer"
                         >
                           Sign Out of All Sessions
                         </button>
@@ -1092,7 +1089,7 @@ export default function AccountPage() {
                   </div>
 
                   <p className="text-[10px] text-y2k-gunmetal/50 mt-6 pt-4 border-t border-y2k-gunmetal/10 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-green-700" /> End-to-end encrypted account token
+                    <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" /> End-to-end encrypted account token
                   </p>
                 </div>
 
@@ -1106,14 +1103,14 @@ export default function AccountPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-y2k-gunmetal/10 gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="bg-black text-white text-[9px] font-black uppercase px-2 py-0.5 tracking-wider">
+                    <span className="bg-y2k-gunmetal text-white text-[9px] font-black uppercase px-2 py-0.5 tracking-wider">
                       SUPERUSER PORTAL
                     </span>
-                    <span className="text-[10px] text-emerald-700 font-bold uppercase">
+                    <span className="text-[10px] text-y2k-gunmetal font-bold uppercase">
                       ✓ AUTHENTICATED
                     </span>
                   </div>
-                  <h3 className="font-display text-2xl uppercase tracking-tight">
+                  <h3 className="font-display font-medium text-2xl uppercase tracking-tight text-y2k-gunmetal">
                     BAGIFYYYY STUDIO ADMIN
                   </h3>
                   <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
@@ -1124,7 +1121,7 @@ export default function AccountPage() {
                 <div className="flex items-center gap-3">
                   <Link
                     href="/studio"
-                    className="bg-black text-white hover:bg-gray-800 text-[10px] font-black uppercase tracking-widest px-5 py-3 transition-colors shadow-xs"
+                    className="btn-bagify text-[10px] font-black uppercase tracking-widest px-5 py-3 shadow-xs"
                   >
                     Open Studio Dashboard →
                   </Link>
@@ -1136,10 +1133,10 @@ export default function AccountPage() {
                 {/* 1. Orders & Logistics */}
                 <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
                       <ShoppingBag className="w-5 h-5" />
                     </div>
-                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
                       Order Management
                     </h4>
                     <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
@@ -1148,7 +1145,7 @@ export default function AccountPage() {
                   </div>
                   <Link
                     href="/studio/orders"
-                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
                   >
                     Orders &amp; Labels →
                   </Link>
@@ -1157,10 +1154,10 @@ export default function AccountPage() {
                 {/* 2. Product Catalog */}
                 <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
                       <Package className="w-5 h-5" />
                     </div>
-                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
                       Product Catalog &amp; Stock
                     </h4>
                     <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
@@ -1169,7 +1166,7 @@ export default function AccountPage() {
                   </div>
                   <Link
                     href="/studio"
-                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
                   >
                     Manage Catalog →
                   </Link>
@@ -1178,10 +1175,10 @@ export default function AccountPage() {
                 {/* 3. Bundle Combos */}
                 <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
                       <Tag className="w-5 h-5" />
                     </div>
-                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
                       Bundle Outfits &amp; Sets
                     </h4>
                     <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
@@ -1190,7 +1187,7 @@ export default function AccountPage() {
                   </div>
                   <Link
                     href="/studio/bundles"
-                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
                   >
                     Manage Bundles →
                   </Link>
@@ -1199,10 +1196,10 @@ export default function AccountPage() {
                 {/* 4. Marketing & Broadcasts */}
                 <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
                       <Sparkles className="w-5 h-5" />
                     </div>
-                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
                       Marketing &amp; Campaigns
                     </h4>
                     <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
@@ -1211,7 +1208,7 @@ export default function AccountPage() {
                   </div>
                   <Link
                     href="/studio/marketing"
-                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
                   >
                     Marketing Studio →
                   </Link>
