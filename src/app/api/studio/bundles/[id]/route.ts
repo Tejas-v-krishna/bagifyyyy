@@ -1,7 +1,52 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// DELETE /api/studio/bundles/[id]
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const { name, description, discount, productIds } = body;
+
+    if (!id || !name || !productIds || productIds.length < 2) {
+      return NextResponse.json({ error: 'Missing required bundle fields' }, { status: 400 });
+    }
+
+    // Update the bundle, and replace all its products
+    await prisma.$transaction(async (tx) => {
+      // Update bundle details
+      await tx.bundle.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          discount: parseFloat(discount.toString()),
+        },
+      });
+
+      // Delete existing bundle products
+      await tx.bundleProduct.deleteMany({
+        where: { bundleId: id },
+      });
+
+      // Add new bundle products
+      await tx.bundleProduct.createMany({
+        data: productIds.map((productId: string) => ({
+          bundleId: id,
+          productId,
+        })),
+      });
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error updating bundle:', error);
+    return NextResponse.json({ error: 'Failed to update bundle' }, { status: 500 });
+  }
+}
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }

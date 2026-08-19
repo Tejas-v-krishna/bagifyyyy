@@ -110,8 +110,8 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
           </Link>
         </div>
 
-        {/* Outfit Selection Tabs */}
-        <div className="flex flex-wrap items-center gap-2 mb-12">
+        {/* Outfit Selection Massive Blocks */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-y2k-gunmetal/15 mb-12 bg-white shadow-sm">
           {bundles.map((bundle, idx) => {
             const isSelected = selectedIdx === idx;
             return (
@@ -121,14 +121,23 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                   setSelectedIdx(idx);
                   setActiveHoverItem(null);
                 }}
-                className={`px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-3 border cursor-pointer ${
+                className={`p-5 sm:p-6 lg:p-8 text-left border-r border-b md:border-b-0 border-y2k-gunmetal/15 transition-all cursor-pointer group ${
                   isSelected
-                    ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
-                    : "bg-transparent text-y2k-gunmetal border-y2k-gunmetal/20 hover:border-y2k-gunmetal/50"
-                }`}
+                    ? "bg-y2k-gunmetal text-white"
+                    : "bg-white text-y2k-gunmetal hover:bg-y2k-ice"
+                } last:border-r-0`}
               >
-                <span className="opacity-50">0{idx + 1}</span>
-                {bundle.name}
+                <div className="flex justify-between items-start mb-6">
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isSelected ? 'text-white/50' : 'text-y2k-gunmetal/40'}`}>
+                    LOOK 0{idx + 1}
+                  </span>
+                  <span className={`text-[9px] font-bold px-2 py-1 border ${isSelected ? 'border-white/20 text-white' : 'border-y2k-gunmetal/20 text-y2k-gunmetal'}`}>
+                    {bundle.discount}% OFF
+                  </span>
+                </div>
+                <h3 className="font-display text-xl sm:text-2xl lg:text-3xl uppercase leading-[1.1] pr-2 group-hover:translate-x-1 transition-transform">
+                  {bundle.name}
+                </h3>
               </button>
             );
           })}
