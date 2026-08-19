@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, CheckCircle2, ChevronRight } from "lucide-react";
 
 interface Product {
   id: string;
@@ -18,11 +18,42 @@ interface Product {
   _count?: { variants: number };
 }
 
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  size: string;
+  color: string;
+  image: string;
+}
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  customerEmail: string;
+  customerPhone: string;
+  totalAmount: number;
+  paymentStatus: string;
+  orderStatus: string;
+  paymentMethod: string;
+  createdAt: string;
+  items: OrderItem[];
+  shippingAddress?: {
+    fullName: string;
+    city: string;
+    state: string;
+  };
+}
+
 interface Stats {
   total: number;
   soldOut: number;
   newArrivals: number;
   categories: Record<string, number>;
+  totalOrders: number;
+  totalRevenue: number;
+  pendingOrders: number;
 }
 
 function ConfirmModal({
@@ -70,56 +101,95 @@ function StatCard({
   value,
   icon: Icon,
   accent,
+  subtitle,
 }: {
   label: string;
   value: number | string;
   icon: any;
   accent?: string;
+  subtitle?: string;
 }) {
   return (
-    <div className="bg-[#111] border border-white/5 p-6 flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+    <div className="bg-[#111] border border-white/5 p-6 flex flex-col justify-between">
+      <div className="flex items-center justify-between mb-3">
         <p className="text-[8px] font-bold uppercase tracking-widest text-gray-500">
           {label}
         </p>
         <Icon className={`w-4 h-4 ${accent || "text-gray-600"}`} />
       </div>
-      <p className={`text-3xl font-medium ${accent || "text-white"}`}>
-        {value}
-      </p>
+      <div>
+        <p className={`text-2xl lg:text-3xl font-medium ${accent || "text-white"}`}>
+          {value}
+        </p>
+        {subtitle && (
+          <p className="text-[9px] text-gray-500 mt-1 uppercase tracking-wider">{subtitle}</p>
+        )}
+      </div>
     </div>
   );
 }
 
 export default function StudioDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [stats, setStats] = useState<Stats>({ total: 0, soldOut: 0, newArrivals: 0, categories: {} });
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [stats, setStats] = useState<Stats>({
+    total: 0,
+    soldOut: 0,
+    newArrivals: 0,
+    categories: {},
+    totalOrders: 0,
+    totalRevenue: 0,
+    pendingOrders: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [toggling, setToggling] = useState<string | null>(null);
 
-  const fetchProducts = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const res = await fetch("/api/products");
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        // Re-fetch with images included
+      // 1. Fetch Products
+      const [prodRes, orderRes] = await Promise.allSettled([
+        fetch("/api/products").then((r) => r.json()),
+        fetch("/api/studio/orders").then((r) => r.json()),
+      ]);
+
+      let allProducts: Product[] = [];
+      if (prodRes.status === "fulfilled" && Array.isArray(prodRes.value)) {
         const detailed = await Promise.all(
-          data.map((p) => fetch(`/api/products/${p.id}`).then((r) => r.json()))
+          prodRes.value.map((p) => fetch(`/api/products/${p.id}`).then((r) => r.json()))
         );
-        setProducts(detailed.filter((p) => !p.error));
-        const allProducts = detailed.filter((p) => !p.error);
-        const categories: Record<string, number> = {};
-        allProducts.forEach((p) => {
-          categories[p.category] = (categories[p.category] || 0) + 1;
-        });
-        setStats({
-          total: allProducts.length,
-          soldOut: allProducts.filter((p) => p.isSoldOut).length,
-          newArrivals: allProducts.filter((p) => p.isNew).length,
-          categories,
-        });
+        allProducts = detailed.filter((p) => !p.error);
+        setProducts(allProducts);
       }
+
+      let fetchedOrders: Order[] = [];
+      if (orderRes.status === "fulfilled" && orderRes.value?.orders) {
+        fetchedOrders = orderRes.value.orders;
+        setOrders(fetchedOrders);
+      }
+
+      const categories: Record<string, number> = {};
+      allProducts.forEach((p) => {
+        categories[p.category] = (categories[p.category] || 0) + 1;
+      });
+
+      const totalRevenue = fetchedOrders
+        .filter((o) => o.paymentStatus === "PAID" || o.orderStatus !== "CANCELLED")
+        .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+
+      const pendingOrders = fetchedOrders.filter(
+        (o) => o.orderStatus === "PROCESSING"
+      ).length;
+
+      setStats({
+        total: allProducts.length,
+        soldOut: allProducts.filter((p) => p.isSoldOut).length,
+        newArrivals: allProducts.filter((p) => p.isNew).length,
+        categories,
+        totalOrders: fetchedOrders.length,
+        totalRevenue,
+        pendingOrders,
+      });
     } catch (err) {
       console.error(err);
     } finally {
@@ -128,14 +198,14 @@ export default function StudioDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchData();
+  }, [fetchData]);
 
   const handleDelete = async (product: Product) => {
     try {
       await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
       setDeleteTarget(null);
-      fetchProducts();
+      fetchData();
     } catch (err) {
       console.error(err);
     }
@@ -152,7 +222,7 @@ export default function StudioDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [field]: !product[field] }),
       });
-      fetchProducts();
+      fetchData();
     } catch (err) {
       console.error(err);
     } finally {
@@ -173,33 +243,150 @@ export default function StudioDashboard() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white px-8 py-10">
       {/* Header */}
-      <div className="flex items-end justify-between mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
         <div>
           <p className="text-[8px] uppercase tracking-[0.3em] text-gray-600 mb-2">
             BAGIFYYYY / STUDIO
           </p>
           <h1 className="text-2xl font-medium tracking-tight">Dashboard</h1>
         </div>
-        <Link
-          href="/studio/products/new"
-          className="flex items-center gap-2 bg-white text-black px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Add Product
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/studio/orders"
+            className="flex items-center gap-2 border border-white/20 text-white px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:bg-white/5 transition-colors"
+          >
+            <ShoppingBag className="w-3.5 h-3.5" />
+            Manage Orders ({orders.length})
+          </Link>
+          <Link
+            href="/studio/products/new"
+            className="flex items-center gap-2 bg-white text-black px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add Product
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <StatCard label="Total Products" value={stats.total} icon={Package} />
-        <StatCard label="Sold Out" value={stats.soldOut} icon={AlertCircle} accent="text-red-400" />
-        <StatCard label="New Arrivals" value={stats.newArrivals} icon={Sparkles} accent="text-emerald-400" />
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10">
         <StatCard
-          label="Categories"
-          value={Object.keys(stats.categories).length}
-          icon={Tag}
-          accent="text-blue-400"
+          label="Total Revenue"
+          value={`₹${stats.totalRevenue.toLocaleString("en-IN")}`}
+          icon={ShoppingBag}
+          accent="text-emerald-400"
+          subtitle="Gross sales"
         />
+        <StatCard
+          label="Total Orders"
+          value={stats.totalOrders}
+          icon={ShoppingBag}
+          accent="text-white"
+          subtitle={`${orders.length} placed`}
+        />
+        <StatCard
+          label="Processing"
+          value={stats.pendingOrders}
+          icon={Clock}
+          accent={stats.pendingOrders > 0 ? "text-amber-400" : "text-gray-400"}
+          subtitle="Pending action"
+        />
+        <StatCard label="Total Products" value={stats.total} icon={Package} subtitle="In catalog" />
+        <StatCard label="Sold Out" value={stats.soldOut} icon={AlertCircle} accent="text-red-400" subtitle="Needs restock" />
+        <StatCard label="New Arrivals" value={stats.newArrivals} icon={Sparkles} accent="text-cyan-400" subtitle="Active badges" />
+      </div>
+
+      {/* Recent Orders Section */}
+      <div className="mb-10 bg-[#111] border border-white/5 overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <ShoppingBag className="w-4 h-4 text-emerald-400" />
+            <p className="text-[9px] font-bold uppercase tracking-widest text-white">
+              Recent Orders ({orders.length})
+            </p>
+          </div>
+          <Link
+            href="/studio/orders"
+            className="text-[9px] font-bold uppercase tracking-widest text-gray-400 hover:text-white flex items-center gap-1.5 transition-colors"
+          >
+            <span>View All Orders</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+
+        {orders.length === 0 ? (
+          <div className="py-12 text-center text-gray-600 text-xs uppercase tracking-widest">
+            No orders placed yet
+          </div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {orders.slice(0, 5).map((order) => (
+              <div
+                key={order.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-white/2 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-9 h-11 bg-white/5 shrink-0 overflow-hidden relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={order.items?.[0]?.image || "/placeholder.jpg"}
+                      alt={order.items?.[0]?.name || "Order item"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs font-bold text-white">#{order.orderNumber}</p>
+                      <span className={`text-[8px] font-bold uppercase px-2 py-0.5 rounded-xs border ${
+                        order.paymentStatus === "PAID"
+                          ? "bg-green-900/30 border-green-700/40 text-green-400"
+                          : "bg-amber-900/30 border-amber-700/40 text-amber-400"
+                      }`}>
+                        {order.paymentMethod === "COD" ? "COD" : order.paymentStatus}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-0.5">
+                      {order.shippingAddress?.fullName || order.customerEmail} • {order.items?.length || 1} item(s)
+                    </p>
+                    <p className="text-[9px] text-gray-600">
+                      {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 justify-between sm:justify-end">
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-white">
+                      ₹{order.totalAmount?.toLocaleString("en-IN")}
+                    </p>
+                    <span className={`text-[8px] font-bold uppercase px-2 py-0.5 inline-block mt-0.5 border ${
+                      order.orderStatus === "PROCESSING" ? "bg-amber-900/30 border-amber-700/40 text-amber-400" :
+                      order.orderStatus === "SHIPPED" ? "bg-blue-900/30 border-blue-700/40 text-blue-400" :
+                      order.orderStatus === "DELIVERED" ? "bg-green-900/30 border-green-700/40 text-green-400" :
+                      "bg-red-900/30 border-red-700/40 text-red-400"
+                    }`}>
+                      {order.orderStatus}
+                    </span>
+                  </div>
+
+                  <Link
+                    href="/studio/orders"
+                    className="p-2 border border-white/10 text-gray-400 hover:text-white hover:border-white/30 transition-colors"
+                    title="Manage Order"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Category Breakdown */}

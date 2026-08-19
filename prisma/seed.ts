@@ -5,6 +5,7 @@ dotenv.config();
 
 async function main() {
   // Clear existing catalog data
+  await prisma.review.deleteMany();
   await prisma.bundleProduct.deleteMany();
   await prisma.bundle.deleteMany();
   await prisma.orderItem.deleteMany();

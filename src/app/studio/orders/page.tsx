@@ -51,17 +51,25 @@ const FILTER_TABS = ["ALL", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
 export default function StudioOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unauthorized, setUnauthorized] = useState(false);
   const [search, setSearch] = useState("");
   const [filterTab, setFilterTab] = useState("ALL");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
   const [statusSelects, setStatusSelects] = useState<Record<string, string>>({});
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
+    setUnauthorized(false);
     try {
       const res = await fetch("/api/studio/orders");
+      if (res.status === 401) {
+        setUnauthorized(true);
+        setOrders([]);
+        return;
+      }
       const data = await res.json();
       if (data.orders) {
         setOrders(data.orders);
@@ -74,6 +82,8 @@ export default function StudioOrdersPage() {
         });
         setTrackingInputs(tracking);
         setStatusSelects(statuses);
+      } else if (data.error === "Unauthorized") {
+        setUnauthorized(true);
       }
     } catch (err) {
       console.error("Failed to load orders:", err);
@@ -88,6 +98,7 @@ export default function StudioOrdersPage() {
 
   const handleSaveOrder = async (orderId: string) => {
     setSaving(orderId);
+    setSaveSuccess(null);
     try {
       const res = await fetch(`/api/studio/orders/${orderId}`, {
         method: "PATCH",
@@ -105,6 +116,8 @@ export default function StudioOrdersPage() {
               : o
           )
         );
+        setSaveSuccess(orderId);
+        setTimeout(() => setSaveSuccess(null), 3000);
       }
     } catch (err) {
       console.error("Failed to update order:", err);
@@ -115,14 +128,50 @@ export default function StudioOrdersPage() {
 
   const filtered = orders.filter((o) => {
     const matchesTab = filterTab === "ALL" || o.orderStatus === filterTab;
-    const q = search.toLowerCase();
+    const q = search.toLowerCase().trim();
+    if (!q) return matchesTab;
+
+    const matchOrderNum = o.orderNumber?.toLowerCase().includes(q);
+    const matchEmail = o.customerEmail?.toLowerCase().includes(q);
+    const matchPhone = o.customerPhone?.toLowerCase().includes(q);
+    const matchTracking = (o.trackingId || "").toLowerCase().includes(q);
+    const matchName = (o.shippingAddress?.fullName || "").toLowerCase().includes(q);
+    const matchCity = (o.shippingAddress?.city || "").toLowerCase().includes(q);
+    const matchState = (o.shippingAddress?.state || "").toLowerCase().includes(q);
+    const matchPincode = (o.shippingAddress?.pincode || "").toLowerCase().includes(q);
+    const matchItems = o.items?.some((item) => item.name?.toLowerCase().includes(q));
+
     const matchesSearch =
-      !q ||
-      o.orderNumber.toLowerCase().includes(q) ||
-      o.customerEmail.toLowerCase().includes(q) ||
-      (o.trackingId || "").toLowerCase().includes(q);
+      matchOrderNum ||
+      matchEmail ||
+      matchPhone ||
+      matchTracking ||
+      matchName ||
+      matchCity ||
+      matchState ||
+      matchPincode ||
+      matchItems;
+
     return matchesTab && matchesSearch;
   });
+
+  if (unauthorized) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white p-8 flex flex-col items-center justify-center">
+        <div className="bg-[#111] border border-white/10 p-8 max-w-md w-full text-center">
+          <Package className="w-10 h-10 text-amber-400 mx-auto mb-4" />
+          <h2 className="text-base font-bold uppercase tracking-widest mb-2">Studio Authentication Required</h2>
+          <p className="text-xs text-gray-400 mb-6">Please sign in to access order management and customer details.</p>
+          <a
+            href="/studio/login?from=/studio/orders"
+            className="inline-block w-full bg-white text-black text-[10px] font-bold uppercase tracking-widest py-3 hover:bg-gray-200 transition-colors"
+          >
+            Sign In to Studio →
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white p-8">
@@ -131,7 +180,7 @@ export default function StudioOrdersPage() {
         <div>
           <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 mb-1">BAGIFYYYY STUDIO</p>
           <h1 className="text-2xl font-bold tracking-tight">Orders</h1>
-          <p className="text-xs text-gray-500 mt-1">{orders.length} total orders</p>
+          <p className="text-xs text-gray-500 mt-1">{orders.length} total orders recorded</p>
         </div>
         <button
           onClick={fetchOrders}
@@ -171,7 +220,7 @@ export default function StudioOrdersPage() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by order #, email, or tracking ID..."
+          placeholder="Search by order #, name, email, phone, city..."
           className="w-full bg-transparent text-xs text-white outline-none placeholder:text-gray-600"
         />
       </div>
@@ -182,7 +231,7 @@ export default function StudioOrdersPage() {
       ) : filtered.length === 0 ? (
         <div className="text-center text-xs text-gray-500 uppercase tracking-widest py-24 border border-white/5">
           <Package className="w-8 h-8 mx-auto mb-3 opacity-20" />
-          No orders found
+          {orders.length === 0 ? "No orders placed yet" : "No matching orders found"}
         </div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -200,7 +249,10 @@ export default function StudioOrdersPage() {
                   <div className="flex items-center gap-6">
                     <div>
                       <p className="text-xs font-bold tracking-wider">#{order.orderNumber}</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">{order.customerEmail}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-medium">
+                        {order.shippingAddress?.fullName || order.customerEmail}
+                      </p>
+                      <p className="text-[9px] text-gray-600">{order.customerEmail}</p>
                     </div>
                     <div className="hidden sm:block">
                       <p className="text-[10px] text-gray-500 uppercase tracking-widest">Date</p>
@@ -323,6 +375,11 @@ export default function StudioOrdersPage() {
                         >
                           {saving === order.id ? "Saving…" : "Save Changes"}
                         </button>
+                        {saveSuccess === order.id && (
+                          <p className="text-[10px] font-bold text-green-400 text-center uppercase tracking-wider">
+                            ✓ Order updated successfully!
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>

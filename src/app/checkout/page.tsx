@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Loader2, ArrowRight, User, ShieldCheck, Truck, CreditCard, Banknote, Tag, CheckCircle2 } from "lucide-react";
@@ -41,7 +41,7 @@ const loadRazorpayScript = (): Promise<boolean> => {
   });
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
   const { items, cartTotal, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user, isAuthenticated, openAuthModal } = useAuthStore();
@@ -736,5 +736,19 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
+          Loading Checkout...
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }
