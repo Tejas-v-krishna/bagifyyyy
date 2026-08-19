@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Camera,
   Save,
@@ -13,8 +12,6 @@ import {
   ExternalLink,
   CheckCircle2,
   AlertCircle,
-  RefreshCw,
-  Sparkles
 } from "lucide-react";
 
 interface InstagramPostItem {
@@ -130,25 +127,25 @@ export default function StudioInstagramPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white px-6 sm:px-10 py-10">
+    <div className="min-h-screen bg-y2k-ice text-y2k-gunmetal px-6 sm:px-10 py-10">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-6 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 pb-6 border-b border-y2k-gunmetal/15">
         <div>
-          <p className="text-[8px] uppercase tracking-[0.3em] text-gray-600 mb-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-gunmetal/50 mb-2">
             BAGIFYYYY / STUDIO
           </p>
-          <h1 className="text-2xl font-medium tracking-tight">Instagram Lookbook Feed</h1>
-          <p className="text-xs text-gray-400 mt-1">
+          <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-[-0.03em]">Instagram Feed</h1>
+          <p className="text-xs text-y2k-gunmetal/70 mt-1 max-w-lg">
             Curate and update the 4 featured Instagram drop posts shown on the store homepage.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
-            href="/"
+            href="/#instagram"
             target="_blank"
-            className="flex items-center gap-2 border border-white/20 text-white px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:bg-white/5 transition-colors"
+            className="flex items-center gap-2 border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest hover:border-y2k-gunmetal hover:bg-white transition-colors bg-transparent"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             View on Homepage
@@ -156,7 +153,7 @@ export default function StudioInstagramPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-white text-black px-5 py-2.5 text-[9px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 bg-y2k-gunmetal text-white px-5 py-2.5 text-[9px] font-bold uppercase tracking-widest hover:bg-black transition-colors shadow-sm cursor-pointer disabled:opacity-50"
           >
             <Save className="w-3.5 h-3.5" />
             {saving ? "Saving…" : "Save Live Feed"}
@@ -166,10 +163,10 @@ export default function StudioInstagramPage() {
 
       {message && (
         <div
-          className={`p-4 mb-6 text-xs flex items-center gap-2 border ${
+          className={`p-4 mb-6 text-xs flex items-center gap-2 border bg-white ${
             message.type === "success"
-              ? "bg-emerald-950/40 border-emerald-800 text-emerald-300"
-              : "bg-red-950/40 border-red-800 text-red-300"
+              ? "border-y2k-gunmetal text-y2k-gunmetal font-bold"
+              : "border-red-500 text-red-600"
           }`}
         >
           {message.type === "success" ? (
@@ -182,18 +179,18 @@ export default function StudioInstagramPage() {
       )}
 
       {/* Account Handle Setting */}
-      <div className="bg-[#111] border border-white/5 p-6 mb-8">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-2">
+      <div className="bg-white border border-y2k-gunmetal/15 p-6 mb-8">
+        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-2">
           Instagram Account Handle
         </label>
         <div className="flex items-center gap-2 max-w-sm">
-          <span className="text-gray-500 font-mono text-sm">@</span>
+          <span className="text-y2k-gunmetal/40 font-mono text-sm">@</span>
           <input
             type="text"
             value={handle}
             onChange={(e) => setHandle(e.target.value)}
             placeholder="bagifyyyy"
-            className="bg-white/5 border border-white/10 text-white text-xs px-3.5 py-2 outline-none focus:border-white/40 flex-1 font-mono"
+            className="bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-2 py-2 outline-none focus:border-y2k-gunmetal flex-1 font-mono"
           />
         </div>
       </div>
@@ -201,20 +198,20 @@ export default function StudioInstagramPage() {
       {/* 4 Posts Editor Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {posts.map((post, idx) => (
-          <div key={post.id || idx} className="bg-[#111] border border-white/8 p-6 flex flex-col justify-between">
+          <div key={post.id || idx} className="bg-white border border-y2k-gunmetal/15 p-6 flex flex-col justify-between hover:shadow-lg transition-shadow">
             <div>
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/5">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-400">
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-y2k-gunmetal/10">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal">
                   POST 0{idx + 1}
                 </span>
-                <span className="text-[9px] uppercase tracking-wider text-gray-500 font-mono">
-                  {post.type.toUpperCase()}
+                <span className="text-[9px] uppercase tracking-wider text-y2k-gunmetal/40 font-mono font-bold">
+                  {post.type}
                 </span>
               </div>
 
               {/* Image Preview & URL */}
               <div className="flex gap-4 mb-4">
-                <div className="w-24 h-24 shrink-0 bg-white/5 relative border border-white/10 overflow-hidden">
+                <div className="w-24 h-24 shrink-0 bg-y2k-ice relative border border-y2k-gunmetal/10 overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={post.url}
@@ -224,33 +221,33 @@ export default function StudioInstagramPage() {
                       (e.target as HTMLImageElement).src = "/placeholder.jpg";
                     }}
                   />
-                  <div className="absolute top-1 right-1 bg-black/60 p-1 text-white">
+                  <div className="absolute top-1 right-1 bg-white/90 border border-y2k-gunmetal/10 p-1 text-y2k-gunmetal">
                     {post.type === "reel" ? <Film className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   </div>
                 </div>
 
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-3">
                   <div>
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-1">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
                       Image / Thumbnail URL *
                     </label>
                     <input
                       type="text"
                       value={post.url}
                       onChange={(e) => handlePostChange(idx, "url", e.target.value)}
-                      placeholder="/assets/ai/prod_model_7_chromebelt_1786660225515.jpg"
-                      className="w-full bg-white/5 border border-white/10 text-white text-[11px] px-2.5 py-1.5 outline-none focus:border-white/40 font-mono"
+                      placeholder="/assets/..."
+                      className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 text-y2k-gunmetal text-[11px] px-2.5 py-2 outline-none focus:border-y2k-gunmetal font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-1">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
                       Post Type
                     </label>
                     <select
                       value={post.type}
                       onChange={(e) => handlePostChange(idx, "type", e.target.value as any)}
-                      className="bg-[#181818] border border-white/10 text-white text-[10px] uppercase font-bold px-2.5 py-1 outline-none cursor-pointer"
+                      className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal text-[10px] uppercase font-bold px-2.5 py-2 outline-none cursor-pointer w-full"
                     >
                       <option value="reel">Reel / Video</option>
                       <option value="carousel">Lookbook Carousel</option>
@@ -262,7 +259,7 @@ export default function StudioInstagramPage() {
 
               {/* Caption */}
               <div className="mb-4">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-1">
+                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
                   Caption / Description
                 </label>
                 <textarea
@@ -270,48 +267,48 @@ export default function StudioInstagramPage() {
                   value={post.caption}
                   onChange={(e) => handlePostChange(idx, "caption", e.target.value)}
                   placeholder="Drop caption text..."
-                  className="w-full bg-white/5 border border-white/10 text-white text-xs p-2.5 outline-none focus:border-white/40"
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 text-y2k-gunmetal text-xs p-2.5 outline-none focus:border-y2k-gunmetal resize-none"
                 />
               </div>
 
               {/* Engagement & Link */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-1 flex items-center gap-1">
-                    <Heart className="w-2.5 h-2.5" /> Likes
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5 flex items-center gap-1">
+                    <Heart className="w-3 h-3" /> Likes
                   </label>
                   <input
                     type="text"
                     value={post.likes}
                     onChange={(e) => handlePostChange(idx, "likes", e.target.value)}
                     placeholder="4.2K"
-                    className="w-full bg-white/5 border border-white/10 text-white text-xs px-2 py-1 outline-none font-mono"
+                    className="w-full bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-1 flex items-center gap-1">
-                    <MessageCircle className="w-2.5 h-2.5" /> Comments
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5 flex items-center gap-1">
+                    <MessageCircle className="w-3 h-3" /> Comments
                   </label>
                   <input
                     type="text"
                     value={post.comments}
                     onChange={(e) => handlePostChange(idx, "comments", e.target.value)}
                     placeholder="248"
-                    className="w-full bg-white/5 border border-white/10 text-white text-xs px-2 py-1 outline-none font-mono"
+                    className="w-full bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400 block mb-1">
-                    Instagram Link URL
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
+                    Link URL
                   </label>
                   <input
                     type="text"
                     value={post.link}
                     onChange={(e) => handlePostChange(idx, "link", e.target.value)}
-                    placeholder="https://instagram.com/bagifyyyy"
-                    className="w-full bg-white/5 border border-white/10 text-white text-xs px-2 py-1 outline-none font-mono"
+                    placeholder="https://instagram..."
+                    className="w-full bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
                   />
                 </div>
               </div>
@@ -321,11 +318,11 @@ export default function StudioInstagramPage() {
       </div>
 
       {/* Bottom save bar */}
-      <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-end">
+      <div className="mt-10 flex items-center justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-2 bg-white text-black px-8 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-3 bg-y2k-gunmetal text-white px-8 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors shadow-md disabled:opacity-50 cursor-pointer"
         >
           <Save className="w-4 h-4" />
           {saving ? "Saving…" : "Save Instagram Feed"}
