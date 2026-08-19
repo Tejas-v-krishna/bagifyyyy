@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Menu, Heart, ShoppingBag, User } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import { AnimatePresence, motion } from "framer-motion";
@@ -13,6 +14,22 @@ export default function Header() {
   const { toggleCart, items } = useCartStore();
   const { openAuthModal, isAuthenticated, user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
 
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -171,105 +188,116 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── Mobile side drawer menu ─────────────────────────────────────────── */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm lg:hidden"
-            />
-            
-            {/* Drawer */}
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 28, stiffness: 240 }}
-              className="fixed inset-y-0 left-0 z-[100] w-[82vw] max-w-sm bg-[#E8EDF2] text-y2k-gunmetal border-r border-y2k-gunmetal/20 shadow-2xl flex flex-col lg:hidden"
-              style={{ backgroundColor: "#E8EDF2" }}
-            >
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-y2k-gunmetal/15 bg-[#E8EDF2]">
-                <div className="flex items-center gap-2">
-                  <Image
-                    src="/logo.png"
-                    alt="Bagifyyyy Logo"
-                    width={130}
-                    height={30}
-                    className="object-contain"
-                  />
-                </div>
-                <button
+      {/* ── Mobile side drawer menu (Portal to body for clean viewport stacking) ── */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <>
+                {/* Backdrop */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1.5 hover:bg-y2k-gunmetal/10 rounded-full transition-colors cursor-pointer text-y2k-gunmetal"
-                  aria-label="Close menu"
+                  className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm lg:hidden cursor-pointer"
+                />
+
+                {/* Drawer */}
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                  transition={{ type: "spring", damping: 28, stiffness: 240 }}
+                  className="fixed inset-y-0 left-0 z-[9999] w-[82vw] max-w-sm bg-[#E8EDF2] text-y2k-gunmetal border-r border-y2k-gunmetal/20 shadow-2xl flex flex-col lg:hidden h-full max-h-screen"
+                  style={{ backgroundColor: "#E8EDF2" }}
                 >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+                  {/* Drawer Header */}
+                  <div className="flex items-center justify-between px-6 py-5 border-b border-y2k-gunmetal/15 bg-[#E8EDF2] shrink-0">
+                    <Image
+                      src="/logo.png"
+                      alt="Bagifyyyy Logo"
+                      width={130}
+                      height={30}
+                      className="object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="p-1.5 hover:bg-y2k-gunmetal/10 rounded-full transition-colors cursor-pointer text-y2k-gunmetal"
+                      aria-label="Close menu"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
 
-              {/* Navigation Links */}
-              <nav className="flex flex-col px-6 py-6 gap-5 flex-1 overflow-y-auto bg-[#E8EDF2]">
-                {[
-                  { href: "/topwears", label: "Shirts & Tees" },
-                  { href: "/bottomwears", label: "Pants & Cargos" },
-                  { href: "/accessories", label: "Accessories" },
-                  { href: "/bundles", label: "Bundles & Sets" },
-                  { href: "/products", label: "All Drops" },
-                  { href: "/wishlist", label: "Wishlist" },
-                ].map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-[13px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors border-b border-y2k-gunmetal/10 pb-4 flex items-center justify-between"
-                  >
-                    <span>{label}</span>
-                    <span className="text-y2k-gunmetal/30 text-xs">→</span>
-                  </Link>
-                ))}
-              </nav>
+                  {/* Navigation Links */}
+                  <nav className="flex flex-col px-6 py-6 gap-5 flex-1 overflow-y-auto bg-[#E8EDF2]">
+                    {[
+                      { href: "/topwears", label: "Shirts & Tees" },
+                      { href: "/bottomwears", label: "Pants & Cargos" },
+                      { href: "/accessories", label: "Accessories" },
+                      { href: "/bundles", label: "Bundles & Sets" },
+                      { href: "/products", label: "All Drops" },
+                      { href: "/wishlist", label: "Wishlist" },
+                    ].map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-[13px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors border-b border-y2k-gunmetal/10 pb-4 flex items-center justify-between"
+                      >
+                        <span>{label}</span>
+                        <span className="text-y2k-gunmetal/30 text-xs">→</span>
+                      </Link>
+                    ))}
+                  </nav>
 
-              {/* Drawer Footer / Account */}
-              <div className="p-6 border-t border-y2k-gunmetal/15 bg-[#E8EDF2]">
-                {isAuthenticated ? (
-                  <Link
-                    href="/account"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 p-3 rounded-none bg-white/70 border border-y2k-gunmetal/15 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-white transition-colors"
-                  >
-                    {user?.avatar ? (
-                      <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 object-cover" />
+                  {/* Drawer Footer / Account */}
+                  <div className="p-6 border-t border-y2k-gunmetal/15 bg-[#E8EDF2] shrink-0">
+                    {isAuthenticated ? (
+                      <Link
+                        href="/account"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 p-3 rounded-none bg-white/70 border border-y2k-gunmetal/15 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-white transition-colors"
+                      >
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            alt="Avatar"
+                            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 object-cover"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs font-bold">
+                            {user?.name ? user.name[0].toUpperCase() : "U"}
+                          </div>
+                        )}
+                        <div className="flex flex-col truncate">
+                          <span className="text-[11px] font-bold tracking-wider truncate">
+                            {user?.name || "Member"}
+                          </span>
+                          <span className="text-[9px] text-y2k-gunmetal/60 lowercase font-normal truncate">
+                            {user?.email}
+                          </span>
+                        </div>
+                      </Link>
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs font-bold">
-                        {user?.name ? user.name[0].toUpperCase() : "U"}
-                      </div>
+                      <Link
+                        href="/login"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="btn-bagify flex items-center justify-center w-full py-4 text-[11px] font-bold uppercase tracking-[0.15em] gap-2 shadow-md"
+                      >
+                        <User className="w-4 h-4" />
+                        Sign In / Register
+                      </Link>
                     )}
-                    <div className="flex flex-col">
-                      <span className="text-[11px] font-bold tracking-wider">{user?.name || "Member"}</span>
-                      <span className="text-[9px] text-y2k-gunmetal/60 lowercase font-normal">{user?.email}</span>
-                    </div>
-                  </Link>
-                ) : (
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="btn-bagify flex items-center justify-center w-full py-4 text-[11px] font-bold uppercase tracking-[0.15em] gap-2 shadow-md"
-                  >
-                    <User className="w-4 h-4" />
-                    Sign In / Register
-                  </Link>
-                )}
-              </div>
-            </motion.div>
-          </>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </header>
   );
 }
