@@ -261,13 +261,13 @@ export default function Header() {
                     {/* Discover & VIP Group */}
                     <div className="border-t border-y2k-gunmetal/10 pt-4">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-3">
-                        DISCOVER &amp; ARCHIVE
+                        DISCOVER
                       </span>
                       <div className="flex flex-col gap-3">
                         {[
-                          { href: "/products", label: "All Drops & Archive" },
-                          { href: "/wishlist", label: "Saved Wishlist" },
-                          { href: "/account", label: "Chrome Club VIP" },
+                          { href: "/products", label: "All Drops" },
+                          { href: "/wishlist", label: "Wishlist" },
+                          { href: "/account", label: "VIP Club" },
                         ].map(({ href, label }) => (
                           <Link
                             key={href}
@@ -283,13 +283,10 @@ export default function Header() {
                     </div>
 
                     {/* VIP Brand Notice */}
-                    <div className="mt-auto p-3 bg-white/60 border border-y2k-gunmetal/15">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/80">
-                        AUTHENTIC VINTAGE SOURCING
-                      </p>
-                      <p className="text-[9px] text-y2k-gunmetal/60 mt-0.5 leading-tight">
-                        Complimentary shipping on orders over ₹2000.
-                      </p>
+                    <div className="mt-auto py-2 px-3 bg-white/60 border border-y2k-gunmetal/15 flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/80">
+                      <span>Free Shipping ₹2000+</span>
+                      <span className="text-y2k-gunmetal/40">·</span>
+                      <span>Verified 1-of-1</span>
                     </div>
                   </nav>
 

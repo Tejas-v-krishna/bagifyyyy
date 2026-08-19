@@ -177,8 +177,7 @@ export default function Footer() {
             NEWSLETTER + 10% OFF
           </h4>
           <p className="text-xs font-normal text-y2k-gunmetal/70 leading-relaxed mb-4 max-w-sm">
-            Get 10% off on your first order. We&apos;ll only send you updates on new
-            releases and exclusive archive drops.
+            Subscribe for 10% off your first drop. No spam, only rare archive releases.
           </p>
           <form onSubmit={handleSubscribe} className="flex flex-col gap-2.5">
             <input

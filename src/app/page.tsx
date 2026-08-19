@@ -126,9 +126,8 @@ export default async function Home() {
 
           {/* Subtext */}
           <div className="w-full flex justify-end mt-12 md:mt-16" data-animate="text-up">
-            <p className="text-y2k-gunmetal/80 text-xs md:text-sm font-normal uppercase tracking-wider leading-relaxed max-w-md text-right border-r border-y2k-gunmetal/30 pr-5">
-              We build pieces that outlive trends. Stop buying disposable garbage. Invest in the archive. 
-              Our garments are curated to age, to wear, and to carry history.
+            <p className="text-y2k-gunmetal/80 text-xs md:text-sm font-normal uppercase tracking-wider leading-relaxed max-w-sm text-right border-r border-y2k-gunmetal/30 pr-5">
+              Curated 1-of-1 vintage garments built to outlive fast fashion trends.
             </p>
           </div>
         </div>
