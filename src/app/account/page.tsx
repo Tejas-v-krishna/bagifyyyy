@@ -19,10 +19,10 @@ import {
   Trash2,
   Copy,
   ArrowRight,
-  Sparkles,
   ShoppingBag,
   Tag,
-  Check,
+  ExternalLink,
+  Check
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,7 +38,7 @@ export default function AccountPage() {
     (user?.email && ["admin@bagifyyyy.com", "admin@bagify.com"].includes(user.email.toLowerCase()))
   );
 
-  const [activeTab, setActiveTab] = useState<"orders" | "loyalty" | "addresses" | "wishlist" | "profile" | "admin">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "wishlist" | "addresses" | "loyalty" | "settings" | "admin">("orders");
   const [loyaltyData, setLoyaltyData] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
@@ -61,11 +61,10 @@ export default function AccountPage() {
   const [addressError, setAddressError] = useState("");
   const [copiedTrackingId, setCopiedTrackingId] = useState<string | null>(null);
 
-  // ── Load User Data ────────────────────────────────────────────────────────
+  // Load User Data
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    // Load Loyalty
     if (user?.email) {
       fetch(`/api/loyalty?email=${encodeURIComponent(user.email)}`)
         .then((res) => res.json())
@@ -73,7 +72,6 @@ export default function AccountPage() {
         .catch(console.error);
     }
 
-    // Load Orders
     setLoadingOrders(true);
     fetch("/api/orders")
       .then((res) => res.json())
@@ -83,7 +81,6 @@ export default function AccountPage() {
       .catch(console.error)
       .finally(() => setLoadingOrders(false));
 
-    // Load Addresses
     setLoadingAddresses(true);
     fetch("/api/account/addresses")
       .then((res) => res.json())
@@ -166,26 +163,26 @@ export default function AccountPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-y2k-ice min-h-[75vh] flex items-center justify-center px-4 py-16 sm:py-24 text-y2k-gunmetal font-sans">
-        <div className="w-full max-w-md bg-white border border-y2k-gunmetal/15 shadow-xl p-6 sm:p-10 text-center">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-y2k-ice border border-y2k-gunmetal/20 flex items-center justify-center mx-auto mb-5 shadow-xs">
-            <User className="w-6 h-6 sm:w-7 sm:h-7 text-y2k-gunmetal" />
+      <div className="bg-y2k-ice min-h-[70vh] flex items-center justify-center px-4 py-16 text-y2k-gunmetal font-sans">
+        <div className="w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 text-center shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-y2k-ice border border-y2k-gunmetal/20 flex items-center justify-center mx-auto mb-4">
+            <User className="w-5 h-5 text-y2k-gunmetal" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
             ARCHIVE PASSPORT
           </span>
-          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] mb-3 text-y2k-gunmetal">
-            AUTHENTICATION REQUIRED
+          <h1 className="font-display font-medium text-xl uppercase tracking-tight mb-2 text-y2k-gunmetal">
+            ACCOUNT ACCESS
           </h1>
-          <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-7">
-            Sign in to view your orders, track deliveries, manage saved addresses, and access exclusive Chrome Club benefits.
+          <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-6">
+            Sign in to access your saved pieces, track orders, and view member benefits.
           </p>
           <Link
             href="/login"
-            className="btn-bagify w-full py-4 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-md"
+            className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2"
           >
-            <span>SIGN IN / REGISTER</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>SIGN IN</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
@@ -195,282 +192,88 @@ export default function AccountPage() {
   const memberId = user?.id ? `BGF-${user.id.slice(0, 8).toUpperCase()}` : "BGF-MEMBER";
   const points = loyaltyData?.points || 0;
   const tier = loyaltyData?.tier || "CHROME";
-  const pointsToNextTier = Math.max(0, 500 - points);
-  const tierProgress = Math.min(100, Math.round((points / 500) * 100));
 
   return (
-    <div className="bg-y2k-ice min-h-screen text-y2k-gunmetal py-6 sm:py-10 lg:py-12 font-sans">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-10">
+    <div className="bg-y2k-ice min-h-screen text-y2k-gunmetal py-6 sm:py-10 font-sans">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
-        {/* ── Top Header / Passport Identity Bar ─────────────────────────── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-y2k-gunmetal/15">
-          <div>
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate mb-1">
-              <Link href="/" className="hover:text-black">HOME</Link>
-              <span>/</span>
-              <span className="text-y2k-gunmetal">MEMBER PASSPORT</span>
+        {/* ── Compact Profile Header ────────────────────────────────────── */}
+        <div className="bg-white border border-y2k-gunmetal/15 p-4 sm:p-6 mb-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 min-w-0">
+            {user?.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name || "Member Avatar"}
+                className="w-12 h-12 rounded-full object-cover border border-y2k-gunmetal/20 shrink-0"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-base font-bold shrink-0">
+                {user?.name ? user.name[0].toUpperCase() : "U"}
+              </div>
+            )}
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="font-display font-medium text-lg sm:text-xl uppercase tracking-tight text-y2k-gunmetal truncate">
+                  {user?.name || "MEMBER"}
+                </h1>
+                <span className="text-[9px] font-mono font-bold bg-y2k-ice border border-y2k-gunmetal/15 px-2 py-0.5 text-y2k-gunmetal">
+                  {memberId}
+                </span>
+                {isAdmin && (
+                  <span className="text-[8px] font-black uppercase tracking-wider bg-y2k-gunmetal text-white px-1.5 py-0.5">
+                    ADMIN
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-y2k-gunmetal/70 truncate mt-0.5">
+                {user?.email} · <span className="font-bold text-y2k-gunmetal">{tier} VIP ({points} PTS)</span>
+              </p>
             </div>
-            <h1 className="font-display font-medium text-2xl sm:text-3xl md:text-4xl uppercase tracking-[-0.03em] leading-none text-y2k-gunmetal">
-              ACCOUNT DASHBOARD
-            </h1>
           </div>
-          
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[10px] sm:text-xs font-bold text-y2k-gunmetal bg-white border border-y2k-gunmetal/15 px-3 py-1.5 shadow-xs">
-              ID: {memberId}
-            </span>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            {isAdmin && (
+              <Link
+                href="/studio"
+                className="bg-y2k-gunmetal text-white hover:bg-black text-[10px] font-bold uppercase tracking-wider px-3 py-2 transition-colors flex items-center gap-1"
+              >
+                <span>Studio</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+            )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/80 hover:text-black bg-white hover:bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1.5 transition-colors cursor-pointer"
+              className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 hover:text-black bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-2 transition-colors cursor-pointer flex items-center gap-1"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3 h-3" />
               <span>Sign Out</span>
             </button>
           </div>
         </div>
 
-        {/* ── Dashboard Cards Grid: Member Identity + VIP Pass ───────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-8">
-          
-          {/* Member Profile Identity Card (7 cols) */}
-          <div className="lg:col-span-7 bg-white border border-y2k-gunmetal/15 p-5 sm:p-8 flex flex-col justify-between shadow-xs relative overflow-hidden">
-            <div>
-              <div className="flex items-center justify-between gap-4 mb-4">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-y2k-gunmetal" />
-                  AUTHENTICATED ARCHIVE MEMBER
-                </span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                {user?.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name || "Member Avatar"}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-y2k-gunmetal/20 shrink-0 shadow-sm"
-                  />
-                ) : (
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-2xl font-bold shrink-0 shadow-sm">
-                    {user?.name ? user.name[0].toUpperCase() : "U"}
-                  </div>
-                )}
-
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-display font-medium text-xl sm:text-2xl lg:text-3xl uppercase tracking-tight text-y2k-gunmetal truncate">
-                    {user?.name || "BAGIFYYYY MEMBER"}
-                  </h2>
-                  <p className="text-xs text-y2k-gunmetal/70 font-medium truncate mt-0.5">
-                    {user?.email}
-                  </p>
-                  
-                  <div className="flex flex-wrap items-center gap-2 mt-3">
-                    <span className="text-[9px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/15 px-2.5 py-1 text-y2k-gunmetal">
-                      {memberId}
-                    </span>
-                    {isAdmin && (
-                      <span className="text-[9px] font-black uppercase tracking-wider bg-y2k-gunmetal text-white px-2.5 py-1 flex items-center gap-1 border border-y2k-gunmetal shadow-xs">
-                        <ShieldCheck className="w-3 h-3 text-white" /> Store Admin
-                      </span>
-                    )}
-                    <span className="text-[9px] font-bold uppercase tracking-wider bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-2.5 py-1 flex items-center gap-1">
-                      <Check className="w-3 h-3 text-y2k-gunmetal" /> {user?.googleId ? "Google Linked" : "Verified Account"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Admin Management Quick Bar */}
-            {isAdmin && (
-              <div className="mt-5 p-3.5 bg-y2k-gunmetal text-white border border-y2k-gunmetal flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
-                <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-white shrink-0" />
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-wider text-white">
-                      Bagify Studio Administration
-                    </p>
-                    <p className="text-[9px] text-white/70 font-normal">
-                      Authorized to manage orders, catalog &amp; print shipping labels
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Link
-                    href="/studio/orders"
-                    className="bg-white/10 hover:bg-white text-white hover:text-y2k-gunmetal px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors border border-white/20 text-center"
-                  >
-                    Orders &amp; Labels →
-                  </Link>
-                  <Link
-                    href="/studio"
-                    className="bg-white text-y2k-gunmetal hover:bg-y2k-ice px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors text-center"
-                  >
-                    Open Studio →
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* Quick action bar */}
-            <div className="mt-6 pt-4 border-t border-y2k-gunmetal/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <span className="text-y2k-gunmetal/60 text-[10px] sm:text-[11px] uppercase tracking-wider">
-                Session Active: <b>{new Date().toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}</b>
-              </span>
-              <Link
-                href="/products"
-                className="text-[10px] font-bold uppercase tracking-widest underline underline-offset-4 hover:text-black"
-              >
-                Explore Active Drops →
-              </Link>
-            </div>
-          </div>
-
-          {/* VIP Chrome Pass Card (5 cols) */}
-          <div className="lg:col-span-5 bg-y2k-gunmetal text-[#F8F5E9] p-5 sm:p-8 flex flex-col justify-between shadow-lg relative overflow-hidden border border-y2k-gunmetal">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-white" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
-                    CHROME CLUB VIP PASS
-                  </span>
-                </div>
-                <span className="text-[9px] font-black uppercase tracking-widest bg-white/15 border border-white/25 px-2 py-0.5 text-white">
-                  TIER: {tier}
-                </span>
-              </div>
-
-              <div className="flex items-baseline justify-between mb-3">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Chrome Balance</p>
-                  <p className="font-display text-4xl sm:text-5xl text-white tracking-tight leading-none mt-1">
-                    {points} <span className="text-sm font-sans text-white/60 font-normal">PTS</span>
-                  </p>
-                </div>
-                <button
-                  onClick={() => setActiveTab("loyalty")}
-                  className="text-[10px] font-bold uppercase tracking-widest text-white hover:underline underline-offset-4 cursor-pointer"
-                >
-                  View Perks →
-                </button>
-              </div>
-
-              {/* Progress bar */}
-              <div className="w-full bg-white/15 h-1.5 mb-2 overflow-hidden">
-                <div
-                  className="h-full bg-white transition-all duration-500"
-                  style={{ width: `${tierProgress}%` }}
-                />
-              </div>
-
-              <p className="text-[10px] font-medium text-white/70">
-                {pointsToNextTier > 0
-                  ? `Earn ${pointsToNextTier} more points to reach STEEL VIP status`
-                  : "Maximum VIP tier unlocked"}
-              </p>
-            </div>
-
-            <div className="mt-5 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-wider text-white/80">
-              <span className="flex items-center gap-1.5"><Truck className="w-3.5 h-3.5 text-white" /> Free Shipping ₹2000+</span>
-              <span className="flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 text-white" /> Drop Presales</span>
-            </div>
-          </div>
-
-        </div>
-
-        {/* ── Interactive Metric Chips Row ─────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          <button
-            onClick={() => setActiveTab("orders")}
-            className={`p-4 text-left border transition-all cursor-pointer ${
-              activeTab === "orders"
-                ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <Package className="w-4 h-4 text-y2k-gunmetal/70" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">ORDERS</span>
-            </div>
-            <p className="font-display text-2xl font-bold text-y2k-gunmetal">{orders.length}</p>
-            <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Total drop purchases</p>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("addresses")}
-            className={`p-4 text-left border transition-all cursor-pointer ${
-              activeTab === "addresses"
-                ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <MapPin className="w-4 h-4 text-y2k-gunmetal/70" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">ADDRESSES</span>
-            </div>
-            <p className="font-display text-2xl font-bold text-y2k-gunmetal">{addresses.length}</p>
-            <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Saved destinations</p>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("wishlist")}
-            className={`p-4 text-left border transition-all cursor-pointer ${
-              activeTab === "wishlist"
-                ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <Heart className="w-4 h-4 text-y2k-gunmetal/70" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">SAVED</span>
-            </div>
-            <p className="font-display text-2xl font-bold text-y2k-gunmetal">{wishlistIds.length}</p>
-            <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Wishlist archive</p>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("loyalty")}
-            className={`p-4 text-left border transition-all cursor-pointer ${
-              activeTab === "loyalty"
-                ? "bg-white border-y2k-gunmetal shadow-sm translate-y-[-2px]"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white hover:border-y2k-gunmetal/40"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <Award className="w-4 h-4 text-y2k-gunmetal/70" />
-              <span className="text-[10px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">POINTS</span>
-            </div>
-            <p className="font-display text-2xl font-bold text-y2k-gunmetal">{points}</p>
-            <p className="text-[10px] font-medium text-y2k-gunmetal/60 mt-0.5">Chrome reward credits</p>
-          </button>
-        </div>
-
-        {/* ── Segmented Navigation Tabs Bar ───────────────────────────────── */}
+        {/* ── Compact Navigation Tabs Bar ───────────────────────────────── */}
         <div className="flex items-center gap-1 mb-6 border-b border-y2k-gunmetal/15 pb-0 overflow-x-auto select-none no-scrollbar">
           {[
-            { id: "orders", label: "Orders", count: orders.length, icon: Package },
-            { id: "addresses", label: "Addresses", count: addresses.length, icon: MapPin },
-            { id: "wishlist", label: "Saved Pieces", count: wishlistIds.length, icon: Heart },
-            { id: "loyalty", label: "Chrome Club", count: points, icon: Award },
-            { id: "profile", label: "Security & Info", icon: ShieldCheck },
-            ...(isAdmin ? [{ id: "admin", label: "Studio Admin", count: undefined, icon: ShieldCheck }] : []),
+            { id: "orders", label: "Orders", count: orders.length },
+            { id: "wishlist", label: "Saved", count: wishlistIds.length },
+            { id: "addresses", label: "Addresses", count: addresses.length },
+            { id: "loyalty", label: "VIP Club", count: points > 0 ? `${points}p` : undefined },
+            { id: "settings", label: "Settings" },
           ].map((tab) => {
-            const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? "border-y2k-gunmetal text-y2k-gunmetal bg-white/70"
-                    : "border-transparent text-y2k-gunmetal/50 hover:text-y2k-gunmetal hover:bg-white/30"
+                    ? "border-y2k-gunmetal text-y2k-gunmetal bg-white"
+                    : "border-transparent text-y2k-gunmetal/50 hover:text-y2k-gunmetal hover:bg-white/40"
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className={`text-[10px] px-1.5 py-0.2 font-mono ${
+                  <span className={`text-[9px] px-1 py-0.2 font-mono ${
                     isActive ? "bg-y2k-gunmetal text-white" : "bg-y2k-gunmetal/10 text-y2k-gunmetal/70"
                   }`}>
                     {tab.count}
@@ -481,139 +284,112 @@ export default function AccountPage() {
           })}
         </div>
 
-        {/* ── Main Tab Panels ─────────────────────────────────────────────── */}
+        {/* ── Tab Content Zone ──────────────────────────────────────────── */}
         <div>
           {/* 1. ORDERS TAB */}
           {activeTab === "orders" && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {loadingOrders ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-12 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/60">
-                  Loading your drop orders…
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+                  Loading orders…
                 </div>
               ) : orders.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 sm:p-14 text-center">
-                  <ShoppingBag className="w-12 h-12 text-y2k-gunmetal/30 mx-auto mb-4" />
-                  <h3 className="font-display font-medium text-2xl uppercase tracking-tight mb-2 text-y2k-gunmetal">
-                    NO ORDERS IN YOUR ARCHIVE YET
-                  </h3>
-                  <p className="text-xs text-y2k-gunmetal/70 max-w-md mx-auto mb-6">
-                    Every piece is crafted in limited batches. Explore our active drops to start your collection.
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center">
+                  <Package className="w-8 h-8 text-y2k-gunmetal/30 mx-auto mb-2.5" />
+                  <p className="font-display font-medium text-sm uppercase tracking-tight mb-1 text-y2k-gunmetal">
+                    NO ORDERS YET
+                  </p>
+                  <p className="text-xs text-y2k-gunmetal/70 mb-4 max-w-xs mx-auto">
+                    Limited drop releases sell out fast. Browse the collection to place your first order.
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify px-8 py-3.5 text-xs font-bold uppercase tracking-widest inline-flex items-center gap-2 shadow-md"
+                    className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5"
                   >
-                    <span>EXPLORE ACTIVE DROPS</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span>BROWSE DROPS</span>
+                    <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   {orders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="bg-white border border-y2k-gunmetal/15 p-5 sm:p-6 shadow-xs hover:border-y2k-gunmetal/30 transition-colors"
+                      className="bg-white border border-y2k-gunmetal/15 p-4 sm:p-5 shadow-xs"
                     >
-                      {/* Order Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-y2k-gunmetal/10 pb-4 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-y2k-ice border border-y2k-gunmetal/15 flex items-center justify-center">
-                            <Package className="w-4 h-4 text-y2k-gunmetal" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <p className="font-display text-base font-bold tracking-tight">#{ord.orderNumber}</p>
-                              <span className="text-[10px] text-y2k-gunmetal/50">·</span>
-                              <span className="text-xs text-y2k-gunmetal/70 font-medium">
-                                {new Date(ord.createdAt).toLocaleDateString("en-IN", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                })}
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-wider mt-0.5">
-                              Payment: <b>{ord.paymentMethod}</b> ({ord.paymentStatus})
-                            </p>
-                          </div>
+                      {/* Order Title & Status */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-y2k-gunmetal/10 pb-3 mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-display text-sm font-bold tracking-tight">#{ord.orderNumber}</span>
+                          <span className="text-[10px] text-y2k-gunmetal/40">·</span>
+                          <span className="text-[11px] text-y2k-gunmetal/70 font-medium">
+                            {new Date(ord.createdAt).toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </span>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={`text-[9px] font-bold uppercase px-2.5 py-1 border ${
-                              ord.orderStatus === "DELIVERED"
-                                ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
-                                : ord.orderStatus === "SHIPPED"
-                                ? "bg-y2k-ice text-y2k-gunmetal border-y2k-gunmetal/30"
-                                : "bg-white text-y2k-gunmetal/80 border-y2k-gunmetal/20"
-                            }`}
-                          >
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[8px] font-bold uppercase px-2 py-0.5 border ${
+                            ord.orderStatus === "DELIVERED"
+                              ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
+                              : "bg-y2k-ice text-y2k-gunmetal border-y2k-gunmetal/25"
+                          }`}>
                             {ord.orderStatus}
                           </span>
 
                           {ord.trackingId && (
                             <button
                               onClick={() => handleCopyTracking(ord.trackingId)}
-                              className="text-[9px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/20 px-2.5 py-1 text-y2k-gunmetal flex items-center gap-1.5 hover:bg-white cursor-pointer"
-                              title="Click to copy tracking ID"
+                              className="text-[8px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/20 px-2 py-0.5 text-y2k-gunmetal flex items-center gap-1 hover:bg-white cursor-pointer"
+                              title="Copy tracking number"
                             >
-                              <Truck className="w-3 h-3 text-y2k-gunmetal" />
+                              <Truck className="w-2.5 h-2.5 text-y2k-gunmetal" />
                               <span>{copiedTrackingId === ord.trackingId ? "Copied!" : ord.trackingId}</span>
-                              <Copy className="w-2.5 h-2.5 opacity-60" />
+                              <Copy className="w-2 h-2 opacity-60" />
                             </button>
                           )}
                         </div>
                       </div>
 
-                      {/* Items Grid */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                      {/* Items */}
+                      <div className="divide-y divide-y2k-gunmetal/5 mb-3">
                         {ord.items?.map((it: any) => (
-                          <div
-                            key={it.id}
-                            className="flex items-center gap-3 bg-y2k-ice/40 border border-y2k-gunmetal/10 p-2.5"
-                          >
-                            <div className="relative w-12 h-14 bg-gray-100 shrink-0 overflow-hidden">
-                              <Image
-                                src={it.image || "/placeholder.jpg"}
-                                alt={it.name}
-                                fill
-                                className="object-cover"
-                                sizes="48px"
-                              />
+                          <div key={it.id} className="py-2 flex items-center justify-between gap-3 text-xs">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="relative w-10 h-12 bg-gray-100 shrink-0 overflow-hidden border border-y2k-gunmetal/10">
+                                <Image
+                                  src={it.image || "/placeholder.jpg"}
+                                  alt={it.name}
+                                  fill
+                                  className="object-cover"
+                                  sizes="40px"
+                                />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-[11px] font-bold uppercase truncate text-y2k-gunmetal">{it.name}</p>
+                                <p className="text-[9px] text-y2k-gunmetal/60 uppercase tracking-wider mt-0.5">
+                                  Qty: {it.quantity} · {it.size} · {it.color}
+                                </p>
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-xs font-bold uppercase truncate text-y2k-gunmetal">{it.name}</h4>
-                              <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-widest mt-0.5">
-                                Qty: {it.quantity} | {it.size} | {it.color}
-                              </p>
-                              <p className="text-xs font-bold text-y2k-gunmetal mt-1">
-                                ₹{(it.price * it.quantity).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                              </p>
-                            </div>
+                            <span className="text-[11px] font-bold text-y2k-gunmetal shrink-0">
+                              ₹{(it.price * it.quantity).toLocaleString("en-IN")}
+                            </span>
                           </div>
                         ))}
                       </div>
 
-                      {/* Order Footer Breakdown */}
-                      <div className="pt-3 border-t border-y2k-gunmetal/10 flex flex-wrap items-center justify-between text-xs gap-3">
-                        <div className="flex items-center gap-2 text-y2k-gunmetal/70 text-[11px]">
-                          <MapPin className="w-3.5 h-3.5 text-y2k-gunmetal/50 shrink-0" />
-                          <span>
-                            Ship to: <b>{ord.shippingAddress?.fullName}</b> — {ord.shippingAddress?.city},{" "}
-                            {ord.shippingAddress?.state} ({ord.shippingAddress?.pincode})
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                          {ord.discountAmount > 0 && (
-                            <span className="text-[11px] text-y2k-gunmetal font-bold uppercase bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/15">
-                              Saved ₹{ord.discountAmount.toFixed(2)}
-                            </span>
-                          )}
-                          <p className="font-display text-base font-bold text-y2k-gunmetal">
-                            Total: ₹{ord.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                          </p>
-                        </div>
+                      {/* Total Bar */}
+                      <div className="pt-2.5 border-t border-y2k-gunmetal/10 flex items-center justify-between text-xs">
+                        <span className="text-[10px] text-y2k-gunmetal/60 truncate">
+                          Ship to: {ord.shippingAddress?.fullName} ({ord.shippingAddress?.city})
+                        </span>
+                        <span className="font-display text-sm font-bold text-y2k-gunmetal">
+                          Total: ₹{ord.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -622,254 +398,35 @@ export default function AccountPage() {
             </div>
           )}
 
-          {/* 2. SAVED ADDRESSES TAB */}
-          {activeTab === "addresses" && (
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <h3 className="font-display font-medium text-xl uppercase tracking-tight">Delivery Addresses</h3>
-                  <p className="text-xs text-y2k-gunmetal/60">Saved destinations for one-click checkout fulfillment.</p>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowAddressForm(!showAddressForm);
-                    setAddressError("");
-                  }}
-                  className="btn-bagify text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 flex items-center justify-center gap-1.5 self-start sm:self-auto cursor-pointer"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>{showAddressForm ? "Cancel" : "Add Address"}</span>
-                </button>
-              </div>
-
-              {/* Add Address Form Card */}
-              <AnimatePresence>
-                {showAddressForm && (
-                  <motion.form
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    onSubmit={handleAddAddress}
-                    className="bg-white border-2 border-y2k-gunmetal p-5 sm:p-8 flex flex-col gap-4 shadow-md overflow-hidden"
-                  >
-                    <div className="flex items-center justify-between border-b border-y2k-gunmetal/10 pb-3">
-                      <p className="text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
-                        Add New Delivery Destination
-                      </p>
-                      <span className="text-[10px] text-y2k-gunmetal/50 uppercase">* All fields mandatory</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block text-y2k-gunmetal/70">
-                          Recipient Full Name *
-                        </label>
-                        <input
-                          required
-                          value={addressForm.fullName}
-                          onChange={(e) => setAddressForm((p) => ({ ...p, fullName: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
-                          placeholder="e.g. Alex Vance"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block text-y2k-gunmetal/70">
-                          Contact Phone Number (+91) *
-                        </label>
-                        <input
-                          required
-                          type="tel"
-                          value={addressForm.phone}
-                          onChange={(e) => setAddressForm((p) => ({ ...p, phone: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
-                          placeholder="9876543210"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block text-y2k-gunmetal/70">
-                        Street Address & Building / Landmark *
-                      </label>
-                      <input
-                        required
-                        value={addressForm.street}
-                        onChange={(e) => setAddressForm((p) => ({ ...p, street: e.target.value }))}
-                        className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
-                        placeholder="Flat 402, Lotus Heights, MG Road"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block text-y2k-gunmetal/70">
-                          Pincode *
-                        </label>
-                        <input
-                          required
-                          maxLength={6}
-                          value={addressForm.pincode}
-                          onChange={(e) => setAddressForm((p) => ({ ...p, pincode: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal font-mono bg-white"
-                          placeholder="400001"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block text-y2k-gunmetal/70">
-                          City / District *
-                        </label>
-                        <input
-                          required
-                          value={addressForm.city}
-                          onChange={(e) => setAddressForm((p) => ({ ...p, city: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
-                          placeholder="Mumbai"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest mb-1.5 block text-y2k-gunmetal/70">
-                          State / Union Territory *
-                        </label>
-                        <input
-                          required
-                          value={addressForm.state}
-                          onChange={(e) => setAddressForm((p) => ({ ...p, state: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
-                          placeholder="Maharashtra"
-                        />
-                      </div>
-                    </div>
-
-                    {addressError && (
-                      <p className="text-xs font-bold text-red-600 uppercase tracking-wider bg-red-50 p-2.5 border border-red-200">
-                        {addressError}
-                      </p>
-                    )}
-
-                    <div className="flex justify-end gap-3 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddressForm(false)}
-                        className="px-5 py-2.5 border border-y2k-gunmetal/30 text-xs font-bold uppercase tracking-wider cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={savingAddress}
-                        className="btn-bagify px-6 py-2.5 text-xs font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer"
-                      >
-                        {savingAddress ? "Saving Address…" : "Save Destination →"}
-                      </button>
-                    </div>
-                  </motion.form>
-                )}
-              </AnimatePresence>
-
-              {/* Saved Addresses Grid */}
-              {loadingAddresses ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-12 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/60">
-                  Loading addresses…
-                </div>
-              ) : addresses.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 sm:p-10 text-center">
-                  <MapPin className="w-10 h-10 text-y2k-gunmetal/30 mx-auto mb-3" />
-                  <p className="font-bold text-sm text-y2k-gunmetal uppercase tracking-wider mb-2">
-                    No Saved Addresses Found
-                  </p>
-                  <p className="text-xs text-y2k-gunmetal/70 max-w-sm mx-auto mb-5">
-                    Save your primary delivery location to streamline checkout on high-demand drop launches.
-                  </p>
-                  <button
-                    onClick={() => setShowAddressForm(true)}
-                    className="btn-bagify px-6 py-3 text-xs font-bold uppercase tracking-widest inline-block cursor-pointer"
-                  >
-                    + Add Your First Address
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {addresses.map((addr: any, idx: number) => (
-                    <div
-                      key={addr.id}
-                      className="bg-white border border-y2k-gunmetal/15 p-5 sm:p-6 flex flex-col justify-between shadow-xs hover:border-y2k-gunmetal/30 transition-all"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-[10px] font-bold uppercase tracking-widest bg-y2k-ice border border-y2k-gunmetal/15 px-2 py-0.5 text-y2k-gunmetal">
-                            {idx === 0 ? "PRIMARY DESTINATION" : `SAVED LOCATION #${idx + 1}`}
-                          </span>
-                          <button
-                            onClick={() => handleDeleteAddress(addr.id)}
-                            className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3 h-3" /> Remove
-                          </button>
-                        </div>
-
-                        <p className="font-bold text-sm text-y2k-gunmetal">{addr.fullName}</p>
-                        <p className="text-xs text-y2k-gunmetal/70 font-mono mt-0.5">{addr.phone}</p>
-                        <p className="text-xs text-y2k-gunmetal/80 mt-2 leading-relaxed">
-                          {addr.street}, {addr.city}, {addr.state} — <b className="font-mono">{addr.pincode}</b>
-                        </p>
-                        <p className="text-[10px] text-y2k-gunmetal/50 uppercase tracking-widest mt-1">
-                          Country: {addr.country || "India"}
-                        </p>
-                      </div>
-
-                      <div className="mt-4 pt-3 border-t border-y2k-gunmetal/10 flex items-center justify-between text-[10px] font-bold text-y2k-gunmetal/60 uppercase">
-                        <span>Standard & Express Eligible</span>
-                        <span className="text-y2k-gunmetal font-bold">✦ Verified Pincode</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 3. SAVED PIECES (WISHLIST) TAB */}
+          {/* 2. SAVED WISHLIST TAB */}
           {activeTab === "wishlist" && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-display font-medium text-xl uppercase tracking-tight">Saved Archive Pieces</h3>
-                  <p className="text-xs text-y2k-gunmetal/60">Pieces you have bookmarked from our collections.</p>
-                </div>
-                <Link
-                  href="/wishlist"
-                  className="text-xs font-bold uppercase tracking-widest underline underline-offset-4 hover:text-black"
-                >
-                  Full Wishlist Page →
-                </Link>
-              </div>
-
+            <div className="space-y-4">
               {loadingWishlist ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-12 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/60">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/50">
                   Loading saved pieces…
                 </div>
               ) : wishlistProducts.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 sm:p-10 text-center">
-                  <Heart className="w-10 h-10 text-y2k-gunmetal/30 mx-auto mb-3" />
-                  <p className="font-bold text-sm text-y2k-gunmetal uppercase tracking-wider mb-2">
-                    Your Wishlist Is Empty
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center">
+                  <Heart className="w-8 h-8 text-y2k-gunmetal/30 mx-auto mb-2.5" />
+                  <p className="font-display font-medium text-sm uppercase tracking-tight mb-1 text-y2k-gunmetal">
+                    WISHLIST EMPTY
                   </p>
-                  <p className="text-xs text-y2k-gunmetal/70 max-w-sm mx-auto mb-5">
-                    Click the heart icon on any drop piece to save it here for later.
+                  <p className="text-xs text-y2k-gunmetal/70 mb-4 max-w-xs mx-auto">
+                    Save pieces while browsing to track availability.
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify px-6 py-3 text-xs font-bold uppercase tracking-widest inline-block"
+                    className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest inline-block"
                   >
-                    Browse Collections →
+                    EXPLORE ARCHIVE
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {wishlistProducts.map((p) => (
                     <div
                       key={p.id}
-                      className="bg-white border border-y2k-gunmetal/15 p-3 flex flex-col justify-between group shadow-xs"
+                      className="bg-white border border-y2k-gunmetal/15 p-2.5 flex flex-col justify-between group shadow-xs"
                     >
                       <Link href={`/product/${p.id}`} className="block">
                         <div className="relative aspect-[3/4] bg-gray-100 mb-2 overflow-hidden">
@@ -881,14 +438,11 @@ export default function AccountPage() {
                             sizes="(max-width: 768px) 50vw, 25vw"
                           />
                         </div>
-                        <p className="text-[10px] font-bold uppercase text-y2k-gunmetal/50 truncate">
-                          {p.brand || "BAGIFYYYY"}
-                        </p>
-                        <h4 className="font-bold text-xs uppercase truncate text-y2k-gunmetal mt-0.5">{p.name}</h4>
-                        <p className="font-bold text-xs text-y2k-gunmetal mt-1">₹{p.price.toLocaleString("en-IN")}</p>
+                        <h4 className="font-bold text-[11px] uppercase truncate text-y2k-gunmetal">{p.name}</h4>
+                        <p className="font-bold text-[11px] text-y2k-gunmetal mt-0.5">₹{p.price.toLocaleString("en-IN")}</p>
                       </Link>
 
-                      <div className="mt-3 pt-2 border-t border-y2k-gunmetal/10 flex items-center gap-2">
+                      <div className="mt-2.5 pt-2 border-t border-y2k-gunmetal/10 flex items-center gap-1.5">
                         <button
                           onClick={() => {
                             addItem({
@@ -901,17 +455,201 @@ export default function AccountPage() {
                               color: p.colors?.[0] || "Default",
                             });
                           }}
-                          className="flex-1 btn-bagify text-[9px] font-bold uppercase tracking-wider py-2 transition-opacity cursor-pointer text-center"
+                          className="flex-1 btn-bagify text-[8px] font-bold uppercase tracking-wider py-1.5 cursor-pointer text-center"
                         >
                           Add to Bag
                         </button>
                         <button
                           onClick={() => toggleItem(p.id)}
-                          className="p-2 border border-y2k-gunmetal/20 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer"
-                          title="Remove from wishlist"
+                          className="p-1.5 border border-y2k-gunmetal/20 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer text-y2k-gunmetal"
+                          title="Remove"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 3. SAVED ADDRESSES TAB */}
+          {activeTab === "addresses" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate">
+                  SAVED DESTINATIONS ({addresses.length})
+                </span>
+                <button
+                  onClick={() => {
+                    setShowAddressForm(!showAddressForm);
+                    setAddressError("");
+                  }}
+                  className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>{showAddressForm ? "Cancel" : "Add New"}</span>
+                </button>
+              </div>
+
+              {/* Form Card */}
+              <AnimatePresence>
+                {showAddressForm && (
+                  <motion.form
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    onSubmit={handleAddAddress}
+                    className="bg-white border border-y2k-gunmetal p-4 sm:p-5 flex flex-col gap-3 shadow-xs overflow-hidden"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                          Recipient Name *
+                        </label>
+                        <input
+                          required
+                          value={addressForm.fullName}
+                          onChange={(e) => setAddressForm((p) => ({ ...p, fullName: e.target.value }))}
+                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          placeholder="Alex Vance"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                          Phone (+91) *
+                        </label>
+                        <input
+                          required
+                          type="tel"
+                          value={addressForm.phone}
+                          onChange={(e) => setAddressForm((p) => ({ ...p, phone: e.target.value }))}
+                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          placeholder="9876543210"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                        Street Address *
+                      </label>
+                      <input
+                        required
+                        value={addressForm.street}
+                        onChange={(e) => setAddressForm((p) => ({ ...p, street: e.target.value }))}
+                        className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                        placeholder="Flat 402, Lotus Heights, MG Road"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                          Pincode *
+                        </label>
+                        <input
+                          required
+                          maxLength={6}
+                          value={addressForm.pincode}
+                          onChange={(e) => setAddressForm((p) => ({ ...p, pincode: e.target.value }))}
+                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal font-mono bg-white"
+                          placeholder="400001"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                          City *
+                        </label>
+                        <input
+                          required
+                          value={addressForm.city}
+                          onChange={(e) => setAddressForm((p) => ({ ...p, city: e.target.value }))}
+                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          placeholder="Mumbai"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                          State *
+                        </label>
+                        <input
+                          required
+                          value={addressForm.state}
+                          onChange={(e) => setAddressForm((p) => ({ ...p, state: e.target.value }))}
+                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          placeholder="Maharashtra"
+                        />
+                      </div>
+                    </div>
+
+                    {addressError && (
+                      <p className="text-[11px] font-bold text-red-600 bg-red-50 p-2 border border-red-200">
+                        {addressError}
+                      </p>
+                    )}
+
+                    <div className="flex justify-end gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddressForm(false)}
+                        className="px-4 py-1.5 border border-y2k-gunmetal/30 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={savingAddress}
+                        className="btn-bagify px-5 py-1.5 text-[10px] font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer"
+                      >
+                        {savingAddress ? "Saving…" : "Save Address"}
+                      </button>
+                    </div>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+
+              {/* Grid */}
+              {loadingAddresses ? (
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+                  Loading addresses…
+                </div>
+              ) : addresses.length === 0 ? (
+                <div className="bg-white border border-y2k-gunmetal/15 p-6 text-center">
+                  <MapPin className="w-7 h-7 text-y2k-gunmetal/30 mx-auto mb-2" />
+                  <p className="text-xs text-y2k-gunmetal/70 mb-3">No saved addresses found.</p>
+                  <button
+                    onClick={() => setShowAddressForm(true)}
+                    className="btn-bagify px-4 py-2 text-[9px] font-bold uppercase tracking-widest inline-block cursor-pointer"
+                  >
+                    + Add Primary Address
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {addresses.map((addr: any, idx: number) => (
+                    <div
+                      key={addr.id}
+                      className="bg-white border border-y2k-gunmetal/15 p-4 flex flex-col justify-between shadow-xs"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[8px] font-bold uppercase tracking-widest bg-y2k-ice border border-y2k-gunmetal/15 px-1.5 py-0.5 text-y2k-gunmetal">
+                            {idx === 0 ? "PRIMARY" : `SAVED #${idx + 1}`}
+                          </span>
+                          <button
+                            onClick={() => handleDeleteAddress(addr.id)}
+                            className="text-[9px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-2.5 h-2.5" /> Remove
+                          </button>
+                        </div>
+                        <p className="font-bold text-xs text-y2k-gunmetal">{addr.fullName}</p>
+                        <p className="text-[10px] text-y2k-gunmetal/70 font-mono">{addr.phone}</p>
+                        <p className="text-[11px] text-y2k-gunmetal/80 mt-1 leading-snug">
+                          {addr.street}, {addr.city}, {addr.state} — <b className="font-mono">{addr.pincode}</b>
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -922,66 +660,51 @@ export default function AccountPage() {
 
           {/* 4. CHROME CLUB VIP TAB */}
           {activeTab === "loyalty" && (
-            <div className="space-y-6">
-              {/* VIP Tier Ladder Card */}
-              <div className="bg-y2k-gunmetal text-[#F8F5E9] p-6 sm:p-8 border border-y2k-gunmetal shadow-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="space-y-4">
+              <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/10">
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
-                      LOYALTY TIERS & PROGRESSION
+                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
+                      TIER STATUS
                     </span>
-                    <h3 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-tight text-white mt-1">
-                      YOUR VIP STATUS: {tier}
+                    <h3 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal">
+                      {tier} VIP MEMBER
                     </h3>
                   </div>
                   <div className="text-left sm:text-right">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">Total Points</p>
-                    <p className="font-display text-4xl text-white font-medium">{points} PTS</p>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block">Balance</span>
+                    <span className="font-display text-2xl font-bold text-y2k-gunmetal">{points} PTS</span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-white/15 pt-6">
-                  <div className={`p-4 border ${tier === "CHROME" ? "bg-white/15 border-white" : "bg-white/5 border-white/10"}`}>
-                    <p className="text-xs font-black uppercase tracking-widest text-white">TIER 1: CHROME</p>
-                    <p className="text-[10px] text-white/60 mb-2">0 – 499 Points</p>
-                    <ul className="text-[11px] text-white/80 space-y-1">
-                      <li>✦ Early Drop Access</li>
-                      <li>✦ Complimentary Standard Shipping</li>
-                    </ul>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 text-xs">
+                  <div className={`p-3 border ${tier === "CHROME" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
+                    <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">CHROME (0-499 PTS)</p>
+                    <p className="text-[10px] text-y2k-gunmetal/70 mt-1">Standard drop access &amp; free shipping over ₹2000</p>
                   </div>
-
-                  <div className={`p-4 border ${tier === "STEEL" ? "bg-white/15 border-white" : "bg-white/5 border-white/10"}`}>
-                    <p className="text-xs font-black uppercase tracking-widest text-white">TIER 2: STEEL</p>
-                    <p className="text-[10px] text-white/60 mb-2">500 – 1999 Points</p>
-                    <ul className="text-[11px] text-white/80 space-y-1">
-                      <li>✦ Free Express Shipping</li>
-                      <li>✦ 1.5x Points Multiplier</li>
-                      <li>✦ Secret Drop Presales</li>
-                    </ul>
+                  <div className={`p-3 border ${tier === "STEEL" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
+                    <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">STEEL (500-1999 PTS)</p>
+                    <p className="text-[10px] text-y2k-gunmetal/70 mt-1">Free express shipping &amp; 1.5x points multiplier</p>
                   </div>
-
-                  <div className={`p-4 border ${tier === "GOLD" ? "bg-white/15 border-white" : "bg-white/5 border-white/10"}`}>
-                    <p className="text-xs font-black uppercase tracking-widest text-white">TIER 3: PLATINUM VIP</p>
-                    <p className="text-[10px] text-white/60 mb-2">2000+ Points</p>
-                    <ul className="text-[11px] text-white/80 space-y-1">
-                      <li>✦ 2x Points Multiplier</li>
-                      <li>✦ Custom Archive Access</li>
-                      <li>✦ Free Priority Fulfillment</li>
-                    </ul>
+                  <div className={`p-3 border ${tier === "GOLD" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
+                    <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">PLATINUM (2000+ PTS)</p>
+                    <p className="text-[10px] text-y2k-gunmetal/70 mt-1">2x points multiplier &amp; secret drop presales</p>
                   </div>
                 </div>
               </div>
 
-              {/* Points History Card */}
-              <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs">
-                <h4 className="font-display font-medium text-lg uppercase tracking-tight mb-4 text-y2k-gunmetal">Recent Point Activity</h4>
+              {/* History */}
+              <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-2">
+                  ACTIVITY HISTORY
+                </span>
                 {loyaltyData?.history && loyaltyData.history.length > 0 ? (
-                  <div className="divide-y divide-y2k-gunmetal/10">
+                  <div className="divide-y divide-y2k-gunmetal/10 text-xs">
                     {loyaltyData.history.map((h: any) => (
-                      <div key={h.id} className="py-3 flex items-center justify-between text-xs">
+                      <div key={h.id} className="py-2 flex items-center justify-between">
                         <div>
-                          <p className="font-bold text-y2k-gunmetal">{h.reason}</p>
-                          <p className="text-[10px] text-y2k-gunmetal/50">
+                          <p className="font-bold text-[11px] text-y2k-gunmetal">{h.reason}</p>
+                          <p className="text-[9px] text-y2k-gunmetal/50">
                             {new Date(h.createdAt).toLocaleDateString("en-IN", {
                               day: "numeric",
                               month: "short",
@@ -989,230 +712,60 @@ export default function AccountPage() {
                             })}
                           </p>
                         </div>
-                        <span className="font-display text-sm font-bold text-y2k-gunmetal">+{h.points} PTS</span>
+                        <span className="font-mono text-xs font-bold text-y2k-gunmetal">+{h.points} PTS</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-y2k-gunmetal/60 py-4">
-                    Earn points by completing orders (+10 pts per ₹100), leaving product reviews, or during promotional drop events.
+                  <p className="text-[11px] text-y2k-gunmetal/60 py-2">
+                    Earn 10 points for every ₹100 spent on drop orders.
                   </p>
                 )}
               </div>
             </div>
           )}
 
-          {/* 5. PROFILE & SECURITY TAB */}
-          {activeTab === "profile" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Account Details */}
-                <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs flex flex-col justify-between">
-                  <div>
-                    <h4 className="font-display font-medium text-lg uppercase tracking-tight mb-4 text-y2k-gunmetal">Account Information</h4>
-                    <div className="space-y-4 text-xs">
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
-                          Display Name
-                        </label>
-                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium text-y2k-gunmetal">
-                          {user?.name || "Not Set"}
-                        </div>
-                      </div>
+          {/* 5. SETTINGS TAB */}
+          {activeTab === "settings" && (
+            <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs space-y-4 text-xs">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block">
+                ACCOUNT SETTINGS &amp; SECURITY
+              </span>
 
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
-                          Email Address
-                        </label>
-                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium text-y2k-gunmetal">
-                          {user?.email}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
-                          Authentication Method
-                        </label>
-                        <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 font-medium flex items-center justify-between text-y2k-gunmetal">
-                          <span>{user?.googleId ? "Google OAuth 2.0 Linked" : "Email & Password Account"}</span>
-                          <span className="bg-y2k-gunmetal text-white font-bold uppercase text-[9px] px-2 py-0.5">Active</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-[10px] text-y2k-gunmetal/50 mt-6 pt-4 border-t border-y2k-gunmetal/10">
-                    To modify your registered email address, please contact support at support@bagifyyyy.com.
-                  </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3 bg-y2k-ice/40 border border-y2k-gunmetal/10">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
+                    Display Name
+                  </label>
+                  <p className="font-bold text-xs text-y2k-gunmetal">{user?.name || "Not Set"}</p>
                 </div>
 
-                {/* Security & Password */}
-                <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs flex flex-col justify-between">
-                  <div>
-                    <h4 className="font-display font-medium text-lg uppercase tracking-tight mb-4 text-y2k-gunmetal">Security & Password</h4>
-                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-6">
-                      Your account credentials and payment sessions are encrypted with industry-standard TLS 1.3 protocol.
-                    </p>
-
-                    <div className="space-y-4">
-                      <div className="p-4 bg-y2k-ice/60 border border-y2k-gunmetal/15">
-                        <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal mb-1">
-                          Password Protection
-                        </p>
-                        <p className="text-[11px] text-y2k-gunmetal/70 mb-3">
-                          Reset your password anytime using our secure one-hour single-use token system.
-                        </p>
-                        <Link
-                          href="/login"
-                          className="btn-bagify text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 inline-block"
-                        >
-                          Request Password Reset →
-                        </Link>
-                      </div>
-
-                      <div className="p-4 bg-y2k-ice/60 border border-y2k-gunmetal/15">
-                        <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal mb-1">
-                          Session Control
-                        </p>
-                        <p className="text-[11px] text-y2k-gunmetal/70 mb-3">
-                          Sign out of this browser session to protect your saved cart and addresses.
-                        </p>
-                        <button
-                          onClick={handleSignOut}
-                          className="text-[10px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 underline underline-offset-4 cursor-pointer"
-                        >
-                          Sign Out of All Sessions
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-[10px] text-y2k-gunmetal/50 mt-6 pt-4 border-t border-y2k-gunmetal/10 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" /> End-to-end encrypted account token
-                  </p>
+                <div className="p-3 bg-y2k-ice/40 border border-y2k-gunmetal/10">
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1">
+                    Email Address
+                  </label>
+                  <p className="font-bold text-xs text-y2k-gunmetal truncate">{user?.email}</p>
                 </div>
-
               </div>
-            </div>
-          )}
 
-          {/* 6. STUDIO ADMIN TAB */}
-          {activeTab === "admin" && isAdmin && (
-            <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-y2k-gunmetal/10 gap-4">
+              <div className="p-3 bg-y2k-ice/40 border border-y2k-gunmetal/10 flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="bg-y2k-gunmetal text-white text-[9px] font-black uppercase px-2 py-0.5 tracking-wider">
-                      SUPERUSER PORTAL
-                    </span>
-                    <span className="text-[10px] text-y2k-gunmetal font-bold uppercase">
-                      ✓ AUTHENTICATED
-                    </span>
-                  </div>
-                  <h3 className="font-display font-medium text-2xl uppercase tracking-tight text-y2k-gunmetal">
-                    BAGIFYYYY STUDIO ADMIN
-                  </h3>
-                  <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-                    Full access to fulfill orders, print shipping labels, manage inventory &amp; launch drops.
-                  </p>
+                  <p className="font-bold text-xs text-y2k-gunmetal">Authentication Mode</p>
+                  <p className="text-[10px] text-y2k-gunmetal/70">{user?.googleId ? "Google OAuth 2.0 Linked" : "Email & Password"}</p>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <Link
-                    href="/studio"
-                    className="btn-bagify text-[10px] font-black uppercase tracking-widest px-5 py-3 shadow-xs"
-                  >
-                    Open Studio Dashboard →
-                  </Link>
-                </div>
+                <span className="text-[9px] font-bold uppercase tracking-wider bg-y2k-gunmetal text-white px-2 py-0.5">
+                  VERIFIED
+                </span>
               </div>
 
-              {/* Admin Portal Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* 1. Orders & Logistics */}
-                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
-                  <div>
-                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
-                      <ShoppingBag className="w-5 h-5" />
-                    </div>
-                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
-                      Order Management
-                    </h4>
-                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
-                      Review customer orders, update tracking IDs, and generate thermal 4x6 / A6 packaging labels for parcel shipping bags.
-                    </p>
-                  </div>
-                  <Link
-                    href="/studio/orders"
-                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
-                  >
-                    Orders &amp; Labels →
-                  </Link>
-                </div>
-
-                {/* 2. Product Catalog */}
-                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
-                  <div>
-                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
-                      <Package className="w-5 h-5" />
-                    </div>
-                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
-                      Product Catalog &amp; Stock
-                    </h4>
-                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
-                      Add new apparel drops, upload product photos, edit descriptions, adjust prices, and toggle sold-out statuses.
-                    </p>
-                  </div>
-                  <Link
-                    href="/studio"
-                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
-                  >
-                    Manage Catalog →
-                  </Link>
-                </div>
-
-                {/* 3. Bundle Combos */}
-                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
-                  <div>
-                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
-                      <Tag className="w-5 h-5" />
-                    </div>
-                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
-                      Bundle Outfits &amp; Sets
-                    </h4>
-                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
-                      Curate multi-piece lookbook outfits with special combo discounts displayed on the store landing page and bundles section.
-                    </p>
-                  </div>
-                  <Link
-                    href="/studio/bundles"
-                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
-                  >
-                    Manage Bundles →
-                  </Link>
-                </div>
-
-                {/* 4. Marketing & Broadcasts */}
-                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
-                  <div>
-                    <div className="w-10 h-10 bg-y2k-gunmetal text-white flex items-center justify-center mb-3">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <h4 className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
-                      Marketing &amp; Campaigns
-                    </h4>
-                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
-                      Broadcast drop announcements, send promo codes, and review newsletter subscriber engagement.
-                    </p>
-                  </div>
-                  <Link
-                    href="/studio/marketing"
-                    className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center"
-                  >
-                    Marketing Studio →
-                  </Link>
-                </div>
+              <div className="pt-3 border-t border-y2k-gunmetal/10 flex items-center justify-between">
+                <span className="text-[10px] text-y2k-gunmetal/60">Session active on this device</span>
+                <button
+                  onClick={handleSignOut}
+                  className="text-[10px] font-bold uppercase tracking-wider text-red-600 hover:text-red-800 underline underline-offset-4 cursor-pointer"
+                >
+                  Sign Out
+                </button>
               </div>
             </div>
           )}
