@@ -38,11 +38,11 @@ export default function HeroText() {
   return (
     <h1
       ref={containerRef}
-      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.85] pt-8 md:pt-12 pb-4 select-none overflow-hidden flex flex-wrap justify-center px-4"
+      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.8] pt-3 md:pt-5 pb-2 md:pb-4 select-none whitespace-nowrap overflow-hidden"
       style={{
-        fontSize: "clamp(3.5rem, 12vw, 230px)",
+        fontSize: "clamp(2rem, 10vw, 230px)",
         fontWeight: 500,
-        lineHeight: 0.85,
+        lineHeight: 0.8,
         letterSpacing: "-0.06em",
       }}
     >

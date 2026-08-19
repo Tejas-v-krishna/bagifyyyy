@@ -10,7 +10,7 @@ import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
-import HeroAsymmetrical from "@/components/ui/HeroAsymmetrical";
+import HeroCarousel from "@/components/ui/HeroCarousel";
 
 export const dynamic = 'force-dynamic';
 
@@ -82,12 +82,9 @@ export default async function Home() {
       <section className="w-full flex flex-col items-center h-[calc(100vh-64px)]">
         {/* Massive Headline (GSAP Animated in Instrument Sans Medium) */}
         <HeroText />
-        
-        {/* Gradient Line under Text */}
-        <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-y2k-gunmetal/20 to-transparent" />
 
-        {/* Asymmetrical Overlapping Hero Images */}
-        <HeroAsymmetrical />
+        {/* Full Width Hero Carousel */}
+        <HeroCarousel />
 
         {/* Ticker Strip */}
         <div className="w-full bg-[#232D3B] text-[#E8EDF2] border-y border-[#232D3B] overflow-hidden h-[44px] md:h-[48px] flex items-center shadow-inner">

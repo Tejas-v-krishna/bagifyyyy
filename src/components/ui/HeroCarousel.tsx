@@ -50,7 +50,7 @@ export default function HeroCarousel() {
 
   return (
     <div 
-      className="w-full relative flex-1 flex overflow-hidden border-t border-y2k-gunmetal/15"
+      className="w-full relative flex-1 flex overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
