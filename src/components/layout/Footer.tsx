@@ -49,6 +49,12 @@ export default function Footer() {
             </h4>
             <nav className="flex flex-col gap-3">
               <Link
+                href="/track"
+                className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
+              >
+                TRACK SHIPMENT
+              </Link>
+              <Link
                 href="/shipping"
                 className="text-[11px] font-medium text-y2k-gunmetal/65 hover:text-black transition-colors uppercase tracking-[0.12em]"
               >

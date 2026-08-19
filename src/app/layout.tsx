@@ -15,8 +15,40 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
-  title: "BAGIFYYYY | Y2K Streetwear & Archive",
-  description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.com"),
+  title: {
+    default: "BAGIFYYYY | Y2K Streetwear & Archive",
+    template: "%s | BAGIFYYYY",
+  },
+  description: "Y2K-era streetwear drop culture. No restocks, no replicas. 1-of-1 curated vintage archive garments.",
+  keywords: ["Y2K fashion", "streetwear", "archive fashion", "vintage clothing", "bagifyyyy", "oversized tees", "cargos"],
+  authors: [{ name: "BAGIFYYYY ARCHIVE" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://bagifyyyy.com",
+    title: "BAGIFYYYY | Y2K Streetwear & Archive",
+    description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
+    siteName: "BAGIFYYYY",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "BAGIFYYYY Y2K Archive",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BAGIFYYYY | Y2K Streetwear & Archive",
+    description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 import Header from "@/components/layout/Header";

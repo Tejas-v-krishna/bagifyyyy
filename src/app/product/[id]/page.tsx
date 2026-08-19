@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
@@ -11,9 +11,8 @@ import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import NotifyMeSection from "@/components/product/NotifyMeSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import ReviewSection from "@/components/product/ReviewSection";
-import { Heart } from "lucide-react";
-
-import { useRouter } from "next/navigation";
+import SizeGuideModal from "@/components/product/SizeGuideModal";
+import { Heart, Ruler, Sparkles, ShoppingBag, ShieldCheck, Truck } from "lucide-react";
 
 export default function ProductDetailPage() {
   const router = useRouter();
@@ -29,6 +28,8 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [addedAnimation, setAddedAnimation] = useState(false);
 
   const wishlisted = id ? isInWishlist(id) : false;
 
@@ -61,11 +62,13 @@ export default function ProductDetailPage() {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images?.[0] || product.image || "/placeholder.jpg",
+      image: product.images?.[0]?.url || product.images?.[0] || product.image || "/placeholder.jpg",
       quantity: 1,
       size: selectedSize || (product.sizes?.[0] ?? "One Size"),
       color: selectedColor || (product.colors?.[0] ?? "Default"),
     });
+    setAddedAnimation(true);
+    setTimeout(() => setAddedAnimation(false), 1500);
   };
 
   const handleWishlistClick = () => {
@@ -83,79 +86,103 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-white text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
-        Loading archive piece...
+      <div className="w-full min-h-[70vh] flex items-center justify-center bg-y2k-ice text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/60 font-sans">
+        Loading drop archive piece…
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-white">
-        <h1 className="font-display text-4xl uppercase mb-4 text-y2k-gunmetal">
-          Product Not Found
+      <div className="w-full min-h-[70vh] flex flex-col items-center justify-center bg-y2k-ice font-sans px-4 text-center">
+        <h1 className="font-display font-medium text-3xl uppercase tracking-tight mb-2 text-y2k-gunmetal">
+          PIECE NOT FOUND
         </h1>
+        <p className="text-xs text-y2k-gunmetal/70 mb-5">This drop piece is either archived or unavailable.</p>
         <Link
           href="/products"
-          className="text-xs font-bold uppercase tracking-wider text-y2k-slate hover:text-black"
+          className="btn-bagify px-6 py-3 text-xs font-bold uppercase tracking-widest"
         >
-          Back to shop
+          Browse Active Drops →
         </Link>
       </div>
     );
   }
 
-  const collectionTag = product.brand || "BAGIFYYYY AW24";
+  const collectionTag = product.brand || "BAGIFYYYY ARCHIVE";
 
   return (
-    <div className="w-full bg-white text-black min-h-screen pt-12 pb-24 font-sans">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Breadcrumbs */}
-        <div className="mb-10">
-          <nav className="flex text-[11px] md:text-xs font-semibold uppercase tracking-wider text-gray-500">
-            <Link href="/products" className="hover:text-black transition-colors">
-              MENS
-            </Link>
-            <span className="mx-2 text-gray-300">&gt;</span>
-            <Link href="/products" className="hover:text-black transition-colors">
+    <div className="w-full bg-white text-y2k-gunmetal min-h-screen pt-8 pb-24 font-sans">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+        
+        {/* Top Breadcrumb */}
+        <div className="mb-8">
+          <nav className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+            <Link href="/" className="hover:text-black transition-colors">HOME</Link>
+            <span>/</span>
+            <Link href="/products" className="hover:text-black transition-colors">DROPS</Link>
+            <span>/</span>
+            <Link href={`/${product.category?.toLowerCase() || "products"}`} className="hover:text-black transition-colors">
               {product.category || "ARCHIVE"}
             </Link>
-            <span className="mx-2 text-gray-300">&gt;</span>
-            <span className="text-black font-bold">BAGIFYYYY</span>
+            <span>/</span>
+            <span className="text-y2k-gunmetal truncate max-w-[200px]">{product.name}</span>
           </nav>
         </div>
 
         {/* 3-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-12 lg:gap-8 xl:gap-16">
-          {/* Left Column: Info */}
-          <div className="flex flex-col order-2 lg:order-1 pt-0 lg:pt-16">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-4">
-              {collectionTag} | ART: {product.id.substring(0, 8).toUpperCase()}
-            </p>
-            <h1 className="font-sans font-medium text-4xl lg:text-5xl leading-[1.1] tracking-tight text-black mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.8fr_1.1fr] gap-8 lg:gap-10 xl:gap-14">
+          
+          {/* Left Column: Garment Details & Sizing */}
+          <div className="flex flex-col order-2 lg:order-1 pt-0 lg:pt-8">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-slate">
+                {collectionTag}
+              </span>
+              <span className="text-[9px] font-mono text-y2k-gunmetal/40">· ART: {product.id.substring(0, 8).toUpperCase()}</span>
+            </div>
+
+            <h1 className="font-display font-medium text-3xl sm:text-4xl lg:text-5xl leading-[1.08] tracking-tight text-y2k-gunmetal mb-4">
               {product.name}
             </h1>
 
-            <p className="text-sm text-black/80 leading-relaxed font-normal mb-8">
+            <p className="text-xs sm:text-sm text-y2k-gunmetal/80 leading-relaxed font-normal mb-6">
               {product.description ||
                 "A signature archival piece crafted with heavyweight construction and tailored modern silhouette."}
             </p>
 
-            {/* Size Selector if available */}
+            {/* Scarcity Low Stock Indicator */}
+            <div className="flex items-center gap-2 py-2 px-3 bg-y2k-ice border border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal mb-6">
+              <span className="w-2 h-2 rounded-full bg-y2k-gunmetal animate-pulse" />
+              <span>LIMITED QUANTITY · AUTHENTIC 1-OF-1 ARCHIVE</span>
+            </div>
+
+            {/* Size Selector with Inline Size Guide Trigger */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="mb-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2.5">
-                  Select Size
-                </p>
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70">
+                    SELECT SIZE
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal hover:underline cursor-pointer"
+                  >
+                    <Ruler className="w-3 h-3" />
+                    <span>Size Guide</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
                   {product.sizes.map((s: string) => (
                     <button
                       key={s}
                       onClick={() => setSelectedSize(s)}
-                      className={`text-xs font-bold uppercase tracking-wider px-4 py-2 border transition-all ${
+                      className={`text-xs font-bold uppercase tracking-wider px-3.5 py-2 border transition-all cursor-pointer ${
                         selectedSize === s
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 text-black hover:border-black"
+                          ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
+                          : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
                       }`}
                     >
                       {s}
@@ -165,21 +192,21 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Color Selector if available */}
+            {/* Color Selector */}
             {product.colors && product.colors.length > 0 && (
               <div className="mb-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2.5">
-                  Color / Finish
-                </p>
-                <div className="flex flex-wrap gap-2.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-2">
+                  FINISH / COLOR
+                </span>
+                <div className="flex flex-wrap gap-2">
                   {product.colors.map((c: string) => (
                     <button
                       key={c}
                       onClick={() => setSelectedColor(c)}
-                      className={`text-xs font-bold uppercase tracking-wider px-4 py-2 border transition-all ${
+                      className={`text-xs font-bold uppercase tracking-wider px-3.5 py-2 border transition-all cursor-pointer ${
                         selectedColor === c
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 text-black hover:border-black"
+                          ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
+                          : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
                       }`}
                     >
                       {c}
@@ -189,42 +216,55 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            <div className="text-xs font-normal text-gray-600 space-y-1 mt-4">
-              <p>100% heavyweight premium cotton.</p>
-              <p>Crafted in India.</p>
+            {/* Material & Provenance Notes */}
+            <div className="text-[11px] text-y2k-gunmetal/70 space-y-1.5 pt-4 border-t border-y2k-gunmetal/10">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+                <span>100% Verified Heavyweight Archive Quality</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Truck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+                <span>Complimentary Shipping Over ₹2000</span>
+              </div>
             </div>
           </div>
 
-          {/* Center Column: Image & Pagination */}
+          {/* Center Column: Image & Gallery */}
           <div className="flex flex-col items-center order-1 lg:order-2">
-            <div className="w-full aspect-[3/4] md:aspect-[4/5] relative bg-white">
+            <div className="w-full aspect-[3/4] md:aspect-[4/5] relative bg-[#FAFAFA] border border-y2k-gunmetal/10 overflow-hidden">
               {product.images && product.images.length > 0 ? (
                 <Image
-                  src={product.images[activeImageIndex] || product.images[0]}
+                  src={
+                    product.images[activeImageIndex]?.url ||
+                    product.images[activeImageIndex] ||
+                    product.images[0]?.url ||
+                    product.images[0]
+                  }
                   alt={product.name}
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-contain object-top mix-blend-multiply"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                  className="object-contain object-center"
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs uppercase tracking-wider">
-                  No Image
+                <div className="absolute inset-0 flex items-center justify-center text-y2k-gunmetal/40 text-xs uppercase tracking-wider">
+                  No Image Available
                 </div>
               )}
             </div>
 
-            {/* Pagination Controls */}
+            {/* Pagination Thumbnails */}
             {product.images && product.images.length > 1 && (
-              <div className="flex items-center gap-4 md:gap-8 mt-12 text-xs font-bold uppercase tracking-wider text-gray-400">
+              <div className="flex items-center gap-3 mt-4 text-xs font-bold uppercase tracking-wider">
                 {product.images.map((_: any, idx: number) => (
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`${
+                    className={`px-3 py-1.5 border transition-all cursor-pointer font-mono text-[11px] ${
                       activeImageIndex === idx
-                        ? "text-black bg-gray-100 px-3 py-1.5 border border-gray-200"
-                        : "hover:text-black px-3 py-1.5"
-                    } transition-all`}
+                        ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
+                        : "bg-white text-y2k-gunmetal/60 border-y2k-gunmetal/15 hover:border-y2k-gunmetal"
+                    }`}
                   >
                     {(idx + 1).toString().padStart(2, "0")}
                   </button>
@@ -233,45 +273,49 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          {/* Right Column: Actions */}
-          <div className="flex flex-col order-3 lg:order-3 pt-0 lg:pt-16">
-            <h2 className="text-4xl lg:text-[42px] font-medium tracking-tight text-black mb-12 lg:text-right">
-              ₹
-              {product.price.toLocaleString("en-IN", {
-                minimumFractionDigits: 2,
-              })}
+          {/* Right Column: Price & Add to Bag */}
+          <div className="flex flex-col order-3 lg:order-3 pt-0 lg:pt-8">
+            <h2 className="font-display font-medium text-3xl sm:text-4xl lg:text-5xl tracking-tight text-y2k-gunmetal mb-6 lg:text-right">
+              ₹{product.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
             </h2>
 
             {product.isSoldOut ? (
               <NotifyMeSection productId={product.id} />
             ) : (
-              <button
-                onClick={handleAddToCart}
-                className="w-full bg-black text-white rounded-none flex items-center justify-between px-5 py-4 hover:opacity-90 transition-opacity mb-4"
-              >
-                <span className="text-xs md:text-sm font-bold uppercase tracking-wider">
-                  ADD TO BAG {selectedSize ? `(${selectedSize})` : ""}
-                </span>
-                <span className="text-xs uppercase tracking-wider text-gray-300">
-                  BAG: ₹{totalBagValue.toLocaleString("en-IN")}
-                </span>
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={handleAddToCart}
+                  className="btn-bagify w-full py-4 px-5 text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center justify-between shadow-md cursor-pointer"
+                >
+                  <span>{addedAnimation ? "✓ ADDED TO BAG" : `ADD TO BAG ${selectedSize ? `(${selectedSize})` : ""}`}</span>
+                  <span className="text-[11px] text-white/70 font-normal">
+                    BAG: ₹{totalBagValue.toLocaleString("en-IN")}
+                  </span>
+                </button>
+
+                <button
+                  onClick={handleWishlistClick}
+                  className="w-full py-3 border border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer"
+                >
+                  <Heart
+                    className={`w-3.5 h-3.5 ${
+                      wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : ""
+                    }`}
+                  />
+                  <span>{wishlisted ? "SAVED IN WISHLIST" : "SAVE TO WISHLIST"}</span>
+                </button>
+              </div>
             )}
 
-            <div className="w-full text-center mt-4">
-              <button
-                onClick={handleWishlistClick}
-                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-black transition-colors"
-              >
-                <Heart
-                  className={`w-4 h-4 ${
-                    wishlisted ? "fill-red-500 text-red-500" : ""
-                  }`}
-                />
-                {wishlisted ? "WISHLISTED" : "ADD TO WISHLIST"}
-              </button>
+            {/* Quick Policy Notice */}
+            <div className="mt-8 p-4 bg-y2k-ice/60 border border-y2k-gunmetal/15 text-[10px] text-y2k-gunmetal/80 space-y-2">
+              <p className="font-bold uppercase tracking-wider text-y2k-gunmetal">7-DAY RETURNS &amp; VERIFIED AUTHENTIC</p>
+              <p className="leading-relaxed">
+                Every drop piece is inspected for fabric density, hardware integrity, and provenance.
+              </p>
             </div>
           </div>
+
         </div>
 
         {/* Similar Products */}
@@ -283,10 +327,36 @@ export default function ProductDetailPage() {
         <ReviewSection productId={id} />
 
         {/* Recently Viewed */}
-        <div className="mt-16 pt-8 border-t border-gray-100">
+        <div className="mt-16 pt-8 border-t border-y2k-gunmetal/10">
           <RecentlyViewed productId={id} />
         </div>
+
       </div>
+
+      {/* ── Size Guide Modal ────────────────────────────────────────────── */}
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        category={product.category}
+      />
+
+      {/* ── Mobile Sticky Buy Bar ───────────────────────────────────────── */}
+      {!product.isSoldOut && (
+        <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-y2k-gunmetal/15 p-3 flex lg:hidden items-center justify-between shadow-lg">
+          <div className="min-w-0 pr-3">
+            <p className="font-bold text-xs uppercase truncate text-y2k-gunmetal">{product.name}</p>
+            <p className="font-display text-sm font-bold text-y2k-gunmetal">
+              ₹{product.price.toLocaleString("en-IN")}
+            </p>
+          </div>
+          <button
+            onClick={handleAddToCart}
+            className="btn-bagify px-5 py-3 text-xs font-bold uppercase tracking-wider shrink-0 cursor-pointer"
+          >
+            {addedAnimation ? "✓ ADDED" : "ADD TO BAG"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
