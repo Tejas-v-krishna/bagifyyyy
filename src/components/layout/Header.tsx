@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState } from "react";
-import { X, Menu } from "lucide-react";
+import { X, Menu, Heart, ShoppingBag, User } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 
 export default function Header() {
@@ -78,59 +78,60 @@ export default function Header() {
         </Link>
 
         {/* Desktop nav — right side */}
-        <nav className="hidden lg:flex items-center gap-7 flex-1 justify-end">
+        <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
           <Link
             href="/products"
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
+            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100 mr-2"
           >
             All Drops
-          </Link>
-
-          {isAuthenticated ? (
-            <Link
-              href="/account"
-              className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/90 hover:text-black hover:opacity-100"
-            >
-              {user?.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name || "User"}
-                  className="w-4 h-4 rounded-full object-cover border border-y2k-gunmetal/30"
-                />
-              ) : (
-                <span className="w-4 h-4 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-[8px] font-bold">
-                  {user?.name ? user.name[0].toUpperCase() : "U"}
-                </span>
-              )}
-              <span className="truncate max-w-[80px]">{user?.name ? user.name.split(" ")[0] : "Account"}</span>
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
-            >
-              Account
-            </Link>
-          )}
-
-          <Link
-            href="/wishlist"
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
-          >
-            Wishlist
           </Link>
 
           {/* Search */}
           <SearchOverlay />
 
-          {/* Bag with subtle count */}
+          <Link
+            href="/wishlist"
+            className="text-y2k-gunmetal/75 hover:text-black transition-colors"
+            aria-label="Wishlist"
+          >
+            <Heart className="w-[18px] h-[18px]" strokeWidth={1.75} />
+          </Link>
+
+          {isAuthenticated ? (
+            <Link
+              href="/account"
+              className="flex items-center gap-2 text-y2k-gunmetal/90 hover:text-black transition-colors"
+              aria-label="Account"
+            >
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name || "User"}
+                  className="w-5 h-5 rounded-full object-cover border border-y2k-gunmetal/30"
+                />
+              ) : (
+                <User className="w-[18px] h-[18px]" strokeWidth={1.75} />
+              )}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="text-y2k-gunmetal/75 hover:text-black transition-colors"
+              aria-label="Account"
+            >
+              <User className="w-[18px] h-[18px]" strokeWidth={1.75} />
+            </Link>
+          )}
+
+          {/* Bag with count badge */}
           <button
             onClick={toggleCart}
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/90 hover:text-black hover:opacity-100 flex items-center gap-1 cursor-pointer"
+            className="relative text-y2k-gunmetal/90 hover:text-black transition-colors cursor-pointer"
+            aria-label="Bag"
           >
-            <span>Bag</span>
+            <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.75} />
             {itemCount > 0 && (
-              <span className="text-[10px] font-black text-white bg-y2k-gunmetal px-1.5 py-0.2 rounded-full leading-tight">
+              <span className="absolute -top-1.5 -right-2 text-[9px] font-black text-white bg-y2k-gunmetal w-4 h-4 flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
@@ -138,23 +139,27 @@ export default function Header() {
         </nav>
 
         {/* Mobile right: search + bag + hamburger */}
-        <div className="flex lg:hidden items-center gap-4">
+        <div className="flex lg:hidden items-center gap-5">
           <SearchOverlay />
+          
           <button
             onClick={toggleCart}
-            className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-1"
+            className="relative text-y2k-gunmetal hover:text-black transition-colors cursor-pointer"
+            aria-label="Bag"
           >
-            <span>Bag</span>
+            <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
             {itemCount > 0 && (
-              <span className="text-[10px] font-black text-white bg-y2k-gunmetal px-1.5 py-0.2 rounded-full leading-tight">
+              <span className="absolute -top-1.5 -right-2 text-[9px] font-black text-white bg-y2k-gunmetal w-[18px] h-[18px] flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
           </button>
+
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-y2k-gunmetal p-1"
+            className="text-y2k-gunmetal p-1 -mr-1"
+            aria-label="Menu"
           >
             {isMobileMenuOpen ? (
               <X strokeWidth={1.5} className="h-5 w-5" />

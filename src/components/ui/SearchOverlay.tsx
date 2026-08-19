@@ -94,10 +94,9 @@ export default function SearchOverlay() {
       <button
         onClick={open}
         aria-label="Search products"
-        className="flex items-center gap-1.5 text-y2k-gunmetal/75 hover:text-black transition-colors cursor-pointer"
+        className="flex items-center text-y2k-gunmetal/75 hover:text-black transition-colors cursor-pointer"
       >
-        <Search className="w-[15px] h-[15px]" strokeWidth={1.75} />
-        <span className="hidden xl:inline text-[11px] font-bold uppercase tracking-[0.14em]">Search</span>
+        <Search className="w-5 h-5 lg:w-[18px] lg:h-[18px]" strokeWidth={1.75} />
       </button>
 
       {/* Overlay */}
