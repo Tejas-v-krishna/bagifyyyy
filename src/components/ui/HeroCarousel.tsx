@@ -67,25 +67,41 @@ export default function HeroCarousel() {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url('${slide.image}')` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 z-10 pointer-events-none">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pointer-events-auto">
-          <div className="max-w-lg">
+      <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-8 md:p-12 z-10 pointer-events-none">
+        
+        {/* Progress / Navigation indicators (Moved to Top) */}
+        <div className="flex justify-center gap-2 z-20 pointer-events-auto">
+          {HERO_SLIDES.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`h-1 transition-all duration-500 ease-out ${
+                idx === currentSlide ? "w-10 bg-white" : "w-4 bg-white/40 hover:bg-white/70"
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Text and Button (Bottom) */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 md:gap-8 pointer-events-auto w-full">
+          <div className="max-w-xl w-full">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`text-${currentSlide}`}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/80 mb-2 drop-shadow-md">
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-white/90 mb-3 drop-shadow-md">
                   {slide.subtitle}
                 </p>
-                <h2 className="font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-tighter text-white drop-shadow-lg leading-[0.9]">
+                <h2 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[80px] uppercase tracking-tighter text-white drop-shadow-lg leading-[0.85]">
                   {slide.title}
                 </h2>
               </motion.div>
@@ -94,26 +110,12 @@ export default function HeroCarousel() {
 
           <Link
             href={slide.link}
-            className="btn-bagify inline-flex items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.15em] py-4 px-8 sm:px-12 backdrop-blur-sm self-start md:self-end hover:scale-[1.02] transition-transform"
+            className="btn-bagify flex md:inline-flex w-full md:w-auto items-center justify-center gap-3 text-[11px] sm:text-xs font-bold uppercase tracking-[0.15em] py-4 md:py-5 px-8 md:px-12 backdrop-blur-sm hover:scale-[1.02] transition-transform shadow-xl"
           >
             <span>{slide.btnLabel}</span>
-            <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
-      </div>
-
-      {/* Progress / Navigation indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {HERO_SLIDES.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentSlide(idx)}
-            className={`h-1 transition-all duration-500 ease-out ${
-              idx === currentSlide ? "w-8 bg-white" : "w-3 bg-white/40 hover:bg-white/70"
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
       </div>
     </div>
   );
