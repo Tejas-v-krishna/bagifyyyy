@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, ChevronDown, Package, Truck, CheckCircle2, XCircle, Clock, RefreshCw } from "lucide-react";
+import { Search, ChevronDown, Package, Truck, CheckCircle2, XCircle, Clock, RefreshCw, Printer } from "lucide-react";
+import ShippingLabelModal from "./ShippingLabelModal";
 
 type OrderItem = {
   id: string;
@@ -55,6 +56,7 @@ export default function StudioOrdersPage() {
   const [search, setSearch] = useState("");
   const [filterTab, setFilterTab] = useState("ALL");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
@@ -291,7 +293,22 @@ export default function StudioOrdersPage() {
                       </span>
                     </div>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPrintingOrder(order);
+                      }}
+                      className="flex items-center gap-1.5 bg-white/10 hover:bg-white text-gray-300 hover:text-black border border-white/15 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-all cursor-pointer"
+                      title="Print Shipping Label Sticker"
+                    >
+                      <Printer className="w-3 h-3" />
+                      <span className="hidden sm:inline">Print Label</span>
+                    </button>
+                    <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                  </div>
                 </button>
 
                 {/* Expanded Detail */}
@@ -315,7 +332,20 @@ export default function StudioOrdersPage() {
                           </div>
                         ))}
                       </div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Delivery Address</p>
+
+                      {/* Delivery Address Header + Print Button */}
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Delivery Address</p>
+                        <button
+                          type="button"
+                          onClick={() => setPrintingOrder(order)}
+                          className="flex items-center gap-1.5 bg-white text-black hover:bg-gray-200 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest transition-colors shadow-sm cursor-pointer"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                          Print Shipping Label
+                        </button>
+                      </div>
+
                       <div className="bg-white/3 px-3 py-3 text-xs text-gray-300 leading-relaxed">
                         <p className="font-bold text-white">{order.shippingAddress?.fullName}</p>
                         <p>{order.shippingAddress?.phone}</p>
@@ -388,6 +418,14 @@ export default function StudioOrdersPage() {
             );
           })}
         </div>
+      )}
+
+      {/* Printable Shipping Label Modal */}
+      {printingOrder && (
+        <ShippingLabelModal
+          order={printingOrder}
+          onClose={() => setPrintingOrder(null)}
+        />
       )}
     </div>
   );

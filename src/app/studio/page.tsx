@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, CheckCircle2, ChevronRight } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, CheckCircle2, ChevronRight, Printer } from "lucide-react";
+import ShippingLabelModal from "./orders/ShippingLabelModal";
 
 interface Product {
   id: string;
@@ -34,15 +35,21 @@ interface Order {
   customerEmail: string;
   customerPhone: string;
   totalAmount: number;
+  discountAmount: number;
+  shippingAmount: number;
   paymentStatus: string;
   orderStatus: string;
   paymentMethod: string;
+  trackingId: string | null;
   createdAt: string;
   items: OrderItem[];
-  shippingAddress?: {
+  shippingAddress: {
     fullName: string;
+    phone: string;
+    street: string;
     city: string;
     state: string;
+    pincode: string;
   };
 }
 
@@ -132,6 +139,7 @@ function StatCard({
 export default function StudioDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
   const [stats, setStats] = useState<Stats>({
     total: 0,
     soldOut: 0,
@@ -375,13 +383,24 @@ export default function StudioDashboard() {
                     </span>
                   </div>
 
-                  <Link
-                    href="/studio/orders"
-                    className="p-2 border border-white/10 text-gray-400 hover:text-white hover:border-white/30 transition-colors"
-                    title="Manage Order"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPrintingOrder(order)}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 border border-white/10 hover:border-white text-gray-300 hover:text-white text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                      title="Print Shipping Label Sticker"
+                    >
+                      <Printer className="w-3 h-3" />
+                      <span className="hidden md:inline">Print Label</span>
+                    </button>
+                    <Link
+                      href="/studio/orders"
+                      className="p-2 border border-white/10 text-gray-400 hover:text-white hover:border-white/30 transition-colors"
+                      title="Manage Order"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
@@ -540,6 +559,14 @@ export default function StudioDashboard() {
           productName={deleteTarget.name}
           onConfirm={() => handleDelete(deleteTarget)}
           onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+
+      {/* Printable Shipping Label Modal */}
+      {printingOrder && (
+        <ShippingLabelModal
+          order={printingOrder}
+          onClose={() => setPrintingOrder(null)}
         />
       )}
     </div>
