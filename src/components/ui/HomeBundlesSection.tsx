@@ -54,16 +54,10 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
       <div className="w-full max-w-[1400px] mx-auto">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 lg:mb-16 pb-6 sm:pb-8 border-b border-y2k-gunmetal/15">
-          <div className="max-w-2xl">
-            <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-gunmetal/50 mb-2 sm:mb-3">
-              BAGIFYYYY LOOKBOOK // COMBO SYSTEM
-            </p>
-            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[72px] uppercase tracking-[-0.04em] leading-[0.9] text-y2k-gunmetal">
-              CURATED <br />
-              <span className="text-y2k-gunmetal/60 italic">OUTFITS</span>
-            </h2>
-          </div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 lg:mb-16">
+          <h2 className="font-display font-medium text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none text-y2k-gunmetal">
+            CURATED OUTFITS
+          </h2>
 
           <Link
             href="/bundles"
@@ -149,10 +143,8 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                 <button
                   onClick={() => handleAddBundle(bundle)}
                   disabled={bundle.products.every((p) => p.isSoldOut)}
-                  className={`w-full py-4 sm:py-5 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 border border-y2k-gunmetal shadow-[3px_3px_0px_#28323F] sm:shadow-[4px_4px_0px_#28323F] hover:shadow-[0px_0px_0px_#28323F] hover:translate-x-[3px] hover:translate-y-[3px] sm:hover:translate-x-[4px] sm:hover:translate-y-[4px] disabled:opacity-40 disabled:pointer-events-none ${
-                    addedBundleId === bundle.id
-                      ? "bg-white text-y2k-gunmetal"
-                      : "bg-y2k-gunmetal text-white"
+                  className={`w-full py-4 sm:py-5 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.15em] flex items-center justify-center gap-2 sm:gap-3 btn-bagify disabled:opacity-40 disabled:pointer-events-none ${
+                    addedBundleId === bundle.id ? "!bg-white !text-y2k-gunmetal border border-y2k-gunmetal shadow-none" : ""
                   }`}
                 >
                   <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
