@@ -1,18 +1,5 @@
-import { Metadata } from "next";
-import CategoryPageClient from "@/components/product/CategoryPageClient";
-
-export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: "Curated Grails | BAGIFYYYY Vintage & Archive",
-  description: "Hand-selected archival grails, rare designer deadstock, and high-provenance vintage collector pieces.",
-};
+import { redirect } from "next/navigation";
 
 export default function CuratedGrailsPage() {
-  return (
-    <CategoryPageClient
-      filter="grails"
-      title="CURATED GRAILS"
-    />
-  );
+  redirect("/#showcase");
 }

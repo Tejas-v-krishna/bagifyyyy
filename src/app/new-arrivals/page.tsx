@@ -1,18 +1,5 @@
-import { Metadata } from "next";
-import CategoryPageClient from "@/components/product/CategoryPageClient";
-
-export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: "New Arrivals | BAGIFYYYY Vintage & Archive",
-  description: "Freshly sourced Y2K garments, rare deadstock capsules, and verified 1-of-1 archive drops.",
-};
+import { redirect } from "next/navigation";
 
 export default function NewArrivalsPage() {
-  return (
-    <CategoryPageClient
-      filter="new"
-      title="NEW ARRIVALS"
-    />
-  );
+  redirect("/#showcase");
 }

@@ -174,7 +174,7 @@ export default async function Home() {
       </section>
 
       {/* 2. New Arrivals & Curated Grails Showcase Section */}
-      <section className="w-full bg-y2k-ice pt-24 pb-14 px-4 sm:px-6 lg:px-12 max-w-[1800px] mx-auto">
+      <section id="showcase" className="w-full bg-y2k-ice pt-24 pb-14 px-4 sm:px-6 lg:px-12 max-w-[1800px] mx-auto scroll-mt-20">
         <InteractiveShowcase products={newArrivals} topPicks={curatedGrails} />
       </section>
 

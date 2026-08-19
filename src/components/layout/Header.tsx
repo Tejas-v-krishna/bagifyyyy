@@ -37,18 +37,6 @@ export default function Header() {
         {/* Desktop nav — left side */}
         <nav className="hidden lg:flex items-center gap-6 xl:gap-8 flex-1">
           <Link
-            href="/new-arrivals"
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
-          >
-            New Arrivals
-          </Link>
-          <Link
-            href="/curated-grails"
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
-          >
-            Curated Grails
-          </Link>
-          <Link
             href="/topwears"
             className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
           >
@@ -59,6 +47,12 @@ export default function Header() {
             className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
           >
             Pants &amp; Cargos
+          </Link>
+          <Link
+            href="/accessories"
+            className="text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/75 hover:text-black hover:opacity-100"
+          >
+            Accessories
           </Link>
           <Link
             href="/bundles"
@@ -176,11 +170,10 @@ export default function Header() {
         <div className="lg:hidden border-t border-y2k-gunmetal/15 bg-y2k-ice">
           <nav className="flex flex-col px-6 py-6 gap-5">
             {[
-              { href: "/new-arrivals", label: "New Arrivals" },
-              { href: "/curated-grails", label: "Curated Grails" },
               { href: "/topwears", label: "Shirts & Tees" },
               { href: "/bottomwears", label: "Pants & Cargos" },
-              { href: "/bundles", label: "Bundles" },
+              { href: "/accessories", label: "Accessories" },
+              { href: "/bundles", label: "Bundles & Sets" },
               { href: "/products", label: "All Drops" },
               { href: "/wishlist", label: "Wishlist" },
             ].map(({ href, label }) => (
