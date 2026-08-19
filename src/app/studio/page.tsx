@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, CheckCircle2, ChevronRight, Printer } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, Tag, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, CheckCircle2, ChevronRight, Printer, Layers } from "lucide-react";
 import ShippingLabelModal from "./orders/ShippingLabelModal";
 
 interface Product {
@@ -258,7 +257,14 @@ export default function StudioDashboard() {
           </p>
           <h1 className="text-2xl font-medium tracking-tight">Dashboard</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/studio/bundles"
+            className="flex items-center gap-2 border border-white/20 text-white px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:bg-white/5 transition-colors"
+          >
+            <Layers className="w-3.5 h-3.5" />
+            Bundle Combos
+          </Link>
           <Link
             href="/studio/orders"
             className="flex items-center gap-2 border border-white/20 text-white px-5 py-3 text-[9px] font-bold uppercase tracking-widest hover:border-white hover:bg-white/5 transition-colors"

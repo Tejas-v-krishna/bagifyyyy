@@ -1132,7 +1132,7 @@ export default function AccountPage() {
               </div>
 
               {/* Admin Portal Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* 1. Orders & Logistics */}
                 <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
                   <div>
@@ -1150,7 +1150,7 @@ export default function AccountPage() {
                     href="/studio/orders"
                     className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
                   >
-                    Manage Orders &amp; Print Labels →
+                    Orders &amp; Labels →
                   </Link>
                 </div>
 
@@ -1171,11 +1171,32 @@ export default function AccountPage() {
                     href="/studio"
                     className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
                   >
-                    Manage Catalog &amp; Drops →
+                    Manage Catalog →
                   </Link>
                 </div>
 
-                {/* 3. Marketing & Broadcasts */}
+                {/* 3. Bundle Combos */}
+                <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
+                  <div>
+                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">
+                      <Tag className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-display text-base uppercase tracking-tight mb-1">
+                      Bundle Outfits &amp; Sets
+                    </h4>
+                    <p className="text-xs text-y2k-gunmetal/70 leading-relaxed mb-4">
+                      Curate multi-piece lookbook outfits with special combo discounts displayed on the store landing page and bundles section.
+                    </p>
+                  </div>
+                  <Link
+                    href="/studio/bundles"
+                    className="bg-black text-white text-[9px] font-bold uppercase tracking-widest px-4 py-2.5 text-center hover:bg-gray-800 transition-colors"
+                  >
+                    Manage Bundles →
+                  </Link>
+                </div>
+
+                {/* 4. Marketing & Broadcasts */}
                 <div className="p-5 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex flex-col justify-between">
                   <div>
                     <div className="w-10 h-10 bg-black text-white flex items-center justify-center mb-3">

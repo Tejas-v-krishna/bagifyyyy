@@ -9,6 +9,7 @@ import GsapMarquee from "@/components/ui/GsapMarquee";
 import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
 import InstagramFeed from "@/components/ui/InstagramFeed";
+import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,44 @@ export default async function Home() {
     take: 20,
     orderBy: { price: 'desc' },
     include: { images: true }
+  });
+
+  // Fetch Active Bundles (if any)
+  const rawBundles = await prisma.bundle.findMany({
+    include: {
+      products: {
+        include: {
+          product: {
+            include: { images: { take: 1 } },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 6,
+  });
+
+  const formattedBundles = rawBundles.map((b) => {
+    const items = b.products.map((bp) => ({
+      id: bp.product.id,
+      name: bp.product.name,
+      price: bp.product.price,
+      image: bp.product.images[0]?.url || '/placeholder.jpg',
+      isSoldOut: bp.product.isSoldOut,
+    }));
+    const originalTotal = items.reduce((sum, item) => sum + item.price, 0);
+    const bundlePrice = Math.round(originalTotal * (1 - b.discount / 100) * 100) / 100;
+    const savings = Math.round((originalTotal - bundlePrice) * 100) / 100;
+    return {
+      id: b.id,
+      name: b.name,
+      description: b.description,
+      discount: b.discount,
+      products: items,
+      originalTotal,
+      bundlePrice,
+      savings,
+    };
   });
 
   return (
@@ -246,6 +285,9 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* 3.5. Curated Archive Bundles Section (if bundles exist) */}
+      <HomeBundlesSection bundles={formattedBundles} />
 
       {/* 4. Editorial Instagram Lookbook Feed */}
       <InstagramFeed />
