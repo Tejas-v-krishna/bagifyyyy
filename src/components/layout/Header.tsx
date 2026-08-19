@@ -181,7 +181,7 @@ export default function Header() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm lg:hidden"
             />
             
             {/* Drawer */}
@@ -189,22 +189,32 @@ export default function Header() {
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 z-[70] w-4/5 max-w-sm bg-y2k-ice border-r border-y2k-gunmetal/15 shadow-2xl flex flex-col lg:hidden"
+              transition={{ type: "spring", damping: 28, stiffness: 240 }}
+              className="fixed inset-y-0 left-0 z-[100] w-[82vw] max-w-sm bg-[#E8EDF2] text-y2k-gunmetal border-r border-y2k-gunmetal/20 shadow-2xl flex flex-col lg:hidden"
+              style={{ backgroundColor: "#E8EDF2" }}
             >
-              <div className="flex items-center justify-between p-6 border-b border-y2k-gunmetal/10">
-                <span className="font-display text-xl uppercase tracking-tighter text-y2k-gunmetal">
-                  Menu
-                </span>
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-y2k-gunmetal/15 bg-[#E8EDF2]">
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/logo.png"
+                    alt="Bagifyyyy Logo"
+                    width={130}
+                    height={30}
+                    className="object-contain"
+                  />
+                </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1 hover:bg-black/5 rounded-full transition-colors cursor-pointer"
+                  className="p-1.5 hover:bg-y2k-gunmetal/10 rounded-full transition-colors cursor-pointer text-y2k-gunmetal"
+                  aria-label="Close menu"
                 >
-                  <X className="h-5 w-5 text-y2k-gunmetal" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <nav className="flex flex-col px-6 py-6 gap-6 flex-1 overflow-y-auto">
+              {/* Navigation Links */}
+              <nav className="flex flex-col px-6 py-6 gap-5 flex-1 overflow-y-auto bg-[#E8EDF2]">
                 {[
                   { href: "/topwears", label: "Shirts & Tees" },
                   { href: "/bottomwears", label: "Pants & Cargos" },
@@ -217,37 +227,42 @@ export default function Header() {
                     key={href}
                     href={href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal border-b border-y2k-gunmetal/10 pb-4"
+                    className="text-[13px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors border-b border-y2k-gunmetal/10 pb-4 flex items-center justify-between"
                   >
-                    {label}
+                    <span>{label}</span>
+                    <span className="text-y2k-gunmetal/30 text-xs">→</span>
                   </Link>
                 ))}
               </nav>
 
-              <div className="p-6 border-t border-y2k-gunmetal/10">
+              {/* Drawer Footer / Account */}
+              <div className="p-6 border-t border-y2k-gunmetal/15 bg-[#E8EDF2]">
                 {isAuthenticated ? (
                   <Link
                     href="/account"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal"
+                    className="flex items-center gap-3 p-3 rounded-none bg-white/70 border border-y2k-gunmetal/15 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-white transition-colors"
                   >
                     {user?.avatar ? (
-                      <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full border border-y2k-gunmetal/20" />
+                      <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 object-cover" />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs">
+                      <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs font-bold">
                         {user?.name ? user.name[0].toUpperCase() : "U"}
                       </div>
                     )}
-                    <span>My Account</span>
+                    <div className="flex flex-col">
+                      <span className="text-[11px] font-bold tracking-wider">{user?.name || "Member"}</span>
+                      <span className="text-[9px] text-y2k-gunmetal/60 lowercase font-normal">{user?.email}</span>
+                    </div>
                   </Link>
                 ) : (
                   <Link
                     href="/login"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="btn-bagify flex items-center justify-center w-full py-4 text-[11px] font-bold uppercase tracking-[0.15em] gap-2"
+                    className="btn-bagify flex items-center justify-center w-full py-4 text-[11px] font-bold uppercase tracking-[0.15em] gap-2 shadow-md"
                   >
                     <User className="w-4 h-4" />
-                    Sign In
+                    Sign In / Register
                   </Link>
                 )}
               </div>
