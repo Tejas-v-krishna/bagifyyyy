@@ -38,12 +38,12 @@ export default function HeroText() {
   return (
     <h1
       ref={containerRef}
-      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.8] pt-4 md:pt-8 pb-4 select-none whitespace-nowrap overflow-hidden"
+      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.85] pt-8 md:pt-12 pb-4 select-none overflow-hidden flex flex-wrap justify-center px-4"
       style={{
-        fontSize: "clamp(1.5rem, 11.2vw, 230px)",
+        fontSize: "clamp(3.5rem, 12vw, 230px)",
         fontWeight: 500,
-        lineHeight: 0.8,
-        letterSpacing: "-0.08em",
+        lineHeight: 0.85,
+        letterSpacing: "-0.06em",
       }}
     >
       {words.map((word, wordIdx) => (
