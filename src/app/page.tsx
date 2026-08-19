@@ -10,7 +10,7 @@ import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
-import HeroCarousel from "@/components/ui/HeroCarousel";
+import HeroAsymmetrical from "@/components/ui/HeroAsymmetrical";
 
 export const dynamic = 'force-dynamic';
 
@@ -86,8 +86,8 @@ export default async function Home() {
         {/* Gradient Line under Text */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-y2k-gunmetal/20 to-transparent" />
 
-        {/* Full Width Hero Carousel */}
-        <HeroCarousel />
+        {/* Asymmetrical Overlapping Hero Images */}
+        <HeroAsymmetrical />
 
         {/* Ticker Strip */}
         <div className="w-full bg-[#232D3B] text-[#E8EDF2] border-y border-[#232D3B] overflow-hidden h-[44px] md:h-[48px] flex items-center shadow-inner">
