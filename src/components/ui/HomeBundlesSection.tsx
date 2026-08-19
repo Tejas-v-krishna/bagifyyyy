@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Plus, ShoppingBag, ArrowDownRight } from "lucide-react";
+import { ArrowRight, ArrowDownRight } from "lucide-react";
 
 export type HomeBundleItem = {
   id: string;
@@ -30,6 +30,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
   const { addItem } = useCartStore();
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [addedBundleId, setAddedBundleId] = useState<string | null>(null);
+  const [activeHoverItem, setActiveHoverItem] = useState<string | null>(null);
 
   if (!bundles || bundles.length === 0) return null;
 
@@ -54,7 +55,35 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
     setTimeout(() => setAddedBundleId(null), 2500);
   };
 
-  const heroImage = currentBundle.products[0]?.image || "/placeholder.jpg";
+  // Helper to render the collage grid based on number of products
+  const renderCollage = (products: HomeBundleItem[]) => {
+    const count = products.length;
+
+    return (
+      <div className="absolute inset-0 p-4 sm:p-6 w-full h-full flex gap-4">
+        {count === 1 && (
+          <CollageImage item={products[0]} activeId={activeHoverItem} className="w-full h-full" />
+        )}
+
+        {count === 2 && (
+          <>
+            <CollageImage item={products[0]} activeId={activeHoverItem} className="w-1/2 h-full" />
+            <CollageImage item={products[1]} activeId={activeHoverItem} className="w-1/2 h-full" />
+          </>
+        )}
+
+        {count >= 3 && (
+          <>
+            <CollageImage item={products[0]} activeId={activeHoverItem} className="w-[55%] h-full" />
+            <div className="w-[45%] h-full flex flex-col gap-4">
+              <CollageImage item={products[1]} activeId={activeHoverItem} className="w-full h-1/2" />
+              <CollageImage item={products[2]} activeId={activeHoverItem} className="w-full h-1/2" />
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
 
   return (
     <section className="w-full bg-y2k-ice py-20 sm:py-32 px-4 sm:px-6 lg:px-12 border-t border-y2k-gunmetal/15">
@@ -88,7 +117,10 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
             return (
               <button
                 key={bundle.id}
-                onClick={() => setSelectedIdx(idx)}
+                onClick={() => {
+                  setSelectedIdx(idx);
+                  setActiveHoverItem(null);
+                }}
                 className={`px-6 py-4 text-[10px] font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-3 border cursor-pointer ${
                   isSelected
                     ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
@@ -113,28 +145,21 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
             className="grid grid-cols-1 lg:grid-cols-12 gap-px bg-y2k-gunmetal/15 border border-y2k-gunmetal/15"
           >
             
-            {/* Hero Image (7 Cols) */}
-            <div className="lg:col-span-7 bg-y2k-ice relative min-h-[60vh] lg:min-h-[800px] flex group">
-              <Image
-                src={heroImage}
-                alt={currentBundle.name}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="object-cover object-center grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
-              />
+            {/* LEFT: Multi-Product Collage Frame (7 Cols) */}
+            <div className="lg:col-span-7 bg-white relative min-h-[500px] lg:min-h-[800px] flex">
+              {renderCollage(currentBundle.products)}
               
-              {/* Badges on Image */}
-              <div className="absolute top-6 left-6 bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal shadow-sm border border-y2k-gunmetal/10">
+              {/* Badges on Frame */}
+              <div className="absolute top-8 left-8 bg-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal shadow-sm border border-y2k-gunmetal/10 z-20">
                 LOOK 0{selectedIdx + 1}
               </div>
-              <div className="absolute bottom-6 right-6 bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm">
+              <div className="absolute bottom-8 left-8 bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest shadow-sm z-20">
                 -{currentBundle.discount}% OFF
               </div>
             </div>
 
-            {/* Breakdown & Action (5 Cols) */}
-            <div className="lg:col-span-5 bg-white flex flex-col h-full">
+            {/* RIGHT: Breakdown & Action (5 Cols) */}
+            <div className="lg:col-span-5 bg-white flex flex-col h-full border-l border-y2k-gunmetal/15">
               
               <div className="p-8 sm:p-12 lg:p-16 flex-1 flex flex-col justify-center">
                 <div className="mb-12">
@@ -147,31 +172,33 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                   </p>
                 </div>
 
-                {/* Garment Grid */}
+                {/* Garment Hover Grid */}
                 <div className="space-y-0 border-t border-y2k-gunmetal/15 mb-12">
                   {currentBundle.products.map((item, idx) => (
                     <div
                       key={item.id}
-                      className="group flex items-center justify-between py-6 border-b border-y2k-gunmetal/15"
+                      onMouseEnter={() => setActiveHoverItem(item.id)}
+                      onMouseLeave={() => setActiveHoverItem(null)}
+                      className="group flex items-center justify-between py-5 sm:py-6 border-b border-y2k-gunmetal/15 cursor-crosshair transition-colors hover:bg-y2k-ice/30"
                     >
-                      <div className="flex items-center gap-6">
-                        <span className="text-[10px] font-bold uppercase text-y2k-gunmetal/40 w-4">
+                      <div className="flex items-center gap-4 sm:gap-6 px-2">
+                        <span className="text-[10px] font-bold uppercase text-y2k-gunmetal/40 w-4 group-hover:text-y2k-gunmetal transition-colors">
                           0{idx + 1}
                         </span>
-                        <div className="w-16 h-20 bg-y2k-ice relative shrink-0 border border-y2k-gunmetal/10 overflow-hidden">
+                        <div className="w-14 h-16 sm:w-16 sm:h-20 bg-y2k-ice relative shrink-0 border border-y2k-gunmetal/10 overflow-hidden">
                           <Image
                             src={item.image}
                             alt={item.name}
                             fill
                             sizes="64px"
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="object-cover group-hover:scale-105 transition-transform duration-500 grayscale-[40%] group-hover:grayscale-0"
                           />
                         </div>
-                        <p className="text-xs sm:text-sm font-bold uppercase tracking-tight text-y2k-gunmetal max-w-[180px] leading-tight">
+                        <p className="text-xs sm:text-sm font-bold uppercase tracking-tight text-y2k-gunmetal max-w-[150px] sm:max-w-[180px] leading-tight group-hover:translate-x-1 transition-transform duration-300">
                           {item.name}
                         </p>
                       </div>
-                      <p className="text-xs font-mono text-y2k-gunmetal/70">
+                      <p className="text-xs font-mono text-y2k-gunmetal/70 px-2 group-hover:text-black transition-colors">
                         ₹{item.price.toLocaleString("en-IN")}
                       </p>
                     </div>
@@ -179,7 +206,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                 </div>
 
                 {/* Financials & Add to Cart */}
-                <div className="mt-auto pt-8">
+                <div className="mt-auto pt-4">
                   <div className="flex items-end justify-between mb-8">
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/50 mb-2">
@@ -198,10 +225,10 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
                   <button
                     onClick={() => handleAddBundle(currentBundle)}
-                    className={`w-full py-5 text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 border border-y2k-gunmetal ${
+                    className={`w-full py-5 text-xs font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all duration-300 border border-y2k-gunmetal shadow-[4px_4px_0px_#28323F] hover:shadow-[0px_0px_0px_#28323F] hover:translate-x-[4px] hover:translate-y-[4px] ${
                       isAdded
                         ? "bg-white text-y2k-gunmetal"
-                        : "bg-y2k-gunmetal text-white hover:bg-white hover:text-y2k-gunmetal"
+                        : "bg-y2k-gunmetal text-white"
                     }`}
                   >
                     {isAdded ? (
@@ -215,7 +242,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                   </button>
                   
                   {isAdded && (
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal mt-3 text-center animate-pulse">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal mt-5 text-center animate-pulse">
                       Redirect to bag to checkout
                     </p>
                   )}
@@ -229,5 +256,49 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
       </div>
     </section>
+  );
+}
+
+// Sub-component for individual collage images
+function CollageImage({
+  item,
+  activeId,
+  className,
+}: {
+  item: HomeBundleItem;
+  activeId: string | null;
+  className: string;
+}) {
+  const isHovered = activeId === item.id;
+  const isAnyHovered = activeId !== null;
+
+  return (
+    <div
+      className={`relative overflow-hidden bg-y2k-ice border transition-all duration-500 ease-out ${className} ${
+        isHovered
+          ? "border-y2k-gunmetal shadow-xl scale-[1.02] z-10"
+          : isAnyHovered
+          ? "border-y2k-gunmetal/10 opacity-60 scale-100 z-0"
+          : "border-y2k-gunmetal/20 scale-100 z-0 hover:border-y2k-gunmetal/50"
+      }`}
+    >
+      <Image
+        src={item.image}
+        alt={item.name}
+        fill
+        sizes="(max-width: 1024px) 100vw, 30vw"
+        className={`object-cover object-center transition-all duration-700 ${
+          isHovered ? "grayscale-0 scale-105" : "grayscale-[20%] scale-100"
+        }`}
+      />
+      {/* Product Tag Overlay */}
+      <div
+        className={`absolute bottom-4 right-4 bg-white px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal border border-y2k-gunmetal/10 transition-opacity duration-300 ${
+          isHovered ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {item.name}
+      </div>
+    </div>
   );
 }
