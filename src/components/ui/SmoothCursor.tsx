@@ -71,9 +71,8 @@ export default function SmoothCursor() {
       xTo(e.clientX);
       yTo(e.clientY);
 
-      // Check clickable / hover target
-      const target = e.target as HTMLElement | null;
-      if (target) {
+      const target = e.target as Element | null;
+      if (target && typeof target.closest === "function") {
         const isClickable =
           target.closest("a") ||
           target.closest("button") ||
