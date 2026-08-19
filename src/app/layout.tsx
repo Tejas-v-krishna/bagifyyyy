@@ -74,7 +74,6 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${instrumentSans.variable} ${urbanist.variable} antialiased`}
-      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
