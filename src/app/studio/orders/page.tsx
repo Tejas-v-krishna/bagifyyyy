@@ -244,9 +244,9 @@ export default function StudioOrdersPage() {
             return (
               <div key={order.id} className="border border-white/8 bg-white/3 hover:bg-white/5 transition-colors">
                 {/* Row Header */}
-                <button
+                <div
                   onClick={() => setExpandedId(isExpanded ? null : order.id)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left"
+                  className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer select-none"
                 >
                   <div className="flex items-center gap-6">
                     <div>
@@ -309,7 +309,7 @@ export default function StudioOrdersPage() {
                     </button>
                     <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                   </div>
-                </button>
+                </div>
 
                 {/* Expanded Detail */}
                 {isExpanded && (
