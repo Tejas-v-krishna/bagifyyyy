@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Plus, Package, LogOut, Mail, ShoppingBag, Layers } from "lucide-react";
+import { LayoutDashboard, Plus, Package, LogOut, Mail, ShoppingBag, Layers, Camera } from "lucide-react";
 
 const navItems = [
   { href: "/studio", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/studio/products/new", label: "Add Product", icon: Plus },
   { href: "/studio/bundles", label: "Bundles", icon: Layers },
   { href: "/studio/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/studio/instagram", label: "Instagram Feed", icon: Camera },
   { href: "/studio/marketing", label: "Drop Marketing", icon: Mail },
 ];
 

@@ -1,13 +1,30 @@
 import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
 export const dynamic = "force-dynamic";
 
+const CONFIG_FILE = path.join(process.cwd(), "src", "data", "instagram_feed.json");
+
 export async function GET() {
+  // 1. Check if custom curated Instagram feed is set by Admin
+  try {
+    if (fs.existsSync(CONFIG_FILE)) {
+      const content = fs.readFileSync(CONFIG_FILE, "utf-8");
+      const parsed = JSON.parse(content);
+      if (parsed.posts && Array.isArray(parsed.posts) && parsed.posts.length > 0) {
+        return NextResponse.json({ success: true, source: "curated_admin", ...parsed });
+      }
+    }
+  } catch (e) {
+    console.warn("Could not read local curated instagram feed:", e);
+  }
+
   const token = process.env.INSTAGRAM_ACCESS_TOKEN;
   const accountId = process.env.INSTAGRAM_ACCOUNT_ID;
   const beholdUrl = process.env.BEHOLD_FEED_URL;
 
-  // 1. If using Behold.so or Curator JSON feed
+  // 2. If using Behold.so or Curator JSON feed
   if (beholdUrl) {
     try {
       const res = await fetch(beholdUrl, { next: { revalidate: 1800 } });
@@ -40,7 +57,7 @@ export async function GET() {
     }
   }
 
-  // 2. If using Official Meta Instagram Graph API
+  // 3. If using Official Meta Instagram Graph API
   if (token && accountId) {
     try {
       const profileUrl = `https://graph.facebook.com/v21.0/${accountId}?fields=username,name,profile_picture_url,followers_count,follows_count,media_count,biography&access_token=${token}`;
@@ -82,7 +99,7 @@ export async function GET() {
     }
   }
 
-  // 3. Fallback to curated default editorial lookbook
+  // 4. Fallback to curated default editorial lookbook
   return NextResponse.json({
     success: true,
     source: "static_fallback",
