@@ -79,7 +79,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Hero Section */}
-      <section className="w-full flex flex-col items-center h-[calc(100vh-64px)]">
+      <section className="w-full flex flex-col items-center min-h-[calc(100svh-56px)] md:min-h-[calc(100vh-64px)] md:h-[calc(100vh-64px)]">
         {/* Massive Headline (GSAP Animated in Instrument Sans Medium) */}
         <HeroText />
 

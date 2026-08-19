@@ -10,11 +10,11 @@ export default function Preloader() {
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
 
   useEffect(() => {
-    // Simulate initial loading time
+    // Quick, elegant brand reveal
     const timer = setTimeout(() => {
       setIsLoading(false);
       setPreloaderFinished(true);
-    }, 2500);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, [setPreloaderFinished]);
@@ -26,14 +26,14 @@ export default function Preloader() {
           initial={{ y: 0 }}
           exit={{ 
             y: "100%",
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] }
+            transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] }
           }}
           className="fixed inset-0 z-[9999] bg-y2k-ice flex items-center justify-center pointer-events-none origin-bottom"
         >
           <motion.div
-            initial={{ filter: "blur(20px)", opacity: 0, scale: 0.9 }}
+            initial={{ filter: "blur(12px)", opacity: 0, scale: 0.95 }}
             animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
             <Image

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useAppStore } from "@/store/useAppStore";
@@ -17,20 +17,26 @@ export default function HeroText() {
 
   useGSAP(
     () => {
-      // Set initial state
-      gsap.set(".hero-char", { yPercent: 120, opacity: 0 });
+      if (!containerRef.current) return;
 
-      if (!isPreloaderFinished) return;
+      if (!isPreloaderFinished) {
+        gsap.set(".hero-char", { yPercent: 100, opacity: 0 });
+        return;
+      }
 
-      // Animate to final state
-      gsap.to(".hero-char", {
-        yPercent: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.04,
-        ease: "power4.out",
-        delay: 0.1,
-      });
+      // Animate characters up smoothly
+      gsap.fromTo(
+        ".hero-char",
+        { yPercent: 100, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.02,
+          ease: "power3.out",
+          delay: 0.05,
+        }
+      );
     },
     { scope: containerRef, dependencies: [isPreloaderFinished] }
   );
@@ -38,25 +44,25 @@ export default function HeroText() {
   return (
     <h1
       ref={containerRef}
-      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.08em] leading-[0.8] pt-3 md:pt-5 pb-2 md:pb-4 select-none whitespace-nowrap overflow-hidden"
+      className="font-display font-medium w-full text-center text-y2k-gunmetal uppercase tracking-[-0.05em] leading-[0.85] pt-2 md:pt-4 pb-1 md:pb-3 select-none whitespace-nowrap overflow-hidden px-2 shrink-0"
       style={{
-        fontSize: "clamp(2rem, 10vw, 230px)",
+        fontSize: "clamp(1.75rem, 8.8vw, 210px)",
         fontWeight: 500,
-        lineHeight: 0.8,
-        letterSpacing: "-0.06em",
+        lineHeight: 0.85,
+        letterSpacing: "-0.05em",
+        color: "#28323F",
       }}
     >
       {words.map((word, wordIdx) => (
         <span
           key={wordIdx}
           className="inline-block overflow-hidden align-top"
-          style={{ paddingBottom: "0.1em", marginBottom: "-0.1em" }}
+          style={{ paddingBottom: "0.08em", marginBottom: "-0.08em" }}
         >
           {word.split("").map((char, charIdx) => (
             <span
               key={charIdx}
-              className="hero-char inline-block"
-              style={{ opacity: 0 }}
+              className="hero-char inline-block will-change-transform text-y2k-gunmetal"
             >
               {char}
             </span>
