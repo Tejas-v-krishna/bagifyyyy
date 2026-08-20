@@ -15,7 +15,7 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.in"),
   title: {
     default: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear & Archive Fashion",
     template: "%s | BAGIFYYYY",
@@ -43,12 +43,12 @@ export const metadata: Metadata = {
   creator: "BAGIFYYYY",
   publisher: "BAGIFYYYY",
   alternates: {
-    canonical: "https://bagifyyyy.com",
+    canonical: "https://bagifyyyy.in",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://bagifyyyy.com",
+    url: "https://bagifyyyy.in",
     title: "BAGIFYYYY (Bagify) | Y2K Archive & Premium Streetwear",
     description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. No restocks, no replicas. Wear history.",
     siteName: "BAGIFYYYY",

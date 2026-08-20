@@ -121,7 +121,7 @@ export default function MarketingStudioPage() {
           <div class="card-body">
             <div class="card-title">${p.name}</div>
             <div class="card-price">₹${p.price}</div>
-            <a href="https://bagifyyyy.com/product/${p.id}" class="btn">Shop Piece →</a>
+            <a href="https://bagifyyyy.in/product/${p.id}" class="btn">Shop Piece →</a>
           </div>
         </div>
       `).join('')}
