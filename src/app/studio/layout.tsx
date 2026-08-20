@@ -42,7 +42,7 @@ function NavItem({
   return (
     <Link
       href={href}
-      className={`flex items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-[0.14em] transition-all rounded-none ${
+      className={`flex items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-wider transition-all rounded-none ${
         isActive
           ? "text-white bg-y2k-gunmetal shadow-xs"
           : "text-y2k-gunmetal/75 hover:text-black hover:bg-y2k-ice/80"
@@ -69,7 +69,7 @@ function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.14em] text-red-600 hover:bg-red-50 transition-all w-full text-left cursor-pointer"
+      className="flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-red-600 hover:bg-red-50 transition-all w-full text-left cursor-pointer"
     >
       <LogOut className="w-4 h-4 shrink-0 text-red-600" />
       <span>Sign Out</span>
@@ -116,7 +116,7 @@ export default function StudioLayout({
           <Link
             href="/"
             target="_blank"
-            className="mt-4 flex items-center justify-between w-full bg-y2k-ice border border-y2k-gunmetal/20 px-3 py-2 text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white transition-all cursor-pointer shadow-xs"
+            className="mt-4 flex items-center justify-between w-full bg-y2k-ice border border-y2k-gunmetal/10 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white transition-all cursor-pointer shadow-xs"
           >
             <span>VIEW PUBLIC STORE</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -143,7 +143,7 @@ export default function StudioLayout({
       <div className="pl-64 min-h-screen flex flex-col min-w-0">
         {/* Sticky Top Control Bar */}
         <header className="h-16 border-b border-y2k-gunmetal/15 bg-white px-8 flex items-center justify-between sticky top-0 z-40 shadow-2xs">
-          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
+          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
             <span className="text-y2k-slate">ADMIN</span>
             <span className="text-y2k-gunmetal/30">/</span>
             <span className="text-y2k-gunmetal">{currentNav?.label || "DASHBOARD"}</span>

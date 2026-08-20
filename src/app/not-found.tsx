@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="bg-y2k-ice min-h-[75vh] flex items-center justify-center px-4 py-16 text-y2k-gunmetal font-sans">
       <div className="w-full max-w-md bg-white border border-y2k-gunmetal/15 p-6 sm:p-10 text-center shadow-md">
-        <div className="w-12 h-12 rounded-full bg-y2k-ice border border-y2k-gunmetal/20 flex items-center justify-center mx-auto mb-4">
+        <div className="w-12 h-12 rounded-full bg-y2k-ice border border-y2k-gunmetal/10 flex items-center justify-center mx-auto mb-4">
           <Compass className="w-5 h-5 text-y2k-gunmetal" />
         </div>
 
@@ -24,7 +24,7 @@ export default function NotFound() {
         <div className="flex flex-col gap-2.5">
           <Link
             href="/products"
-            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xs"
+            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs"
           >
             <span>EXPLORE ACTIVE DROPS</span>
             <ArrowRight className="w-3.5 h-3.5" />

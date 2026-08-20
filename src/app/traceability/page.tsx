@@ -7,7 +7,7 @@ export default function TraceabilityPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">TRACEABILITY &amp; PROVENANCE</span>
@@ -117,7 +117,7 @@ export default function TraceabilityPage() {
         <div className="text-center">
           <Link
             href="/products"
-            className="btn-bagify inline-flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-widest"
+            className="btn-bagify inline-flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-wider"
           >
             <span>Explore Sustainable Archive Drops</span>
             <ArrowRight className="w-3.5 h-3.5" />

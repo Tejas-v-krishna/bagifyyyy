@@ -12,7 +12,7 @@ export default function TermsPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">TERMS OF SERVICE</span>

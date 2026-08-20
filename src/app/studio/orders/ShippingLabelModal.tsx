@@ -158,7 +158,7 @@ export default function ShippingLabelModal({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto font-sans">
       {/* Container */}
-      <div className="bg-white border border-y2k-gunmetal/20 max-w-2xl w-full text-y2k-gunmetal shadow-2xl flex flex-col max-h-[94vh]">
+      <div className="bg-white border border-y2k-gunmetal/10 max-w-2xl w-full text-y2k-gunmetal shadow-2xl flex flex-col max-h-[94vh]">
         
         {/* Modal Top Header (Screen Only) */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-y2k-gunmetal/15 shrink-0 bg-y2k-ice print:hidden">
@@ -175,7 +175,7 @@ export default function ShippingLabelModal({
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyAddress}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/20 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/10 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
               title="Copy delivery address to clipboard"
             >
               {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -183,7 +183,7 @@ export default function ShippingLabelModal({
             </button>
             <button
               onClick={handlePrint}
-              className="btn-bagify px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="btn-bagify px-4 py-1.5 text-[9px] font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <Printer className="w-3.5 h-3.5" />
               Print Sticker (Ctrl+P)
@@ -200,7 +200,7 @@ export default function ShippingLabelModal({
 
         {/* Scrollable Preview Area */}
         <div className="p-6 overflow-y-auto flex-1 flex flex-col items-center bg-[#0a0a0a]">
-          <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-4 text-center font-mono">
+          <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-4 text-center font-mono">
             ✦ HIGH-CONTRAST THERMAL / 4x6" / A6 SHIPPING BAG STICKER
           </p>
 
@@ -282,7 +282,7 @@ export default function ShippingLabelModal({
                 <span className="text-[11px] font-black uppercase tracking-wider text-black">
                   DESTINATION PINCODE:
                 </span>
-                <span className="font-mono text-2xl font-black tracking-widest text-black bg-white px-3 py-0.5 border-3 border-black">
+                <span className="font-mono text-2xl font-black tracking-wider text-black bg-white px-3 py-0.5 border-3 border-black">
                   {order.shippingAddress?.pincode}
                 </span>
               </div>
@@ -293,7 +293,7 @@ export default function ShippingLabelModal({
               {order.paymentMethod === "COD" ? (
                 <div className="border-3 border-black bg-black text-white p-2.5 flex items-center justify-between">
                   <div>
-                    <span className="text-[9px] font-mono tracking-widest uppercase text-white font-bold block">
+                    <span className="text-[9px] font-mono tracking-wider uppercase text-white font-bold block">
                       ⚠ PAYMENT DUE ON DELIVERY
                     </span>
                     <span className="text-base font-black tracking-tight uppercase text-white">
@@ -310,7 +310,7 @@ export default function ShippingLabelModal({
               ) : (
                 <div className="border-3 border-black bg-white text-black p-2.5 flex items-center justify-between">
                   <div>
-                    <span className="text-[9px] font-mono tracking-widest uppercase text-black font-black block">
+                    <span className="text-[9px] font-mono tracking-wider uppercase text-black font-black block">
                       ✓ DIGITAL PAYMENT VERIFIED
                     </span>
                     <span className="text-sm font-black tracking-tight uppercase text-black">
@@ -367,7 +367,7 @@ export default function ShippingLabelModal({
             </div>
 
             {/* Bottom Footer Code */}
-            <div className="mt-1.5 text-center text-[8px] uppercase tracking-widest text-black font-mono font-bold">
+            <div className="mt-1.5 text-center text-[8px] uppercase tracking-wider text-black font-mono font-bold">
               BAGIFYYYY • OFFICIAL DISPATCH • VERIFIED PACKAGE
             </div>
           </div>
@@ -383,13 +383,13 @@ export default function ShippingLabelModal({
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-white/20 text-gray-300 hover:text-white text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
+              className="px-4 py-2 border border-white/20 text-gray-300 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
             >
               Close
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 bg-white text-black px-6 py-2.5 text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-colors shadow-md cursor-pointer"
+              className="flex items-center gap-2 bg-white text-black px-6 py-2.5 text-[10px] font-black uppercase tracking-wider hover:bg-gray-200 transition-colors shadow-md cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               Print Shipping Label

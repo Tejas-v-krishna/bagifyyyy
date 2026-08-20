@@ -147,7 +147,7 @@ export default function StudioInstagramPage() {
           <Link
             href="/#instagram"
             target="_blank"
-            className="flex items-center gap-2 border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest hover:border-y2k-gunmetal hover:bg-white transition-colors bg-transparent"
+            className="flex items-center gap-2 border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal hover:bg-white transition-colors bg-transparent"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             View on Homepage
@@ -155,7 +155,7 @@ export default function StudioInstagramPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-y2k-gunmetal text-white px-5 py-2.5 text-[9px] font-bold uppercase tracking-widest hover:bg-black transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 bg-y2k-gunmetal text-white px-5 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer disabled:opacity-50"
           >
             <Save className="w-3.5 h-3.5" />
             {saving ? "Saving…" : "Save Live Feed"}
@@ -182,7 +182,7 @@ export default function StudioInstagramPage() {
 
       {/* Account Handle Setting */}
       <div className="bg-white border border-y2k-gunmetal/15 p-6 mb-8">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-2">
+        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-2">
           Instagram Account Handle
         </label>
         <div className="flex items-center gap-2 max-w-sm">
@@ -192,7 +192,7 @@ export default function StudioInstagramPage() {
             value={handle}
             onChange={(e) => setHandle(e.target.value)}
             placeholder="bagifyyyy"
-            className="bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-2 py-2 outline-none focus:border-y2k-gunmetal flex-1 font-mono"
+            className="bg-transparent border-b border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-2 py-2 outline-none focus:border-y2k-gunmetal flex-1 font-mono"
           />
         </div>
       </div>
@@ -203,7 +203,7 @@ export default function StudioInstagramPage() {
           <div key={post.id || idx} className="bg-white border border-y2k-gunmetal/15 p-6 flex flex-col justify-between hover:shadow-lg transition-shadow">
             <div>
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-y2k-gunmetal/10">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal">
                   POST 0{idx + 1}
                 </span>
                 <span className="text-[9px] uppercase tracking-wider text-y2k-gunmetal/40 font-mono font-bold">
@@ -230,7 +230,7 @@ export default function StudioInstagramPage() {
 
                 <div className="flex-1 space-y-3">
                   <div>
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
                       Image / Thumbnail URL *
                     </label>
                     <input
@@ -238,18 +238,18 @@ export default function StudioInstagramPage() {
                       value={post.url}
                       onChange={(e) => handlePostChange(idx, "url", e.target.value)}
                       placeholder="/assets/..."
-                      className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 text-y2k-gunmetal text-[11px] px-2.5 py-2 outline-none focus:border-y2k-gunmetal font-mono"
+                      className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 text-y2k-gunmetal text-[11px] px-2.5 py-2 outline-none focus:border-y2k-gunmetal font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
+                    <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
                       Post Type
                     </label>
                     <select
                       value={post.type}
                       onChange={(e) => handlePostChange(idx, "type", e.target.value as any)}
-                      className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal text-[10px] uppercase font-bold px-2.5 py-2 outline-none cursor-pointer w-full"
+                      className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal text-[10px] uppercase font-bold px-2.5 py-2 outline-none cursor-pointer w-full"
                     >
                       <option value="reel">Reel / Video</option>
                       <option value="carousel">Lookbook Carousel</option>
@@ -261,7 +261,7 @@ export default function StudioInstagramPage() {
 
               {/* Caption */}
               <div className="mb-4">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
                   Caption / Description
                 </label>
                 <textarea
@@ -269,14 +269,14 @@ export default function StudioInstagramPage() {
                   value={post.caption}
                   onChange={(e) => handlePostChange(idx, "caption", e.target.value)}
                   placeholder="Drop caption text..."
-                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 text-y2k-gunmetal text-xs p-2.5 outline-none focus:border-y2k-gunmetal resize-none"
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs p-2.5 outline-none focus:border-y2k-gunmetal resize-none"
                 />
               </div>
 
               {/* Engagement & Link */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5 flex items-center gap-1">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5 flex items-center gap-1">
                     <Heart className="w-3 h-3" /> Likes
                   </label>
                   <input
@@ -284,12 +284,12 @@ export default function StudioInstagramPage() {
                     value={post.likes}
                     onChange={(e) => handlePostChange(idx, "likes", e.target.value)}
                     placeholder="4.2K"
-                    className="w-full bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
+                    className="w-full bg-transparent border-b border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5 flex items-center gap-1">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5 flex items-center gap-1">
                     <MessageCircle className="w-3 h-3" /> Comments
                   </label>
                   <input
@@ -297,12 +297,12 @@ export default function StudioInstagramPage() {
                     value={post.comments}
                     onChange={(e) => handlePostChange(idx, "comments", e.target.value)}
                     placeholder="248"
-                    className="w-full bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
+                    className="w-full bg-transparent border-b border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 block mb-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
                     Link URL
                   </label>
                   <input
@@ -310,7 +310,7 @@ export default function StudioInstagramPage() {
                     value={post.link}
                     onChange={(e) => handlePostChange(idx, "link", e.target.value)}
                     placeholder="https://instagram..."
-                    className="w-full bg-transparent border-b border-y2k-gunmetal/20 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
+                    className="w-full bg-transparent border-b border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-1 py-1.5 outline-none font-mono focus:border-y2k-gunmetal"
                   />
                 </div>
               </div>
@@ -324,7 +324,7 @@ export default function StudioInstagramPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center gap-3 bg-y2k-gunmetal text-white px-8 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-3 bg-y2k-gunmetal text-white px-8 py-4 text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors shadow-md disabled:opacity-50 cursor-pointer"
         >
           <Save className="w-4 h-4" />
           {saving ? "Saving…" : "Save Instagram Feed"}

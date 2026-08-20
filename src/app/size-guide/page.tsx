@@ -36,7 +36,7 @@ export default function SizeGuidePage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">SIZE MATRIX</span>
@@ -57,7 +57,7 @@ export default function SizeGuidePage() {
 
         {/* Tab & Unit Selector */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="flex border border-y2k-gunmetal/20 bg-white p-0.5">
+          <div className="flex border border-y2k-gunmetal/10 bg-white p-0.5">
             {[
               { id: "tops", label: "SHIRTS & TEES" },
               { id: "bottoms", label: "PANTS & CARGOS" },
@@ -77,7 +77,7 @@ export default function SizeGuidePage() {
             ))}
           </div>
 
-          <div className="flex border border-y2k-gunmetal/20 bg-white p-0.5">
+          <div className="flex border border-y2k-gunmetal/10 bg-white p-0.5">
             <button
               onClick={() => setUnit("cm")}
               className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider cursor-pointer ${
@@ -101,7 +101,7 @@ export default function SizeGuidePage() {
         <div className="bg-white border border-y2k-gunmetal/15 overflow-hidden mb-6 shadow-xs">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-widest">
+              <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-wider">
                 <th className="p-3">SIZE</th>
                 {activeTab === "tops" && (
                   <>
@@ -162,7 +162,7 @@ export default function SizeGuidePage() {
 
         {/* Measuring Guide Notes */}
         <div className="bg-white border border-y2k-gunmetal/15 p-4 text-xs space-y-2 shadow-xs">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate block mb-1">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1">
             HOW TO MEASURE
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-y2k-gunmetal/80">

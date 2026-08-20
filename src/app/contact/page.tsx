@@ -47,7 +47,7 @@ export default function ContactPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">CONTACT CONCIERGE</span>
@@ -84,7 +84,7 @@ export default function ContactPage() {
                     setSubmitted(false);
                     setFormData({ name: "", email: "", order: "", message: "" });
                   }}
-                  className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-widest cursor-pointer"
+                  className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
                 >
                   Send Another Message
                 </button>
@@ -92,7 +92,7 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3.5">
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                     Your Name *
                   </label>
                   <input
@@ -100,13 +100,13 @@ export default function ContactPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
+                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
                     placeholder="Alex Vance"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                     Email Address *
                   </label>
                   <input
@@ -115,26 +115,26 @@ export default function ContactPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
+                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
                     placeholder="alex@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                     Order Number (Optional)
                   </label>
                   <input
                     name="order"
                     value={formData.order}
                     onChange={handleChange}
-                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
+                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
                     placeholder="BGF-1024"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                     Inquiry Details *
                   </label>
                   <textarea
@@ -143,7 +143,7 @@ export default function ContactPage() {
                     rows={4}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal resize-none"
+                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal resize-none"
                     placeholder="How can we assist you with this archive drop?"
                   />
                 </div>
@@ -157,7 +157,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{loading ? "Transmitting…" : "Send Message"}</span>
@@ -169,7 +169,7 @@ export default function ContactPage() {
           {/* Info Side (5 cols) */}
           <div className="md:col-span-5 space-y-4">
             <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-xs">
-              <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate block mb-3">
+              <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-3">
                 DIRECT CHANNELS
               </span>
               <div className="space-y-3 text-xs">

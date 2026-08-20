@@ -15,7 +15,7 @@ export default function CheckoutCancelPage() {
       </p>
       <Link 
         href="/checkout" 
-        className="inline-block bg-foreground text-background px-8 py-4 font-bold uppercase tracking-widest hover:bg-accent hover:text-foreground transition-colors"
+        className="inline-block bg-foreground text-background px-8 py-4 font-bold uppercase tracking-wider hover:bg-accent hover:text-foreground transition-colors"
       >
         Return to Checkout
       </Link>

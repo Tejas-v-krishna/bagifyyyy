@@ -61,7 +61,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
           <Link
             href="/bundles"
-            className="inline-flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-bold uppercase tracking-[0.14em] text-y2k-gunmetal hover:text-black transition-colors pb-1 sm:pb-2 border-b border-y2k-gunmetal/30 hover:border-y2k-gunmetal"
+            className="inline-flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:text-black transition-colors pb-1 sm:pb-2 border-b border-y2k-gunmetal/15 hover:border-y2k-gunmetal"
           >
             <span>Explore Archive</span>
             <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -81,7 +81,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                   <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-tight leading-none text-y2k-gunmetal">
                     {bundle.name}
                   </h3>
-                  <span className="shrink-0 bg-y2k-gunmetal text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-1.5 flex items-center gap-1 shadow-sm">
+                  <span className="shrink-0 bg-y2k-gunmetal text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2.5 py-1.5 flex items-center gap-1 shadow-sm">
                     <Tag className="w-3 h-3" />
                     {bundle.discount}% OFF
                   </span>
@@ -108,7 +108,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
               {/* Product names */}
               <div className="px-6 sm:px-8 py-5 flex-1 bg-y2k-ice/30">
-                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/40 mb-3">Includes</p>
+                <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/40 mb-3">Includes</p>
                 <ul className="space-y-2">
                   {bundle.products.map((p) => (
                     <li key={p.id} className="flex items-start sm:items-center justify-between text-[10px] sm:text-xs">
@@ -123,7 +123,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
               <div className="px-6 sm:px-8 pb-6 sm:pb-8 pt-2 bg-y2k-ice/30 border-t border-y2k-gunmetal/10">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
                   <div>
-                    <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/40 mb-1">Bundle Price</p>
+                    <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/40 mb-1">Bundle Price</p>
                     <div className="flex items-baseline gap-2">
                       <span className="font-display text-3xl sm:text-4xl tracking-tight text-y2k-gunmetal">
                         ₹{bundle.bundlePrice.toLocaleString("en-IN")}
@@ -134,7 +134,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                     </div>
                   </div>
                   <div className="bg-white border border-y2k-gunmetal/15 px-3 py-1.5 self-start sm:self-auto">
-                    <p className="text-[9px] sm:text-[10px] text-y2k-gunmetal font-bold uppercase tracking-widest">
+                    <p className="text-[9px] sm:text-[10px] text-y2k-gunmetal font-bold uppercase tracking-wider">
                       Save ₹{bundle.savings.toLocaleString("en-IN")}
                     </p>
                   </div>

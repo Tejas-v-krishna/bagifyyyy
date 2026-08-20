@@ -171,7 +171,7 @@ export default function AccountPage() {
           </p>
           <Link
             href="/login"
-            className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+            className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
           >
             <span>SIGN IN</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -192,7 +192,7 @@ export default function AccountPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
 
         {/* ── Top Header Row ────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-widest text-y2k-slate">
+        <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
           <span>MEMBER PASSPORT</span>
           <span className="font-mono text-y2k-gunmetal/60">{memberId}</span>
         </div>
@@ -208,7 +208,7 @@ export default function AccountPage() {
                   <img
                     src={user.avatar}
                     alt="Avatar"
-                    className="w-12 h-12 rounded-full object-cover border border-y2k-gunmetal/20 shrink-0"
+                    className="w-12 h-12 rounded-full object-cover border border-y2k-gunmetal/10 shrink-0"
                   />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-base font-bold shrink-0">
@@ -303,7 +303,7 @@ export default function AccountPage() {
             }`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">ORDERS</span>
+              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">ORDERS</span>
               <Package className="w-3 h-3 text-y2k-gunmetal/60" />
             </div>
             <p className="font-display text-lg font-bold text-y2k-gunmetal">{orders.length}</p>
@@ -318,7 +318,7 @@ export default function AccountPage() {
             }`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">SAVED</span>
+              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">SAVED</span>
               <Heart className="w-3 h-3 text-y2k-gunmetal/60" />
             </div>
             <p className="font-display text-lg font-bold text-y2k-gunmetal">{wishlistIds.length}</p>
@@ -333,7 +333,7 @@ export default function AccountPage() {
             }`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">ADDRESSES</span>
+              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">ADDRESSES</span>
               <MapPin className="w-3 h-3 text-y2k-gunmetal/60" />
             </div>
             <p className="font-display text-lg font-bold text-y2k-gunmetal">{addresses.length}</p>
@@ -348,7 +348,7 @@ export default function AccountPage() {
             }`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-widest">POINTS</span>
+              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">POINTS</span>
               <Award className="w-3 h-3 text-y2k-gunmetal/60" />
             </div>
             <p className="font-display text-lg font-bold text-y2k-gunmetal">{points}</p>
@@ -394,7 +394,7 @@ export default function AccountPage() {
           {activeTab === "orders" && (
             <div className="space-y-3">
               {loadingOrders ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/50">
                   Loading orders…
                 </div>
               ) : orders.length === 0 ? (
@@ -405,7 +405,7 @@ export default function AccountPage() {
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 mt-2"
+                    className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 mt-2"
                   >
                     <span>BROWSE DROPS</span>
                     <ArrowRight className="w-3 h-3" />
@@ -433,14 +433,14 @@ export default function AccountPage() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/30 bg-y2k-ice text-y2k-gunmetal">
+                          <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/15 bg-y2k-ice text-y2k-gunmetal">
                             {ord.orderStatus}
                           </span>
 
                           {ord.trackingId && (
                             <button
                               onClick={() => handleCopyTracking(ord.trackingId)}
-                              className="text-[8px] font-bold uppercase bg-y2k-ice border border-y2k-gunmetal/20 px-2 py-0.5 text-y2k-gunmetal flex items-center gap-1 hover:bg-white cursor-pointer"
+                              className="text-[8px] font-bold uppercase bg-y2k-ice border border-y2k-gunmetal/10 px-2 py-0.5 text-y2k-gunmetal flex items-center gap-1 hover:bg-white cursor-pointer"
                               title="Copy tracking"
                             >
                               <Truck className="w-2.5 h-2.5 text-y2k-gunmetal" />
@@ -499,7 +499,7 @@ export default function AccountPage() {
           {activeTab === "wishlist" && (
             <div className="space-y-3">
               {loadingWishlist ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/50">
                   Loading saved…
                 </div>
               ) : wishlistProducts.length === 0 ? (
@@ -510,7 +510,7 @@ export default function AccountPage() {
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-widest inline-block"
+                    className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-wider inline-block"
                   >
                     Browse Drops
                   </Link>
@@ -555,7 +555,7 @@ export default function AccountPage() {
                         </button>
                         <button
                           onClick={() => toggleItem(p.id)}
-                          className="p-1.5 border border-y2k-gunmetal/20 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer text-y2k-gunmetal"
+                          className="p-1.5 border border-y2k-gunmetal/10 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer text-y2k-gunmetal"
                           title="Remove"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -580,7 +580,7 @@ export default function AccountPage() {
                     setShowAddressForm(!showAddressForm);
                     setAddressError("");
                   }}
-                  className="btn-bagify text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 flex items-center gap-1 cursor-pointer"
+                  className="btn-bagify text-[9px] font-bold uppercase tracking-wider px-3 py-1.5 flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3 h-3" />
                   <span>{showAddressForm ? "Cancel" : "Add Address"}</span>
@@ -599,19 +599,19 @@ export default function AccountPage() {
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
                           Full Name *
                         </label>
                         <input
                           required
                           value={addressForm.fullName}
                           onChange={(e) => setAddressForm((p) => ({ ...p, fullName: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="Alex Vance"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
                           Phone (+91) *
                         </label>
                         <input
@@ -619,28 +619,28 @@ export default function AccountPage() {
                           type="tel"
                           value={addressForm.phone}
                           onChange={(e) => setAddressForm((p) => ({ ...p, phone: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="9876543210"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                      <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
                         Street Address *
                       </label>
                       <input
                         required
                         value={addressForm.street}
                         onChange={(e) => setAddressForm((p) => ({ ...p, street: e.target.value }))}
-                        className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                        className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                         placeholder="Flat 402, Lotus Heights, MG Road"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
                           Pincode *
                         </label>
                         <input
@@ -648,31 +648,31 @@ export default function AccountPage() {
                           maxLength={6}
                           value={addressForm.pincode}
                           onChange={(e) => setAddressForm((p) => ({ ...p, pincode: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal font-mono bg-white"
+                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal font-mono bg-white"
                           placeholder="400001"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
                           City *
                         </label>
                         <input
                           required
                           value={addressForm.city}
                           onChange={(e) => setAddressForm((p) => ({ ...p, city: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="Mumbai"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-widest mb-1 block text-y2k-gunmetal/70">
+                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
                           State *
                         </label>
                         <input
                           required
                           value={addressForm.state}
                           onChange={(e) => setAddressForm((p) => ({ ...p, state: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/20 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
                           placeholder="Maharashtra"
                         />
                       </div>
@@ -688,7 +688,7 @@ export default function AccountPage() {
                       <button
                         type="button"
                         onClick={() => setShowAddressForm(false)}
-                        className="px-4 py-1.5 border border-y2k-gunmetal/30 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+                        className="px-4 py-1.5 border border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -706,7 +706,7 @@ export default function AccountPage() {
 
               {/* Grid */}
               {loadingAddresses ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/50">
                   Loading addresses…
                 </div>
               ) : addresses.length === 0 ? (
@@ -714,7 +714,7 @@ export default function AccountPage() {
                   <p className="text-xs text-y2k-gunmetal/70 mb-3">No saved addresses.</p>
                   <button
                     onClick={() => setShowAddressForm(true)}
-                    className="btn-bagify px-4 py-2 text-[9px] font-bold uppercase tracking-widest inline-block cursor-pointer"
+                    className="btn-bagify px-4 py-2 text-[9px] font-bold uppercase tracking-wider inline-block cursor-pointer"
                   >
                     + Add Address
                   </button>
@@ -728,12 +728,12 @@ export default function AccountPage() {
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-[8px] font-bold uppercase tracking-widest bg-y2k-ice border border-y2k-gunmetal/15 px-1.5 py-0.5 text-y2k-gunmetal">
+                          <span className="text-[8px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/15 px-1.5 py-0.5 text-y2k-gunmetal">
                             {idx === 0 ? "PRIMARY" : `SAVED #${idx + 1}`}
                           </span>
                           <button
                             onClick={() => handleDeleteAddress(addr.id)}
-                            className="text-[9px] font-bold uppercase tracking-widest text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
+                            className="text-[9px] font-bold uppercase tracking-wider text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
                           >
                             <Trash2 className="w-3 h-3" /> Remove
                           </button>

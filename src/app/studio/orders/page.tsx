@@ -158,7 +158,7 @@ export default function StudioOrdersPage() {
           <p className="text-xs text-y2k-gunmetal/70 mb-6">Please sign in to access order management and customer details.</p>
           <a
             href="/studio/login?from=/studio/orders"
-            className="btn-bagify inline-block w-full py-3 text-xs font-bold uppercase tracking-widest shadow-sm"
+            className="btn-bagify inline-block w-full py-3 text-xs font-bold uppercase tracking-wider shadow-sm"
           >
             Sign In to Studio →
           </a>
@@ -182,7 +182,7 @@ export default function StudioOrdersPage() {
         </div>
         <button
           onClick={fetchOrders}
-          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-white border border-y2k-gunmetal/20 px-4 py-2.5 hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer"
+          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider bg-white border border-y2k-gunmetal/10 px-4 py-2.5 hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Refresh Data</span>
@@ -197,7 +197,7 @@ export default function StudioOrdersPage() {
             <button
               key={tab}
               onClick={() => setFilterTab(tab)}
-              className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.14em] border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                 filterTab === tab
                   ? "border-y2k-gunmetal text-y2k-gunmetal bg-white"
                   : "border-transparent text-y2k-gunmetal/60 hover:text-black hover:bg-white/50"
@@ -216,7 +216,7 @@ export default function StudioOrdersPage() {
             placeholder="Search order #, email, phone…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white border border-y2k-gunmetal/20 pl-9 pr-4 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40 shadow-2xs"
+            className="w-full bg-white border border-y2k-gunmetal/10 pl-9 pr-4 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40 shadow-2xs"
           />
         </div>
       </div>
@@ -224,11 +224,11 @@ export default function StudioOrdersPage() {
       {/* ── Orders Table ───────────────────────────────────────────────────────── */}
       <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
         {loading ? (
-          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-widest text-y2k-slate animate-pulse">
+          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-wider text-y2k-slate animate-pulse">
             Fetching order records…
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-20 text-center text-y2k-gunmetal/50 text-xs font-bold uppercase tracking-widest">
+          <div className="py-20 text-center text-y2k-gunmetal/50 text-xs font-bold uppercase tracking-wider">
             No matching orders found.
           </div>
         ) : (
@@ -254,7 +254,7 @@ export default function StudioOrdersPage() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-mono text-sm font-bold text-y2k-gunmetal">#{order.orderNumber}</span>
-                          <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal">
+                          <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal">
                             {order.paymentMethod === "COD" ? "COD" : order.paymentStatus}
                           </span>
                         </div>
@@ -278,7 +278,7 @@ export default function StudioOrdersPage() {
                         <p className="font-display font-medium text-base text-y2k-gunmetal">
                           ₹{order.totalAmount?.toLocaleString("en-IN")}
                         </p>
-                        <span className="text-[8px] font-bold uppercase px-2.5 py-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal block mt-0.5">
+                        <span className="text-[8px] font-bold uppercase px-2.5 py-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal block mt-0.5">
                           {order.orderStatus}
                         </span>
                       </div>
@@ -290,7 +290,7 @@ export default function StudioOrdersPage() {
                             e.stopPropagation();
                             setPrintingOrder(order);
                           }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/20 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/10 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
                           title="Print Thermal Shipping Sticker"
                         >
                           <Printer className="w-3.5 h-3.5" />
@@ -341,7 +341,7 @@ export default function StudioOrdersPage() {
                                   </div>
                                   <div>
                                     <p className="font-bold text-y2k-gunmetal">{item.name}</p>
-                                    <p className="text-[9px] uppercase tracking-widest text-y2k-slate">
+                                    <p className="text-[9px] uppercase tracking-wider text-y2k-slate">
                                       Size: {item.size} • Color: {item.color} • Qty: {item.quantity}
                                     </p>
                                   </div>
@@ -358,7 +358,7 @@ export default function StudioOrdersPage() {
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4 flex-1">
                           {/* Order Status Select */}
                           <div className="flex flex-col gap-1">
-                            <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">
+                            <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
                               Fulfillment Status
                             </label>
                             <select
@@ -366,7 +366,7 @@ export default function StudioOrdersPage() {
                               onChange={(e) =>
                                 setStatusSelects((prev) => ({ ...prev, [order.id]: e.target.value }))
                               }
-                              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+                              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
                             >
                               <option value="PROCESSING">PROCESSING</option>
                               <option value="SHIPPED">SHIPPED</option>
@@ -377,7 +377,7 @@ export default function StudioOrdersPage() {
 
                           {/* Tracking ID Input */}
                           <div className="flex flex-col gap-1 flex-1">
-                            <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">
+                            <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
                               Tracking ID / India Post Reference
                             </label>
                             <input
@@ -387,7 +387,7 @@ export default function StudioOrdersPage() {
                               onChange={(e) =>
                                 setTrackingInputs((prev) => ({ ...prev, [order.id]: e.target.value }))
                               }
-                              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs font-mono uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
+                              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
                             />
                           </div>
                         </div>
@@ -401,7 +401,7 @@ export default function StudioOrdersPage() {
                           <button
                             onClick={() => handleSaveOrder(order.id)}
                             disabled={saving === order.id}
-                            className="btn-bagify px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest cursor-pointer disabled:opacity-50"
+                            className="btn-bagify px-6 py-2.5 text-[10px] font-bold uppercase tracking-wider cursor-pointer disabled:opacity-50"
                           >
                             {saving === order.id ? "Saving…" : "Update Order"}
                           </button>

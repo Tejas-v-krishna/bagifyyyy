@@ -142,7 +142,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                 <span className="font-medium text-5xl tracking-tight">{avgRating}</span>
                 <div>
                   <StarRow rating={Math.round(avgRating)} />
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">{reviews.length} review{reviews.length !== 1 ? "s" : ""}</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-1">{reviews.length} review{reviews.length !== 1 ? "s" : ""}</p>
                 </div>
               </div>
               <div className="flex flex-col gap-1.5 mt-1">
@@ -155,7 +155,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
 
           {/* Write a review */}
           <div className="border border-gray-200 p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-y2k-gunmetal mb-4">Write a Review</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal mb-4">Write a Review</p>
 
             {formSuccess ? (
               <div className="flex items-center gap-2 text-green-700 text-xs font-bold uppercase tracking-wider">
@@ -165,7 +165,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 {/* Name */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Your Name *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Your Name *</label>
                   <input
                     type="text"
                     value={formName}
@@ -178,13 +178,13 @@ export default function ReviewSection({ productId }: { productId: string }) {
 
                 {/* Star rating */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1.5">Rating *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1.5">Rating *</label>
                   <StarRow rating={formRating} interactive onRate={setFormRating} />
                 </div>
 
                 {/* Body */}
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500 block mb-1">Review *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">Review *</label>
                   <textarea
                     value={formBody}
                     onChange={(e) => setFormBody(e.target.value)}
@@ -202,7 +202,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-[#232D3B] text-white text-[10px] font-bold uppercase tracking-widest py-3 hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="bg-[#232D3B] text-white text-[10px] font-bold uppercase tracking-wider py-3 hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   {submitting ? "Submitting…" : "Submit Review →"}
@@ -215,7 +215,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
         {/* Right: review list */}
         <div>
           {loading ? (
-            <div className="text-xs text-gray-400 uppercase tracking-widest py-8">Loading reviews…</div>
+            <div className="text-xs text-gray-400 uppercase tracking-wider py-8">Loading reviews…</div>
           ) : reviews.length === 0 ? (
             <div className="text-sm text-gray-400 py-8">
               No reviews yet — be the first to share your thoughts!

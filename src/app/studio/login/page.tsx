@@ -47,7 +47,7 @@ function LoginForm() {
       {/* Return to Public Store link */}
       <Link
         href="/"
-        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-y2k-slate hover:text-black transition-colors"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-y2k-slate hover:text-black transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Return to Public Store</span>
@@ -64,7 +64,7 @@ function LoginForm() {
             className="object-contain mx-auto mb-3"
             priority
           />
-          <div className="inline-flex items-center gap-1.5 bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal">
+          <div className="inline-flex items-center gap-1.5 bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>STUDIO CONTROL PASSPORT</span>
           </div>
@@ -73,7 +73,7 @@ function LoginForm() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70">
+            <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70">
               Admin Access Password *
             </label>
             <input
@@ -83,12 +83,12 @@ function LoginForm() {
               required
               autoFocus
               placeholder="Enter studio key"
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal font-medium transition-colors placeholder:text-y2k-gunmetal/30"
+              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal font-medium transition-colors placeholder:text-y2k-gunmetal/30"
             />
           </div>
 
           {error && (
-            <p className="text-[10px] font-bold uppercase tracking-widest text-red-600 bg-red-50 p-2.5 border border-red-200">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 p-2.5 border border-red-200">
               {error}
             </p>
           )}
@@ -96,14 +96,14 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 shadow-sm"
+            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 shadow-sm"
           >
             <span>{loading ? "Authenticating…" : "Unlock Studio Operations"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </form>
 
-        <p className="text-center text-[9px] uppercase tracking-widest text-y2k-gunmetal/40 mt-6 pt-4 border-t border-y2k-gunmetal/10">
+        <p className="text-center text-[9px] uppercase tracking-wider text-y2k-gunmetal/40 mt-6 pt-4 border-t border-y2k-gunmetal/10">
           Internal Restricted Control Interface
         </p>
       </div>
@@ -115,7 +115,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
+        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
           Loading Control Portal...
         </div>
       }

@@ -162,7 +162,7 @@ export default function InstagramFeed() {
                 <p className="text-xs text-white/90 line-clamp-2 max-w-[220px] font-sans font-normal leading-snug mb-3">
                   {post.caption}
                 </p>
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-white/90 bg-white/20 px-3 py-1">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-white/90 bg-white/20 px-3 py-1">
                   View on Instagram <ArrowUpRight className="w-3 h-3" />
                 </span>
               </div>
@@ -176,10 +176,10 @@ export default function InstagramFeed() {
             href={profileLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 py-3 px-6 bg-white hover:bg-y2k-gunmetal hover:text-white border border-y2k-gunmetal/20 text-y2k-gunmetal transition-all group shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2.5 py-3 px-6 bg-white hover:bg-y2k-gunmetal hover:text-white border border-y2k-gunmetal/10 text-y2k-gunmetal transition-all group shadow-xs cursor-pointer"
           >
             <InstagramIcon className="w-4 h-4" />
-            <span className="font-display font-medium text-xs md:text-sm uppercase tracking-[0.14em]">
+            <span className="font-display font-medium text-xs md:text-sm uppercase tracking-wider">
               {handle}
             </span>
             <ArrowUpRight className="w-3.5 h-3.5 text-y2k-gunmetal/60 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

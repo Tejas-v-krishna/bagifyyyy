@@ -74,7 +74,7 @@ export default function FAQPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">FAQ</span>
@@ -100,7 +100,7 @@ export default function FAQPage() {
             placeholder="Search questions (e.g. tracking, sizing, returns)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white border border-y2k-gunmetal/20 px-3.5 py-2.5 pl-9 text-xs outline-none focus:border-y2k-gunmetal shadow-xs"
+            className="w-full bg-white border border-y2k-gunmetal/10 px-3.5 py-2.5 pl-9 text-xs outline-none focus:border-y2k-gunmetal shadow-xs"
           />
           <Search className="w-3.5 h-3.5 text-y2k-gunmetal/50 absolute left-3 top-1/2 -translate-y-1/2" />
         </div>
@@ -155,7 +155,7 @@ export default function FAQPage() {
           <span className="text-y2k-gunmetal/80">Still have questions regarding an archive piece?</span>
           <Link
             href="/contact"
-            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-widest shrink-0"
+            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-wider shrink-0"
           >
             Contact Support →
           </Link>

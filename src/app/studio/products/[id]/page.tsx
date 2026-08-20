@@ -62,7 +62,7 @@ function ConfirmDeleteModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
-      <div className="bg-white border border-y2k-gunmetal/20 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
+      <div className="bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
         <div className="flex items-center gap-3 mb-4">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
           <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">Delete Product?</h2>
@@ -73,13 +73,13 @@ function ConfirmDeleteModal({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
+            className="flex-1 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-wide transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer shadow-xs"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-wide transition-colors cursor-pointer shadow-xs"
           >
             Delete
           </button>
@@ -324,7 +324,7 @@ export default function StudioEditProduct() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center font-sans">
-        <div className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate animate-pulse">
+        <div className="text-[10px] font-bold uppercase tracking-wide text-y2k-slate animate-pulse">
           Loading Product Studio…
         </div>
       </div>
@@ -334,12 +334,12 @@ export default function StudioEditProduct() {
   if (!product) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center font-sans">
-        <p className="text-xs font-bold uppercase tracking-widest text-y2k-gunmetal mb-4">
+        <p className="text-xs font-bold uppercase tracking-wide text-y2k-gunmetal mb-4">
           Product not found in catalog
         </p>
         <Link
           href="/studio/products"
-          className="btn-bagify px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest"
+          className="btn-bagify px-6 py-2.5 text-[10px] font-bold uppercase tracking-wide"
         >
           ← Return to Products &amp; Catalog
         </Link>
@@ -404,7 +404,7 @@ export default function StudioEditProduct() {
           <Link
             href={`/product/${id}`}
             target="_blank"
-            className="flex items-center gap-1.5 bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-3.5 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-y2k-ice transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide hover:bg-y2k-ice transition-colors cursor-pointer shadow-2xs"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             <span>View Live</span>
@@ -413,7 +413,7 @@ export default function StudioEditProduct() {
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white px-3.5 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide transition-colors cursor-pointer shadow-2xs"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Delete</span>
@@ -423,7 +423,7 @@ export default function StudioEditProduct() {
             type="button"
             onClick={() => handleSave()}
             disabled={saving}
-            className="btn-bagify px-6 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+            className="btn-bagify px-6 py-2 text-[10px] font-bold uppercase tracking-wide flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -438,7 +438,7 @@ export default function StudioEditProduct() {
       </div>
 
       {saved && (
-        <div className="p-3 bg-y2k-gunmetal text-white text-xs font-bold uppercase tracking-widest flex items-center justify-between shadow-xs">
+        <div className="p-3 bg-y2k-gunmetal text-white text-xs font-bold uppercase tracking-wide flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-400" />
             <span>Product details updated successfully! Live page is updated.</span>
@@ -469,7 +469,7 @@ export default function StudioEditProduct() {
 
               {/* Collection / Brand Tag */}
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                   Collection Badge
                 </label>
                 <input
@@ -477,14 +477,14 @@ export default function StudioEditProduct() {
                   name="collectionTag"
                   value={form.collectionTag}
                   onChange={handleChange}
-                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
                   placeholder="BAGIFYYYY"
                 />
               </div>
 
               {/* Product Title */}
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                   Product Name *
                 </label>
                 <input
@@ -493,21 +493,21 @@ export default function StudioEditProduct() {
                   value={form.name}
                   onChange={handleChange}
                   required
-                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 px-3.5 py-2.5 font-display font-medium text-xl sm:text-2xl text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 font-display font-medium text-xl sm:text-2xl text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
                   placeholder="Product Name"
                 />
               </div>
 
               {/* Category Dropdown */}
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                   Category *
                 </label>
                 <select
                   name="category"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
                 >
                   <option value="topwear">Topwear / Shirts &amp; Tees</option>
                   <option value="bottomwear">Bottomwear / Pants &amp; Cargos</option>
@@ -519,7 +519,7 @@ export default function StudioEditProduct() {
 
               {/* Description & Fit Details */}
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                   Description &amp; Fit Details *
                 </label>
                 <textarea
@@ -528,7 +528,7 @@ export default function StudioEditProduct() {
                   onChange={handleChange}
                   rows={6}
                   required
-                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 p-3.5 text-xs text-y2k-gunmetal leading-relaxed outline-none focus:border-y2k-gunmetal font-sans resize-none"
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 p-3.5 text-xs text-y2k-gunmetal leading-relaxed outline-none focus:border-y2k-gunmetal font-sans resize-none"
                   placeholder="Describe garment cut, fit, chest/waist measurements, and styling..."
                 />
               </div>
@@ -604,13 +604,13 @@ export default function StudioEditProduct() {
                     )}
 
                     {activeImageIndex === 0 && (
-                      <span className="absolute top-3 left-3 bg-y2k-gunmetal text-white text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 shadow-sm">
+                      <span className="absolute top-3 left-3 bg-y2k-gunmetal text-white text-[8px] font-bold uppercase tracking-wide px-2.5 py-1 shadow-sm">
                         Primary Cover Photo
                       </span>
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-y2k-slate text-xs uppercase tracking-widest p-6 text-center">
+                  <div className="w-full h-full flex flex-col items-center justify-center text-y2k-slate text-xs uppercase tracking-wide p-6 text-center">
                     <ImageIcon className="w-10 h-10 mb-2 opacity-40" />
                     <span>No product image uploaded yet</span>
                     <p className="text-[10px] text-y2k-slate/70 mt-1 lowercase">Select a photo from your device below</p>
@@ -622,7 +622,7 @@ export default function StudioEditProduct() {
               {images.length > 0 && (
                 <div className="w-full mt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">
+                    <span className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate">
                       Click any thumbnail to preview or manage:
                     </span>
                   </div>
@@ -637,7 +637,7 @@ export default function StudioEditProduct() {
                           className={`relative aspect-square border cursor-pointer transition-all overflow-hidden group/item ${
                             isSelected
                               ? "border-y2k-gunmetal ring-2 ring-y2k-gunmetal bg-white shadow-sm"
-                              : "border-y2k-gunmetal/20 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
+                              : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
                           }`}
                         >
                           <img
@@ -728,7 +728,7 @@ export default function StudioEditProduct() {
 
                 {/* Optional: Add via Image URL */}
                 <div className="pt-2">
-                  <span className="text-[8px] font-bold uppercase tracking-widest text-y2k-slate block mb-1">
+                  <span className="text-[8px] font-bold uppercase tracking-wide text-y2k-slate block mb-1">
                     Or Paste Public Image URL:
                   </span>
                   <div className="flex gap-2">
@@ -743,13 +743,13 @@ export default function StudioEditProduct() {
                           handleAddImageUrl();
                         }
                       }}
-                      className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/20 text-y2k-gunmetal px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/30"
+                      className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/30"
                     />
                     <button
                       type="button"
                       onClick={handleAddImageUrl}
                       disabled={uploadingFiles || !newImageUrl.trim()}
-                      className="bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest disabled:opacity-40 transition-colors cursor-pointer shadow-2xs"
+                      className="bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wide disabled:opacity-40 transition-colors cursor-pointer shadow-2xs"
                     >
                       + Add URL
                     </button>
@@ -772,10 +772,10 @@ export default function StudioEditProduct() {
               {/* Price Box */}
               <div className="bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                     Selling Price (₹ INR) *
                   </label>
-                  <div className="flex items-center gap-2 border border-y2k-gunmetal/20 bg-white px-3.5 py-2.5">
+                  <div className="flex items-center gap-2 border border-y2k-gunmetal/10 bg-white px-3.5 py-2.5">
                     <span className="font-display text-2xl font-bold text-y2k-gunmetal">₹</span>
                     <input
                       type="number"
@@ -791,10 +791,10 @@ export default function StudioEditProduct() {
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                     Compare-At Price / Original MRP (₹)
                   </label>
-                  <div className="flex items-center gap-2 border border-y2k-gunmetal/20 bg-white px-3.5 py-2">
+                  <div className="flex items-center gap-2 border border-y2k-gunmetal/10 bg-white px-3.5 py-2">
                     <span className="font-display text-base font-bold text-y2k-slate">₹</span>
                     <input
                       type="number"
@@ -875,7 +875,7 @@ export default function StudioEditProduct() {
                 type="button"
                 onClick={() => handleSave()}
                 disabled={saving}
-                className="btn-bagify w-full py-4 px-5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+                className="btn-bagify w-full py-4 px-5 text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -899,13 +899,13 @@ export default function StudioEditProduct() {
           <div className="bg-y2k-ice px-6 py-3 border-b border-y2k-gunmetal/15 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Eye className="w-4 h-4 text-y2k-gunmetal" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal">
+              <span className="text-[10px] font-bold uppercase tracking-wide text-y2k-gunmetal">
                 STOREFRONT LIVE CUSTOMER PREVIEW — This reflects your current edits in real-time
               </span>
             </div>
             <button
               onClick={() => setActiveTab("editor")}
-              className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate hover:text-black transition-colors underline cursor-pointer"
+              className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate hover:text-black transition-colors underline cursor-pointer"
             >
               Return to Studio Editor →
             </button>
@@ -914,7 +914,7 @@ export default function StudioEditProduct() {
           <div className="p-6 sm:p-10 lg:p-14">
             {/* Top Breadcrumb */}
             <div className="mb-8">
-              <nav className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-y2k-gunmetal/50">
+              <nav className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-y2k-gunmetal/50">
                 <span>HOME</span>
                 <span>/</span>
                 <span>DROPS</span>
@@ -973,7 +973,7 @@ export default function StudioEditProduct() {
                         className={`text-xs font-bold uppercase tracking-wider px-3.5 py-2 border transition-all cursor-pointer ${
                           previewSize === s
                             ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
-                            : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
+                            : "border-y2k-gunmetal/10 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
                         }`}
                       >
                         {s}
@@ -1085,7 +1085,7 @@ export default function StudioEditProduct() {
                         setPreviewBagAdded(true);
                         setTimeout(() => setPreviewBagAdded(false), 2000);
                       }}
-                      className="btn-bagify w-full py-4 px-5 text-xs sm:text-sm font-bold uppercase tracking-widest flex items-center justify-between shadow-md cursor-pointer"
+                      className="btn-bagify w-full py-4 px-5 text-xs sm:text-sm font-bold uppercase tracking-wide flex items-center justify-between shadow-md cursor-pointer"
                     >
                       <span>{previewBagAdded ? "✓ ADDED TO BAG" : `ADD TO BAG (${previewSize})`}</span>
                       <span className="text-[11px] text-white/70 font-normal">
@@ -1096,7 +1096,7 @@ export default function StudioEditProduct() {
                     <button
                       type="button"
                       onClick={() => setPreviewWishlisted(!previewWishlisted)}
-                      className="w-full py-3 border border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors cursor-pointer"
+                      className="w-full py-3 border border-y2k-gunmetal/10 text-y2k-gunmetal hover:border-y2k-gunmetal flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wide transition-colors cursor-pointer"
                     >
                       <Heart
                         className={`w-3.5 h-3.5 ${

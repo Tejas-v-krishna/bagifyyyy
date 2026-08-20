@@ -156,7 +156,7 @@ export default function SearchOverlay() {
                     transition={{ duration: 0.18, ease: "easeOut" }}
                     className="max-w-3xl mx-auto px-4 sm:px-6 pb-6 overflow-hidden"
                   >
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/40 mb-3 pt-1">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/40 mb-3 pt-1">
                       {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{debouncedQuery}&rdquo;
                     </p>
                     <ul className="flex flex-col gap-1">
@@ -187,7 +187,7 @@ export default function SearchOverlay() {
                               <p className="text-xs font-bold text-y2k-gunmetal leading-tight truncate group-hover:text-black">
                                 {item.name}
                               </p>
-                              <p className="text-[10px] text-y2k-gunmetal/50 uppercase tracking-widest mt-0.5">
+                              <p className="text-[10px] text-y2k-gunmetal/50 uppercase tracking-wider mt-0.5">
                                 {item.brand ?? "BAGIFYYYY"} · {item.category}
                               </p>
                             </div>
@@ -206,7 +206,7 @@ export default function SearchOverlay() {
                       <Link
                         href={`/products?q=${encodeURIComponent(debouncedQuery)}`}
                         onClick={close}
-                        className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/60 hover:text-black transition-colors flex items-center gap-1.5"
+                        className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 hover:text-black transition-colors flex items-center gap-1.5"
                       >
                         See all results for &ldquo;{debouncedQuery}&rdquo; <ArrowRight className="w-3 h-3" />
                       </Link>
@@ -236,7 +236,7 @@ export default function SearchOverlay() {
                     animate={{ opacity: 1 }}
                     className="max-w-3xl mx-auto px-4 sm:px-6 pb-5 flex items-center justify-between"
                   >
-                    <p className="text-[10px] text-y2k-gunmetal/35 uppercase tracking-widest">
+                    <p className="text-[10px] text-y2k-gunmetal/35 uppercase tracking-wider">
                       Type at least 2 characters to search
                     </p>
                     <span className="text-[10px] text-y2k-gunmetal/25 font-mono hidden sm:block">ESC to close</span>

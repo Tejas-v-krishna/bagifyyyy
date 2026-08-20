@@ -35,7 +35,7 @@ export default function NotifyMeSection({ productId }: NotifyMeSectionProps) {
   if (status === "success") {
     return (
       <div className="w-full border border-black p-4 text-center mb-4 bg-gray-50">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-black">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-black">
           You'll be notified when this item is restocked!
         </p>
       </div>
@@ -50,19 +50,19 @@ export default function NotifyMeSection({ productId }: NotifyMeSectionProps) {
         placeholder="ENTER YOUR EMAIL"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full border border-black px-4 py-3 text-xs font-bold uppercase tracking-widest bg-white text-black outline-none placeholder-gray-400"
+        className="w-full border border-black px-4 py-3 text-xs font-bold uppercase tracking-wider bg-white text-black outline-none placeholder-gray-400"
       />
       <button 
         type="submit"
         disabled={status === "loading"}
         className="w-full border border-black text-black bg-white hover:bg-black hover:text-white transition-colors flex items-center justify-center px-4 py-3 disabled:opacity-50"
       >
-        <span className="text-xs font-bold uppercase tracking-widest">
+        <span className="text-xs font-bold uppercase tracking-wider">
           {status === "loading" ? "SUBMITTING..." : "NOTIFY ME WHEN BACK IN STOCK"}
         </span>
       </button>
       {status === "error" && (
-        <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mt-2 text-center">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-red-500 mt-2 text-center">
           Something went wrong. Please try again.
         </p>
       )}

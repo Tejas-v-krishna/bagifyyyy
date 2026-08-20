@@ -19,7 +19,7 @@ export default function CustomerServicePage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">CUSTOMER CONCIERGE</span>
@@ -100,7 +100,7 @@ export default function CustomerServicePage() {
               </p>
               <button
                 onClick={() => setFormSubmitted(false)}
-                className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-widest cursor-pointer"
+                className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
               >
                 Submit Another Request
               </button>
@@ -108,33 +108,33 @@ export default function CustomerServicePage() {
           ) : (
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                   Full Name *
                 </label>
                 <input
                   required
                   placeholder="Alex Vance"
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
                 />
               </div>
 
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                   Email Address *
                 </label>
                 <input
                   required
                   type="email"
                   placeholder="alex@example.com"
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                   Inquiry Category
                 </label>
-                <select className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal">
+                <select className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal">
                   <option>Order &amp; Shipping Status</option>
                   <option>Size &amp; Fit Consultation</option>
                   <option>Authentication &amp; Sourcing</option>
@@ -144,21 +144,21 @@ export default function CustomerServicePage() {
               </div>
 
               <div className="sm:col-span-2">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 block mb-1">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                   Message *
                 </label>
                 <textarea
                   required
                   rows={4}
                   placeholder="Describe your inquiry..."
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal resize-none"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal resize-none"
                 />
               </div>
 
               <div className="sm:col-span-2 pt-1">
                 <button
                   type="submit"
-                  className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-widest cursor-pointer"
+                  className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-wider cursor-pointer"
                 >
                   Submit Ticket
                 </button>

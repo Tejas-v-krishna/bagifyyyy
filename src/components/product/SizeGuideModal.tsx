@@ -53,7 +53,7 @@ export default function SizeGuideModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 15 }}
             transition={{ type: "spring", damping: 26, stiffness: 280 }}
-            className="relative w-full max-w-md bg-white border border-y2k-gunmetal/20 p-6 shadow-2xl z-10 text-y2k-gunmetal font-sans"
+            className="relative w-full max-w-md bg-white border border-y2k-gunmetal/10 p-6 shadow-2xl z-10 text-y2k-gunmetal font-sans"
           >
             <div className="flex items-center justify-between border-b border-y2k-gunmetal/10 pb-3 mb-4">
               <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export default function SizeGuideModal({
               <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
                 {isBottom ? "Pants & Cargo Fit (Boxy/Wide)" : "Boxy Oversized Vintage Fit"}
               </span>
-              <div className="flex items-center border border-y2k-gunmetal/20 bg-y2k-ice p-0.5">
+              <div className="flex items-center border border-y2k-gunmetal/10 bg-y2k-ice p-0.5">
                 <button
                   onClick={() => setUnit("cm")}
                   className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider cursor-pointer ${
@@ -99,7 +99,7 @@ export default function SizeGuideModal({
             <div className="border border-y2k-gunmetal/15 overflow-hidden mb-4">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-widest">
+                  <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-wider">
                     <th className="p-2.5">SIZE</th>
                     {isBottom ? (
                       <>

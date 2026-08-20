@@ -64,7 +64,7 @@ export default function TrackOrderPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">TRACK SHIPMENT</span>
@@ -87,7 +87,7 @@ export default function TrackOrderPage() {
               placeholder="e.g. 1001 or BGF-TRACK-XXXX"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
+              className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
             />
             <button
               type="submit"

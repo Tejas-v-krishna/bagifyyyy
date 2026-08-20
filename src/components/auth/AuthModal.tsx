@@ -58,7 +58,7 @@ export default function AuthModal() {
             damping: 26,
             stiffness: 320,
           }}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[999] w-[calc(100vw-32px)] sm:w-[480px] md:w-[520px] bg-white text-y2k-gunmetal font-sans shadow-2xl shadow-black/40 border border-y2k-gunmetal/20 overflow-hidden flex flex-col sm:flex-row select-none"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[999] w-[calc(100vw-32px)] sm:w-[480px] md:w-[520px] bg-white text-y2k-gunmetal font-sans shadow-2xl shadow-black/40 border border-y2k-gunmetal/10 overflow-hidden flex flex-col sm:flex-row select-none"
         >
           {/* Close Button */}
           <button
@@ -103,7 +103,7 @@ export default function AuthModal() {
               <button
                 type="button"
                 onClick={handleGoToAuth}
-                className="btn-bagify w-full text-white text-[11px] font-bold uppercase tracking-[0.16em] py-3.5 px-4 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cursor-pointer shadow-md"
+                className="btn-bagify w-full text-white text-[11px] font-bold uppercase tracking-wider py-3.5 px-4 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cursor-pointer shadow-md"
               >
                 <span>SIGN IN / CREATE ACCOUNT</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -112,7 +112,7 @@ export default function AuthModal() {
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-slate hover:text-black py-1 text-center transition-colors cursor-pointer"
+                className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate hover:text-black py-1 text-center transition-colors cursor-pointer"
               >
                 Continue Browsing
               </button>

@@ -59,7 +59,7 @@ function SuccessContent() {
           {/* 1. Header Verification Section */}
           <div className="p-8 sm:p-12 text-center border-b border-y2k-gunmetal/10">
             {/* Minimalist Monochrome Verification Seal */}
-            <div className="w-14 h-14 bg-y2k-ice border border-y2k-gunmetal/20 rounded-full flex items-center justify-center mx-auto mb-5 text-y2k-gunmetal shadow-xs">
+            <div className="w-14 h-14 bg-y2k-ice border border-y2k-gunmetal/10 rounded-full flex items-center justify-center mx-auto mb-5 text-y2k-gunmetal shadow-xs">
               <Check strokeWidth={2.5} className="w-6 h-6 text-y2k-gunmetal" />
             </div>
 
@@ -99,7 +99,7 @@ function SuccessContent() {
               <h3 className="font-display font-medium text-lg uppercase tracking-tight flex items-center gap-2 text-y2k-gunmetal">
                 <Package className="w-4 h-4 text-y2k-slate" /> Ordered Items ({order?.items?.length || 1})
               </h3>
-              <span className="text-xs font-bold uppercase tracking-widest text-y2k-slate font-sans">
+              <span className="text-xs font-bold uppercase tracking-wider text-y2k-slate font-sans">
                 ARCHIVE DROP
               </span>
             </div>
@@ -186,7 +186,7 @@ function SuccessContent() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-xs">
               {/* Delivery Address */}
               <div>
-                <p className="font-bold uppercase tracking-[0.16em] text-[10px] text-y2k-slate mb-2 flex items-center gap-1.5">
+                <p className="font-bold uppercase tracking-wider text-[10px] text-y2k-slate mb-2 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-y2k-gunmetal" /> Delivery Address
                 </p>
                 <div className="bg-white border border-y2k-gunmetal/10 p-4 leading-relaxed">
@@ -209,7 +209,7 @@ function SuccessContent() {
 
               {/* Logistics & Tracking */}
               <div>
-                <p className="font-bold uppercase tracking-[0.16em] text-[10px] text-y2k-slate mb-2 flex items-center gap-1.5">
+                <p className="font-bold uppercase tracking-wider text-[10px] text-y2k-slate mb-2 flex items-center gap-1.5">
                   <Truck className="w-3.5 h-3.5 text-y2k-gunmetal" /> Logistics &amp; Tracking
                 </p>
                 <div className="bg-white border border-y2k-gunmetal/10 p-4 leading-relaxed flex flex-col justify-between h-[calc(100%-28px)]">
@@ -257,14 +257,14 @@ function SuccessContent() {
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
           <Link
             href="/account"
-            className="flex-1 btn-bagify text-white py-4 text-xs font-bold uppercase tracking-[0.16em] text-center hover:opacity-90 transition-opacity shadow-md flex items-center justify-center gap-2"
+            className="flex-1 btn-bagify text-white py-4 text-xs font-bold uppercase tracking-wider text-center hover:opacity-90 transition-opacity shadow-md flex items-center justify-center gap-2"
           >
             <span>VIEW IN MY ACCOUNT</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/products"
-            className="flex-1 bg-white border border-y2k-gunmetal/30 hover:border-y2k-gunmetal text-y2k-gunmetal py-4 text-xs font-bold uppercase tracking-[0.16em] text-center hover:bg-black/[0.02] transition-colors"
+            className="flex-1 bg-white border border-y2k-gunmetal/15 hover:border-y2k-gunmetal text-y2k-gunmetal py-4 text-xs font-bold uppercase tracking-wider text-center hover:bg-black/[0.02] transition-colors"
           >
             CONTINUE EXPLORING DROPS
           </Link>
@@ -296,7 +296,7 @@ export default function CheckoutSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-y2k-ice min-h-[70vh] flex items-center justify-center text-xs font-bold uppercase tracking-widest">
+        <div className="bg-y2k-ice min-h-[70vh] flex items-center justify-center text-xs font-bold uppercase tracking-wider">
           Loading Order Receipt...
         </div>
       }

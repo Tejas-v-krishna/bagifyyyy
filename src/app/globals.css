@@ -42,6 +42,44 @@
 }
 
 @layer utilities {
+  /* ── Premium Design System Utilities ─────────────────────────────── */
+
+  /* Consistent section label — small uppercase eyebrow above headings */
+  .section-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--color-y2k-mist);
+  }
+
+  /* Ultra-thin 1px divider */
+  .divider {
+    border-top: 1px solid rgba(40, 50, 63, 0.07);
+    width: 100%;
+  }
+
+  /* Bottom-only input style for premium forms */
+  .input-line {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(40, 50, 63, 0.2);
+    border-radius: 0;
+    padding: 0.5rem 0;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  .input-line:focus {
+    border-bottom-color: var(--color-y2k-gunmetal);
+  }
+  .input-line::placeholder {
+    color: rgba(40, 50, 63, 0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.6875rem;
+  }
+
+  /* ── Existing Utilities ────────────────────────────────────────────── */
   .chrome-gradient {
     background: linear-gradient(135deg, #E8EDF2 0%, #A8B8CB 40%, #5F7591 70%, #3E4E64 100%);
   }
@@ -54,7 +92,7 @@
   .btn-bagify {
     background: #232D3B;
     color: #F8F5E9;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -62,8 +100,8 @@
     will-change: transform;
   }
   .btn-bagify:hover {
-    filter: brightness(1.06);
-    box-shadow: 0 4px 16px rgba(35, 45, 59, 0.16);
+    filter: brightness(1.08);
+    box-shadow: 0 6px 24px rgba(35, 45, 59, 0.18);
   }
   .btn-bagify:active {
     transform: scale(0.985);
@@ -144,6 +182,7 @@
   .font-display {
     font-family: var(--font-display);
     font-optical-sizing: auto;
+    letter-spacing: -0.04em;
   }
 
   /* Universal Silky Smooth Easing for All Clickable Elements */
@@ -275,25 +314,25 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* Custom Scrollbar for Y2K Vibe */
+/* Custom Scrollbar — Refined */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: rgba(40, 50, 63, 0.18);
   border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1aa;
+  background: rgba(40, 50, 63, 0.36);
 }
 
 /* Selection */
 ::selection {
-  background-color: var(--color-accent);
-  color: #111111;
+  background-color: var(--color-y2k-gunmetal);
+  color: var(--color-y2k-ice);
 }
 
 @keyframes marquee {

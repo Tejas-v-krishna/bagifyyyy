@@ -271,7 +271,7 @@ function CheckoutContent() {
       <div className="min-h-[70vh] bg-y2k-ice flex flex-col items-center justify-center pt-20 px-4 text-y2k-gunmetal">
         <h1 className="font-display text-4xl uppercase tracking-tighter mb-4">Your Bag is Empty</h1>
         <p className="text-sm text-y2k-gunmetal/70 mb-8">Discover our latest streetwear archive and top drops.</p>
-        <Link href="/products" className="btn-bagify px-8 py-4 text-xs font-bold uppercase tracking-widest text-white hover:opacity-90 transition-opacity">
+        <Link href="/products" className="btn-bagify px-8 py-4 text-xs font-bold uppercase tracking-wider text-white hover:opacity-90 transition-opacity">
           SHOP THE DROP →
         </Link>
       </div>
@@ -296,28 +296,28 @@ function CheckoutContent() {
           {checkoutMode === 'select' ? (
             <div className="flex flex-col items-center pt-8 bg-white border border-y2k-gunmetal/15 p-8 sm:p-12">
               <div className="max-w-lg mx-auto w-full text-center">
-                <h2 className="text-sm font-bold uppercase tracking-widest mb-8">HOW WOULD YOU LIKE TO CONTINUE?</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-8">HOW WOULD YOU LIKE TO CONTINUE?</h2>
                 <div className="flex flex-col sm:flex-row gap-6 mb-6">
                   {/* Option 1: Guest */}
-                  <div className="flex-1 flex flex-col items-center p-6 border border-y2k-gunmetal/20 hover:border-y2k-gunmetal transition-colors">
+                  <div className="flex-1 flex flex-col items-center p-6 border border-y2k-gunmetal/10 hover:border-y2k-gunmetal transition-colors">
                     <ArrowRight className="w-5 h-5 mb-4 text-y2k-gunmetal" />
-                    <h3 className="text-xs font-bold uppercase tracking-widest mb-2">GUEST CHECKOUT</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider mb-2">GUEST CHECKOUT</h3>
                     <p className="text-[11px] text-y2k-gunmetal/60 mb-6 h-8">Fast checkout with email & phone.</p>
                     <button 
                       onClick={() => setCheckoutMode('guest')}
-                      className="w-full btn-bagify text-white px-4 py-3.5 text-xs font-bold uppercase tracking-widest hover:opacity-90"
+                      className="w-full btn-bagify text-white px-4 py-3.5 text-xs font-bold uppercase tracking-wider hover:opacity-90"
                     >
                       CONTINUE →
                     </button>
                   </div>
                   {/* Option 2: Sign In */}
-                  <div className="flex-1 flex flex-col items-center p-6 border border-y2k-gunmetal/20 hover:border-y2k-gunmetal transition-colors">
+                  <div className="flex-1 flex flex-col items-center p-6 border border-y2k-gunmetal/10 hover:border-y2k-gunmetal transition-colors">
                     <User className="w-5 h-5 mb-4 text-y2k-gunmetal" />
-                    <h3 className="text-xs font-bold uppercase tracking-widest mb-2">GOOGLE / SIGN IN</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-wider mb-2">GOOGLE / SIGN IN</h3>
                     <p className="text-[11px] text-y2k-gunmetal/60 mb-6 h-8">Earn Chrome Points & auto-fill details.</p>
                     <Link 
                       href="/login?from=/checkout"
-                      className="w-full border border-y2k-gunmetal text-y2k-gunmetal px-4 py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors text-center inline-block"
+                      className="w-full border border-y2k-gunmetal text-y2k-gunmetal px-4 py-3.5 text-xs font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-colors text-center inline-block"
                     >
                       SIGN IN →
                     </Link>
@@ -363,7 +363,7 @@ function CheckoutContent() {
                   <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">Full Name *</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Full Name *</label>
                         <input
                           type="text"
                           name="fullName"
@@ -375,7 +375,7 @@ function CheckoutContent() {
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">Phone Number (+91) *</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Phone Number (+91) *</label>
                         <input
                           type="tel"
                           name="phone"
@@ -389,7 +389,7 @@ function CheckoutContent() {
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">Email Address (for Receipt & Tracking) *</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Email Address (for Receipt & Tracking) *</label>
                       <input
                         type="email"
                         name="email"
@@ -402,7 +402,7 @@ function CheckoutContent() {
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">House / Flat / Street Address *</label>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">House / Flat / Street Address *</label>
                       <input
                         type="text"
                         name="street"
@@ -416,7 +416,7 @@ function CheckoutContent() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">PIN Code *</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">PIN Code *</label>
                         <input
                           type="text"
                           name="pincode"
@@ -429,7 +429,7 @@ function CheckoutContent() {
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">City *</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">City *</label>
                         <input
                           type="text"
                           name="city"
@@ -441,7 +441,7 @@ function CheckoutContent() {
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">State *</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">State *</label>
                         <select
                           name="state"
                           value={formData.state}
@@ -466,7 +466,7 @@ function CheckoutContent() {
                           setError("");
                           setActiveStep(2);
                         }}
-                        className="btn-bagify text-white px-8 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90"
+                        className="btn-bagify text-white px-8 py-3 text-xs font-bold uppercase tracking-wider hover:opacity-90"
                       >
                         CONTINUE TO SHIPPING ›
                       </button>
@@ -496,7 +496,7 @@ function CheckoutContent() {
 
                 {activeStep === 2 ? (
                   <div className="flex flex-col gap-4">
-                    <label className={`flex items-center justify-between p-4 border cursor-pointer transition-all ${shippingMethod === 'standard' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/20'}`}>
+                    <label className={`flex items-center justify-between p-4 border cursor-pointer transition-all ${shippingMethod === 'standard' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/10'}`}>
                       <div className="flex items-center gap-3">
                         <input
                           type="radio"
@@ -515,7 +515,7 @@ function CheckoutContent() {
                       <span className="text-xs font-bold uppercase">{total >= 2000 ? 'FREE' : '₹49'}</span>
                     </label>
 
-                    <label className={`flex items-center justify-between p-4 border cursor-pointer transition-all ${shippingMethod === 'express' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/20'}`}>
+                    <label className={`flex items-center justify-between p-4 border cursor-pointer transition-all ${shippingMethod === 'express' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/10'}`}>
                       <div className="flex items-center gap-3">
                         <input
                           type="radio"
@@ -538,7 +538,7 @@ function CheckoutContent() {
                       <button
                         type="button"
                         onClick={() => setActiveStep(3)}
-                        className="btn-bagify text-white px-8 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90"
+                        className="btn-bagify text-white px-8 py-3 text-xs font-bold uppercase tracking-wider hover:opacity-90"
                       >
                         CONTINUE TO PAYMENT ›
                       </button>
@@ -563,7 +563,7 @@ function CheckoutContent() {
                 {activeStep === 3 && (
                   <div className="flex flex-col gap-4">
                     {/* Option A: Razorpay */}
-                    <label className={`flex items-start justify-between p-4 border cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/20'}`}>
+                    <label className={`flex items-start justify-between p-4 border cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/10'}`}>
                       <div className="flex items-start gap-3">
                         <input
                           type="radio"
@@ -580,17 +580,17 @@ function CheckoutContent() {
                             Secure payment with Google Pay, PhonePe, Paytm, RuPay cards, and NetBanking.
                           </p>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-[9px] bg-white border border-y2k-gunmetal/20 px-2 py-0.5 rounded-xs font-bold">UPI</span>
-                            <span className="text-[9px] bg-white border border-y2k-gunmetal/20 px-2 py-0.5 rounded-xs font-bold">GPAY</span>
-                            <span className="text-[9px] bg-white border border-y2k-gunmetal/20 px-2 py-0.5 rounded-xs font-bold">PHONEPE</span>
-                            <span className="text-[9px] bg-white border border-y2k-gunmetal/20 px-2 py-0.5 rounded-xs font-bold">CARDS</span>
+                            <span className="text-[9px] bg-white border border-y2k-gunmetal/10 px-2 py-0.5 rounded-xs font-bold">UPI</span>
+                            <span className="text-[9px] bg-white border border-y2k-gunmetal/10 px-2 py-0.5 rounded-xs font-bold">GPAY</span>
+                            <span className="text-[9px] bg-white border border-y2k-gunmetal/10 px-2 py-0.5 rounded-xs font-bold">PHONEPE</span>
+                            <span className="text-[9px] bg-white border border-y2k-gunmetal/10 px-2 py-0.5 rounded-xs font-bold">CARDS</span>
                           </div>
                         </div>
                       </div>
                     </label>
 
                     {/* Option B: Cash on Delivery */}
-                    <label className={`flex items-start justify-between p-4 border cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/20'}`}>
+                    <label className={`flex items-start justify-between p-4 border cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-y2k-gunmetal bg-y2k-ice/40' : 'border-y2k-gunmetal/10'}`}>
                       <div className="flex items-start gap-3">
                         <input
                           type="radio"
@@ -619,7 +619,7 @@ function CheckoutContent() {
                         type="button"
                         onClick={handleProceedToPayment}
                         disabled={loading}
-                        className="w-full sm:w-auto btn-bagify text-white px-10 py-4 text-xs font-bold uppercase tracking-widest hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto btn-bagify text-white px-10 py-4 text-xs font-bold uppercase tracking-wider hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                       >
                         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                         {loading ? 'OPENING RAZORPAY…' : paymentMethod === 'cod' ? 'PLACE COD ORDER →' : 'PAY WITH RAZORPAY →'}
@@ -649,16 +649,16 @@ function CheckoutContent() {
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
                         <h4 className="text-xs font-bold uppercase tracking-wider">{item.name}</h4>
-                        <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-widest mt-0.5">
+                        <p className="text-[10px] text-y2k-gunmetal/60 uppercase tracking-wider mt-0.5">
                           {item.color} | Size: {item.size}
                         </p>
                       </div>
                       
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2 text-xs font-bold">
-                          <button onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-y2k-gunmetal/20 flex items-center justify-center hover:bg-gray-100">-</button>
+                          <button onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-y2k-gunmetal/10 flex items-center justify-center hover:bg-gray-100">-</button>
                           <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-y2k-gunmetal/20 flex items-center justify-center hover:bg-gray-100">+</button>
+                          <button onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-y2k-gunmetal/10 flex items-center justify-center hover:bg-gray-100">+</button>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>
@@ -674,8 +674,8 @@ function CheckoutContent() {
             {/* Promo Code */}
             <div className="border-t border-y2k-gunmetal/10 pt-4 pb-2">
               {appliedPromo ? (
-                <div className="flex items-center justify-between bg-y2k-ice border border-y2k-gunmetal/20 px-3 py-2">
-                  <span className="text-[10px] font-bold text-y2k-gunmetal uppercase tracking-widest flex items-center gap-1.5">
+                <div className="flex items-center justify-between bg-y2k-ice border border-y2k-gunmetal/10 px-3 py-2">
+                  <span className="text-[10px] font-bold text-y2k-gunmetal uppercase tracking-wider flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                   </span>
@@ -688,7 +688,7 @@ function CheckoutContent() {
                 </div>
               ) : (
                 <div className="flex gap-2">
-                  <div className="flex-1 flex items-center gap-2 border border-y2k-gunmetal/20 px-3 py-2">
+                  <div className="flex-1 flex items-center gap-2 border border-y2k-gunmetal/10 px-3 py-2">
                     <Tag className="w-3.5 h-3.5 text-y2k-gunmetal/40 shrink-0" />
                     <input
                       type="text"
@@ -701,7 +701,7 @@ function CheckoutContent() {
                   </div>
                   <button
                     onClick={handleApplyPromo}
-                    className="px-3 py-2 bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity cursor-pointer"
+                    className="px-3 py-2 bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     Apply
                   </button>
@@ -755,7 +755,7 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-widest text-y2k-gunmetal">
+        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
           Loading Checkout...
         </div>
       }

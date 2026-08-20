@@ -55,7 +55,7 @@ export default function NewsletterForm() {
         </button>
       </form>
       {message && (
-        <p className={`mt-2 text-xs font-medium uppercase tracking-widest ${status === "success" ? "text-green-600" : "text-red-500"}`}>
+        <p className={`mt-2 text-xs font-medium uppercase tracking-wider ${status === "success" ? "text-green-600" : "text-red-500"}`}>
           {message}
         </p>
       )}

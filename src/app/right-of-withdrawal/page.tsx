@@ -16,7 +16,7 @@ export default function RightOfWithdrawalPage() {
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Store
         </Link>
-        <div className="w-14 h-14 bg-y2k-gunmetal/5 border border-y2k-gunmetal/20 rounded-full flex items-center justify-center mx-auto mb-6 text-y2k-gunmetal">
+        <div className="w-14 h-14 bg-y2k-gunmetal/5 border border-y2k-gunmetal/10 rounded-full flex items-center justify-center mx-auto mb-6 text-y2k-gunmetal">
           <ShieldCheck className="w-7 h-7" />
         </div>
         <h1 className="font-display text-3xl sm:text-5xl uppercase tracking-tight font-medium text-y2k-gunmetal mb-4">
@@ -29,13 +29,13 @@ export default function RightOfWithdrawalPage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/shipping"
-            className="btn-bagify text-white text-xs font-bold uppercase tracking-widest px-8 py-3.5 shadow-sm"
+            className="btn-bagify text-white text-xs font-bold uppercase tracking-wider px-8 py-3.5 shadow-sm"
           >
             VIEW SHIPPING POLICY
           </Link>
           <Link
             href="/"
-            className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal text-xs font-bold uppercase tracking-widest px-8 py-3.5 hover:bg-gray-50 transition-colors"
+            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs font-bold uppercase tracking-wider px-8 py-3.5 hover:bg-gray-50 transition-colors"
           >
             RETURN TO CATALOG
           </Link>

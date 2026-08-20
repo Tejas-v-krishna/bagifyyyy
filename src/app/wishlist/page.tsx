@@ -56,7 +56,7 @@ export default function WishlistPage() {
           <span>Wishlist items are saved in this browser. Sign in to sync across device sessions.</span>
           <Link
             href="/login?from=/wishlist"
-            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white hover:opacity-90 shrink-0"
+            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white hover:opacity-90 shrink-0"
           >
             SIGN IN TO SYNC →
           </Link>
@@ -64,7 +64,7 @@ export default function WishlistPage() {
       )}
 
       {loading ? (
-        <div className="w-full flex justify-center py-20 text-y2k-slate uppercase tracking-widest font-bold">
+        <div className="w-full flex justify-center py-20 text-y2k-slate uppercase tracking-wider font-bold">
           LOADING WISHLIST...
         </div>
       ) : products.length === 0 ? (
@@ -80,7 +80,7 @@ export default function WishlistPage() {
             href="/products"
             className="btn-bagify px-8 py-4 rounded-none shadow-xl hover:-translate-y-1 transition-transform"
           >
-            <span className="text-bagify font-bold uppercase text-sm tracking-widest">
+            <span className="text-bagify font-bold uppercase text-sm tracking-wider">
               DISCOVER PIECES
             </span>
           </Link>

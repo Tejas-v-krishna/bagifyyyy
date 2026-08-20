@@ -461,7 +461,7 @@ export default function InteractiveShowcase({
                   {/* Minimalist Brand "NEW" Label */}
                   {product.isNew && (
                     <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
-                      <span className="text-[8px] font-bold uppercase tracking-[0.14em] bg-[#232D3B] text-white px-1.5 py-0.5 shadow-sm">
+                      <span className="text-[8px] font-bold uppercase tracking-wider bg-[#232D3B] text-white px-1.5 py-0.5 shadow-sm">
                         NEW
                       </span>
                     </div>
@@ -511,7 +511,7 @@ export default function InteractiveShowcase({
                   {/* Sold Out Badge */}
                   {product.isSoldOut && (
                     <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                      <span className="bg-[#232D3B] text-white text-[9px] font-bold px-3 py-1 uppercase tracking-widest">
+                      <span className="bg-[#232D3B] text-white text-[9px] font-bold px-3 py-1 uppercase tracking-wider">
                         SOLD OUT
                       </span>
                     </div>
@@ -520,7 +520,7 @@ export default function InteractiveShowcase({
 
                 {/* Product Details Below Image */}
                 <div className="flex flex-col pt-3 pb-1 pointer-events-none">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60 truncate">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 truncate">
                     {product.brand || "BAGIFYYYY ARCHIVE"}
                   </p>
                   <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-black transition-colors line-clamp-2 leading-snug mt-0.5">
@@ -555,7 +555,7 @@ export default function InteractiveShowcase({
       {/* ── 4. Synchronized Controls Below Track ─────────────────────────────── */}
       <div className="w-full flex items-center justify-between px-1">
         {/* Left: Product Counter */}
-        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/60">
+        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal/60">
           <span className="text-y2k-gunmetal">{String(currentIndex + 1).padStart(2, "0")}</span>
           <span className="opacity-30">/</span>
           <span>{String(total).padStart(2, "0")}</span>
@@ -582,14 +582,14 @@ export default function InteractiveShowcase({
           <button
             onClick={goPrev}
             aria-label="Previous products"
-            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
+            className="w-8 h-8 rounded-full border border-y2k-gunmetal/10 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
           >
             <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>
           <button
             onClick={goNext}
             aria-label="Next products"
-            className="w-8 h-8 rounded-full border border-y2k-gunmetal/20 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
+            className="w-8 h-8 rounded-full border border-y2k-gunmetal/10 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
           >
             <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>

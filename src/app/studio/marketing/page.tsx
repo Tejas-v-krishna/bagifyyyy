@@ -197,7 +197,7 @@ export default function MarketingStudioPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="bg-white border border-y2k-gunmetal/20 px-4 py-2 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-2 shadow-2xs">
+          <div className="bg-white border border-y2k-gunmetal/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-2 shadow-2xs">
             <Users className="w-4 h-4 text-y2k-slate" />
             <span>{stats.subscriberCount} Active Subscribers</span>
           </div>
@@ -207,7 +207,7 @@ export default function MarketingStudioPage() {
       {/* Alert Status Banner */}
       {statusMessage && (
         <div
-          className={`p-4 border text-xs font-bold uppercase tracking-widest flex items-center gap-3 ${
+          className={`p-4 border text-xs font-bold uppercase tracking-wider flex items-center gap-3 ${
             statusMessage.type === "success"
               ? "bg-white border-y2k-gunmetal text-y2k-gunmetal"
               : "bg-red-50 border-red-200 text-red-600"
@@ -234,68 +234,68 @@ export default function MarketingStudioPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
                   Internal Campaign Name *
                 </label>
                 <input
                   type="text"
                   value={campaignTitle}
                   onChange={(e) => setCampaignTitle(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
                   placeholder="e.g. Summer Drop Broadcast"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
                   Promo / Discount Badge *
                 </label>
                 <input
                   type="text"
                   value={promoBadge}
                   onChange={(e) => setPromoBadge(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-bold"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-bold"
                   placeholder="e.g. 50–80% OFF"
                 />
               </div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1.5">
+              <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
                 Email Subject Line (Inbox Headline) *
               </label>
               <input
                 type="text"
                 value={subjectLine}
                 onChange={(e) => setSubjectLine(e.target.value)}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
                 placeholder="✦ RIGHT TO FASHION: New Drop Live"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
                   Banner Headline *
                 </label>
                 <input
                   type="text"
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-bold uppercase"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-bold uppercase"
                   placeholder="e.g. RIGHT TO FASHION DROP"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
                   Subheadline / Hook *
                 </label>
                 <input
                   type="text"
                   value={subheadline}
                   onChange={(e) => setSubheadline(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
                   placeholder="e.g. Limited Archive Collection"
                 />
               </div>
@@ -326,7 +326,7 @@ export default function MarketingStudioPage() {
               </div>
 
               {loading ? (
-                <div className="p-8 text-center text-xs text-y2k-slate font-bold uppercase tracking-widest">Loading catalog products…</div>
+                <div className="p-8 text-center text-xs text-y2k-slate font-bold uppercase tracking-wider">Loading catalog products…</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[320px] overflow-y-auto pr-1">
                   {products.map((prod) => {
@@ -353,7 +353,7 @@ export default function MarketingStudioPage() {
                           <p className="text-[11px] font-bold truncate">{prod.name}</p>
                           <p className="text-[10px] text-y2k-gunmetal/60">₹{prod.price}</p>
                         </div>
-                        <div className={`w-4 h-4 border flex items-center justify-center text-[10px] font-bold ${isSelected ? "bg-y2k-gunmetal border-y2k-gunmetal text-white" : "border-y2k-gunmetal/30"}`}>
+                        <div className={`w-4 h-4 border flex items-center justify-center text-[10px] font-bold ${isSelected ? "bg-y2k-gunmetal border-y2k-gunmetal text-white" : "border-y2k-gunmetal/15"}`}>
                           {isSelected ? "✓" : ""}
                         </div>
                       </div>
@@ -373,13 +373,13 @@ export default function MarketingStudioPage() {
                 placeholder="your.test@email.com"
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
-                className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium w-full sm:w-60"
+                className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium w-full sm:w-60"
               />
               <button
                 type="button"
                 onClick={() => handleSendBroadcast(true)}
                 disabled={sending}
-                className="bg-white border border-y2k-gunmetal/20 hover:bg-y2k-ice text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-2xs"
+                className="bg-white border border-y2k-gunmetal/10 hover:bg-y2k-ice text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-2xs"
               >
                 Send Test
               </button>
@@ -390,7 +390,7 @@ export default function MarketingStudioPage() {
               type="button"
               onClick={() => handleSendBroadcast(false)}
               disabled={sending}
-              className="w-full sm:w-auto btn-bagify px-8 py-3.5 text-xs font-bold uppercase tracking-widest shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+              className="w-full sm:w-auto btn-bagify px-8 py-3.5 text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               {sending && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{sending ? "DISPATCHING…" : `DISPATCH TO ${stats.subscriberCount} SUBSCRIBERS`}</span>

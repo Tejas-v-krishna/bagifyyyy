@@ -226,7 +226,7 @@ function LoginContent() {
         >
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-y2k-gunmetal/75 hover:text-black transition-colors"
+            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal/75 hover:text-black transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Drops
           </Link>
@@ -257,7 +257,7 @@ function LoginContent() {
                 <button
                   type="button"
                   onClick={() => switchView("login")}
-                  className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-[0.16em] text-center transition-all relative cursor-pointer ${
+                  className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-wider text-center transition-all relative cursor-pointer ${
                     view === "login" ? "text-y2k-gunmetal font-black" : "text-y2k-gunmetal/40 hover:text-y2k-gunmetal"
                   }`}
                 >
@@ -272,7 +272,7 @@ function LoginContent() {
                 <button
                   type="button"
                   onClick={() => switchView("register")}
-                  className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-[0.16em] text-center transition-all relative cursor-pointer ${
+                  className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-wider text-center transition-all relative cursor-pointer ${
                     view === "register" ? "text-y2k-gunmetal font-black" : "text-y2k-gunmetal/40 hover:text-y2k-gunmetal"
                   }`}
                 >
@@ -291,7 +291,7 @@ function LoginContent() {
                 type="button"
                 onClick={handleGoogleClick}
                 disabled={googleLoading}
-                className="w-full flex items-center justify-center gap-3 bg-white border border-y2k-gunmetal/20 hover:border-y2k-gunmetal hover:bg-black/[0.02] py-3 px-4 transition-all shadow-sm mb-5 text-[11px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-3 bg-white border border-y2k-gunmetal/10 hover:border-y2k-gunmetal hover:bg-black/[0.02] py-3 px-4 transition-all shadow-sm mb-5 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal disabled:opacity-50 cursor-pointer"
               >
                 {googleLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin text-y2k-gunmetal" />
@@ -321,7 +321,7 @@ function LoginContent() {
               {/* Divider */}
               <div className="relative flex items-center justify-center mb-5">
                 <div className="w-full border-t border-y2k-gunmetal/15" />
-                <span className="bg-white px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-y2k-slate absolute">
+                <span className="bg-white px-3 text-[10px] font-bold uppercase tracking-wider text-y2k-slate absolute">
                   OR WITH EMAIL
                 </span>
               </div>
@@ -337,7 +337,7 @@ function LoginContent() {
                       transition={{ duration: 0.25, ease: [0.25, 1, 0.5, 1] }}
                       className="flex flex-col overflow-hidden"
                     >
-                      <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80 mb-1">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
                         FULL NAME*
                       </label>
                       <input
@@ -346,14 +346,14 @@ function LoginContent() {
                         placeholder="e.g. Alex Vance"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full text-xs font-medium text-black border border-y2k-gunmetal/20 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                        className="w-full text-xs font-medium text-black border border-y2k-gunmetal/10 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
                       />
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 <div className="flex flex-col">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80 mb-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80 mb-1">
                     EMAIL ADDRESS*
                   </label>
                   <input
@@ -362,20 +362,20 @@ function LoginContent() {
                     placeholder="you@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full text-xs font-medium text-black border border-y2k-gunmetal/20 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                    className="w-full text-xs font-medium text-black border border-y2k-gunmetal/10 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
                   />
                 </div>
 
                 <div className="flex flex-col">
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal/80">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/80">
                       PASSWORD*
                     </label>
                     {view === "login" && (
                       <button
                         type="button"
                         onClick={() => { setForgotMode(!forgotMode); setForgotSuccess(""); setError(""); }}
-                        className="text-[10px] font-bold uppercase tracking-[0.14em] text-y2k-slate hover:text-black underline cursor-pointer"
+                        className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate hover:text-black underline cursor-pointer"
                       >
                         {forgotMode ? "Cancel" : "Forgot?"}
                       </button>
@@ -388,7 +388,7 @@ function LoginContent() {
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full text-xs font-medium text-black border border-y2k-gunmetal/20 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
+                      className="w-full text-xs font-medium text-black border border-y2k-gunmetal/10 px-4 py-3 bg-white focus:border-y2k-gunmetal outline-none transition-all"
                     />
                   )}
                 </div>
@@ -404,7 +404,7 @@ function LoginContent() {
                       className="overflow-hidden"
                     >
                       <form onSubmit={handleForgotPassword} className="flex flex-col gap-3 bg-y2k-ice border border-y2k-gunmetal/15 p-4">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70">
                           Enter your email to receive a reset link
                         </p>
                         <input
@@ -413,7 +413,7 @@ function LoginContent() {
                           placeholder="you@email.com"
                           value={forgotEmail}
                           onChange={(e) => setForgotEmail(e.target.value)}
-                          className="w-full text-xs border border-y2k-gunmetal/20 px-3 py-2.5 bg-white outline-none focus:border-y2k-gunmetal"
+                          className="w-full text-xs border border-y2k-gunmetal/10 px-3 py-2.5 bg-white outline-none focus:border-y2k-gunmetal"
                         />
                         {forgotSuccess && (
                           <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
@@ -423,7 +423,7 @@ function LoginContent() {
                         <button
                           type="submit"
                           disabled={forgotLoading}
-                          className="bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-widest py-2.5 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                          className="bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-wider py-2.5 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                           {forgotLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                           {forgotLoading ? "Sending…" : "Send Reset Link →"}
@@ -448,7 +448,7 @@ function LoginContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-bagify text-white text-[11px] font-bold uppercase tracking-[0.16em] py-3.5 px-8 hover:opacity-90 transition-opacity mt-2 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-md"
+                  className="btn-bagify text-white text-[11px] font-bold uppercase tracking-wider py-3.5 px-8 hover:opacity-90 transition-opacity mt-2 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-md"
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -471,7 +471,7 @@ function LoginContent() {
           </div>
 
           {/* Right Editorial Column (5 Columns) */}
-          <div className="hidden lg:flex lg:col-span-5 relative bg-[#232D3B] text-[#F8F5E9] flex-col justify-between p-10 overflow-hidden border-l border-y2k-gunmetal/20">
+          <div className="hidden lg:flex lg:col-span-5 relative bg-[#232D3B] text-[#F8F5E9] flex-col justify-between p-10 overflow-hidden border-l border-y2k-gunmetal/10">
             {/* Background Editorial Photo */}
             <div className="absolute inset-0 bg-[url('/hero-1-new.jpg')] bg-cover bg-center opacity-25 mix-blend-luminosity" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#232D3B] via-[#232D3B]/80 to-[#232D3B]/40 pointer-events-none" />
@@ -543,7 +543,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="bg-y2k-ice min-h-screen flex items-center justify-center text-xs font-bold uppercase tracking-widest">Loading Portal...</div>}>
+    <Suspense fallback={<div className="bg-y2k-ice min-h-screen flex items-center justify-center text-xs font-bold uppercase tracking-wider">Loading Portal...</div>}>
       <LoginContent />
     </Suspense>
   );

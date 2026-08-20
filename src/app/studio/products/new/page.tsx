@@ -192,7 +192,7 @@ export default function StudioNewProduct() {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="btn-bagify px-8 py-2 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+          className="btn-bagify px-8 py-2 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
         >
           {loading ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -222,7 +222,7 @@ export default function StudioNewProduct() {
 
             {/* Collection / Brand Tag */}
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                 Collection Badge
               </label>
               <input
@@ -230,14 +230,14 @@ export default function StudioNewProduct() {
                 name="collectionTag"
                 value={form.collectionTag}
                 onChange={handleChange}
-                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
+                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
                 placeholder="BAGIFYYYY"
               />
             </div>
 
             {/* Product Title */}
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                 Product Name *
               </label>
               <input
@@ -246,21 +246,21 @@ export default function StudioNewProduct() {
                 value={form.name}
                 onChange={handleChange}
                 required
-                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 px-3.5 py-2.5 font-display font-medium text-xl sm:text-2xl text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
+                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 font-display font-medium text-xl sm:text-2xl text-y2k-gunmetal outline-none focus:border-y2k-gunmetal"
                 placeholder="Over-Sized Heavy Cotton Hoodie"
               />
             </div>
 
             {/* Category Dropdown */}
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                 Category *
               </label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
               >
                 <option value="topwear">Topwear / Shirts &amp; Tees</option>
                 <option value="bottomwear">Bottomwear / Pants &amp; Cargos</option>
@@ -272,7 +272,7 @@ export default function StudioNewProduct() {
 
             {/* Description & Fit Details */}
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                 Description &amp; Fit Details *
               </label>
               <textarea
@@ -281,7 +281,7 @@ export default function StudioNewProduct() {
                 onChange={handleChange}
                 rows={6}
                 required
-                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/20 p-3.5 text-xs text-y2k-gunmetal leading-relaxed outline-none focus:border-y2k-gunmetal font-sans resize-none"
+                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 p-3.5 text-xs text-y2k-gunmetal leading-relaxed outline-none focus:border-y2k-gunmetal font-sans resize-none"
                 placeholder="Describe garment cut, fit, chest/waist measurements, and styling notes..."
               />
             </div>
@@ -357,13 +357,13 @@ export default function StudioNewProduct() {
                   )}
 
                   {activeImageIndex === 0 && (
-                    <span className="absolute top-3 left-3 bg-y2k-gunmetal text-white text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 shadow-sm">
+                    <span className="absolute top-3 left-3 bg-y2k-gunmetal text-white text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 shadow-sm">
                       Primary Cover Photo
                     </span>
                   )}
                 </>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-y2k-slate text-xs uppercase tracking-widest p-6 text-center">
+                <div className="w-full h-full flex flex-col items-center justify-center text-y2k-slate text-xs uppercase tracking-wider p-6 text-center">
                   <ImageIcon className="w-10 h-10 mb-2 opacity-40" />
                   <span>No photo uploaded yet</span>
                   <p className="text-[10px] text-y2k-slate/70 mt-1 lowercase">Upload photos from device below</p>
@@ -375,7 +375,7 @@ export default function StudioNewProduct() {
             {images.length > 0 && (
               <div className="w-full mt-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
                     Click any thumbnail to preview or remove:
                   </span>
                 </div>
@@ -390,7 +390,7 @@ export default function StudioNewProduct() {
                         className={`relative aspect-square border cursor-pointer transition-all overflow-hidden group/item ${
                           isSelected
                             ? "border-y2k-gunmetal ring-2 ring-y2k-gunmetal bg-white shadow-sm"
-                            : "border-y2k-gunmetal/20 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
+                            : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
                         }`}
                       >
                         <img
@@ -476,7 +476,7 @@ export default function StudioNewProduct() {
 
               {/* Optional: Add via Image URL */}
               <div className="pt-2">
-                <span className="text-[8px] font-bold uppercase tracking-widest text-y2k-slate block mb-1">
+                <span className="text-[8px] font-bold uppercase tracking-wider text-y2k-slate block mb-1">
                   Or Paste Public Image URL:
                 </span>
                 <div className="flex gap-2">
@@ -491,13 +491,13 @@ export default function StudioNewProduct() {
                         handleAddImageUrl();
                       }
                     }}
-                    className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/20 text-y2k-gunmetal px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/30"
+                    className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/30"
                   />
                   <button
                     type="button"
                     onClick={handleAddImageUrl}
                     disabled={uploadingFiles || !newImageUrl.trim()}
-                    className="bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest disabled:opacity-40 transition-colors cursor-pointer shadow-2xs"
+                    className="bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wider disabled:opacity-40 transition-colors cursor-pointer shadow-2xs"
                   >
                     + Add URL
                   </button>
@@ -520,10 +520,10 @@ export default function StudioNewProduct() {
             {/* Price Box */}
             <div className="bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                   Selling Price (₹ INR) *
                 </label>
-                <div className="flex items-center gap-2 border border-y2k-gunmetal/20 bg-white px-3.5 py-2.5">
+                <div className="flex items-center gap-2 border border-y2k-gunmetal/10 bg-white px-3.5 py-2.5">
                   <span className="font-display text-2xl font-bold text-y2k-gunmetal">₹</span>
                   <input
                     type="number"
@@ -539,10 +539,10 @@ export default function StudioNewProduct() {
               </div>
 
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                   Compare-At Price / Original MRP (₹)
                 </label>
-                <div className="flex items-center gap-2 border border-y2k-gunmetal/20 bg-white px-3.5 py-2">
+                <div className="flex items-center gap-2 border border-y2k-gunmetal/10 bg-white px-3.5 py-2">
                   <span className="font-display text-base font-bold text-y2k-slate">₹</span>
                   <input
                     type="number"
@@ -626,7 +626,7 @@ export default function StudioNewProduct() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-bagify w-full py-4 px-5 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+              className="btn-bagify w-full py-4 px-5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

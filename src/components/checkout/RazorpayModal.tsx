@@ -246,7 +246,7 @@ export default function RazorpayModal({
                           value={cardCvv}
                           onChange={(e) => setCardCvv(e.target.value)}
                           placeholder="888"
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-[#0C2340] outline-none font-mono tracking-widest"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-[#0C2340] outline-none font-mono tracking-wider"
                         />
                       </div>
                     </div>
@@ -337,7 +337,7 @@ export default function RazorpayModal({
                   maxLength={6}
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  className="w-full text-center text-2xl font-mono tracking-widest border border-gray-300 rounded-md py-3 focus:border-blue-600 outline-none"
+                  className="w-full text-center text-2xl font-mono tracking-wider border border-gray-300 rounded-md py-3 focus:border-blue-600 outline-none"
                 />
                 <span className="text-[10px] text-gray-400 mt-1 block">Default test OTP: <b>123456</b></span>
               </div>

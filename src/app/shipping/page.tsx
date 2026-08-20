@@ -12,7 +12,7 @@ export default function ShippingPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-6">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
           <Link href="/" className="hover:text-black">HOME</Link>
           <span>/</span>
           <span className="text-y2k-gunmetal">SHIPPING &amp; STORE POLICY</span>
@@ -35,7 +35,7 @@ export default function ShippingPage() {
         <div className="bg-white border border-y2k-gunmetal/15 overflow-hidden mb-8 shadow-xs">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-widest">
+              <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-wider">
                 <th className="p-3 sm:p-3.5">SERVICE</th>
                 <th className="p-3 sm:p-3.5">ESTIMATED TRANSIT</th>
                 <th className="p-3 sm:p-3.5 text-right">RATES</th>

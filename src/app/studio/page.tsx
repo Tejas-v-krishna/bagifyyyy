@@ -73,7 +73,7 @@ function ConfirmModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
-      <div className="bg-white border border-y2k-gunmetal/20 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
+      <div className="bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
         <div className="flex items-center gap-3 mb-4">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
           <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">Delete Product?</h2>
@@ -84,13 +84,13 @@ function ConfirmModal({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
+            className="flex-1 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer shadow-xs"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             Delete
           </button>
@@ -116,7 +116,7 @@ function StatCard({
   return (
     <div className="bg-white border border-y2k-gunmetal/15 p-6 flex flex-col justify-between shadow-xs">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-slate">
+        <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
           {label}
         </p>
         <Icon className={`w-4 h-4 ${accent || "text-y2k-gunmetal/50"}`} />
@@ -237,7 +237,7 @@ export default function StudioDashboard() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center font-sans">
-        <div className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate animate-pulse">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate animate-pulse">
           Loading Dashboard…
         </div>
       </div>
@@ -263,21 +263,21 @@ export default function StudioDashboard() {
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/studio/bundles"
-            className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <Layers className="w-3.5 h-3.5" />
             <span>Bundles ({stats.total})</span>
           </Link>
           <Link
             href="/studio/orders"
-            className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>Orders ({orders.length})</span>
           </Link>
           <Link
             href="/studio/products/new"
-            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm cursor-pointer"
+            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Product</span>
@@ -323,7 +323,7 @@ export default function StudioDashboard() {
           </div>
           <Link
             href="/studio/orders"
-            className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate hover:text-black flex items-center gap-1 transition-colors"
+            className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate hover:text-black flex items-center gap-1 transition-colors"
           >
             <span>View All Orders</span>
             <ArrowRight className="w-3 h-3" />
@@ -331,7 +331,7 @@ export default function StudioDashboard() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="py-12 text-center text-y2k-gunmetal/50 text-xs uppercase tracking-widest">
+          <div className="py-12 text-center text-y2k-gunmetal/50 text-xs uppercase tracking-wider">
             No orders placed yet
           </div>
         ) : (
@@ -353,7 +353,7 @@ export default function StudioDashboard() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-xs font-bold text-y2k-gunmetal group-hover:underline">#{order.orderNumber}</p>
-                      <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal">
+                      <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal">
                         {order.paymentMethod === "COD" ? "COD" : order.paymentStatus}
                       </span>
                     </div>
@@ -377,7 +377,7 @@ export default function StudioDashboard() {
                     <p className="text-sm font-bold text-y2k-gunmetal">
                       ₹{order.totalAmount?.toLocaleString("en-IN")}
                     </p>
-                    <span className="text-[8px] font-bold uppercase px-2 py-0.5 inline-block mt-0.5 border border-y2k-gunmetal/20 bg-y2k-ice text-y2k-gunmetal">
+                    <span className="text-[8px] font-bold uppercase px-2 py-0.5 inline-block mt-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal">
                       {order.orderStatus}
                     </span>
                   </div>
@@ -386,7 +386,7 @@ export default function StudioDashboard() {
                     <button
                       type="button"
                       onClick={() => setPrintingOrder(order)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/20 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/10 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
                       title="Print Shipping Label Sticker"
                     >
                       <Printer className="w-3 h-3" />
@@ -410,7 +410,7 @@ export default function StudioDashboard() {
           <div className="flex flex-wrap gap-3">
             {Object.entries(stats.categories).map(([cat, count]) => (
               <div key={cat} className="flex items-center gap-2 border border-y2k-gunmetal/15 bg-y2k-ice/40 px-3 py-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal">
                   {cat}
                 </span>
                 <span className="bg-y2k-gunmetal text-white text-[9px] font-bold px-1.5 py-0.5">
@@ -430,7 +430,7 @@ export default function StudioDashboard() {
           </h2>
           <Link
             href="/studio/products/new"
-            className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate hover:text-black flex items-center gap-1"
+            className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate hover:text-black flex items-center gap-1"
           >
             <span>+ Add Product</span>
           </Link>
@@ -438,12 +438,12 @@ export default function StudioDashboard() {
 
         {products.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-slate mb-4">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-4">
               No products in catalog
             </p>
             <Link
               href="/studio/products/new"
-              className="btn-bagify inline-block px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest"
+              className="btn-bagify inline-block px-6 py-2.5 text-[10px] font-bold uppercase tracking-wider"
             >
               Add First Product →
             </Link>
@@ -477,7 +477,7 @@ export default function StudioDashboard() {
                   >
                     {product.name}
                   </Link>
-                  <p className="text-[9px] uppercase tracking-widest text-y2k-slate mt-0.5">
+                  <p className="text-[9px] uppercase tracking-wider text-y2k-slate mt-0.5">
                     {product.category} · {product.brand || "BAGIFYYYY"}
                   </p>
                 </div>
@@ -492,12 +492,12 @@ export default function StudioDashboard() {
                 {/* Status badges */}
                 <div className="flex gap-2 w-36 shrink-0 justify-center">
                   {product.isSoldOut && (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-red-50 text-red-600 border border-red-200">
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-red-50 text-red-600 border border-red-200">
                       Sold Out
                     </span>
                   )}
                   {product.isNew && (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/20">
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/10">
                       New
                     </span>
                   )}

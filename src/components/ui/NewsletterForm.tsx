@@ -48,19 +48,19 @@ export default function NewsletterForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="flex-1 bg-y2k-gunmetal border border-[#F8F5E9] text-[#F8F5E9] placeholder-[#F8F5E9]/50 px-6 py-4 outline-none font-bold text-xs tracking-widest focus:bg-white/5 transition-colors rounded-none"
+          className="flex-1 bg-y2k-gunmetal border border-[#F8F5E9] text-[#F8F5E9] placeholder-[#F8F5E9]/50 px-6 py-4 outline-none font-bold text-xs tracking-wider focus:bg-white/5 transition-colors rounded-none"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="bg-[#F8F5E9] text-y2k-gunmetal font-bold uppercase tracking-widest px-8 py-4 whitespace-nowrap hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="bg-[#F8F5E9] text-y2k-gunmetal font-bold uppercase tracking-wider px-8 py-4 whitespace-nowrap hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {status === "loading" ? "JOINING..." : "SUBSCRIBE"}
         </button>
       </form>
       {message && (
         <p
-          className={`text-[10px] font-bold uppercase tracking-widest mt-2 ${
+          className={`text-[10px] font-bold uppercase tracking-wider mt-2 ${
             status === "success" ? "text-emerald-300" : "text-red-300"
           }`}
         >

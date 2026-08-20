@@ -133,7 +133,7 @@ export default function SimilarProducts({
                   className="object-contain object-center mix-blend-multiply group-hover:scale-[1.04] transition-transform duration-500 p-3 sm:p-4"
                 />
               ) : (
-                <div className="text-[9px] uppercase tracking-widest text-gray-400">
+                <div className="text-[9px] uppercase tracking-wider text-gray-400">
                   No Image
                 </div>
               )}

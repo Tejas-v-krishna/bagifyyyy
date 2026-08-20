@@ -92,7 +92,7 @@ export default function BundlesPage() {
         ) : bundles.length === 0 ? (
           <div className="text-center py-24 border border-y2k-gunmetal/15 bg-white">
             <Zap className="w-10 h-10 mx-auto opacity-20 mb-4" />
-            <p className="font-bold uppercase tracking-widest text-sm text-y2k-gunmetal/40">
+            <p className="font-bold uppercase tracking-wider text-sm text-y2k-gunmetal/40">
               No bundles available yet — check back soon!
             </p>
           </div>
@@ -109,7 +109,7 @@ export default function BundlesPage() {
                     <h2 className="font-display text-2xl md:text-3xl uppercase tracking-tight leading-tight">
                       {bundle.name}
                     </h2>
-                    <span className="shrink-0 bg-y2k-gunmetal text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1.5 flex items-center gap-1">
+                    <span className="shrink-0 bg-y2k-gunmetal text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1.5 flex items-center gap-1">
                       <Tag className="w-3 h-3" />
                       {bundle.discount}% OFF
                     </span>
@@ -136,7 +136,7 @@ export default function BundlesPage() {
 
                 {/* Product names */}
                 <div className="px-7 pb-4 flex-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/40 mb-2">Includes</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/40 mb-2">Includes</p>
                   <ul className="space-y-1">
                     {bundle.products.map((p) => (
                       <li key={p.id} className="flex items-center justify-between text-xs">
@@ -151,7 +151,7 @@ export default function BundlesPage() {
                 <div className="px-7 pb-7">
                   <div className="flex items-end justify-between mb-4 pt-4 border-t border-y2k-gunmetal/8">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/40 mb-0.5">Bundle Price</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/40 mb-0.5">Bundle Price</p>
                       <div className="flex items-baseline gap-2">
                         <span className="font-display text-3xl tracking-tight">
                           ₹{bundle.bundlePrice.toLocaleString("en-IN")}
@@ -160,7 +160,7 @@ export default function BundlesPage() {
                           ₹{bundle.originalTotal.toLocaleString("en-IN")}
                         </span>
                       </div>
-                      <p className="text-[10px] text-y2k-slate font-bold uppercase tracking-widest mt-0.5">
+                      <p className="text-[10px] text-y2k-slate font-bold uppercase tracking-wider mt-0.5">
                         You save ₹{(bundle.originalTotal - bundle.bundlePrice).toLocaleString("en-IN")}
                       </p>
                     </div>
@@ -169,7 +169,7 @@ export default function BundlesPage() {
                   <button
                     onClick={() => handleAddBundle(bundle)}
                     disabled={bundle.products.every((p) => p.isSoldOut)}
-                    className="w-full btn-bagify text-white text-[11px] font-bold uppercase tracking-widest py-4 hover:opacity-90 transition-opacity disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full btn-bagify text-white text-[11px] font-bold uppercase tracking-wider py-4 hover:opacity-90 transition-opacity disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     {addedId === bundle.id ? "Added to Bag ✓" : "Add Bundle to Bag"}

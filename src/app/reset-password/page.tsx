@@ -68,7 +68,7 @@ function ResetPasswordContent() {
   return (
     <div className="bg-y2k-ice min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-20 text-y2k-gunmetal">
       <div className="w-full max-w-sm">
-        <Link href="/login" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 hover:text-black mb-8 transition-colors">
+        <Link href="/login" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 hover:text-black mb-8 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Login
         </Link>
 
@@ -87,7 +87,7 @@ function ResetPasswordContent() {
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">New Password *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">New Password *</label>
                   <input
                     type="password"
                     required
@@ -95,18 +95,18 @@ function ResetPasswordContent() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-y2k-gunmetal/20 px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal transition-all"
+                    className="w-full border border-y2k-gunmetal/10 px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-y2k-gunmetal/70 mb-1 block">Confirm Password *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Confirm Password *</label>
                   <input
                     type="password"
                     required
                     placeholder="••••••••"
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
-                    className="w-full border border-y2k-gunmetal/20 px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal transition-all"
+                    className="w-full border border-y2k-gunmetal/10 px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal transition-all"
                   />
                 </div>
 
@@ -119,7 +119,7 @@ function ResetPasswordContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-bagify text-white text-[11px] font-bold uppercase tracking-widest py-3.5 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+                  className="btn-bagify text-white text-[11px] font-bold uppercase tracking-wider py-3.5 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   {loading ? "Updating…" : "UPDATE PASSWORD →"}
@@ -135,7 +135,7 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="bg-y2k-ice min-h-screen flex items-center justify-center text-xs font-bold uppercase tracking-widest">Loading…</div>}>
+    <Suspense fallback={<div className="bg-y2k-ice min-h-screen flex items-center justify-center text-xs font-bold uppercase tracking-wider">Loading…</div>}>
       <ResetPasswordContent />
     </Suspense>
   );

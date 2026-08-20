@@ -40,7 +40,7 @@ function ConfirmDeleteModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
-      <div className="bg-white border border-y2k-gunmetal/20 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
+      <div className="bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
         <div className="flex items-center gap-3 mb-4">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
           <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">
@@ -53,13 +53,13 @@ function ConfirmDeleteModal({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer"
+            className="flex-1 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-widest transition-colors cursor-pointer shadow-xs"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             Delete
           </button>
@@ -180,7 +180,7 @@ export default function StudioProductsCatalogPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchProducts}
-            className="bg-white border border-y2k-gunmetal/20 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
+            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Refresh</span>
@@ -188,7 +188,7 @@ export default function StudioProductsCatalogPage() {
 
           <Link
             href="/studio/products/new"
-            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm cursor-pointer"
+            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Product</span>
@@ -199,19 +199,19 @@ export default function StudioProductsCatalogPage() {
       {/* ── Summary Metric Badges ────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1">Total Products</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">Total Products</p>
           <p className="font-display text-2xl font-bold text-y2k-gunmetal">{totalProducts}</p>
         </div>
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1">In Stock</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">In Stock</p>
           <p className="font-display text-2xl font-bold text-y2k-gunmetal">{inStockCount}</p>
         </div>
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1">Sold Out</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">Sold Out</p>
           <p className="font-display text-2xl font-bold text-red-600">{soldOutCount}</p>
         </div>
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate mb-1">New Badges</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">New Badges</p>
           <p className="font-display text-2xl font-bold text-y2k-gunmetal">{newDropCount}</p>
         </div>
       </div>
@@ -226,18 +226,18 @@ export default function StudioProductsCatalogPage() {
             placeholder="Search by product name, category, or brand…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/20 pl-9 pr-4 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40"
+            className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 pl-9 pr-4 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40"
           />
         </div>
 
         {/* Category & Status Dropdowns */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">Category:</span>
+            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">Category:</span>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
             >
               <option value="ALL">All Categories</option>
               <option value="topwear">Topwear / Shirts</option>
@@ -249,11 +249,11 @@ export default function StudioProductsCatalogPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-y2k-slate">Status:</span>
+            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">Status:</span>
             <select
               value={stockFilter}
               onChange={(e) => setStockFilter(e.target.value)}
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/20 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
             >
               <option value="ALL">All Statuses</option>
               <option value="IN_STOCK">In Stock Only</option>
@@ -276,13 +276,13 @@ export default function StudioProductsCatalogPage() {
         </div>
 
         {loading ? (
-          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-widest text-y2k-slate animate-pulse">
+          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-wider text-y2k-slate animate-pulse">
             Loading products…
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="py-16 text-center">
             <Package className="w-8 h-8 text-y2k-slate/50 mx-auto mb-2" />
-            <p className="text-xs font-bold uppercase tracking-widest text-y2k-gunmetal mb-2">
+            <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal mb-2">
               No products found
             </p>
             <p className="text-xs text-y2k-slate max-w-sm mx-auto mb-4">
@@ -318,7 +318,7 @@ export default function StudioProductsCatalogPage() {
                   >
                     {product.name}
                   </Link>
-                  <p className="text-[9px] uppercase tracking-widest text-y2k-slate mt-0.5">
+                  <p className="text-[9px] uppercase tracking-wider text-y2k-slate mt-0.5">
                     Category: {product.category} • Brand: {product.brand || "BAGIFYYYY"}
                   </p>
                   <p className="text-[10px] text-y2k-gunmetal/70 line-clamp-1 mt-1 font-sans">
@@ -336,16 +336,16 @@ export default function StudioProductsCatalogPage() {
                 {/* Status Badges */}
                 <div className="flex gap-2 w-36 shrink-0 justify-center">
                   {product.isSoldOut ? (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 bg-red-50 text-red-600 border border-red-200">
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 bg-red-50 text-red-600 border border-red-200">
                       Sold Out
                     </span>
                   ) : (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/20">
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/10">
                       In Stock
                     </span>
                   )}
                   {product.isNew && (
-                    <span className="text-[8px] font-bold uppercase tracking-widest px-2.5 py-1 bg-y2k-gunmetal text-white border border-y2k-gunmetal">
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 bg-y2k-gunmetal text-white border border-y2k-gunmetal">
                       New Tag
                     </span>
                   )}

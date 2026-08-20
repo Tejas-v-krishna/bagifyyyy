@@ -63,7 +63,7 @@ export default function RazorpayButton({
   customer,
   notes,
   themeColor = "#232D3B",
-  className = "btn-bagify text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2",
+  className = "btn-bagify text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2",
   children,
   onSuccess,
   onFailure,

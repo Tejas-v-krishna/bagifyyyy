@@ -52,7 +52,7 @@ export default function CartDrawer() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeCart}
-            className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] bg-black/35 backdrop-blur-sm"
           />
 
           {/* Drawer */}
@@ -60,34 +60,41 @@ export default function CartDrawer() {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 z-[10000] w-full max-w-md bg-background border-l border-border shadow-2xl flex flex-col h-[100dvh]"
+            transition={{ type: "spring", damping: 28, stiffness: 220 }}
+            className="fixed inset-y-0 right-0 z-[10000] w-full max-w-md bg-y2k-ice border-l border-y2k-gunmetal/[0.08] shadow-2xl flex flex-col h-[100dvh]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 className="font-display text-2xl uppercase tracking-tighter">
-                Your Bag
-              </h2>
+            <div className="flex items-center justify-between px-8 py-7 border-b border-y2k-gunmetal/[0.07]">
+              <div>
+                <h2 className="font-display text-2xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+                  Your Bag
+                </h2>
+                {items.length > 0 && (
+                  <p className="text-[9.5px] uppercase tracking-[0.2em] text-y2k-gunmetal/45 mt-0.5">
+                    {items.reduce((t, i) => t + i.quantity, 0)} {items.reduce((t, i) => t + i.quantity, 0) === 1 ? "item" : "items"}
+                  </p>
+                )}
+              </div>
               <button
                 onClick={closeCart}
-                className="p-2 hover:bg-muted rounded-full transition-colors cursor-pointer"
+                className="p-2 hover:bg-y2k-gunmetal/[0.06] transition-colors cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal"
               >
                 <span className="sr-only">Close cart</span>
-                <X className="h-5 w-5" />
+                <X className="h-4.5 w-4.5" strokeWidth={1.5} />
               </button>
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto px-8 py-6">
               {items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-4">
-                  <ShoppingBag className="w-12 h-12 opacity-20" />
-                  <p className="font-medium uppercase tracking-wide">
+                <div className="flex flex-col items-center justify-center h-full text-y2k-gunmetal/40 space-y-5">
+                  <ShoppingBag className="w-10 h-10" strokeWidth={1} />
+                  <p className="text-[10.5px] uppercase tracking-[0.2em]">
                     Your bag is empty
                   </p>
                   <button
                     onClick={closeCart}
-                    className="text-accent-hover underline underline-offset-4 font-medium mt-4 cursor-pointer"
+                    className="text-[10.5px] uppercase tracking-[0.14em] text-y2k-gunmetal underline underline-offset-4 mt-2 cursor-pointer hover:text-black transition-colors"
                   >
                     Continue Shopping
                   </button>
@@ -95,24 +102,24 @@ export default function CartDrawer() {
               ) : (
                 <>
                   {!isAuthenticated && (
-                    <div className="mb-5 p-2.5 bg-y2k-ice border border-y2k-gunmetal/15 text-[10px] font-semibold uppercase tracking-wider text-y2k-gunmetal/80 flex items-center justify-between">
+                    <div className="mb-6 p-3 bg-white/50 border border-y2k-gunmetal/[0.1] text-[9.5px] uppercase tracking-[0.16em] text-y2k-gunmetal/70 flex items-center justify-between">
                       <span>Guest Checkout Active</span>
                       <Link
                         href="/login"
                         onClick={closeCart}
-                        className="font-bold underline text-black hover:opacity-80"
+                        className="text-y2k-gunmetal underline hover:opacity-70 transition-opacity"
                       >
-                        Sign in for points →
+                        Sign in →
                       </Link>
                     </div>
                   )}
-                  <ul className="space-y-6">
+                  <ul className="space-y-8">
                     {items.map((item) => {
                       const key = getItemKey(item);
                       return (
-                        <li key={key} className="flex gap-4">
+                        <li key={key} className="flex gap-5">
                           {/* Image */}
-                          <div className="relative h-24 w-20 bg-muted shrink-0 overflow-hidden">
+                          <div className="relative h-28 w-[88px] bg-y2k-pale/30 shrink-0 overflow-hidden">
                             <Image
                               src={item.image || "/placeholder.jpg"}
                               alt={item.name}
@@ -122,21 +129,23 @@ export default function CartDrawer() {
                           </div>
 
                           {/* Details */}
-                          <div className="flex flex-1 flex-col justify-between">
+                          <div className="flex flex-1 flex-col justify-between min-w-0">
                             <div>
-                              <div className="flex justify-between">
-                                <h3 className="font-bold text-sm">{item.name}</h3>
-                                <p className="font-medium text-sm">
-                                  ₹{item.price.toFixed(2)}
+                              <div className="flex justify-between items-start gap-2">
+                                <h3 className="text-xs uppercase tracking-[0.1em] text-y2k-gunmetal leading-snug line-clamp-2 flex-1">
+                                  {item.name}
+                                </h3>
+                                <p className="text-xs text-y2k-gunmetal shrink-0">
+                                  ₹{item.price.toFixed(0)}
                                 </p>
                               </div>
-                              <p className="text-xs text-muted-foreground mt-1">
+                              <p className="text-[9.5px] uppercase tracking-[0.12em] text-y2k-gunmetal/45 mt-1.5">
                                 {item.color} / {item.size}
                               </p>
                             </div>
 
-                            <div className="flex items-center justify-between mt-2">
-                              <div className="flex items-center border border-border">
+                            <div className="flex items-center justify-between mt-3">
+                              <div className="flex items-center border border-y2k-gunmetal/[0.12]">
                                 <button
                                   onClick={() =>
                                     updateQuantity(
@@ -144,34 +153,34 @@ export default function CartDrawer() {
                                       Math.max(1, item.quantity - 1)
                                     )
                                   }
-                                  className="p-1 hover:bg-muted cursor-pointer"
+                                  className="p-1.5 hover:bg-y2k-gunmetal/[0.06] cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors"
                                 >
-                                  <Minus className="w-4 h-4" />
+                                  <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="w-8 text-center text-sm font-medium">
+                                <span className="w-8 text-center text-xs text-y2k-gunmetal">
                                   {item.quantity}
                                 </span>
                                 <button
                                   onClick={() =>
                                     updateQuantity(key, item.quantity + 1)
                                   }
-                                  className="p-1 hover:bg-muted cursor-pointer"
+                                  className="p-1.5 hover:bg-y2k-gunmetal/[0.06] cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors"
                                 >
-                                  <Plus className="w-4 h-4" />
+                                  <Plus className="w-3 h-3" />
                                 </button>
                               </div>
                               {removingItemKey === key ? (
-                                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                                <div className="flex items-center gap-2 text-[9.5px] uppercase tracking-wider">
                                   <span className="text-red-500">Remove?</span>
                                   <button
                                     onClick={() => removeItem(key)}
-                                    className="text-black underline cursor-pointer"
+                                    className="text-y2k-gunmetal underline cursor-pointer"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setRemovingItemKey(null)}
-                                    className="text-gray-400 hover:text-black cursor-pointer"
+                                    className="text-y2k-gunmetal/40 hover:text-y2k-gunmetal cursor-pointer"
                                   >
                                     No
                                   </button>
@@ -179,7 +188,7 @@ export default function CartDrawer() {
                               ) : (
                                 <button
                                   onClick={() => setRemovingItemKey(key)}
-                                  className="text-xs uppercase tracking-wide text-muted-foreground hover:text-foreground underline underline-offset-2 cursor-pointer"
+                                  className="text-[9.5px] uppercase tracking-wider text-y2k-gunmetal/40 hover:text-y2k-gunmetal underline underline-offset-2 cursor-pointer transition-colors"
                                 >
                                   Remove
                                 </button>
@@ -196,17 +205,17 @@ export default function CartDrawer() {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-border p-6 bg-background space-y-4">
+              <div className="border-t border-y2k-gunmetal/[0.07] px-8 py-7 bg-y2k-ice space-y-5">
                 {/* Free Shipping Progress */}
-                <div className="space-y-2 pb-2">
-                  <p className="text-xs font-bold uppercase tracking-widest text-center">
+                <div className="space-y-2">
+                  <p className="text-[9.5px] uppercase tracking-[0.18em] text-center text-y2k-gunmetal/60">
                     {subtotal >= 2000
-                      ? "You've unlocked free shipping! 🎉"
+                      ? "Free shipping unlocked ✓"
                       : `₹${(2000 - subtotal).toFixed(0)} away from free shipping`}
                   </p>
-                  <div className="bg-gray-200 h-1 w-full">
+                  <div className="bg-y2k-gunmetal/[0.08] h-[1px] w-full">
                     <div
-                      className="bg-[#232D3B] h-1 transition-all duration-300"
+                      className="bg-y2k-gunmetal h-[1px] transition-all duration-500"
                       style={{ width: `${Math.min((subtotal / 2000) * 100, 100)}%` }}
                     />
                   </div>
@@ -214,71 +223,71 @@ export default function CartDrawer() {
 
                 {/* Promo Code Row */}
                 {appliedPromo ? (
-                  <div className="flex items-center justify-between bg-y2k-ice border border-y2k-gunmetal/20 px-3 py-2">
-                    <span className="text-[10px] font-bold text-y2k-gunmetal uppercase tracking-widest flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                  <div className="flex items-center justify-between bg-white/50 border border-y2k-gunmetal/[0.1] px-4 py-3">
+                    <span className="text-[9.5px] uppercase tracking-wider text-y2k-gunmetal flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3 h-3" />
                       {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                     </span>
                     <button
                       onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
-                      className="text-[10px] font-bold text-y2k-slate hover:text-black underline cursor-pointer"
+                      className="text-[9.5px] uppercase tracking-wider text-y2k-gunmetal/50 hover:text-y2k-gunmetal underline cursor-pointer"
                     >
                       Remove
                     </button>
                   </div>
                 ) : (
-                  <div className="flex gap-2">
-                    <div className="flex-1 flex items-center gap-2 border border-border px-3 py-2">
-                      <Tag className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <div className="flex gap-2 items-end">
+                    <div className="flex-1 flex items-center gap-2 border-b border-y2k-gunmetal/20 pb-1.5">
+                      <Tag className="w-3 h-3 text-y2k-gunmetal/35 shrink-0" />
                       <input
                         type="text"
                         value={promoInput}
                         onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
                         onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
                         placeholder="Promo code"
-                        className="w-full text-xs font-medium uppercase outline-none bg-transparent tracking-wider placeholder:normal-case placeholder:tracking-normal"
+                        className="w-full text-[10.5px] uppercase tracking-wider outline-none bg-transparent text-y2k-gunmetal placeholder:text-y2k-gunmetal/30 placeholder:normal-case placeholder:tracking-normal"
                       />
                     </div>
                     <button
                       onClick={handleApplyPromo}
-                      className="px-3 py-2 bg-[#232D3B] text-white text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity cursor-pointer"
+                      className="px-4 py-1.5 bg-y2k-gunmetal text-white text-[9.5px] uppercase tracking-[0.18em] hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       Apply
                     </button>
                   </div>
                 )}
                 {promoError && (
-                  <p className="text-[10px] text-red-600 font-bold uppercase tracking-wider -mt-2">{promoError}</p>
+                  <p className="text-[9.5px] text-red-600 uppercase tracking-wider -mt-3">{promoError}</p>
                 )}
 
                 {/* Totals */}
-                <div className="space-y-1.5 pt-1">
-                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                <div className="space-y-2 pt-1">
+                  <div className="flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-y2k-gunmetal/55">
                     <span>Subtotal</span>
-                    <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toFixed(0)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between items-center text-sm text-green-600 font-bold">
+                    <div className="flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-green-700">
                       <span>Promo ({appliedPromo!.code})</span>
-                      <span>−₹{discountAmount.toFixed(2)}</span>
+                      <span>−₹{discountAmount.toFixed(0)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center font-bold text-lg pt-1 border-t border-border">
-                    <span>Total</span>
-                    <span>₹{finalTotal.toFixed(2)}</span>
+                  <div className="flex justify-between items-center pt-3 border-t border-y2k-gunmetal/[0.07]">
+                    <span className="text-[10.5px] uppercase tracking-[0.16em] text-y2k-gunmetal">Total</span>
+                    <span className="text-lg tracking-tight text-y2k-gunmetal">₹{finalTotal.toFixed(0)}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-muted-foreground">
-                  Shipping and taxes calculated at checkout.
+                <p className="text-[9px] uppercase tracking-[0.16em] text-y2k-gunmetal/40">
+                  Shipping &amp; taxes calculated at checkout.
                 </p>
 
                 <Link
                   href={`/checkout${appliedPromo ? `?promo=${appliedPromo.code}` : ""}`}
                   onClick={closeCart}
-                  className="block w-full bg-[#232D3B] text-[#F8F5E9] rounded-none font-bold uppercase tracking-widest py-4 text-center hover:opacity-90 transition-opacity"
+                  className="btn-bagify block w-full text-y2k-ice uppercase tracking-[0.18em] py-5 text-center text-[10.5px]"
                 >
-                  Checkout
+                  Proceed to Checkout
                 </Link>
               </div>
             )}
