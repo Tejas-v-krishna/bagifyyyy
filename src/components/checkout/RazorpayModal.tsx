@@ -326,7 +326,7 @@ export default function RazorpayModal({
                 <Landmark className="w-6 h-6" />
               </div>
               <h4 className="font-bold text-base text-gray-800 mb-1">Bank 2-Factor Authentication</h4>
-              <p className="text-xs text-gray-500 mb-6">
+              <p className="font-bold text-xs text-gray-500 mb-6">
                 Enter simulated OTP sent to +91 {orderData.customer.phone || '9876543210'} for ₹{orderData.amount.toFixed(2)}
               </p>
 

@@ -275,7 +275,7 @@ export default function StudioOrdersPage() {
 
                     <div className="flex items-center gap-6 justify-between md:justify-end shrink-0">
                       <div className="text-right">
-                        <p className="font-display font-medium text-base text-y2k-gunmetal">
+                        <p className="font-bold font-display font-medium text-base text-y2k-gunmetal">
                           ₹{order.totalAmount?.toLocaleString("en-IN")}
                         </p>
                         <span className="text-[8px] font-bold uppercase px-2.5 py-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal block mt-0.5">

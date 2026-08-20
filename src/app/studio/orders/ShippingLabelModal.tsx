@@ -302,7 +302,7 @@ export default function ShippingLabelModal({
                   </div>
                   <div className="text-right">
                     <span className="text-[9px] uppercase tracking-wider block text-white font-bold">COLLECT CASH</span>
-                    <span className="text-xl font-black tracking-tight text-white bg-black px-1.5 border border-white inline-block">
+                    <span className="font-bold text-xl font-black tracking-tight text-white bg-black px-1.5 border border-white inline-block">
                       ₹{order.totalAmount.toFixed(2)}
                     </span>
                   </div>
@@ -319,7 +319,7 @@ export default function ShippingLabelModal({
                   </div>
                   <div className="text-right">
                     <span className="text-[9px] uppercase tracking-wider block text-black font-bold">DO NOT COLLECT CASH</span>
-                    <span className="text-sm font-black tracking-tight text-black bg-black text-white px-2 py-0.5 inline-block">
+                    <span className="font-bold text-sm font-black tracking-tight text-black bg-black text-white px-2 py-0.5 inline-block">
                       PAID IN FULL (₹{order.totalAmount.toFixed(2)})
                     </span>
                   </div>

@@ -763,7 +763,7 @@ export default function AccountPage() {
                   <div className={`p-3 border ${tier === "CHROME" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
                     <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">CHROME (0-499 PTS)</p>
                     <p className="text-[10px] text-y2k-gunmetal/70 mt-1">✦ Early drop access</p>
-                    <p className="text-[10px] text-y2k-gunmetal/70">✦ Free shipping ₹2000+</p>
+                    <p className="font-bold text-[10px] text-y2k-gunmetal/70">✦ Free shipping ₹2000+</p>
                   </div>
 
                   <div className={`p-3 border ${tier === "STEEL" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
@@ -795,7 +795,7 @@ export default function AccountPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[11px] text-y2k-gunmetal/60 py-1">
+                  <p className="font-bold text-[11px] text-y2k-gunmetal/60 py-1">
                     Earn 10 points per ₹100 spent.
                   </p>
                 )}

@@ -140,7 +140,7 @@ function SuccessContent() {
                         </div>
                       </div>
                     </div>
-                    <span className="font-display font-medium text-base sm:text-lg text-y2k-gunmetal shrink-0">
+                    <span className="font-bold font-display font-medium text-base sm:text-lg text-y2k-gunmetal shrink-0">
                       ₹{(item.price * item.quantity).toFixed(2)}
                     </span>
                   </div>
@@ -173,7 +173,7 @@ function SuccessContent() {
                       </div>
                     </div>
                   </div>
-                  <span className="font-display font-medium text-base sm:text-lg text-y2k-gunmetal shrink-0">
+                  <span className="font-bold font-display font-medium text-base sm:text-lg text-y2k-gunmetal shrink-0">
                     ₹3,999.00
                   </span>
                 </div>
@@ -246,7 +246,7 @@ function SuccessContent() {
                 </span>
                 <span className="text-[10px] text-y2k-slate font-medium">Inclusive of all duties &amp; GST</span>
               </div>
-              <span className="font-display font-medium text-2xl sm:text-3xl text-y2k-gunmetal">
+              <span className="font-bold font-display font-medium text-2xl sm:text-3xl text-y2k-gunmetal">
                 ₹{(order?.totalAmount || 3999).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </span>
             </div>

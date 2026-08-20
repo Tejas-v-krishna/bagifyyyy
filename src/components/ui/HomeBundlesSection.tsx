@@ -156,13 +156,13 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
                     {/* Price row */}
                     <div className="flex items-baseline gap-2.5 mt-3 mb-5">
-                      <span className="text-white text-lg tracking-tight">
+                      <span className="font-bold text-white text-lg tracking-tight">
                         ₹{bundle.bundlePrice.toLocaleString("en-IN")}
                       </span>
-                      <span className="text-white/35 text-xs line-through">
+                      <span className="font-bold text-white/35 text-xs line-through">
                         ₹{bundle.originalTotal.toLocaleString("en-IN")}
                       </span>
-                      <span className="text-white/55 text-[9.5px] uppercase tracking-[0.16em] ml-auto">
+                      <span className="font-bold text-white/55 text-[9.5px] uppercase tracking-[0.16em] ml-auto">
                         Save ₹{bundle.savings.toLocaleString("en-IN")}
                       </span>
                     </div>

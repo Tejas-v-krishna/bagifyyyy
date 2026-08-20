@@ -351,7 +351,7 @@ export default function MarketingStudioPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[11px] font-bold truncate">{prod.name}</p>
-                          <p className="text-[10px] text-y2k-gunmetal/60">₹{prod.price}</p>
+                          <p className="font-bold text-[10px] text-y2k-gunmetal/60">₹{prod.price}</p>
                         </div>
                         <div className={`w-4 h-4 border flex items-center justify-center text-[10px] font-bold ${isSelected ? "bg-y2k-gunmetal border-y2k-gunmetal text-white" : "border-y2k-gunmetal/15"}`}>
                           {isSelected ? "✓" : ""}

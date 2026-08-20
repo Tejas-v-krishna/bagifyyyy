@@ -539,7 +539,7 @@ export default function InteractiveShowcase({
                   <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-black transition-colors line-clamp-2 leading-snug mt-0.5">
                     {product.name}
                   </h3>
-                  <p className="font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
+                  <p className="font-bold font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
                     ₹{product.price.toLocaleString("en-IN")}
                   </p>
                   <p className="text-[10px] text-y2k-gunmetal/45 font-medium capitalize mt-0.5 truncate">

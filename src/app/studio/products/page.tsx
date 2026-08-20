@@ -327,7 +327,7 @@ export default function StudioProductsCatalogPage() {
                 </div>
 
                 {/* Price */}
-                <div className="w-28 text-right shrink-0">
+                <div className="font-bold w-28 text-right shrink-0">
                   <p className="text-sm font-bold text-y2k-gunmetal">
                     ₹{product.price?.toLocaleString("en-IN")}
                   </p>

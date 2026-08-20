@@ -361,7 +361,7 @@ export default function StudioBundlesPage() {
                           />
                         </div>
                         <p className="text-[10px] font-bold text-y2k-gunmetal truncate">{item.name}</p>
-                        <p className="text-[10px] text-y2k-gunmetal/70 font-mono">₹{item.price.toLocaleString("en-IN")}</p>
+                        <p className="font-bold text-[10px] text-y2k-gunmetal/70 font-mono">₹{item.price.toLocaleString("en-IN")}</p>
                         
                         {/* Quick edit product */}
                         {catalogProd && (
@@ -383,10 +383,10 @@ export default function StudioBundlesPage() {
               <div className="pt-4 border-t border-y2k-gunmetal/10 flex items-center justify-between">
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="font-display text-xl font-black text-y2k-gunmetal">
+                    <span className="font-bold font-display text-xl font-black text-y2k-gunmetal">
                       ₹{bundle.bundlePrice.toLocaleString("en-IN")}
                     </span>
-                    <span className="text-xs text-y2k-gunmetal/50 line-through font-mono">
+                    <span className="font-bold text-xs text-y2k-gunmetal/50 line-through font-mono">
                       ₹{bundle.originalTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
@@ -568,15 +568,15 @@ export default function StudioBundlesPage() {
                     Selected Items ({selectedIds.length})
                   </span>
                   <div className="flex items-baseline gap-3 mt-1">
-                    <span className="font-display text-2xl font-black">
+                    <span className="font-bold font-display text-2xl font-black">
                       Final Price: ₹{calculatedBundlePrice.toLocaleString("en-IN")}
                     </span>
-                    <span className="text-sm text-white/40 line-through font-mono">
+                    <span className="font-bold text-sm text-white/40 line-through font-mono">
                       ₹{calculatedOriginalTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
                 </div>
-                <div className="text-right bg-white text-y2k-gunmetal px-4 py-2 border border-white">
+                <div className="font-bold text-right bg-white text-y2k-gunmetal px-4 py-2 border border-white">
                   <span className="text-[10px] uppercase tracking-wider font-bold block">
                     TOTAL SAVINGS: ₹{calculatedSavings.toLocaleString("en-IN")} ({discountPercent}% OFF)
                   </span>
@@ -644,7 +644,7 @@ export default function StudioBundlesPage() {
                             )}
                           </div>
                           <p className="text-[10px] font-bold text-y2k-gunmetal truncate">{prod.name}</p>
-                          <p className="text-[8px] uppercase tracking-wider text-y2k-gunmetal/50">{prod.category}</p>
+                          <p className="font-bold text-[8px] uppercase tracking-wider text-y2k-gunmetal/50">{prod.category}</p>
                         </div>
                         <p className="text-xs font-mono font-bold text-y2k-gunmetal mt-1">
                           ₹{prod.price.toLocaleString("en-IN")}

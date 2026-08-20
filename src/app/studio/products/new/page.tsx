@@ -293,7 +293,7 @@ export default function StudioNewProduct() {
                 <span>Heavyweight Construction Standard</span>
               </div>
               <div className="flex items-center gap-2">
-                <Truck className="w-4 h-4 text-y2k-gunmetal shrink-0" />
+                <Truck className="font-bold w-4 h-4 text-y2k-gunmetal shrink-0" />
                 <span>Free Express Shipping Over ₹2000</span>
               </div>
             </div>
@@ -518,7 +518,7 @@ export default function StudioNewProduct() {
             </div>
 
             {/* Price Box */}
-            <div className="bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
+            <div className="font-bold bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
               <div>
                 <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
                   Selling Price (₹ INR) *

@@ -223,7 +223,7 @@ export default function ProductDetailPage() {
                 <span>100% Verified Heavyweight Quality Standard</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Truck className="w-3.5 h-3.5 text-y2k-gunmetal/50" strokeWidth={1.5} />
+                <Truck className="font-bold w-3.5 h-3.5 text-y2k-gunmetal/50" strokeWidth={1.5} />
                 <span>Complimentary Shipping Over ₹2000</span>
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function ProductDetailPage() {
 
           {/* Right Column: Price & Add to Bag */}
           <div className="flex flex-col order-3 lg:order-3 pt-0 lg:pt-10">
-            <h2 className="font-display text-4xl sm:text-5xl tracking-[-0.04em] text-y2k-gunmetal mb-8 lg:text-right">
+            <h2 className="font-bold font-display text-4xl sm:text-5xl tracking-[-0.04em] text-y2k-gunmetal mb-8 lg:text-right">
               ₹{product.price.toLocaleString("en-IN")}
             </h2>
 
@@ -319,7 +319,7 @@ export default function ProductDetailPage() {
                   className="btn-bagify w-full py-5 px-5 text-[10px] sm:text-[10.5px] uppercase tracking-[0.16em] flex items-center justify-between cursor-pointer"
                 >
                   <span>{addedAnimation ? "✓ ADDED TO BAG" : `ADD TO BAG${selectedSize ? ` (${selectedSize})` : ""}`}</span>
-                  <span className="text-[9px] text-white/55">
+                  <span className="font-bold text-[9px] text-white/55">
                     BAG: ₹{totalBagValue.toLocaleString("en-IN")}
                   </span>
                 </button>
@@ -377,7 +377,7 @@ export default function ProductDetailPage() {
         <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-y2k-gunmetal/[0.1] p-4 flex lg:hidden items-center justify-between shadow-xl">
           <div className="min-w-0 pr-4">
             <p className="text-[10.5px] uppercase tracking-[0.12em] truncate text-y2k-gunmetal">{product.name}</p>
-            <p className="font-display text-lg tracking-tight text-y2k-gunmetal">
+            <p className="font-bold font-display text-lg tracking-tight text-y2k-gunmetal">
               ₹{product.price.toLocaleString("en-IN")}
             </p>
           </div>

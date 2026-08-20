@@ -162,7 +162,7 @@ export default function CategoryPageClient({
             id="price-filter"
             value={priceFilter}
             onChange={(e) => setPriceFilter(e.target.value)}
-            className="bg-transparent border-b border-y2k-gunmetal/15 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer hover:border-y2k-gunmetal/40 transition-colors"
+            className="font-bold bg-transparent border-b border-y2k-gunmetal/15 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer hover:border-y2k-gunmetal/40 transition-colors"
           >
             <option value="All Prices">Price: All</option>
             <option value="Under ₹500">Under ₹500</option>

@@ -540,7 +540,7 @@ export default function StudioEditProduct() {
                   <span>Heavyweight Construction Standard</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-y2k-gunmetal shrink-0" />
+                  <Truck className="font-bold w-4 h-4 text-y2k-gunmetal shrink-0" />
                   <span>Free Express Shipping Over ₹2000</span>
                 </div>
               </div>
@@ -770,7 +770,7 @@ export default function StudioEditProduct() {
               </div>
 
               {/* Price Box */}
-              <div className="bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
+              <div className="font-bold bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
                 <div>
                   <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate block mb-1.5">
                     Selling Price (₹ INR) *
@@ -989,7 +989,7 @@ export default function StudioEditProduct() {
                     <span>100% Verified Heavyweight Quality Standard</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Truck className="w-3.5 h-3.5 text-y2k-gunmetal" />
+                    <Truck className="font-bold w-3.5 h-3.5 text-y2k-gunmetal" />
                     <span>Complimentary Shipping Over ₹2000</span>
                   </div>
                 </div>
@@ -1056,13 +1056,13 @@ export default function StudioEditProduct() {
               {/* Right: Price & Add to Bag */}
               <div className="flex flex-col order-3 lg:order-3 pt-0 lg:pt-8">
                 <div className="mb-6 lg:text-right">
-                  <h2 className="font-display font-medium text-3xl sm:text-4xl lg:text-5xl tracking-tight text-y2k-gunmetal">
+                  <h2 className="font-bold font-display font-medium text-3xl sm:text-4xl lg:text-5xl tracking-tight text-y2k-gunmetal">
                     ₹{numericPrice.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                   </h2>
 
                   {numericComparePrice > numericPrice && (
                     <div className="flex items-center gap-2 mt-1 justify-start lg:justify-end">
-                      <span className="text-xs text-y2k-slate line-through font-mono">
+                      <span className="font-bold text-xs text-y2k-slate line-through font-mono">
                         MRP: ₹{numericComparePrice.toLocaleString("en-IN")}
                       </span>
                       <span className="text-[9px] font-bold bg-y2k-gunmetal text-white px-2 py-0.5 font-mono">
@@ -1088,7 +1088,7 @@ export default function StudioEditProduct() {
                       className="btn-bagify w-full py-4 px-5 text-xs sm:text-sm font-bold uppercase tracking-wide flex items-center justify-between shadow-md cursor-pointer"
                     >
                       <span>{previewBagAdded ? "✓ ADDED TO BAG" : `ADD TO BAG (${previewSize})`}</span>
-                      <span className="text-[11px] text-white/70 font-normal">
+                      <span className="font-bold text-[11px] text-white/70 font-normal">
                         BAG: ₹{numericPrice.toLocaleString("en-IN")}
                       </span>
                     </button>

@@ -545,7 +545,7 @@ function CheckoutContent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-xs text-y2k-gunmetal/80">
+                  <div className="font-bold text-xs text-y2k-gunmetal/80">
                     <p className="font-bold uppercase">
                       {shippingMethod === 'express' ? 'India Post Air Express (₹99)' : 'India Post Standard Delivery (Free / ₹49)'}
                     </p>
@@ -603,7 +603,7 @@ function CheckoutContent() {
                           <p className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                             <Banknote className="w-4 h-4 text-green-700" /> Cash on Delivery (COD)
                           </p>
-                          <p className="text-[11px] text-y2k-gunmetal/60 mt-1">
+                          <p className="font-bold text-[11px] text-y2k-gunmetal/60 mt-1">
                             Pay in cash upon doorstep delivery (+₹49 handling fee).
                           </p>
                         </div>
@@ -613,7 +613,7 @@ function CheckoutContent() {
 
                     <div className="mt-8 pt-6 border-t border-y2k-gunmetal/15 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <p className="text-xs text-y2k-gunmetal/70">
-                        Total Payable: <b className="text-base text-y2k-gunmetal">₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</b>
+                        Total Payable: <b className="font-bold text-base text-y2k-gunmetal">₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</b>
                       </p>
                       <button
                         type="button"
@@ -716,7 +716,7 @@ function CheckoutContent() {
             <div className="flex flex-col gap-2.5 text-xs border-t border-y2k-gunmetal/15 pt-4">
               <div className="flex justify-between items-center text-y2k-gunmetal/70">
                 <span>Items Subtotal:</span>
-                <span className="font-semibold">₹{total.toFixed(2)}</span>
+                <span className="font-bold font-semibold">₹{total.toFixed(2)}</span>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between items-center text-y2k-gunmetal font-bold">
@@ -726,12 +726,12 @@ function CheckoutContent() {
               )}
               <div className="flex justify-between items-center text-y2k-gunmetal/70">
                 <span>Shipping ({shippingMethod === 'express' ? 'Express' : 'Standard'}):</span>
-                <span className="font-semibold">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
+                <span className="font-bold font-semibold">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
               </div>
               {codFee > 0 && (
                 <div className="flex justify-between items-center text-y2k-gunmetal/70">
                   <span>COD Handling:</span>
-                  <span className="font-semibold">₹{codFee.toFixed(2)}</span>
+                  <span className="font-bold font-semibold">₹{codFee.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between items-center font-bold text-sm border-t border-y2k-gunmetal/15 pt-3 mt-1 text-y2k-gunmetal">

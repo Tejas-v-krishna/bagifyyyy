@@ -211,7 +211,7 @@ export default function TrackOrderPage() {
 
             {/* Total */}
             <div className="pt-3 border-t border-y2k-gunmetal/10 flex items-center justify-between text-xs">
-              <span className="text-y2k-gunmetal/70">Payment: {order.paymentMethod} ({order.paymentStatus})</span>
+              <span className="font-bold text-y2k-gunmetal/70">Payment: {order.paymentMethod} ({order.paymentStatus})</span>
               <span className="font-display text-sm font-bold text-y2k-gunmetal">
                 Total: ₹{order.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </span>

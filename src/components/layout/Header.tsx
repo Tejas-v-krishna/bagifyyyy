@@ -52,7 +52,7 @@ export default function Header() {
             <span className="text-center truncate">AUTHENTIC ARCHIVE SOURCING</span>
           </div>
           <div className="flex items-center justify-center px-4 hover:text-y2k-gunmetal transition-colors">
-            <span className="text-center truncate">COMPLIMENTARY SHIPPING OVER ₹2000</span>
+            <span className="font-bold text-center truncate">COMPLIMENTARY SHIPPING OVER ₹2000</span>
           </div>
         </div>
       </div>
@@ -292,7 +292,7 @@ export default function Header() {
                     </div>
 
                     {/* VIP Brand Notice */}
-                    <div className="mt-auto py-3 px-4 bg-white/50 border border-y2k-gunmetal/[0.08] flex items-center justify-between text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/60">
+                    <div className="font-bold mt-auto py-3 px-4 bg-white/50 border border-y2k-gunmetal/[0.08] flex items-center justify-between text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/60">
                       <span>Free Shipping ₹2000+</span>
                       <span className="text-y2k-gunmetal/30">·</span>
                       <span>Verified 1-of-1</span>

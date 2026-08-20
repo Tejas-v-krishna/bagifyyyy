@@ -135,7 +135,7 @@ export default function CartDrawer() {
                                 <h3 className="text-xs uppercase tracking-[0.1em] text-y2k-gunmetal leading-snug line-clamp-2 flex-1">
                                   {item.name}
                                 </h3>
-                                <p className="text-xs text-y2k-gunmetal shrink-0">
+                                <p className="font-bold text-xs text-y2k-gunmetal shrink-0">
                                   ₹{item.price.toFixed(0)}
                                 </p>
                               </div>
@@ -208,7 +208,7 @@ export default function CartDrawer() {
               <div className="border-t border-y2k-gunmetal/[0.07] px-8 py-7 bg-y2k-ice space-y-5">
                 {/* Free Shipping Progress */}
                 <div className="space-y-2">
-                  <p className="text-[9.5px] uppercase tracking-[0.18em] text-center text-y2k-gunmetal/60">
+                  <p className="font-bold text-[9.5px] uppercase tracking-[0.18em] text-center text-y2k-gunmetal/60">
                     {subtotal >= 2000
                       ? "Free shipping unlocked ✓"
                       : `₹${(2000 - subtotal).toFixed(0)} away from free shipping`}
@@ -262,19 +262,19 @@ export default function CartDrawer() {
 
                 {/* Totals */}
                 <div className="space-y-2 pt-1">
-                  <div className="flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-y2k-gunmetal/55">
+                  <div className="font-bold flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-y2k-gunmetal/55">
                     <span>Subtotal</span>
                     <span>₹{subtotal.toFixed(0)}</span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-green-700">
+                    <div className="font-bold flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-green-700">
                       <span>Promo ({appliedPromo!.code})</span>
                       <span>−₹{discountAmount.toFixed(0)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center pt-3 border-t border-y2k-gunmetal/[0.07]">
                     <span className="text-[10.5px] uppercase tracking-[0.16em] text-y2k-gunmetal">Total</span>
-                    <span className="text-lg tracking-tight text-y2k-gunmetal">₹{finalTotal.toFixed(0)}</span>
+                    <span className="font-bold text-lg tracking-tight text-y2k-gunmetal">₹{finalTotal.toFixed(0)}</span>
                   </div>
                 </div>
 

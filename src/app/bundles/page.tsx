@@ -181,14 +181,14 @@ export default function BundlesPage() {
 
                       {/* Pricing */}
                       <div className="flex items-baseline gap-2.5 mb-5">
-                        <span className="text-white text-xl tracking-tight">
+                        <span className="font-bold text-white text-xl tracking-tight">
                           ₹{bundle.bundlePrice.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-white/30 text-xs line-through">
+                        <span className="font-bold text-white/30 text-xs line-through">
                           ₹{bundle.originalTotal.toLocaleString("en-IN")}
                         </span>
                         {savings > 0 && (
-                          <span className="text-white/50 text-[9px] uppercase tracking-[0.16em] ml-auto">
+                          <span className="font-bold text-white/50 text-[9px] uppercase tracking-[0.16em] ml-auto">
                             −₹{savings.toLocaleString("en-IN")}
                           </span>
                         )}

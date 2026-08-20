@@ -286,7 +286,7 @@ export default function StudioDashboard() {
       </div>
 
       {/* ── Metric Cards ─────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="font-bold grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <StatCard
           label="Total Revenue"
           value={`₹${stats.totalRevenue.toLocaleString("en-IN")}`}
@@ -373,7 +373,7 @@ export default function StudioDashboard() {
                 </div>
 
                 <div className="flex items-center gap-4 justify-between sm:justify-end shrink-0">
-                  <div className="text-right">
+                  <div className="font-bold text-right">
                     <p className="text-sm font-bold text-y2k-gunmetal">
                       ₹{order.totalAmount?.toLocaleString("en-IN")}
                     </p>
@@ -483,7 +483,7 @@ export default function StudioDashboard() {
                 </div>
 
                 {/* Price */}
-                <div className="w-28 text-right shrink-0">
+                <div className="font-bold w-28 text-right shrink-0">
                   <p className="text-xs font-bold text-y2k-gunmetal">
                     ₹{product.price?.toLocaleString("en-IN")}
                   </p>
