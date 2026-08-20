@@ -44,7 +44,7 @@ export default function HeroText() {
   return (
     <h1
       ref={containerRef}
-      className="font-display font-medium w-full text-center text-vibe-gradient uppercase tracking-[-0.05em] leading-[0.85] pt-2 md:pt-4 pb-1 md:pb-3 select-none whitespace-nowrap overflow-hidden px-2 shrink-0"
+      className="font-display font-medium w-full text-center text-y2k-gunmetal uppercase tracking-[-0.05em] leading-[0.85] pt-2 md:pt-4 pb-1 md:pb-3 select-none whitespace-nowrap overflow-hidden px-2 shrink-0"
       style={{
         fontSize: "clamp(1.75rem, 8.8vw, 210px)",
         fontWeight: 500,

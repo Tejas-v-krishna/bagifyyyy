@@ -98,14 +98,14 @@ export default function HeroCarousel() {
 
         {/* Bottom: single minimal glass CTA */}
         <div className="flex items-end justify-between">
-          {/* Glass pill link */}
+          {/* Solid fill link */}
           <Link
             href={slide.link}
             aria-label={`${slide.alt} — explore collection`}
-            className="pointer-events-auto glass-pill flex items-center gap-3 px-6 py-3 text-white text-[10px] uppercase tracking-[0.22em] hover:bg-white/20 transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+            className="pointer-events-auto bg-white flex items-center gap-3 px-7 py-3.5 text-y2k-gunmetal text-[10px] uppercase tracking-[0.22em] font-bold hover:bg-y2k-ice hover:scale-[1.02] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
           >
             <span>Explore</span>
-            <span className="w-4 h-px bg-white/60" aria-hidden="true" />
+            <span className="w-4 h-px bg-y2k-gunmetal/60" aria-hidden="true" />
             <span aria-hidden="true">→</span>
           </Link>
 

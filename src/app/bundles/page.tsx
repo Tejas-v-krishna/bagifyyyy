@@ -107,15 +107,56 @@ export default function BundlesPage() {
                   className={`relative overflow-hidden group animate-fade-up delay-${Math.min((i + 1) * 100, 400)}`}
                   aria-label={`${bundle.name} bundle — ${bundle.discount}% off`}
                 >
-                  {/* Full-bleed image */}
+                  {/* Full-bleed dynamic image container */}
                   <div className="relative aspect-[3/4] overflow-hidden bg-y2k-pale/20">
-                    <Image
-                      src={coverImage}
-                      alt={bundle.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
-                    />
+                    {/* Image Grid Logic */}
+                    {(() => {
+                      const count = bundle.products.length;
+                      
+                      if (count === 1 || count === 0) {
+                        return (
+                          <div className="absolute inset-0">
+                            <Image src={coverImage} alt={bundle.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                          </div>
+                        );
+                      }
+                      if (count === 2) {
+                        return (
+                          <div className="absolute inset-0 flex flex-col gap-0.5 bg-black/10">
+                            <div className="relative w-full h-1/2 overflow-hidden">
+                              <Image src={bundle.products[0].image} alt={bundle.products[0].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                            </div>
+                            <div className="relative w-full h-1/2 overflow-hidden">
+                              <Image src={bundle.products[1].image} alt={bundle.products[1].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                            </div>
+                          </div>
+                        );
+                      }
+                      if (count === 3) {
+                        return (
+                          <div className="absolute inset-0 flex flex-col gap-0.5 bg-black/10">
+                            <div className="relative w-full h-1/3 overflow-hidden">
+                              <Image src={bundle.products[0].image} alt={bundle.products[0].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                            </div>
+                            <div className="relative w-full h-1/3 overflow-hidden">
+                              <Image src={bundle.products[1].image} alt={bundle.products[1].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                            </div>
+                            <div className="relative w-full h-1/3 overflow-hidden">
+                              <Image src={bundle.products[2].image} alt={bundle.products[2].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 bg-black/10">
+                          {bundle.products.slice(0, 4).map((p, pIdx) => (
+                            <div key={p.id} className="relative w-full h-full overflow-hidden">
+                               <Image src={p.image} alt={p.name} fill sizes="16vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
 
                     {/* Gradient for text legibility — bottom only */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/8 to-transparent" aria-hidden="true" />

@@ -134,7 +134,7 @@ export default async function Home() {
       </section>
 
       {/* 2. New Arrivals & Curated Grails Showcase Section */}
-      <section id="showcase" className="w-full bg-y2k-ice pt-32 pb-20 px-6 sm:px-8 lg:px-16 max-w-[1800px] mx-auto scroll-mt-20">
+      <section id="showcase" className="w-full bg-y2k-ice py-32 md:py-44 px-6 sm:px-8 lg:px-16 max-w-[1800px] mx-auto scroll-mt-20">
         <InteractiveShowcase products={newArrivals} topPicks={curatedGrails} />
       </section>
 
@@ -142,7 +142,7 @@ export default async function Home() {
       <GsapMarquee />
 
       {/* 3.5. Explore Categories Section */}
-      <section className="w-full mt-16 md:mt-24 mb-0">
+      <section className="w-full mt-32 md:mt-44 mb-0">
         <div className="w-full grid grid-cols-1 md:grid-cols-2">
           {/* Top Left: TOPS */}
           <div className="relative w-full aspect-square overflow-hidden group">
@@ -210,7 +210,7 @@ export default async function Home() {
       </section>
 
       {/* 3. Vintage Archive Section */}
-      <section className="w-full bg-y2k-ice pt-32 md:pt-44 pb-20 px-6 sm:px-8 lg:px-16 max-w-[1800px] mx-auto">
+      <section className="w-full bg-y2k-ice py-32 md:py-44 px-6 sm:px-8 lg:px-16 max-w-[1800px] mx-auto">
         {/* Section Header */}
         <div className="flex flex-row items-end justify-between gap-4 mb-16 border-b border-y2k-gunmetal/[0.07] pb-8">
           <div className="flex flex-col">
@@ -250,7 +250,7 @@ export default async function Home() {
         </div>
 
         {/* View All CTA */}
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center mt-20">
           <Link
             href="/products"
             className="flex items-center gap-3 text-[10px] uppercase tracking-[0.22em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors group"

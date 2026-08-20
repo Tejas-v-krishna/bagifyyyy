@@ -172,6 +172,17 @@ export default function InteractiveShowcase({
     goToCard(prevIdx);
   }, [currentIndex, maxIndex, goToCard]);
 
+  // ── 3.5. Autoplay (5s Interval) ─────────────────────────────────────────────
+  const isHoveredRef = useRef(false);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!isPressedRef.current && !isDraggingRef.current && !isHoveredRef.current) {
+        goNext();
+      }
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [goNext]);
+
   // ── 4. Robust GSAP Mouse / Touch Drag Engine ───────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Only primary mouse button (0) or touch
@@ -431,6 +442,8 @@ export default function InteractiveShowcase({
         ref={viewportRef}
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
+        onMouseEnter={() => (isHoveredRef.current = true)}
+        onMouseLeave={() => (isHoveredRef.current = false)}
         className="w-full overflow-hidden mb-4 py-2 cursor-grab active:cursor-grabbing touch-pan-y select-none"
       >
         <div
