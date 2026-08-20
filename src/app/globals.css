@@ -42,6 +42,80 @@
 }
 
 @layer utilities {
+  /* ── Glassmorphism Utilities ──────────────────────────────────────── */
+
+  /* Light glass — for use on dark photo/dark bg only (WCAG: text on glass must be ≥4.5:1) */
+  .glass-light {
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+  }
+
+  /* Dark glass — for overlay panels on photos */
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  /* Frosted pill — small tag / badge on dark surfaces */
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  /* ── WCAG-Compliant Animation Classes ────────────────────────────── */
+  /* All transitions respect prefers-reduced-motion (WCAG 2.3.3 / 2.1.1) */
+
+  .animate-fade-up {
+    animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease both;
+  }
+
+  /* Stagger delays for child sequences — apply via inline style or tailwind arbitrary */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Respect user's motion preference — WCAG 2.3.3 */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .animate-fade-in {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    /* Also disable Framer Motion defaults via CSS reset */
+    [data-framer-motion] {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
   /* ── Premium Design System Utilities ─────────────────────────────── */
 
   /* Consistent section label — small uppercase eyebrow above headings */

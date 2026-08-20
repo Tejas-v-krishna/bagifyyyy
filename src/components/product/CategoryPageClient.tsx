@@ -85,30 +85,39 @@ export default function CategoryPageClient({
     setSortBy("Newest");
   };
 
+  const hasActiveFilters = sizeFilter || priceFilter !== "All Prices" || sortBy !== "Newest";
+
   return (
-    <div className="w-full min-h-screen flex flex-col pt-16 md:pt-20 bg-y2k-ice">
-      {/* Page Header */}
-      <div className="shrink-0 px-6 sm:px-8 lg:px-16 w-full max-w-[1800px] mx-auto mb-10">
+    <div className="w-full min-h-screen flex flex-col bg-y2k-ice">
+
+      {/* Page Header — with WCAG-safe fade-up animation */}
+      <div className="shrink-0 px-6 sm:px-8 lg:px-16 w-full max-w-[1800px] mx-auto pt-16 md:pt-20 mb-10">
         <div className="flex flex-row items-end justify-between gap-4 border-b border-y2k-gunmetal/[0.07] pb-8">
-          {/* Left: Category Title */}
+          {/* Left: Title block */}
           <div className="flex flex-col">
             {badge && (
-              <span className="section-label text-y2k-gunmetal/50 mb-3">{badge}</span>
+              <span className="section-label text-y2k-gunmetal/40 mb-3">{badge}</span>
             )}
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[80px] uppercase tracking-[-0.04em] leading-none text-y2k-gunmetal py-1">
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[80px] uppercase tracking-[-0.04em] leading-none text-y2k-gunmetal animate-fade-up">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-xs text-y2k-gunmetal/50 uppercase tracking-[0.14em] mt-3">{subtitle}</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-y2k-gunmetal/40 mt-3 animate-fade-up delay-100">
+                {subtitle}
+              </p>
             )}
           </div>
 
           {/* Right: Count */}
-          <div className="flex items-baseline gap-1.5 shrink-0 select-none pb-1">
+          <div
+            className="flex items-baseline gap-1.5 shrink-0 pb-1 animate-fade-up delay-200"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <span className="font-display text-4xl sm:text-5xl text-y2k-gunmetal leading-none tracking-tight">
               {loading ? "--" : String(filteredAndSortedProducts.length).padStart(2, "0")}
             </span>
-            <span className="section-label text-y2k-gunmetal/45 pb-0.5">
+            <span className="section-label text-y2k-gunmetal/40">
               {filteredAndSortedProducts.length === 1 ? "PIECE" : "PIECES"}
             </span>
           </div>
@@ -116,18 +125,24 @@ export default function CategoryPageClient({
       </div>
 
       {/* Filter Bar */}
-      <div className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-y2k-gunmetal/[0.06] mb-12 gap-4 px-6 sm:px-8 lg:px-16 w-full max-w-[1800px] mx-auto">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1.5 text-[9.5px] uppercase tracking-[0.2em] text-y2k-gunmetal/60 mr-1">
+      <div
+        className="shrink-0 flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-y2k-gunmetal/[0.06] mb-12 gap-4 px-6 sm:px-8 lg:px-16 w-full max-w-[1800px] mx-auto"
+        role="search"
+        aria-label="Filter and sort products"
+      >
+        <div className="flex flex-wrap items-center gap-5">
+          <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-y2k-gunmetal/50 mr-1" aria-hidden="true">
             <SlidersHorizontal className="w-3 h-3" />
             Filter
           </div>
 
           {/* Size Filter */}
+          <label className="sr-only" htmlFor="size-filter">Filter by size</label>
           <select
+            id="size-filter"
             value={sizeFilter}
             onChange={(e) => setSizeFilter(e.target.value)}
-            className="bg-transparent border-b border-y2k-gunmetal/20 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer"
+            className="bg-transparent border-b border-y2k-gunmetal/15 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer hover:border-y2k-gunmetal/40 transition-colors"
           >
             <option value="">Size: All</option>
             <option value="S">S</option>
@@ -142,10 +157,12 @@ export default function CategoryPageClient({
           </select>
 
           {/* Price Filter */}
+          <label className="sr-only" htmlFor="price-filter">Filter by price</label>
           <select
+            id="price-filter"
             value={priceFilter}
             onChange={(e) => setPriceFilter(e.target.value)}
-            className="bg-transparent border-b border-y2k-gunmetal/20 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer"
+            className="bg-transparent border-b border-y2k-gunmetal/15 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer hover:border-y2k-gunmetal/40 transition-colors"
           >
             <option value="All Prices">Price: All</option>
             <option value="Under ₹500">Under ₹500</option>
@@ -153,54 +170,66 @@ export default function CategoryPageClient({
             <option value="Over ₹1500">Over ₹1500</option>
           </select>
 
-          {(sizeFilter || priceFilter !== "All Prices" || sortBy !== "Newest") && (
+          {hasActiveFilters && (
             <button
               onClick={resetFilters}
-              className="flex items-center gap-1 text-[9.5px] uppercase tracking-[0.16em] text-y2k-gunmetal/50 hover:text-y2k-gunmetal transition-colors ml-1 cursor-pointer"
+              className="flex items-center gap-1 text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/40 hover:text-y2k-gunmetal transition-colors ml-1 cursor-pointer focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+              aria-label="Reset all filters"
             >
-              <RotateCcw className="w-3 h-3" />
+              <RotateCcw className="w-2.5 h-2.5" />
               Reset
             </button>
           )}
         </div>
 
-        {/* Right Side: Count & View Mode & Sort */}
+        {/* Right: count + view toggle + sort */}
         <div className="flex items-center gap-5 w-full md:w-auto justify-between md:justify-end">
-          <div className="hidden sm:flex items-center text-[9.5px] uppercase tracking-[0.18em] text-y2k-gunmetal/45 pr-4 border-r border-y2k-gunmetal/[0.1]">
-            <span>{filteredAndSortedProducts.length} Available</span>
+          <div
+            className="hidden sm:flex items-center text-[9px] uppercase tracking-[0.2em] text-y2k-gunmetal/35 pr-4 border-r border-y2k-gunmetal/[0.08]"
+            aria-live="polite"
+          >
+            {filteredAndSortedProducts.length} Available
           </div>
 
-          {/* View Mode Toggle */}
-          <div className="flex items-center border border-y2k-gunmetal/[0.1]">
+          {/* View Toggle */}
+          <div
+            className="flex items-center border border-y2k-gunmetal/[0.1]"
+            role="group"
+            aria-label="View mode"
+          >
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-2 transition-colors cursor-pointer ${
+              aria-pressed={viewMode === "grid"}
+              aria-label="Grid view"
+              className={`p-2 transition-colors cursor-pointer focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal ${
                 viewMode === "grid"
                   ? "bg-y2k-gunmetal text-white"
-                  : "bg-transparent text-y2k-gunmetal/50 hover:bg-y2k-gunmetal/[0.06]"
+                  : "bg-transparent text-y2k-gunmetal/40 hover:bg-y2k-gunmetal/[0.06]"
               }`}
-              title="Grid View"
             >
               <LayoutGrid className="w-3 h-3" />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-2 transition-colors cursor-pointer ${
+              aria-pressed={viewMode === "list"}
+              aria-label="List view"
+              className={`p-2 transition-colors cursor-pointer focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal ${
                 viewMode === "list"
                   ? "bg-y2k-gunmetal text-white"
-                  : "bg-transparent text-y2k-gunmetal/50 hover:bg-y2k-gunmetal/[0.06]"
+                  : "bg-transparent text-y2k-gunmetal/40 hover:bg-y2k-gunmetal/[0.06]"
               }`}
-              title="List View"
             >
               <List className="w-3 h-3" />
             </button>
           </div>
 
-          {/* Sort Dropdown */}
+          {/* Sort */}
+          <label className="sr-only" htmlFor="sort-select">Sort products</label>
           <select
+            id="sort-select"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-transparent border-b border-y2k-gunmetal/20 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer"
+            className="bg-transparent border-b border-y2k-gunmetal/15 px-1 pb-1 text-[10px] uppercase tracking-[0.14em] text-y2k-gunmetal focus:outline-none focus:border-y2k-gunmetal cursor-pointer hover:border-y2k-gunmetal/40 transition-colors"
           >
             <option value="Newest">Newest First</option>
             <option value="Price: Low to High">Price: Low → High</option>
@@ -212,29 +241,31 @@ export default function CategoryPageClient({
       {/* Main Content */}
       <div className="px-6 sm:px-8 lg:px-16 w-full max-w-[1800px] mx-auto pb-32">
         {loading ? (
+          /* Static skeleton — no pulse/flash (WCAG 2.3.1 — no content flashing >3Hz) */
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-16">
             {[...Array(12)].map((_, i) => (
-              <div key={i} className="animate-pulse flex flex-col">
-                <div className="bg-y2k-pale/40 aspect-[4/5] w-full mb-4" />
-                <div className="h-2.5 bg-y2k-pale/40 w-3/4 mb-1.5" />
-                <div className="h-2.5 bg-y2k-pale/40 w-1/3" />
+              <div key={i} className="flex flex-col">
+                <div className="bg-y2k-pale/25 aspect-[4/5] w-full mb-4" />
+                <div className="h-2 bg-y2k-pale/25 w-3/4 mb-2" />
+                <div className="h-2 bg-y2k-pale/25 w-1/3" />
               </div>
             ))}
           </div>
         ) : displayedProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="w-px h-16 bg-y2k-gunmetal/15 mb-12" />
+          <div className="flex flex-col items-center justify-center py-40 text-center">
+            <div className="w-px h-16 bg-y2k-gunmetal/12 mb-12" aria-hidden="true" />
             <h3 className="font-display text-3xl uppercase tracking-[-0.03em] mb-3 text-y2k-gunmetal">
-              No Archive Pieces Found
+              Nothing Found
             </h3>
-            <p className="text-[10.5px] uppercase tracking-[0.18em] text-y2k-gunmetal/45 mb-10">
-              Try adjusting your filters to view all items.
+            <p className="text-[10px] uppercase tracking-[0.2em] text-y2k-gunmetal/40 mb-10">
+              Adjust your filters to see available pieces.
             </p>
             <button
               onClick={resetFilters}
-              className="btn-bagify px-10 py-4 text-[10px] uppercase tracking-[0.18em] cursor-pointer"
+              className="btn-bagify px-10 py-4 text-[10px] uppercase tracking-[0.2em] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+              aria-label="Clear all filters"
             >
-              Clear All Filters
+              Clear Filters
             </button>
           </div>
         ) : (
@@ -245,9 +276,13 @@ export default function CategoryPageClient({
                   ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-16"
                   : "flex flex-col gap-6"
               }
+              role="list"
+              aria-label={`${filteredAndSortedProducts.length} products`}
             >
               {displayedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <div key={product.id} role="listitem">
+                  <ProductCard product={product} />
+                </div>
               ))}
             </div>
 
@@ -256,11 +291,15 @@ export default function CategoryPageClient({
               <div className="flex flex-col items-center mt-20 gap-4">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 12)}
-                  className="btn-bagify px-14 py-4 text-[10px] uppercase tracking-[0.2em] cursor-pointer"
+                  className="btn-bagify px-14 py-4 text-[10px] uppercase tracking-[0.22em] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+                  aria-label={`Load 12 more products — ${filteredAndSortedProducts.length - visibleCount} remaining`}
                 >
-                  Load More — {filteredAndSortedProducts.length - visibleCount} Remaining
+                  Load More
                 </button>
-                <div className="w-px h-8 bg-y2k-gunmetal/15" />
+                <span className="text-[9px] uppercase tracking-[0.2em] text-y2k-gunmetal/35">
+                  {filteredAndSortedProducts.length - visibleCount} remaining
+                </span>
+                <div className="w-px h-8 bg-y2k-gunmetal/12" aria-hidden="true" />
               </div>
             )}
           </>
