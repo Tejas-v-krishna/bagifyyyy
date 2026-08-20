@@ -80,6 +80,12 @@ export default async function Home() {
       
       {/* 1. Hero Section */}
       <section className="w-full flex flex-col items-center min-h-[calc(100svh-60px)] md:min-h-[calc(100vh-72px)] md:h-[calc(100vh-72px)]">
+        
+        {/* Visually Hidden SEO H1 - Crucial for Google Ranking BAGIFYYYY */}
+        <h1 className="sr-only">
+          BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
+        </h1>
+
         {/* Massive Headline */}
         <HeroText />
 

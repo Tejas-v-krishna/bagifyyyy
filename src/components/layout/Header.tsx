@@ -92,9 +92,10 @@ export default function Header() {
           href="/"
           className="hover:opacity-80 flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-opacity duration-300"
         >
+          <span className="sr-only">BAGIFYYYY (Bagify) Home</span>
           <Image
             src="/logo.png"
-            alt="Bagifyyyy Logo"
+            alt="BAGIFYYYY (Bagify) Premium Streetwear Logo"
             width={220}
             height={48}
             priority

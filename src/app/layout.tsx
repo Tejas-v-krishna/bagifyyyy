@@ -17,37 +17,69 @@ const urbanist = Urbanist({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.com"),
   title: {
-    default: "BAGIFYYYY | Streetwear & Apparel",
+    default: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear & Archive Fashion",
     template: "%s | BAGIFYYYY",
   },
-  description: "Streetwear drop culture. Premium oversized tees, cargos, jackets, and accessories.",
-  keywords: ["streetwear", "fashion", "bagifyyyy", "oversized tees", "cargos"],
+  description: "Shop BAGIFYYYY (Bagify) for premium Y2K streetwear, archive fashion, and exclusive limited-edition drops. High-quality oversized tees, cyber cargos, and heavy denim. No restocks, no replicas.",
+  keywords: [
+    "BAGIFYYYY",
+    "Bagify",
+    "Bagifyy",
+    "streetwear",
+    "Y2K fashion",
+    "vintage archive",
+    "archive fashion",
+    "oversized tees",
+    "heavyweight hoodies",
+    "cyber cargos",
+    "drop culture",
+    "luxury streetwear",
+    "avant-garde fashion",
+    "opium fashion",
+    "streetwear brands india",
+    "premium apparel"
+  ],
   authors: [{ name: "BAGIFYYYY" }],
+  creator: "BAGIFYYYY",
+  publisher: "BAGIFYYYY",
+  alternates: {
+    canonical: "https://bagifyyyy.com",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://bagifyyyy.com",
-    title: "BAGIFYYYY | Streetwear & Apparel",
-    description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
+    title: "BAGIFYYYY (Bagify) | Y2K Archive & Premium Streetwear",
+    description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. No restocks, no replicas. Wear history.",
     siteName: "BAGIFYYYY",
     images: [
       {
         url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "BAGIFYYYY Y2K Archive",
+        alt: "BAGIFYYYY (Bagify) Premium Y2K Archive",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BAGIFYYYY | Y2K Streetwear & Archive",
-    description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
+    title: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear",
+    description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. Wear history.",
     images: ["/logo.png"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: "add-your-google-site-verification-here", // Placeholder for GSC
   },
 };
 

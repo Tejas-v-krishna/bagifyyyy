@@ -2,9 +2,9 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "BAGIFYYYY | Y2K Streetwear & Archive",
+    name: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear & Archive Fashion",
     short_name: "BAGIFYYYY",
-    description: "Y2K-era streetwear drop culture. No restocks, no replicas.",
+    description: "Shop BAGIFYYYY (Bagify) for premium Y2K streetwear, archive fashion, and exclusive limited-edition drops.",
     start_url: "/",
     display: "standalone",
     background_color: "#E8EDF2",
