@@ -82,32 +82,48 @@ export async function POST(request: Request) {
       },
     });
 
-    // 4. Initialize Razorpay or generate fallback test order
-    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_mock';
-    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'mock_secret';
-    let razorpayOrderId = `order_mock_${Date.now()}`;
+    // 4. Initialize Razorpay and create real Razorpay Order
+    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-    if (keyId && !keyId.includes('mock') && keySecret && !keySecret.includes('mock')) {
-      try {
-        const rzp = new Razorpay({
-          key_id: keyId,
-          key_secret: keySecret,
-        });
+    if (!keyId || !keySecret) {
+      return NextResponse.json(
+        { error: 'Razorpay credentials not configured on server' },
+        { status: 401 }
+      );
+    }
 
-        const rzpOrder = await rzp.orders.create({
-          amount: amountInPaise,
-          currency: 'INR',
-          receipt: orderNumber,
-          notes: {
-            customerEmail,
-            customerPhone,
-            orderNumber,
-          },
-        });
-        razorpayOrderId = rzpOrder.id;
-      } catch (rzpError: any) {
-        console.warn('Razorpay API error, falling back to mock order for testing:', rzpError);
-      }
+    if (amountInPaise < 100) {
+      return NextResponse.json(
+        { error: 'Minimum payable amount must be at least ₹1.00 (100 paise)' },
+        { status: 400 }
+      );
+    }
+
+    const rzp = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret,
+    });
+
+    let razorpayOrderId: string;
+    try {
+      const rzpOrder = await rzp.orders.create({
+        amount: amountInPaise,
+        currency: 'INR',
+        receipt: orderNumber,
+        notes: {
+          customerEmail,
+          customerPhone,
+          orderNumber,
+        },
+      });
+      razorpayOrderId = rzpOrder.id;
+    } catch (rzpError: any) {
+      console.error('Razorpay API order creation failed:', rzpError);
+      return NextResponse.json(
+        { error: rzpError.error?.description || rzpError.message || 'Razorpay order creation failed' },
+        { status: 500 }
+      );
     }
 
     // 5. Create Order record in DB (PENDING)

@@ -129,6 +129,7 @@ function CheckoutContent() {
   }) => {
     try {
       setLoading(true);
+      setError("");
       const verifyRes = await fetch('/api/payment/razorpay/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -141,15 +142,19 @@ function CheckoutContent() {
       });
 
       const verifyData = await verifyRes.json();
-      if (verifyRes.ok) {
+      if (verifyRes.ok && verifyData.success) {
         clearCart();
         router.push(`/checkout/success?order_id=${orderId}`);
       } else {
-        alert(verifyData.error || 'Payment verification failed');
+        const msg = verifyData.error || 'Payment verification failed. Please contact support.';
+        setError(msg);
+        alert(msg);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Verify error:', err);
-      alert('Payment verification failed');
+      const msg = err.message || 'Payment verification failed';
+      setError(msg);
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -189,7 +194,7 @@ function CheckoutContent() {
         return;
       }
 
-      // Handle Official Razorpay Checkout
+      // Handle Official Razorpay Standard Web Checkout
       const isScriptLoaded = await loadRazorpayScript();
       if (!isScriptLoaded) {
         throw new Error('Unable to load Razorpay SDK. Please check your internet connection.');
@@ -211,9 +216,14 @@ function CheckoutContent() {
       const orderData = await res.json();
       if (!res.ok) throw new Error(orderData.error || 'Failed to initialize payment');
 
+      const razorpayKey = orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        throw new Error('Razorpay Key is not configured.');
+      }
+
       // Configure official Razorpay Standard Checkout Options
       const options = {
-        key: orderData.keyId,
+        key: razorpayKey,
         amount: orderData.amountInPaise,
         currency: orderData.currency || "INR",
         name: "BAGIFYYYY",
@@ -243,7 +253,9 @@ function CheckoutContent() {
 
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function (resp: any) {
-        alert(`Payment failed: ${resp.error.description}`);
+        const failureReason = resp.error?.description || resp.error?.reason || 'Payment failed';
+        setError(`Payment failed: ${failureReason}`);
+        alert(`Payment failed: ${failureReason}`);
         setLoading(false);
       });
       rzp.open();

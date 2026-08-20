@@ -8,8 +8,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = body;
 
-    if (!orderId) {
-      return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
+    if (!orderId || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return NextResponse.json(
+        { error: 'Missing required payment verification fields (orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature)' },
+        { status: 400 }
+      );
     }
 
     const order = await prisma.order.findUnique({
@@ -21,23 +24,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    // 1. Signature Verification
+    // 1. Signature Verification: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const isMock = !keySecret || keySecret.includes('mock') || keySecret.includes('placeholder') || keySecret.includes('bagify_key') || (typeof razorpay_signature === 'string' && razorpay_signature.startsWith('sig_test_'));
+    if (!keySecret) {
+      return NextResponse.json(
+        { error: 'Razorpay secret key not configured on server' },
+        { status: 500 }
+      );
+    }
 
-    if (!isMock && razorpay_order_id && razorpay_payment_id && razorpay_signature) {
-      const generatedSignature = crypto
-        .createHmac('sha256', keySecret)
-        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-        .digest('hex');
+    const generatedSignature = crypto
+      .createHmac('sha256', keySecret)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
 
-      if (generatedSignature !== razorpay_signature) {
-        await prisma.order.update({
-          where: { id: orderId },
-          data: { paymentStatus: 'FAILED' },
-        });
-        return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
+    let isSignatureValid = false;
+    try {
+      const genBuf = Buffer.from(generatedSignature, 'utf-8');
+      const sigBuf = Buffer.from(razorpay_signature, 'utf-8');
+      if (genBuf.length === sigBuf.length) {
+        isSignatureValid = crypto.timingSafeEqual(genBuf, sigBuf);
       }
+    } catch {
+      isSignatureValid = false;
+    }
+
+    if (!isSignatureValid) {
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { paymentStatus: 'FAILED' },
+      });
+      return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
     }
 
     // 2. Mark Order as PAID
