@@ -25,6 +25,64 @@ const INDIAN_STATES = [
   "Delhi", "Jammu & Kashmir", "Ladakh"
 ];
 
+type AddressForm = {
+  fullName: string;
+  email: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+};
+
+/** The order the fields appear in, so focus lands on the first bad one. */
+const FIELD_ORDER = ["fullName", "phone", "email", "street", "pincode", "city"] as const;
+
+/**
+ * Mirrors assertValidShippingAddress and assertValidContact in src/lib/cart.ts.
+ * The shopper is told which field is wrong before the request is sent, instead
+ * of getting one generic sentence back from the server with no field named.
+ */
+function validateAddress(data: AddressForm): Partial<Record<keyof AddressForm, string>> {
+  const errors: Partial<Record<keyof AddressForm, string>> = {};
+
+  if (!data.fullName.trim()) errors.fullName = "Enter the name for this delivery.";
+
+  const phone = data.phone.trim();
+  if (!phone) errors.phone = "Enter a number the courier can call.";
+  else if (!/^[+\d][\d\s-]{7,15}$/.test(phone)) errors.phone = "That does not look like a valid phone number.";
+
+  const email = data.email.trim();
+  if (!email) errors.email = "Enter an email so we can send the receipt.";
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "That does not look like a valid email address.";
+
+  if (!data.street.trim()) errors.street = "Enter the house, flat and street.";
+
+  const pincode = data.pincode.trim();
+  if (!pincode) errors.pincode = "Enter your 6-digit PIN code.";
+  else if (!/^\d{6}$/.test(pincode)) errors.pincode = "A PIN code is exactly 6 digits.";
+
+  if (!data.city.trim()) errors.city = "Enter the city.";
+
+  return errors;
+}
+
+const fieldClass = (hasError: boolean) =>
+  `w-full border px-4 py-3 text-sm outline-none transition-colors ${
+    hasError
+      ? "border-red-500 focus:border-red-600"
+      : "border-y2k-gunmetal/25 focus:border-y2k-gunmetal"
+  }`;
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={id} className="text-[11px] text-red-600 mt-1.5">
+      {message}
+    </p>
+  );
+}
+
 // Helper to ensure Razorpay script is loaded
 const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -69,7 +127,7 @@ function CheckoutContent() {
   };
 
   // Address Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AddressForm>({
     fullName: user?.name || "",
     email: user?.email || "",
     phone: "",
@@ -78,6 +136,7 @@ function CheckoutContent() {
     state: "Maharashtra",
     pincode: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
 
   // Shipping & Payment Options
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
@@ -125,6 +184,27 @@ function CheckoutContent() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear the field's complaint as soon as the shopper starts fixing it.
+    setFieldErrors((prev) => (prev[name as keyof AddressForm] ? { ...prev, [name]: undefined } : prev));
+  };
+
+  /** Puts the caret on the first field that failed, so nothing is hunted for. */
+  const focusFirstError = (errors: Partial<Record<keyof AddressForm, string>>) => {
+    const first = FIELD_ORDER.find((field) => errors[field]);
+    if (first) document.getElementById(`checkout-${first}`)?.focus();
+  };
+
+  const handleAddressSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const errors = validateAddress(formData);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setError("");
+      focusFirstError(errors);
+      return;
+    }
+    setError("");
+    setActiveStep(2);
   };
 
   const handlePaymentSuccess = async (orderId: string, response: {
@@ -168,11 +248,17 @@ function CheckoutContent() {
   const handleProceedToPayment = async () => {
     setError("");
 
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.street || !formData.pincode || !formData.city) {
+    // Same validator the address step uses, so a shopper who edited a field
+    // after passing step 1 is sent back to the exact field that broke.
+    const errors = validateAddress(formData);
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       setActiveStep(1);
-      setError("Please fill out all required delivery fields.");
+      setError("Some delivery details need fixing before we can take payment.");
+      requestAnimationFrame(() => focusFirstError(errors));
       return;
     }
+    setFieldErrors({});
 
     try {
       setLoading(true);
@@ -365,92 +451,136 @@ function CheckoutContent() {
                 </div>
 
                 {activeStep === 1 ? (
-                  <div className="flex flex-col gap-4">
+                  /* A real form, so Enter submits, the browser runs its own
+                     required and pattern checks, and address autofill
+                     recognises the fields. These inputs used to sit in a bare
+                     div, which made every required and pattern attribute on
+                     them inert. */
+                  <form onSubmit={handleAddressSubmit} className="flex flex-col gap-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Full Name *</label>
+                        <label htmlFor="checkout-fullName" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Full Name *</label>
                         <input
+                          id="checkout-fullName"
                           type="text"
                           name="fullName"
                           value={formData.fullName}
                           onChange={handleInputChange}
                           placeholder="e.g. Rahul Sharma"
-                          className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none"
+                          autoComplete="name"
                           required
+                          aria-invalid={Boolean(fieldErrors.fullName)}
+                          aria-describedby={fieldErrors.fullName ? "checkout-fullName-error" : undefined}
+                          className={fieldClass(Boolean(fieldErrors.fullName))}
                         />
+                        <FieldError id="checkout-fullName-error" message={fieldErrors.fullName} />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Phone Number (+91) *</label>
+                        <label htmlFor="checkout-phone" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Phone Number (+91) *</label>
                         <input
+                          id="checkout-phone"
                           type="tel"
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
                           placeholder="9876543210"
-                          className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none"
+                          autoComplete="tel"
+                          inputMode="tel"
+                          pattern="[+\d][\d\s-]{7,15}"
+                          title="8 to 16 digits, optionally starting with a plus"
                           required
+                          aria-invalid={Boolean(fieldErrors.phone)}
+                          aria-describedby={fieldErrors.phone ? "checkout-phone-error" : undefined}
+                          className={fieldClass(Boolean(fieldErrors.phone))}
                         />
+                        <FieldError id="checkout-phone-error" message={fieldErrors.phone} />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Email Address (for Receipt & Tracking) *</label>
+                      <label htmlFor="checkout-email" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">Email Address (for Receipt &amp; Tracking) *</label>
                       <input
+                        id="checkout-email"
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="you@email.com"
-                        className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none"
+                        autoComplete="email"
+                        inputMode="email"
                         required
+                        aria-invalid={Boolean(fieldErrors.email)}
+                        aria-describedby={fieldErrors.email ? "checkout-email-error" : undefined}
+                        className={fieldClass(Boolean(fieldErrors.email))}
                       />
+                      <FieldError id="checkout-email-error" message={fieldErrors.email} />
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">House / Flat / Street Address *</label>
+                      <label htmlFor="checkout-street" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">House / Flat / Street Address *</label>
                       <input
+                        id="checkout-street"
                         type="text"
                         name="street"
                         value={formData.street}
                         onChange={handleInputChange}
                         placeholder="Flat 402, Lotus Heights, MG Road"
-                        className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none"
+                        autoComplete="street-address"
                         required
+                        aria-invalid={Boolean(fieldErrors.street)}
+                        aria-describedby={fieldErrors.street ? "checkout-street-error" : undefined}
+                        className={fieldClass(Boolean(fieldErrors.street))}
                       />
+                      <FieldError id="checkout-street-error" message={fieldErrors.street} />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">PIN Code *</label>
+                        <label htmlFor="checkout-pincode" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">PIN Code *</label>
                         <input
+                          id="checkout-pincode"
                           type="text"
                           name="pincode"
                           maxLength={6}
                           value={formData.pincode}
                           onChange={handleInputChange}
                           placeholder="400001"
-                          className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none"
+                          autoComplete="postal-code"
+                          inputMode="numeric"
+                          pattern="\d{6}"
+                          title="Exactly 6 digits"
                           required
+                          aria-invalid={Boolean(fieldErrors.pincode)}
+                          aria-describedby={fieldErrors.pincode ? "checkout-pincode-error" : undefined}
+                          className={fieldClass(Boolean(fieldErrors.pincode))}
                         />
+                        <FieldError id="checkout-pincode-error" message={fieldErrors.pincode} />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">City *</label>
+                        <label htmlFor="checkout-city" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">City *</label>
                         <input
+                          id="checkout-city"
                           type="text"
                           name="city"
                           value={formData.city}
                           onChange={handleInputChange}
                           placeholder="Mumbai"
-                          className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none"
+                          autoComplete="address-level2"
                           required
+                          aria-invalid={Boolean(fieldErrors.city)}
+                          aria-describedby={fieldErrors.city ? "checkout-city-error" : undefined}
+                          className={fieldClass(Boolean(fieldErrors.city))}
                         />
+                        <FieldError id="checkout-city-error" message={fieldErrors.city} />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">State *</label>
+                        <label htmlFor="checkout-state" className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 mb-1 block">State *</label>
                         <select
+                          id="checkout-state"
                           name="state"
                           value={formData.state}
                           onChange={handleInputChange}
+                          autoComplete="address-level1"
                           className="w-full border border-y2k-gunmetal/25 px-4 py-3 text-sm focus:border-y2k-gunmetal outline-none bg-white"
                         >
                           {INDIAN_STATES.map((st) => (
@@ -462,21 +592,13 @@ function CheckoutContent() {
 
                     <div className="flex justify-end mt-4">
                       <button
-                        type="button"
-                        onClick={() => {
-                          if (!formData.fullName || !formData.phone || !formData.street || !formData.pincode || !formData.city) {
-                            setError("Please complete all address fields.");
-                            return;
-                          }
-                          setError("");
-                          setActiveStep(2);
-                        }}
+                        type="submit"
                         className="btn-bagify text-white px-8 py-3 text-xs font-bold uppercase tracking-wider hover:opacity-90"
                       >
-                        CONTINUE TO SHIPPING ›
+                        CONTINUE TO SHIPPING &rsaquo;
                       </button>
                     </div>
-                  </div>
+                  </form>
                 ) : (
                   <div className="text-xs text-y2k-gunmetal/80">
                     <p className="font-bold">{formData.fullName} ({formData.phone})</p>
