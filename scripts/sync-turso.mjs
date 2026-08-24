@@ -1,7 +1,6 @@
 import { createClient } from '@libsql/client';
 import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config();
 

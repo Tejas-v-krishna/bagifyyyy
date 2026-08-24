@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json().catch(() => ({}));
-    let { amount, currency = 'INR', receipt, notes } = body;
+    const { amount, currency = 'INR', receipt, notes } = body;
 
     // Validate amount
     if (amount === undefined || amount === null || typeof amount !== 'number' || isNaN(amount)) {

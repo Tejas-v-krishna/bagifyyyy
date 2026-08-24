@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('category')?.toLowerCase().trim();
     const filter = searchParams.get('filter')?.toLowerCase().trim();
 
-    let whereClause: any = {};
+    const whereClause: any = {};
 
     if (category && category !== 'all') {
       const normalizedCategories = Array.from(
