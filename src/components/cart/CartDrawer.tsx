@@ -18,10 +18,6 @@ export default function CartDrawer() {
     useCartStore();
   const { isAuthenticated } = useAuthStore();
 
-  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
-    return null;
-  }
-
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
   const [promoError, setPromoError] = useState("");
@@ -37,6 +33,10 @@ export default function CartDrawer() {
       setAppliedPromo(null);
     }
   };
+
+  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const subtotal = cartTotal();
   const discountAmount = appliedPromo ? Math.round(subtotal * appliedPromo.discount * 100) / 100 : 0;

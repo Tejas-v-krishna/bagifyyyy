@@ -19,10 +19,6 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
-    return null;
-  }
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -39,6 +35,10 @@ export default function Header() {
   }, [isMobileMenuOpen]);
 
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
+
+  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-y2k-ice/80 backdrop-blur-2xl border-b border-y2k-gunmetal/[0.06] font-sans">

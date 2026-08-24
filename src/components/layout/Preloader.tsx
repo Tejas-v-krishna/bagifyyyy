@@ -11,12 +11,16 @@ export default function Preloader() {
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
-
-  if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
-    return null;
-  }
+  const isDashboard = pathname?.startsWith("/studio") || pathname?.startsWith("/admin");
 
   useEffect(() => {
+    // Studio/admin never shows the storefront preloader, but downstream animations
+    // wait on this flag — so mark it finished immediately instead of gating on a timer.
+    if (isDashboard) {
+      setPreloaderFinished(true);
+      return;
+    }
+
     // Atmospheric brand reveal
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -24,7 +28,11 @@ export default function Preloader() {
     }, 2200);
 
     return () => clearTimeout(timer);
-  }, [setPreloaderFinished]);
+  }, [isDashboard, setPreloaderFinished]);
+
+  if (isDashboard) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
