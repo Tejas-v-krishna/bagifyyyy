@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isStudioAuthed } from '@/lib/requireStudioAuth';
+import { canonicalCategory } from '@/lib/categories';
 
 export async function POST(request: Request) {
   if (!(await isStudioAuthed())) {
@@ -15,7 +16,9 @@ export async function POST(request: Request) {
       data: {
         name,
         price,
-        category,
+        // Stored canonically so the storefront breadcrumb and the category
+        // route always agree. Clients have sent both "topwear" and "topwears".
+        category: canonicalCategory(category),
         description,
         isNew: isNew || false,
         isSoldOut: isSoldOut || false,

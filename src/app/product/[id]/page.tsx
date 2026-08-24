@@ -12,6 +12,7 @@ import NotifyMeSection from "@/components/product/NotifyMeSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import ReviewSection from "@/components/product/ReviewSection";
 import SizeGuideModal from "@/components/product/SizeGuideModal";
+import { categoryHref, categoryLabel } from "@/lib/categories";
 import { Heart, Ruler, Sparkles, ShoppingBag, ShieldCheck, Truck, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function ProductDetailPage() {
@@ -122,8 +123,8 @@ export default function ProductDetailPage() {
             <span>/</span>
             <Link href="/products" className="hover:text-y2k-gunmetal transition-colors">DROPS</Link>
             <span>/</span>
-            <Link href={`/${product.category?.toLowerCase() || "products"}`} className="hover:text-y2k-gunmetal transition-colors">
-              {product.category || "COLLECTION"}
+            <Link href={categoryHref(product.category)} className="hover:text-y2k-gunmetal transition-colors">
+              {categoryLabel(product.category)}
             </Link>
             <span>/</span>
             <span className="text-y2k-gunmetal/70 truncate max-w-[200px]">{product.name}</span>

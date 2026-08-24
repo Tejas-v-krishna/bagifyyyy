@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { canonicalCategory } from '@/lib/categories';
 
 export async function PATCH(
   request: Request,
@@ -8,12 +9,15 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, description, price, image, collectionTag, isNew, isSoldOut } = body;
+    const { name, description, price, image, collectionTag, isNew, isSoldOut, category } = body;
 
     const product = await prisma.product.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
+        // category was never read here, so changing a product's category in the
+        // studio returned 200 and changed nothing.
+        ...(category !== undefined && { category: canonicalCategory(category) }),
         ...(description !== undefined && { description }),
         ...(price !== undefined && { price: parseFloat(price) }),
         ...(collectionTag !== undefined && { brand: collectionTag }),

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { CATEGORIES } from "@/lib/categories";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -36,7 +37,7 @@ export default function StudioNewProduct() {
     price: "",
     comparePrice: "",
     collectionTag: "BAGIFYYYY",
-    category: "topwear",
+    category: CATEGORIES[0].slug,
     isNew: true,
     isSoldOut: false,
     isBestSeller: false,
@@ -262,11 +263,9 @@ export default function StudioNewProduct() {
                 onChange={handleChange}
                 className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
               >
-                <option value="topwear">Topwear / Shirts &amp; Tees</option>
-                <option value="bottomwear">Bottomwear / Pants &amp; Cargos</option>
-                <option value="accessories">Accessories</option>
-                <option value="footwear">Footwear</option>
-                <option value="unisex">Unisex</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+                ))}
               </select>
             </div>
 

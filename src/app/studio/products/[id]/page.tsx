@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { CATEGORIES, canonicalCategory } from "@/lib/categories";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -121,7 +122,7 @@ export default function StudioEditProduct() {
     comparePrice: "",
     brand: "",
     collectionTag: "BAGIFYYYY",
-    category: "topwear",
+    category: CATEGORIES[0].slug,
     isNew: false,
     isSoldOut: false,
     isBestSeller: false,
@@ -143,7 +144,7 @@ export default function StudioEditProduct() {
           comparePrice: estComparePrice,
           brand: data.brand || "BAGIFYYYY",
           collectionTag: data.collectionTag || data.brand || "BAGIFYYYY",
-          category: data.category || "topwear",
+          category: canonicalCategory(data.category) || CATEGORIES[0].slug,
           isNew: Boolean(data.isNew),
           isSoldOut: Boolean(data.isSoldOut),
           isBestSeller: Boolean(data.isBestSeller),
@@ -509,11 +510,9 @@ export default function StudioEditProduct() {
                   onChange={handleChange}
                   className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
                 >
-                  <option value="topwear">Topwear / Shirts &amp; Tees</option>
-                  <option value="bottomwear">Bottomwear / Pants &amp; Cargos</option>
-                  <option value="accessories">Accessories</option>
-                  <option value="footwear">Footwear</option>
-                  <option value="unisex">Unisex</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+                  ))}
                 </select>
               </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CATEGORIES } from "@/lib/categories";
 
 export default function ProductForm() {
   const router = useRouter();
@@ -58,10 +59,9 @@ export default function ProductForm() {
         <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Category</label>
         <select name="category" className="border border-border p-3 bg-transparent font-medium uppercase text-xs tracking-wider">
           <option value="accessories">Accessories</option>
-          <option value="topwear">Topwear</option>
-          <option value="bottomwear">Bottomwear</option>
-          <option value="footwear">Footwear</option>
-          <option value="unisex">Unisex</option>
+          {CATEGORIES.map((cat) => (
+            <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+          ))}
         </select>
       </div>
       

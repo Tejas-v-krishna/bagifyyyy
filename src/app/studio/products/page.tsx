@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { CATEGORIES, canonicalCategory } from "@/lib/categories";
 import { 
   Plus, 
   Search, 
@@ -135,7 +136,7 @@ export default function StudioProductsCatalogPage() {
       // Category filter
       const matchesCategory =
         selectedCategory === "ALL" ||
-        p.category?.toLowerCase() === selectedCategory.toLowerCase();
+        canonicalCategory(p.category) === canonicalCategory(selectedCategory);
 
       // Stock status filter
       const matchesStock =
@@ -240,11 +241,9 @@ export default function StudioProductsCatalogPage() {
               className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
             >
               <option value="ALL">All Categories</option>
-              <option value="topwear">Topwear / Shirts</option>
-              <option value="bottomwear">Bottomwear / Cargos</option>
-              <option value="accessories">Accessories</option>
-              <option value="footwear">Footwear</option>
-              <option value="unisex">Unisex</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+              ))}
             </select>
           </div>
 
