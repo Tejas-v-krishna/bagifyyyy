@@ -1,12 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-
-// Studio-auth guard helper
-async function isStudioAuthed(): Promise<boolean> {
-  const cookieStore = await cookies();
-  return cookieStore.get('studio-auth')?.value === 'authenticated';
-}
+import { isStudioAuthed } from '@/lib/requireStudioAuth';
 
 export async function POST(request: Request) {
   if (!(await isStudioAuthed())) {

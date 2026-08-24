@@ -1,22 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createHash } from 'crypto';
+import {
+  ADMIN_SESSION_COOKIE,
+  adminSessionCookieOptions,
+  createAdminSessionToken,
+  secretsMatch,
+} from '@/lib/adminSession';
 
 function hashPassword(password: string): string {
   return createHash('sha256').update(password + 'bagify-salt').digest('hex');
 }
 
-const ADMIN_EMAILS = [
-  (process.env.ADMIN_EMAIL || 'admin@bagifyyyy.com').toLowerCase(),
-  'admin@bagifyyyy.com',
-  'admin@bagify.com',
-];
-
-const ADMIN_PASSWORDS = [
-  process.env.ADMIN_PASSWORD || 'BagifyAdmin#2026',
-  'BagifyAdmin#2026',
-  'bagifyadmin',
-];
+/** The one configured admin identity. An email alone grants nothing. */
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@bagifyyyy.com').toLowerCase();
 
 // POST /api/auth/login
 export async function POST(request: Request) {
@@ -28,13 +25,33 @@ export async function POST(request: Request) {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const isAdminAttempt = ADMIN_EMAILS.includes(cleanEmail);
+    const isAdminAttempt = cleanEmail === ADMIN_EMAIL;
 
     // ── Dedicated Admin Login Path ──────────────────────────────────────────
     if (isAdminAttempt) {
-      const isPasswordCorrect = ADMIN_PASSWORDS.includes(password);
-      if (!isPasswordCorrect) {
+      // 'BagifyAdmin#2026' and 'bagifyadmin' used to be accepted in every
+      // deployment no matter what ADMIN_PASSWORD said, and both were committed
+      // to the repository.
+      const expectedPassword = process.env.ADMIN_PASSWORD;
+      if (!expectedPassword) {
+        console.error('Admin login attempted but ADMIN_PASSWORD is not set.');
+        return NextResponse.json(
+          { error: 'Admin access is not configured on this server.' },
+          { status: 503 }
+        );
+      }
+
+      if (!(await secretsMatch(password, expectedPassword))) {
         return NextResponse.json({ error: 'Incorrect admin password' }, { status: 401 });
+      }
+
+      const studioToken = await createAdminSessionToken();
+      if (!studioToken) {
+        console.error('Admin login attempted but AUTH_SECRET is missing or too short.');
+        return NextResponse.json(
+          { error: 'Admin access is not configured on this server.' },
+          { status: 503 }
+        );
       }
 
       // Upsert admin user in database so all foreign keys / user profile lookups succeed
@@ -68,14 +85,8 @@ export async function POST(request: Request) {
         path: '/',
       });
 
-      // Set studio admin authorization cookie (24 hours)
-      response.cookies.set('studio-auth', 'authenticated', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24,
-        path: '/',
-      });
+      // Signed studio session — see src/lib/adminSession.ts
+      response.cookies.set(ADMIN_SESSION_COOKIE, studioToken, adminSessionCookieOptions());
 
       return response;
     }
@@ -120,6 +131,6 @@ export async function POST(request: Request) {
 export async function DELETE() {
   const response = NextResponse.json({ success: true });
   response.cookies.set('user-session', '', { maxAge: 0, path: '/' });
-  response.cookies.set('studio-auth', '', { maxAge: 0, path: '/' });
+  response.cookies.set(ADMIN_SESSION_COOKIE, '', { maxAge: 0, path: '/' });
   return response;
 }

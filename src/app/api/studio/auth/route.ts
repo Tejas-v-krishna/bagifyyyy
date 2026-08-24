@@ -1,32 +1,57 @@
 import { NextResponse } from 'next/server';
-
-const VALID_ADMIN_PASSWORDS = [
-  process.env.ADMIN_PASSWORD || 'BagifyAdmin#2026',
-  'BagifyAdmin#2026',
-  'bagifyadmin',
-];
+import {
+  ADMIN_SESSION_COOKIE,
+  adminSessionCookieOptions,
+  createAdminSessionToken,
+  isAdminSessionConfigured,
+  secretsMatch,
+} from '@/lib/adminSession';
 
 export async function POST(request: Request) {
   try {
-    const { password } = await request.json();
+    const body = await request.json().catch(() => null);
+    const password = body && typeof body === 'object' ? (body as { password?: unknown }).password : null;
 
-    if (!password || !VALID_ADMIN_PASSWORDS.includes(password)) {
+    if (typeof password !== 'string' || !password) {
       return NextResponse.json({ error: 'Invalid admin password' }, { status: 401 });
     }
 
+    // The password used to be accepted from a hardcoded list — 'BagifyAdmin#2026'
+    // and 'bagifyadmin' were valid in every deployment regardless of what
+    // ADMIN_PASSWORD was set to, and both were sitting in the repository.
+    const expectedPassword = process.env.ADMIN_PASSWORD;
+    if (!expectedPassword) {
+      console.error('Studio login attempted but ADMIN_PASSWORD is not set.');
+      return NextResponse.json(
+        { error: 'Studio access is not configured on this server.' },
+        { status: 503 }
+      );
+    }
+    if (!isAdminSessionConfigured()) {
+      console.error('Studio login attempted but AUTH_SECRET is missing or too short.');
+      return NextResponse.json(
+        { error: 'Studio access is not configured on this server.' },
+        { status: 503 }
+      );
+    }
+
+    if (!(await secretsMatch(password, expectedPassword))) {
+      return NextResponse.json({ error: 'Invalid admin password' }, { status: 401 });
+    }
+
+    const token = await createAdminSessionToken();
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Studio access is not configured on this server.' },
+        { status: 503 }
+      );
+    }
+
     const response = NextResponse.json({ success: true });
-
-    // Set auth cookie — httpOnly so JS can't read it
-    response.cookies.set('studio-auth', 'authenticated', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24, // 24 hours
-      path: '/',
-    });
-
+    response.cookies.set(ADMIN_SESSION_COOKIE, token, adminSessionCookieOptions());
     return response;
-  } catch {
+  } catch (error) {
+    console.error('Studio auth error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

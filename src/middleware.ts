@@ -1,50 +1,45 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from '@/lib/adminSession';
 
-export function middleware(request: NextRequest) {
+/** Endpoints under the protected prefixes that must stay reachable to everyone. */
+const PUBLIC_PATHS = new Set([
+  '/studio/login',
+  '/api/studio/auth',
+  '/api/auth/login',
+  '/api/marketing/subscribe',
+]);
+
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Paths that require authentication
-  const isStudioRoute = path.startsWith('/studio');
-  const isAdminRoute = path.startsWith('/admin');
-  const isStudioApi = path.startsWith('/api/studio');
-  const isAdminApi = path.startsWith('/api/admin');
-  const isMarketingApi = path.startsWith('/api/marketing');
-  
-  // Public exceptions
-  if (path === '/studio/login' || path === '/api/studio/auth' || path === '/api/auth/login') {
+  if (PUBLIC_PATHS.has(path)) {
     return NextResponse.next();
   }
 
-  // Check for the studio authentication cookie
-  const studioAuthCookie = request.cookies.get('studio-auth')?.value;
-  const userSessionCookie = request.cookies.get('user-session')?.value;
-  
-  // In Bagify, admin access is sometimes governed by user-session with isAdmin=true in DB,
-  // but studio specifically sets `studio-auth`. Let's allow either for API routes.
-  const isStudioAuthenticated = studioAuthCookie === 'authenticated';
-  
-  if (isStudioRoute || isAdminRoute || isStudioApi || isAdminApi || isMarketingApi) {
-    // Exclude public marketing endpoints
-    if (path === '/api/marketing/subscribe') {
-      return NextResponse.next();
-    }
-    
-    if (!isStudioAuthenticated) {
-      if (isStudioRoute && !isStudioApi) {
-        // Redirect unauthenticated users to studio login
-        const loginUrl = new URL('/studio/login', request.url);
-        return NextResponse.redirect(loginUrl);
-      }
-      
-      return new NextResponse(
-        JSON.stringify({ error: 'Unauthorized. Authentication required.' }),
-        { status: 401, headers: { 'content-type': 'application/json' } }
-      );
-    }
+  // The gate used to be `cookie === 'authenticated'`, i.e. a constant any
+  // visitor could set for themselves. It is now a signature check against
+  // AUTH_SECRET, and it fails closed when that secret is missing.
+  const isStudioAuthenticated = await verifyAdminSessionToken(
+    request.cookies.get(ADMIN_SESSION_COOKIE)?.value
+  );
+
+  if (isStudioAuthenticated) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  const isApiRoute = path.startsWith('/api/');
+
+  if (!isApiRoute) {
+    const loginUrl = new URL('/studio/login', request.url);
+    loginUrl.searchParams.set('from', path);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.json(
+    { error: 'Unauthorized. Authentication required.' },
+    { status: 401 }
+  );
 }
 
 export const config = {
@@ -53,6 +48,6 @@ export const config = {
     '/admin/:path*',
     '/api/studio/:path*',
     '/api/admin/:path*',
-    '/api/marketing/:path*'
+    '/api/marketing/:path*',
   ],
 };
