@@ -2,27 +2,26 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import Razorpay from 'razorpay';
+import {
+  priceCart,
+  cartTotal,
+  assertValidShippingAddress,
+  assertValidContact,
+  CartError,
+} from '@/lib/cart';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { items, shippingAddress, customerEmail, customerPhone, shippingMethod, promoCode } = body;
 
-    // Validate promo code server-side
-    const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
-    const promoDiscount = promoCode && VALID_PROMO_CODES[promoCode.toUpperCase()] ? VALID_PROMO_CODES[promoCode.toUpperCase()] : 0;
-
-    if (!items || items.length === 0) {
-      return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
-    }
-
-    if (!shippingAddress || !shippingAddress.fullName || !shippingAddress.pincode || !shippingAddress.street) {
-      return NextResponse.json({ error: 'Complete shipping address is required' }, { status: 400 });
-    }
-
-    if (!customerEmail || !customerPhone) {
-      return NextResponse.json({ error: 'Email and phone number are required' }, { status: 400 });
-    }
+    // Every price, name and image below comes from the database — the request
+    // body only says which product/size/colour/quantity.
+    const address = assertValidShippingAddress(shippingAddress);
+    const contact = assertValidContact(customerEmail, customerPhone);
+    const cart = await priceCart({ items, shippingMethod, promoCode });
+    const totalAmount = cartTotal(cart);
+    const amountInPaise = Math.round(totalAmount * 100);
 
     // 1. Get logged in user if available
     const cookieStore = await cookies();
@@ -33,63 +32,17 @@ export async function POST(request: Request) {
       if (user) userId = user.id;
     }
 
-    // 2. Validate real prices from database
-    let subtotal = 0;
-    const validatedItems = [];
-
-    for (const item of items) {
-      const product = await prisma.product.findUnique({
-        where: { id: item.id },
-        include: { images: true },
-      });
-
-      const price = product ? product.price : item.price;
-      const name = product ? product.name : item.name;
-      const image = product?.images?.[0]?.url || item.image || '/placeholder.jpg';
-
-      subtotal += price * item.quantity;
-      validatedItems.push({
-        productId: item.id,
-        name,
-        price,
-        size: item.size || 'M',
-        color: item.color || 'Default',
-        quantity: item.quantity,
-        image,
-      });
-    }
-
-    // Calculate shipping
-    const shippingFee = shippingMethod === 'express' ? 99 : (subtotal >= 2000 ? 0 : 49);
-    const discountAmount = Math.round(subtotal * promoDiscount * 100) / 100;
-    const totalAmount = subtotal - discountAmount + shippingFee;
-    const amountInPaise = Math.round(totalAmount * 100);
-
     // Generate unique order number (e.g. BGF-58291)
     const orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
 
-    // 3. Create or save Address in DB
-    const savedAddress = await prisma.address.create({
-      data: {
-        userId,
-        fullName: shippingAddress.fullName,
-        phone: customerPhone,
-        street: shippingAddress.street,
-        city: shippingAddress.city || 'City',
-        state: shippingAddress.state || 'State',
-        pincode: shippingAddress.pincode,
-        country: shippingAddress.country || 'India',
-      },
-    });
-
-    // 4. Initialize Razorpay and create real Razorpay Order
+    // 2. Initialize Razorpay
     const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
     if (!keyId || !keySecret) {
       return NextResponse.json(
         { error: 'Razorpay credentials not configured on server' },
-        { status: 401 }
+        { status: 500 }
       );
     }
 
@@ -100,6 +53,21 @@ export async function POST(request: Request) {
       );
     }
 
+    // 3. Create or save Address in DB
+    const savedAddress = await prisma.address.create({
+      data: {
+        userId,
+        fullName: address.fullName,
+        phone: contact.phone,
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+        country: address.country,
+      },
+    });
+
+    // 4. Create the real Razorpay order
     const rzp = new Razorpay({
       key_id: keyId,
       key_secret: keySecret,
@@ -112,17 +80,17 @@ export async function POST(request: Request) {
         currency: 'INR',
         receipt: orderNumber,
         notes: {
-          customerEmail,
-          customerPhone,
+          customerEmail: contact.email,
+          customerPhone: contact.phone,
           orderNumber,
         },
       });
       razorpayOrderId = rzpOrder.id;
-    } catch (rzpError: any) {
+    } catch (rzpError) {
       console.error('Razorpay API order creation failed:', rzpError);
       return NextResponse.json(
-        { error: rzpError.error?.description || rzpError.message || 'Razorpay order creation failed' },
-        { status: 500 }
+        { error: 'Could not start payment with the payment provider. Please try again.' },
+        { status: 502 }
       );
     }
 
@@ -131,18 +99,18 @@ export async function POST(request: Request) {
       data: {
         orderNumber,
         userId,
-        customerEmail,
-        customerPhone,
+        customerEmail: contact.email,
+        customerPhone: contact.phone,
         totalAmount,
-        shippingAmount: shippingFee,
-        discountAmount,
+        shippingAmount: cart.shippingFee,
+        discountAmount: cart.discountAmount,
         paymentStatus: 'PENDING',
         orderStatus: 'PROCESSING',
         paymentMethod: 'RAZORPAY',
         razorpayOrderId,
         shippingAddressId: savedAddress.id,
         items: {
-          create: validatedItems.map((item) => ({
+          create: cart.items.map((item) => ({
             productId: item.productId,
             name: item.name,
             price: item.price,
@@ -169,13 +137,16 @@ export async function POST(request: Request) {
       currency: 'INR',
       keyId,
       customer: {
-        name: shippingAddress.fullName,
-        email: customerEmail,
-        phone: customerPhone,
+        name: address.fullName,
+        email: contact.email,
+        phone: contact.phone,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    if (error instanceof CartError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Error creating order:', error);
-    return NextResponse.json({ error: error.message || 'Failed to create order' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
   }
 }
