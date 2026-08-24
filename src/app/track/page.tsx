@@ -7,6 +7,7 @@ import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight, ArrowLef
 
 export default function TrackOrderPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [contact, setContact] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<any>(null);
   const [error, setError] = useState("");
@@ -24,7 +25,7 @@ export default function TrackOrderPage() {
       const res = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: searchQuery }),
+        body: JSON.stringify({ query: searchQuery, contact }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -77,22 +78,44 @@ export default function TrackOrderPage() {
             TRACK ARCHIVE DROP
           </h1>
           <p className="text-xs text-y2k-gunmetal/70 mb-5 max-w-sm mx-auto">
-            Enter your order number (e.g. 1001) or airway bill tracking ID.
+            Enter your order number (e.g. 1001) or airway bill tracking ID, plus the
+            email address or phone number you used at checkout.
           </p>
 
-          <form onSubmit={handleSearch} className="flex gap-2 max-w-md mx-auto">
-            <input
-              required
-              type="text"
-              placeholder="e.g. 1001 or BGF-TRACK-XXXX"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
-            />
+          <form onSubmit={handleSearch} className="max-w-md mx-auto space-y-2">
+            <div>
+              <label htmlFor="track-order" className="sr-only">
+                Order number or tracking ID
+              </label>
+              <input
+                required
+                id="track-order"
+                type="text"
+                placeholder="e.g. 1001 or BGF-TRACK-XXXX"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
+              />
+            </div>
+            <div>
+              <label htmlFor="track-contact" className="sr-only">
+                Email address or phone number used on the order
+              </label>
+              <input
+                required
+                id="track-contact"
+                type="text"
+                autoComplete="email"
+                placeholder="Email or phone used on the order"
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal font-mono"
+              />
+            </div>
             <button
               type="submit"
               disabled={loading}
-              className="btn-bagify px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="btn-bagify w-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Search className="w-3.5 h-3.5" />
               <span>{loading ? "Locating…" : "Track"}</span>
@@ -100,7 +123,10 @@ export default function TrackOrderPage() {
           </form>
 
           {error && (
-            <p className="text-xs font-bold text-red-600 bg-red-50 p-2.5 border border-red-200 mt-4 max-w-md mx-auto">
+            <p
+              role="alert"
+              className="text-xs font-bold text-red-600 bg-red-50 p-2.5 border border-red-200 mt-4 max-w-md mx-auto"
+            >
               {error}
             </p>
           )}

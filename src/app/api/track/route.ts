@@ -1,14 +1,62 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+/** Same wording whether the order is absent or simply not yours. */
+const NOT_FOUND = "No drop shipment found for that order and contact detail.";
+
+const digitsOnly = (value: string) => value.replace(/\D/g, "");
+
+function contactMatchesOrder(
+  supplied: string,
+  order: { customerEmail: string | null; customerPhone: string | null }
+): boolean {
+  const normalized = supplied.trim().toLowerCase();
+  if (!normalized) return false;
+
+  if (order.customerEmail && normalized === order.customerEmail.trim().toLowerCase()) {
+    return true;
+  }
+
+  const suppliedDigits = digitsOnly(normalized);
+  const orderDigits = order.customerPhone ? digitsOnly(order.customerPhone) : "";
+  if (suppliedDigits.length >= 10 && orderDigits.length >= 10) {
+    // Compare the last 10 digits so a country code on either side still matches.
+    return suppliedDigits.slice(-10) === orderDigits.slice(-10);
+  }
+
+  return false;
+}
+
 export async function POST(req: Request) {
   try {
-    const { query } = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
 
-    if (!query || typeof query !== "string" || !query.trim()) {
+    const { query, contact } = body as { query?: unknown; contact?: unknown };
+
+    if (typeof query !== "string" || !query.trim()) {
       return NextResponse.json({ error: "Order number or tracking ID required." }, { status: 400 });
+    }
+
+    const suppliedContact = typeof contact === "string" ? contact.trim() : "";
+
+    const cookieStore = await cookies();
+    const sessionUserId = cookieStore.get("user-session")?.value ?? "";
+
+    // Order numbers are five digits, so this used to be a walk from BGF-10000 to
+    // BGF-99999 that returned every customer's name, city and order contents.
+    // A second factor is now required, and it is demanded *before* the lookup so
+    // that the response cannot be used to test whether an order number exists.
+    if (!sessionUserId && !suppliedContact) {
+      return NextResponse.json(
+        { error: "Enter the email address or phone number used on the order." },
+        { status: 400 }
+      );
     }
 
     const cleanQuery = query.trim().replace(/^#/g, "");
@@ -35,7 +83,14 @@ export async function POST(req: Request) {
     });
 
     if (!order) {
-      return NextResponse.json({ error: "No drop shipment found for this order ID." }, { status: 404 });
+      return NextResponse.json({ error: NOT_FOUND }, { status: 404 });
+    }
+
+    const ownedBySession = Boolean(sessionUserId && order.userId === sessionUserId);
+    const authorized = ownedBySession || contactMatchesOrder(suppliedContact, order);
+
+    if (!authorized) {
+      return NextResponse.json({ error: NOT_FOUND }, { status: 404 });
     }
 
     return NextResponse.json({
