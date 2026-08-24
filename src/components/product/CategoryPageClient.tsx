@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from "react";
 import ProductCard, { Product } from "@/components/product/ProductCard";
 import { SlidersHorizontal, LayoutGrid, List, RotateCcw } from "lucide-react";
 
+const NO_PRODUCTS: Product[] = [];
+
 export default function CategoryPageClient({
   category,
   filter,
@@ -18,13 +20,27 @@ export default function CategoryPageClient({
   badge?: string;
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const [sortBy, setSortBy] = useState("Newest");
   const [sizeFilter, setSizeFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("All Prices");
   const [visibleCount, setVisibleCount] = useState(12);
+  const [reloadToken, setReloadToken] = useState(0);
+
+  // Each result is stamped with the query it belongs to, so `loading` is derived
+  // rather than set from inside the effect (which cascades an extra render), and
+  // a slow response for a previous query can never overwrite the current one.
+  const queryKey = `${category ?? ""}|${filter ?? ""}|${reloadToken}`;
+  const [result, setResult] = useState<{
+    key: string;
+    products: Product[];
+    failed: boolean;
+  } | null>(null);
+
+  const isCurrent = result?.key === queryKey;
+  const loading = !isCurrent;
+  const loadFailed = isCurrent && result.failed;
+  const products = isCurrent ? result.products : NO_PRODUCTS;
 
   useEffect(() => {
     let url = "/api/products";
@@ -34,18 +50,28 @@ export default function CategoryPageClient({
     const queryString = params.toString();
     if (queryString) url += `?${queryString}`;
 
-    setLoading(true);
-    fetch(url)
-      .then((res) => res.json())
+    const controller = new AbortController();
+
+    fetch(url, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
-        setProducts(data);
-        setLoading(false);
+        setResult({
+          key: queryKey,
+          products: Array.isArray(data) ? data : NO_PRODUCTS,
+          failed: false,
+        });
       })
       .catch((err) => {
+        if (err?.name === "AbortError") return;
         console.error("Error fetching products:", err);
-        setLoading(false);
+        setResult({ key: queryKey, products: NO_PRODUCTS, failed: true });
       });
-  }, [category, filter]);
+
+    return () => controller.abort();
+  }, [category, filter, queryKey]);
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
@@ -250,6 +276,22 @@ export default function CategoryPageClient({
                 <div className="h-2 bg-y2k-pale/25 w-1/3" />
               </div>
             ))}
+          </div>
+        ) : loadFailed ? (
+          <div className="flex flex-col items-center justify-center py-40 text-center" role="alert">
+            <div className="w-px h-16 bg-y2k-gunmetal/12 mb-12" aria-hidden="true" />
+            <h3 className="font-display text-3xl uppercase tracking-[-0.03em] mb-3 text-y2k-gunmetal">
+              Couldn&apos;t Load
+            </h3>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-y2k-gunmetal/40 mb-10">
+              Something went wrong reaching our catalogue. Check your connection and try again.
+            </p>
+            <button
+              onClick={() => setReloadToken((prev) => prev + 1)}
+              className="btn-bagify px-10 py-4 text-[10px] uppercase tracking-[0.2em] cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+            >
+              Try Again
+            </button>
           </div>
         ) : displayedProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-40 text-center">
