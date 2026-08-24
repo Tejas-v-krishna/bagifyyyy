@@ -37,8 +37,13 @@ export default function BundlesPage() {
   }, []);
 
   const handleAddBundle = (bundle: Bundle) => {
-    const available = bundle.products.filter((p) => !p.isSoldOut);
-    available.forEach((p) => {
+    // A set is priced as a whole, so it is added as a whole. Dropping the
+    // sold-out pieces and adding the rest used to charge full price for a
+    // partial set while the card still advertised the set discount.
+    if (bundle.products.some((p) => p.isSoldOut) || bundle.products.length === 0) return;
+
+    const bundleSize = new Set(bundle.products.map((p) => p.id)).size;
+    bundle.products.forEach((p) => {
       addItem({
         id: p.id,
         name: p.name,
@@ -47,6 +52,10 @@ export default function BundlesPage() {
         quantity: 1,
         size: "One Size",
         color: "Default",
+        bundleId: bundle.id,
+        bundleName: bundle.name,
+        bundleDiscount: bundle.discount,
+        bundleSize,
       });
     });
     setAddedId(bundle.id);
@@ -98,7 +107,10 @@ export default function BundlesPage() {
             {bundles.map((bundle, i) => {
               const coverImage = bundle.products[0]?.image || "/placeholder.jpg";
               const isAdded = addedId === bundle.id;
-              const isAllSoldOut = bundle.products.every((p) => p.isSoldOut);
+              // The set price only applies to a complete set, so one sold-out
+              // piece makes the whole set unbuyable.
+              const soldOutCount = bundle.products.filter((p) => p.isSoldOut).length;
+              const isUnavailable = soldOutCount > 0 || bundle.products.length === 0;
               const savings = bundle.originalTotal - bundle.bundlePrice;
 
               return (
@@ -149,7 +161,7 @@ export default function BundlesPage() {
                       }
                       return (
                         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 bg-black/10">
-                          {bundle.products.slice(0, 4).map((p, pIdx) => (
+                          {bundle.products.slice(0, 4).map((p) => (
                             <div key={p.id} className="relative w-full h-full overflow-hidden">
                                <Image src={p.image} alt={p.name} fill sizes="16vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
                             </div>
@@ -177,6 +189,7 @@ export default function BundlesPage() {
                       {/* Minimal product count */}
                       <p className="text-[9px] uppercase tracking-[0.2em] text-white/40 mb-4">
                         {bundle.products.length} {bundle.products.length === 1 ? "piece" : "pieces"} included
+                        {soldOutCount > 0 && ` · ${soldOutCount} sold out`}
                       </p>
 
                       {/* Pricing */}
@@ -197,11 +210,17 @@ export default function BundlesPage() {
                       {/* CTA */}
                       <button
                         onClick={() => handleAddBundle(bundle)}
-                        disabled={isAllSoldOut}
-                        aria-label={isAdded ? "Added to bag" : `Add ${bundle.name} to bag`}
+                        disabled={isUnavailable}
+                        aria-label={
+                          isUnavailable
+                            ? `${bundle.name} set is unavailable`
+                            : isAdded
+                              ? "Added to bag"
+                              : `Add ${bundle.name} set to bag for ₹${bundle.bundlePrice.toLocaleString("en-IN")}`
+                        }
                         className="w-full py-3.5 text-[9.5px] uppercase tracking-[0.22em] border border-white/25 text-white hover:bg-white hover:text-y2k-gunmetal transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
                       >
-                        {isAdded ? "✓ Added to Bag" : "Acquire Look"}
+                        {isUnavailable ? "Set Unavailable" : isAdded ? "✓ Added to Bag" : "Acquire Look"}
                       </button>
                     </div>
                   </div>

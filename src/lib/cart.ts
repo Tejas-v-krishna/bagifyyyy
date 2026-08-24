@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { computeBundleSavings, type BundleLine, type BundleSaving } from '@/lib/bundlePricing';
 
 /** Promo codes and their fractional discount. Server-side source of truth. */
 export const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
@@ -18,11 +19,19 @@ export type PricedItem = {
   color: string;
   quantity: number;
   image: string;
+  /** Set this line was added as part of, if any. */
+  bundleId: string | null;
 };
 
 export type PricedCart = {
   items: PricedItem[];
   subtotal: number;
+  /** Rupees off for complete curated sets, before any promo code. */
+  bundleDiscount: number;
+  bundleSavings: BundleSaving[];
+  /** Rupees off from the promo code, applied after the set discount. */
+  promoAmount: number;
+  /** Every discount combined. This is what gets written to Order.discountAmount. */
   discountAmount: number;
   shippingFee: number;
   promoCode: string | null;
@@ -125,33 +134,100 @@ export async function priceCart(options: {
       color,
       quantity,
       image: product.images?.[0]?.url || '/placeholder.jpg',
+      bundleId: typeof item.bundleId === 'string' && item.bundleId ? item.bundleId : null,
     });
   }
 
   subtotal = Math.round(subtotal * 100) / 100;
+
+  // Curated-set discounts. The client says only *which* set a line belongs to;
+  // the percentage and the set's membership are read back out of the database,
+  // so a tampered request cannot invent a discount or shrink a set to qualify.
+  const { total: bundleDiscount, bundleSavings } = await priceBundles(pricedItems);
+
+  const discountableSubtotal = Math.max(0, Math.round((subtotal - bundleDiscount) * 100) / 100);
 
   const normalizedPromo =
     typeof promoCode === 'string' && VALID_PROMO_CODES[promoCode.toUpperCase()]
       ? promoCode.toUpperCase()
       : null;
   const promoDiscount = normalizedPromo ? VALID_PROMO_CODES[normalizedPromo] : 0;
-  const discountAmount = Math.round(subtotal * promoDiscount * 100) / 100;
+  const promoAmount = Math.round(discountableSubtotal * promoDiscount * 100) / 100;
+  const discountAmount = Math.round((bundleDiscount + promoAmount) * 100) / 100;
 
+  // Free-shipping eligibility is judged on what the shopper actually pays for
+  // goods, not on the pre-discount subtotal.
   const shippingFee =
     (shippingMethod === 'express'
       ? EXPRESS_SHIPPING_FEE
-      : subtotal >= FREE_SHIPPING_THRESHOLD
+      : discountableSubtotal >= FREE_SHIPPING_THRESHOLD
         ? 0
         : STANDARD_SHIPPING_FEE) + (includeCodFee ? COD_HANDLING_FEE : 0);
 
   return {
     items: pricedItems,
     subtotal,
+    bundleDiscount,
+    bundleSavings,
+    promoAmount,
     discountAmount,
     shippingFee,
     promoCode: normalizedPromo,
     promoDiscount,
   };
+}
+
+/**
+ * Resolve the curated sets referenced by a bag and price them from the database.
+ *
+ * Every input to the discount maths comes from the `Bundle` row: the percentage
+ * off, and how many distinct products make a complete set. A line claiming to
+ * belong to a set it isn't actually in is dropped from the calculation rather
+ * than rejected, so a stale bag degrades to normal prices instead of erroring.
+ */
+async function priceBundles(
+  items: PricedItem[]
+): Promise<{ total: number; bundleSavings: BundleSaving[] }> {
+  const bundleIds = [...new Set(items.map((i) => i.bundleId).filter((id): id is string => Boolean(id)))];
+  if (bundleIds.length === 0) return { total: 0, bundleSavings: [] };
+
+  const bundles = await prisma.bundle.findMany({
+    where: { id: { in: bundleIds } },
+    include: { products: { select: { productId: true } } },
+  });
+
+  const byId = new Map(
+    bundles.map((bundle) => [
+      bundle.id,
+      {
+        name: bundle.name,
+        discount: bundle.discount,
+        memberIds: new Set(bundle.products.map((p) => p.productId)),
+        size: new Set(bundle.products.map((p) => p.productId)).size,
+      },
+    ])
+  );
+
+  const lines: BundleLine[] = [];
+  for (const item of items) {
+    if (!item.bundleId) continue;
+    const bundle = byId.get(item.bundleId);
+    // Unknown set, or a product that isn't actually in it: no set discount.
+    if (!bundle || !bundle.memberIds.has(item.productId)) continue;
+
+    lines.push({
+      productId: item.productId,
+      price: item.price,
+      quantity: item.quantity,
+      bundleId: item.bundleId,
+      bundleName: bundle.name,
+      bundleDiscount: bundle.discount,
+      bundleSize: bundle.size,
+    });
+  }
+
+  const { total, savings } = computeBundleSavings(lines);
+  return { total, bundleSavings: savings };
 }
 
 /** Total actually charged, rounded to paise and never negative. */

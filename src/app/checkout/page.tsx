@@ -43,7 +43,7 @@ const loadRazorpayScript = (): Promise<boolean> => {
 
 function CheckoutContent() {
   const router = useRouter();
-  const { items, cartTotal, updateQuantity, removeItem, clearCart } = useCartStore();
+  const { items, cartSubtotal, bundleDiscount, cartTotal, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user, isAuthenticated, openAuthModal } = useAuthStore();
   const searchParams = useSearchParams();
   const [checkoutMode, setCheckoutMode] = useState<'select' | 'guest' | 'account'>(isAuthenticated ? 'account' : 'select');
@@ -111,6 +111,11 @@ function CheckoutContent() {
     loadRazorpayScript();
   }, []);
 
+  // Mirrors priceCart() in src/lib/cart.ts exactly: set discounts come off
+  // first, then the promo code applies to what's left, and free shipping is
+  // judged on that same post-discount figure. The server re-derives all of it.
+  const subtotal = cartSubtotal();
+  const setDiscount = bundleDiscount();
   const total = cartTotal();
   const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
   const codFee = paymentMethod === 'cod' ? 49 : 0;
@@ -716,8 +721,14 @@ function CheckoutContent() {
             <div className="flex flex-col gap-2.5 text-xs border-t border-y2k-gunmetal/15 pt-4">
               <div className="flex justify-between items-center text-y2k-gunmetal/70">
                 <span>Items Subtotal:</span>
-                <span className="font-bold font-semibold">₹{total.toFixed(2)}</span>
+                <span className="font-bold font-semibold">₹{subtotal.toFixed(2)}</span>
               </div>
+              {setDiscount > 0 && (
+                <div className="flex justify-between items-center text-y2k-gunmetal font-bold">
+                  <span>Curated Set Discount:</span>
+                  <span>−₹{setDiscount.toFixed(2)}</span>
+                </div>
+              )}
               {discountAmount > 0 && (
                 <div className="flex justify-between items-center text-y2k-gunmetal font-bold">
                   <span>Promo ({appliedPromo!.code}):</span>

@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation";
 
 export default function CartDrawer() {
   const pathname = usePathname();
-  const { isOpen, closeCart, items, removeItem, updateQuantity, cartTotal } =
+  const { isOpen, closeCart, items, removeItem, updateQuantity, cartSubtotal, bundleDiscount, cartTotal } =
     useCartStore();
   const { isAuthenticated } = useAuthStore();
 
@@ -38,9 +38,14 @@ export default function CartDrawer() {
     return null;
   }
 
-  const subtotal = cartTotal();
-  const discountAmount = appliedPromo ? Math.round(subtotal * appliedPromo.discount * 100) / 100 : 0;
-  const finalTotal = subtotal - discountAmount;
+  // Set discounts come off before the promo code, matching priceCart() on the
+  // server. `goodsTotal` is what the shopper actually pays for the items, so it
+  // is also what the free-shipping progress bar measures against.
+  const subtotal = cartSubtotal();
+  const setDiscount = bundleDiscount();
+  const goodsTotal = cartTotal();
+  const discountAmount = appliedPromo ? Math.round(goodsTotal * appliedPromo.discount * 100) / 100 : 0;
+  const finalTotal = goodsTotal - discountAmount;
 
   return (
     <AnimatePresence>
@@ -142,6 +147,11 @@ export default function CartDrawer() {
                               <p className="text-[9.5px] uppercase tracking-[0.12em] text-y2k-gunmetal/45 mt-1.5">
                                 {item.color} / {item.size}
                               </p>
+                              {item.bundleName && (
+                                <p className="text-[9px] uppercase tracking-[0.16em] text-green-700 mt-1.5">
+                                  Part of {item.bundleName}
+                                </p>
+                              )}
                             </div>
 
                             <div className="flex items-center justify-between mt-3">
@@ -209,14 +219,14 @@ export default function CartDrawer() {
                 {/* Free Shipping Progress */}
                 <div className="space-y-2">
                   <p className="font-bold text-[9.5px] uppercase tracking-[0.18em] text-center text-y2k-gunmetal/60">
-                    {subtotal >= 2000
+                    {goodsTotal >= 2000
                       ? "Free shipping unlocked ✓"
-                      : `₹${(2000 - subtotal).toFixed(0)} away from free shipping`}
+                      : `₹${(2000 - goodsTotal).toFixed(0)} away from free shipping`}
                   </p>
                   <div className="bg-y2k-gunmetal/[0.08] h-[1px] w-full">
                     <div
                       className="bg-y2k-gunmetal h-[1px] transition-all duration-500"
-                      style={{ width: `${Math.min((subtotal / 2000) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((goodsTotal / 2000) * 100, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -266,6 +276,12 @@ export default function CartDrawer() {
                     <span>Subtotal</span>
                     <span>₹{subtotal.toFixed(0)}</span>
                   </div>
+                  {setDiscount > 0 && (
+                    <div className="font-bold flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-green-700">
+                      <span>Curated Set Discount</span>
+                      <span>−₹{setDiscount.toFixed(0)}</span>
+                    </div>
+                  )}
                   {discountAmount > 0 && (
                     <div className="font-bold flex justify-between items-center text-[10.5px] uppercase tracking-[0.12em] text-green-700">
                       <span>Promo ({appliedPromo!.code})</span>
