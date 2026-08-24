@@ -53,21 +53,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Create or save Address in DB
-    const savedAddress = await prisma.address.create({
-      data: {
-        userId,
-        fullName: address.fullName,
-        phone: contact.phone,
-        street: address.street,
-        city: address.city,
-        state: address.state,
-        pincode: address.pincode,
-        country: address.country,
-      },
-    });
-
-    // 4. Create the real Razorpay order
+    // 3. Create the Razorpay order first. Nothing is written to our database
+    // until the payment provider has accepted the order, so a provider failure
+    // no longer leaves an orphan address row behind.
     const rzp = new Razorpay({
       key_id: keyId,
       key_secret: keySecret,
@@ -87,12 +75,46 @@ export async function POST(request: Request) {
       });
       razorpayOrderId = rzpOrder.id;
     } catch (rzpError) {
-      console.error('Razorpay API order creation failed:', rzpError);
+      const statusCode = (rzpError as { statusCode?: number })?.statusCode;
+      const description = (rzpError as { error?: { description?: string } })?.error?.description;
+
+      // Razorpay answers a mismatched key_id/key_secret pair with a 401 and the
+      // description "Authentication failed". That used to be forwarded verbatim
+      // to the shopper, who had no way to know it meant *our* keys were wrong.
+      if (statusCode === 401 || description === 'Authentication failed') {
+        console.error(
+          `RAZORPAY CREDENTIALS REJECTED. key_id "${keyId}" was not accepted with the ` +
+            'configured RAZORPAY_KEY_SECRET. Both values must come from the same ' +
+            'Razorpay account and the same mode (test keys start rzp_test_, live keys ' +
+            'rzp_live_). Check the environment of the running server, not just .env.',
+          rzpError
+        );
+        return NextResponse.json(
+          { error: 'Payments are temporarily unavailable. Please try again shortly or contact us.' },
+          { status: 500 }
+        );
+      }
+
+      console.error('Razorpay API order creation failed:', description ?? rzpError);
       return NextResponse.json(
         { error: 'Could not start payment with the payment provider. Please try again.' },
         { status: 502 }
       );
     }
+
+    // 4. Persist the address now that the provider has accepted the order
+    const savedAddress = await prisma.address.create({
+      data: {
+        userId,
+        fullName: address.fullName,
+        phone: contact.phone,
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+        country: address.country,
+      },
+    });
 
     // 5. Create Order record in DB (PENDING)
     const order = await prisma.order.create({
