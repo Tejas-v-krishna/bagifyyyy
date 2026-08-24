@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, ChevronRight, Printer, Layers } from "lucide-react";
 import ShippingLabelModal from "./orders/ShippingLabelModal";
+import { countsAsRevenue, orderStatusLabel } from "@/lib/orderStatus";
 
 interface Product {
   id: string;
@@ -177,8 +178,11 @@ export default function StudioDashboard() {
         categories[p.category] = (categories[p.category] || 0) + 1;
       });
 
+      // Card orders count once the money is captured, cash on delivery counts
+      // until it is cancelled. The old test was "paid OR not cancelled", which
+      // booked every abandoned payment sheet as revenue.
       const totalRevenue = fetchedOrders
-        .filter((o) => o.paymentStatus === "PAID" || o.orderStatus !== "CANCELLED")
+        .filter(countsAsRevenue)
         .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
       const pendingOrders = fetchedOrders.filter(
@@ -378,7 +382,7 @@ export default function StudioDashboard() {
                       ₹{order.totalAmount?.toLocaleString("en-IN")}
                     </p>
                     <span className="text-[8px] font-bold uppercase px-2 py-0.5 inline-block mt-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal">
-                      {order.orderStatus}
+                      {orderStatusLabel(order.orderStatus)}
                     </span>
                   </div>
 

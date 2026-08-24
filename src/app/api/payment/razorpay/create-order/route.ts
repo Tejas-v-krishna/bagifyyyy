@@ -9,6 +9,7 @@ import {
   assertValidContact,
   CartError,
 } from '@/lib/cart';
+import { AWAITING_PAYMENT } from '@/lib/orderStatus';
 
 export async function POST(request: Request) {
   try {
@@ -116,7 +117,10 @@ export async function POST(request: Request) {
       },
     });
 
-    // 5. Create Order record in DB (PENDING)
+    // 5. Create Order record in DB. It stays AWAITING_PAYMENT until the receipt
+    // is verified, so a shopper who closes the payment sheet does not leave
+    // behind a row that looks like a real order to them, to the tracking page
+    // or to the studio's fulfilment queue.
     const order = await prisma.order.create({
       data: {
         orderNumber,
@@ -127,7 +131,7 @@ export async function POST(request: Request) {
         shippingAmount: cart.shippingFee,
         discountAmount: cart.discountAmount,
         paymentStatus: 'PENDING',
-        orderStatus: 'PROCESSING',
+        orderStatus: AWAITING_PAYMENT,
         paymentMethod: 'RAZORPAY',
         razorpayOrderId,
         shippingAddressId: savedAddress.id,

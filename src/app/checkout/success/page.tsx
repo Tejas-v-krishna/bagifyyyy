@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useSearchParams } from "next/navigation";
 import { Check, Truck, Package, ArrowRight, Sparkles, MapPin, Loader2, AlertCircle } from "lucide-react";
 import Image from "next/image";
+import { isAwaitingPayment, orderStatusLabel } from "@/lib/orderStatus";
 
 type OrderItem = {
   id: string;
@@ -48,13 +49,6 @@ type Order = {
 const money = (value: number) =>
   value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const STATUS_LABEL: Record<string, string> = {
-  PROCESSING: "Processing at hub",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};
-
 function SuccessContent() {
   const clearCart = useCartStore((state) => state.clearCart);
   const searchParams = useSearchParams();
@@ -85,10 +79,11 @@ function SuccessContent() {
         if (res.ok && data.order) {
           setOrder(data.order);
           setStatus("loaded");
-          // Only empty the bag once the order is confirmed to exist. Clearing
-          // it unconditionally threw away a shopper's cart if they ever landed
-          // here with a bad link.
-          clearCart();
+          // Only empty the bag once the order is confirmed to exist and to have
+          // been paid for. Clearing it unconditionally threw away a shopper's
+          // cart if they ever landed here with a bad link, or with a checkout
+          // whose payment never went through and which they may want to retry.
+          if (!isAwaitingPayment(data.order)) clearCart();
         } else {
           setStatus(res.status === 404 ? "missing" : "failed");
         }
@@ -170,6 +165,53 @@ function SuccessContent() {
 
   const isCod = order.paymentMethod === "COD";
   const isPaid = order.paymentStatus === "PAID";
+
+  // A card checkout that was never verified is not a confirmation. Reaching this
+  // URL with one (a browser back button after closing the payment sheet, a
+  // bookmarked link) used to print "Payment Successful" over an unpaid order.
+  if (isAwaitingPayment(order)) {
+    return (
+      <div className="bg-y2k-ice min-h-[70vh] flex items-center justify-center px-4 py-20 text-y2k-gunmetal">
+        <div className="bg-white border border-y2k-gunmetal/15 max-w-[520px] w-full p-8 sm:p-10 text-center">
+          <div className="w-12 h-12 bg-y2k-ice border border-y2k-gunmetal/10 rounded-full flex items-center justify-center mx-auto mb-5">
+            <AlertCircle strokeWidth={2} className="w-5 h-5" aria-hidden="true" />
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl uppercase tracking-[-0.03em] mb-3">
+            Payment Not Completed
+          </h1>
+          <p className="text-xs sm:text-sm text-y2k-gunmetal/75 leading-relaxed mb-2">
+            Order #{order.orderNumber} was started but we never received the payment, so
+            nothing has been charged and nothing has been dispatched.
+          </p>
+          <p className="text-xs sm:text-sm text-y2k-gunmetal/75 leading-relaxed mb-7">
+            Your bag is still saved. You can pick up where you left off.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/checkout"
+              className="flex-1 btn-bagify text-white py-3.5 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity"
+            >
+              Back to Checkout
+            </Link>
+            <Link
+              href="/products"
+              className="flex-1 bg-white border border-y2k-gunmetal/15 hover:border-y2k-gunmetal text-y2k-gunmetal py-3.5 text-xs font-bold uppercase tracking-wider hover:bg-black/[0.02] transition-colors"
+            >
+              Keep Browsing
+            </Link>
+          </div>
+          <p className="text-[11px] text-y2k-slate mt-7">
+            If your bank shows a charge for this order, email{" "}
+            <a href="mailto:support@bagifyyyy.com" className="underline font-bold text-y2k-gunmetal">
+              support@bagifyyyy.com
+            </a>{" "}
+            with order #{order.orderNumber} and we will sort it out.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const itemsSubtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   // Points are awarded when a Razorpay payment is verified. COD orders do not
   // earn them, so the banner only appears when the points genuinely exist.
@@ -317,7 +359,7 @@ function SuccessContent() {
                     <p className="text-y2k-gunmetal/75">
                       Status:{" "}
                       <strong className="font-bold text-y2k-gunmetal">
-                        {STATUS_LABEL[order.orderStatus] ?? order.orderStatus}
+                        {orderStatusLabel(order.orderStatus)}
                       </strong>
                     </p>
                     <p className="text-y2k-gunmetal/75 mt-1">

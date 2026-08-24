@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { isAwaitingPayment } from "@/lib/orderStatus";
 
 export const dynamic = "force-dynamic";
 
@@ -91,6 +92,20 @@ export async function POST(req: Request) {
 
     if (!authorized) {
       return NextResponse.json({ error: NOT_FOUND }, { status: 404 });
+    }
+
+    // A checkout whose payment never completed has no shipment to track. Saying
+    // so plainly beats drawing a fulfilment timeline over an order that was
+    // never paid for, and beats the flat "not found" that made shoppers think
+    // their money had gone somewhere unaccounted for.
+    if (isAwaitingPayment(order)) {
+      return NextResponse.json(
+        {
+          error:
+            "That checkout was never completed, so there is no shipment yet. If you were charged, contact support@bagifyyyy.com with your order number.",
+        },
+        { status: 409 }
+      );
     }
 
     return NextResponse.json({

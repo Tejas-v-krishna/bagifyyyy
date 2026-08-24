@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { AWAITING_PAYMENT } from '@/lib/orderStatus';
 
 export async function GET() {
   try {
@@ -25,6 +26,9 @@ export async function GET() {
           { userId: user.id },
           { customerEmail: user.email },
         ],
+        // A checkout that never got past the payment sheet is not something the
+        // shopper committed to, so it is not listed as one of their orders.
+        NOT: { orderStatus: AWAITING_PAYMENT },
       },
       include: {
         items: true,

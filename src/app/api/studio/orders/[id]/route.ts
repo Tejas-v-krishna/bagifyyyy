@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isStudioAuthed } from '@/lib/requireStudioAuth';
+import { ORDER_STATUSES } from '@/lib/orderStatus';
 
 export async function PATCH(
   request: Request,
@@ -15,7 +16,7 @@ export async function PATCH(
     const body = await request.json();
     const { orderStatus, trackingId } = body;
 
-    const VALID_STATUSES = ['PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+    const VALID_STATUSES: readonly string[] = ORDER_STATUSES;
     if (orderStatus && !VALID_STATUSES.includes(orderStatus)) {
       return NextResponse.json({ error: 'Invalid order status' }, { status: 400 });
     }

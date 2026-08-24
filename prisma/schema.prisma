@@ -136,7 +136,7 @@ model Order {
   shippingAmount    Float       @default(0)
   discountAmount    Float       @default(0)
   paymentStatus     String      @default("PENDING") // PENDING, PAID, FAILED
-  orderStatus       String      @default("PROCESSING") // PROCESSING, SHIPPED, DELIVERED, CANCELLED
+  orderStatus       String      @default("PROCESSING") // AWAITING_PAYMENT, PROCESSING, SHIPPED, DELIVERED, CANCELLED
   paymentMethod     String      // RAZORPAY, COD
   razorpayOrderId   String?     @unique
   paymentId         String?

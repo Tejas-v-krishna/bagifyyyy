@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Search, ChevronDown, Package, Truck, CheckCircle2, XCircle, Clock, RefreshCw, Printer, ShieldCheck } from "lucide-react";
 import ShippingLabelModal from "./ShippingLabelModal";
+import { AWAITING_PAYMENT, ORDER_STATUSES, orderStatusLabel } from "@/lib/orderStatus";
 
 type OrderItem = {
   id: string;
@@ -40,7 +41,9 @@ type Order = {
   shippingAddress: ShippingAddress;
 };
 
-const FILTER_TABS = ["ALL", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+// Started-but-unpaid checkouts get their own tab rather than sitting inside
+// PROCESSING, where they read as orders waiting to be packed.
+const FILTER_TABS = ["ALL", ...ORDER_STATUSES];
 
 export default function StudioOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -203,7 +206,9 @@ export default function StudioOrdersPage() {
                   : "border-transparent text-y2k-gunmetal/60 hover:text-black hover:bg-white/50"
               }`}
             >
-              {tab === "ALL" ? `All (${orders.length})` : `${tab} (${orders.filter((o) => o.orderStatus === tab).length})`}
+              {tab === "ALL"
+                ? `All (${orders.length})`
+                : `${orderStatusLabel(tab)} (${orders.filter((o) => o.orderStatus === tab).length})`}
             </button>
           ))}
         </div>
@@ -278,8 +283,14 @@ export default function StudioOrdersPage() {
                         <p className="font-bold font-display font-medium text-base text-y2k-gunmetal">
                           ₹{order.totalAmount?.toLocaleString("en-IN")}
                         </p>
-                        <span className="text-[8px] font-bold uppercase px-2.5 py-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal block mt-0.5">
-                          {order.orderStatus}
+                        <span
+                          className={`text-[8px] font-bold uppercase px-2.5 py-0.5 border block mt-0.5 ${
+                            order.orderStatus === AWAITING_PAYMENT
+                              ? "border-red-300 bg-red-50 text-red-700"
+                              : "border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal"
+                          }`}
+                        >
+                          {orderStatusLabel(order.orderStatus)}
                         </span>
                       </div>
 
@@ -368,10 +379,15 @@ export default function StudioOrdersPage() {
                               }
                               className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
                             >
-                              <option value="PROCESSING">PROCESSING</option>
-                              <option value="SHIPPED">SHIPPED</option>
-                              <option value="DELIVERED">DELIVERED</option>
-                              <option value="CANCELLED">CANCELLED</option>
+                              {/* AWAITING_PAYMENT has to be listed or an unpaid
+                                  order's select would fall back to showing
+                                  PROCESSING, and one Save click would promote a
+                                  checkout nobody paid for into the queue. */}
+                              {ORDER_STATUSES.map((status) => (
+                                <option key={status} value={status}>
+                                  {orderStatusLabel(status).toUpperCase()}
+                                </option>
+                              ))}
                             </select>
                           </div>
 

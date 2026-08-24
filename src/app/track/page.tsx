@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight, ArrowLeft } from "lucide-react";
+import { orderStatusLabel } from "@/lib/orderStatus";
 
 export default function TrackOrderPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +58,10 @@ export default function TrackOrderPage() {
     const s = status.toUpperCase();
     if (s === "DELIVERED") return 3;
     if (s === "SHIPPED") return 2;
-    return 1; // PROCESSING
+    if (s === "PROCESSING") return 1;
+    // Anything else (cancelled, awaiting payment) has not reached the hub, so
+    // no step past CONFIRMED is lit. This used to fall through to PROCESSING.
+    return 0;
   };
 
   return (
@@ -155,7 +159,7 @@ export default function TrackOrderPage() {
               </div>
 
               <span className="text-[9px] font-bold uppercase px-3 py-1 bg-y2k-gunmetal text-white">
-                {order.orderStatus}
+                {orderStatusLabel(order.orderStatus)}
               </span>
             </div>
 

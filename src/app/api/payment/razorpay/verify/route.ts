@@ -91,9 +91,11 @@ export async function POST(request: Request) {
     if (!isSignatureValid) {
       // Only reachable now that the receipt is already proven to belong to this
       // order, so this can no longer be used to mark someone else's order FAILED.
+      // The order status moves off AWAITING_PAYMENT too, so a rejected receipt
+      // does not leave the row sitting in the studio as still-open.
       await prisma.order.update({
         where: { id: orderId },
-        data: { paymentStatus: 'FAILED' },
+        data: { paymentStatus: 'FAILED', orderStatus: 'CANCELLED' },
       });
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
     }
@@ -141,7 +143,9 @@ export async function POST(request: Request) {
     }
 
     // 5. Mark Order as PAID — conditionally, so two concurrent verifications
-    // cannot both proceed to bank points and stock.
+    // cannot both proceed to bank points and stock. This is also the moment the
+    // order stops being a started-but-unpaid checkout and joins the fulfilment
+    // queue as PROCESSING.
     const claimed = await prisma.order.updateMany({
       where: { id: orderId, paymentStatus: 'PENDING' },
       data: {

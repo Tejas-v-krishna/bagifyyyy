@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { orderStatusLabel } from "@/lib/orderStatus";
 
 export default function AccountPage() {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -434,7 +435,7 @@ export default function AccountPage() {
 
                         <div className="flex items-center gap-2">
                           <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/15 bg-y2k-ice text-y2k-gunmetal">
-                            {ord.orderStatus}
+                            {orderStatusLabel(ord.orderStatus)}
                           </span>
 
                           {ord.trackingId && (
