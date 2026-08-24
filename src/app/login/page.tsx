@@ -65,35 +65,29 @@ function LoginContent() {
     }
   };
 
-  // Google Sign-In
-  const handleGoogleSuccess = async (tokenResponse: any) => {
+  // Google Sign-In. The popup flow hands back an `access_token`; One Tap hands
+  // back a `credential` (ID token). Either is forwarded verbatim to the server.
+  const handleGoogleSuccess = async (
+    tokenResponse: { access_token?: string; credential?: string }
+  ) => {
     try {
       setGoogleLoading(true);
       setError("");
 
       let res;
-      if (tokenResponse.access_token) {
-        const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const googleUser = await userInfoRes.json();
-
-        res = await fetch("/api/auth/google", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            simulatedUser: {
-              email: googleUser.email,
-              name: googleUser.name || googleUser.given_name,
-              avatar: googleUser.picture,
-            },
-          }),
-        });
-      } else if (tokenResponse.credential) {
+      if (tokenResponse.credential) {
         res = await fetch("/api/auth/google", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ credential: tokenResponse.credential }),
+        });
+      } else if (tokenResponse.access_token) {
+        // Send the raw token — the server exchanges it with Google itself, so the
+        // browser never gets to assert which account is signing in.
+        res = await fetch("/api/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accessToken: tokenResponse.access_token }),
         });
       } else {
         throw new Error("No Google token received");
@@ -110,9 +104,13 @@ function LoginContent() {
       setTimeout(() => {
         router.push(from);
       }, 800);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Google Auth error:", err);
-      setError(err.message || "Google authentication failed. Please try again.");
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Google authentication failed. Please try again."
+      );
     } finally {
       setGoogleLoading(false);
     }
