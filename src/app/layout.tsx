@@ -78,9 +78,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: "add-your-google-site-verification-here", // Placeholder for GSC
-  },
+  // Set GOOGLE_SITE_VERIFICATION to the token from Search Console. Left unset,
+  // the tag is omitted rather than shipping a placeholder token on every page.
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 import Header from "@/components/layout/Header";
@@ -96,6 +98,8 @@ import PageTransitionProvider from "@/components/ui/PageTransitionProvider";
 import SmoothCursor from "@/components/ui/SmoothCursor";
 
 import GoogleAuthProvider from "@/components/auth/GoogleAuthProvider";
+import JsonLd from "@/components/seo/JsonLd";
+import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
 export default function RootLayout({
   children,
@@ -110,6 +114,9 @@ export default function RootLayout({
     >
       <head>
         <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/88f10bf18a36407ef36bf30bc25a3618?family=SuisseIntl-Regular" />
+        {/* Ties the brand-name searches (BAGIFYYYY / Bagify / Bagifyy) to one entity. */}
+        <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={webSiteJsonLd()} />
       </head>
       <body
         className="min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"

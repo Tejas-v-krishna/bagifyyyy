@@ -123,29 +123,34 @@ export default function Header() {
             <Heart className="w-[17px] h-[17px]" strokeWidth={1.5} />
           </Link>
 
-          {isAuthenticated ? (
+          {/* User Auth: Profile when logged in, Sign In / Sign Up button when logged out */}
+          {mounted && isAuthenticated ? (
             <Link
               href="/account"
-              className="flex items-center gap-2 text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
+              className="flex items-center gap-2 text-y2k-gunmetal/70 hover:text-y2k-gunmetal transition-colors duration-300 group"
               aria-label="Account"
             >
               {user?.avatar ? (
                 <img
                   src={user.avatar}
                   alt={user.name || "User"}
-                  className="w-5 h-5 rounded-full object-cover border border-y2k-gunmetal/15"
+                  className="w-5 h-5 rounded-full object-cover border border-y2k-gunmetal/20 group-hover:border-y2k-gunmetal transition-colors"
                 />
               ) : (
                 <User className="w-[17px] h-[17px]" strokeWidth={1.5} />
               )}
+              <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] hidden xl:inline max-w-[100px] truncate">
+                {user?.name?.split(" ")[0] || "Account"}
+              </span>
             </Link>
           ) : (
             <Link
               href="/login"
-              className="text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
-              aria-label="Account"
+              className="btn-bagify text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.14em] px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-sm hover:opacity-95 text-[#F8F5E9]"
+              aria-label="Sign In / Sign Up"
             >
-              <User className="w-[17px] h-[17px]" strokeWidth={1.5} />
+              <User className="w-3 h-3 opacity-80" strokeWidth={2} />
+              <span>Sign In / Sign Up</span>
             </Link>
           )}
 
@@ -334,7 +339,7 @@ export default function Header() {
                         className="btn-bagify flex items-center justify-center w-full py-4 text-[10.5px] uppercase tracking-[0.18em] gap-2"
                       >
                         <User className="w-4 h-4" />
-                        <span>Sign In / Passport</span>
+                        <span>Sign In / Sign Up</span>
                       </Link>
                     )}
                   </div>

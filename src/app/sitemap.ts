@@ -1,25 +1,37 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { SITE_URL } from "@/lib/seo";
 
+/**
+ * Only canonical, self-resolving URLs belong here. Routes that just `redirect()`
+ * used to be listed (`/new-arrivals`, `/curated-grails`), which Search Console
+ * reports as "Page with redirect" and declines to index — those two are now real
+ * listing pages, and the remaining redirect stubs (`/footwears`, `/top-picks`)
+ * stay out of the sitemap deliberately.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.in";
+  const baseUrl = SITE_URL;
 
-  // Static core routes
   const staticRoutes: MetadataRoute.Sitemap = [
     "",
     "/products",
     "/topwears",
     "/bottomwears",
+    "/unisex",
     "/accessories",
     "/bundles",
     "/new-arrivals",
     "/curated-grails",
+    "/about",
+    "/contact",
+    "/track",
     "/shipping",
     "/customer-service",
     "/faq",
     "/size-guide",
     "/terms",
     "/privacy-policy",
+    "/right-of-withdrawal",
     "/traceability",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
@@ -29,7 +41,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    // Dynamic products
     const products = await prisma.product.findMany({
       select: { id: true, updatedAt: true },
       take: 1000,

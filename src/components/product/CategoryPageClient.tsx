@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import ProductCard, { Product } from "@/components/product/ProductCard";
 import { SlidersHorizontal, LayoutGrid, List, RotateCcw } from "lucide-react";
 
@@ -21,6 +22,11 @@ export default function CategoryPageClient({
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  // The search overlay's "view all results" link lands here as ?q=…, so the
+  // full catalogue can be filtered to the same term the dropdown previewed.
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q")?.trim() ?? "";
+
   const [sortBy, setSortBy] = useState("Newest");
   const [sizeFilter, setSizeFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("All Prices");
@@ -30,7 +36,7 @@ export default function CategoryPageClient({
   // Each result is stamped with the query it belongs to, so `loading` is derived
   // rather than set from inside the effect (which cascades an extra render), and
   // a slow response for a previous query can never overwrite the current one.
-  const queryKey = `${category ?? ""}|${filter ?? ""}|${reloadToken}`;
+  const queryKey = `${category ?? ""}|${filter ?? ""}|${query}|${reloadToken}`;
   const [result, setResult] = useState<{
     key: string;
     products: Product[];
@@ -47,6 +53,7 @@ export default function CategoryPageClient({
     const params = new URLSearchParams();
     if (category) params.append("category", category);
     if (filter) params.append("filter", filter);
+    if (query) params.append("q", query);
     const queryString = params.toString();
     if (queryString) url += `?${queryString}`;
 
@@ -71,7 +78,7 @@ export default function CategoryPageClient({
       });
 
     return () => controller.abort();
-  }, [category, filter, queryKey]);
+  }, [category, filter, query, queryKey]);
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
@@ -125,12 +132,22 @@ export default function CategoryPageClient({
               <span className="section-label text-y2k-gunmetal/40 mb-3">{badge}</span>
             )}
             <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[80px] uppercase tracking-[-0.04em] leading-none text-y2k-gunmetal animate-fade-up">
-              {title}
+              {query ? `“${query}”` : title}
             </h1>
-            {subtitle && (
+            {query ? (
               <p className="text-[10px] uppercase tracking-[0.16em] text-y2k-gunmetal/40 mt-3 animate-fade-up delay-100">
-                {subtitle}
+                {loading
+                  ? "Searching…"
+                  : `${filteredAndSortedProducts.length} ${
+                      filteredAndSortedProducts.length === 1 ? "result" : "results"
+                    } in ${title}`}
               </p>
+            ) : (
+              subtitle && (
+                <p className="text-[10px] uppercase tracking-[0.16em] text-y2k-gunmetal/40 mt-3 animate-fade-up delay-100">
+                  {subtitle}
+                </p>
+              )
             )}
           </div>
 
