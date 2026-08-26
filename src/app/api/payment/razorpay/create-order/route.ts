@@ -10,19 +10,12 @@ import {
   CartError,
 } from '@/lib/cart';
 import { AWAITING_PAYMENT } from '@/lib/orderStatus';
+import { reserveCartStock } from '@/lib/stockReservation';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { items, shippingAddress, customerEmail, customerPhone, shippingMethod, promoCode } = body;
-
-    // Every price, name and image below comes from the database — the request
-    // body only says which product/size/colour/quantity.
-    const address = assertValidShippingAddress(shippingAddress);
-    const contact = assertValidContact(customerEmail, customerPhone);
-    const cart = await priceCart({ items, shippingMethod, promoCode });
-    const totalAmount = cartTotal(cart);
-    const amountInPaise = Math.round(totalAmount * 100);
 
     // 1. Get logged in user if available
     const cookieStore = await cookies();
@@ -32,6 +25,15 @@ export async function POST(request: Request) {
       const user = await prisma.user.findUnique({ where: { id: sessionCookie.value } });
       if (user) userId = user.id;
     }
+
+    // Every price, name and image below comes from the database — the request
+    // body only says which product/size/colour/quantity.
+    const address = assertValidShippingAddress(shippingAddress);
+    const contact = assertValidContact(customerEmail, customerPhone);
+    const sessionId = sessionCookie?.value || contact.email;
+    const cart = await priceCart({ items, shippingMethod, promoCode, sessionId });
+    const totalAmount = cartTotal(cart);
+    const amountInPaise = Math.round(totalAmount * 100);
 
     // Generate unique order number (e.g. BGF-58291)
     const orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
@@ -151,6 +153,17 @@ export async function POST(request: Request) {
         items: true,
         shippingAddress: true,
       },
+    });
+
+    // 6. Place a 7-minute temporary hold on these items for this checkout session
+    await reserveCartStock({
+      sessionId,
+      orderId: order.id,
+      items: cart.items.map((i) => ({
+        variantId: i.variantId,
+        productId: i.productId,
+        quantity: i.quantity,
+      })),
     });
 
     return NextResponse.json({

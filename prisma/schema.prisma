@@ -206,3 +206,18 @@ model Review {
 
   @@unique([productId, userId])
 }
+
+model StockReservation {
+  id        String   @id @default(uuid())
+  variantId String
+  productId String
+  orderId   String?
+  sessionId String
+  quantity  Int      @default(1)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([variantId, expiresAt])
+  @@index([productId, expiresAt])
+  @@index([sessionId])
+}

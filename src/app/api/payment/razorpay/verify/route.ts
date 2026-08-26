@@ -166,8 +166,12 @@ export async function POST(request: Request) {
       });
     }
 
-    // 6. Decrement Variant Inventory Stock
+    // 6. Clean up Stock Reservation Hold & Decrement Variant Stock
     try {
+      await prisma.stockReservation.deleteMany({
+        where: { orderId: order.id },
+      });
+
       for (const item of order.items) {
         const variant = await prisma.variant.findFirst({
           where: {
@@ -177,11 +181,24 @@ export async function POST(request: Request) {
           },
         });
 
-        if (variant && variant.stock > 0) {
+        if (variant) {
+          const newStock = Math.max(0, variant.stock - item.quantity);
           await prisma.variant.update({
             where: { id: variant.id },
-            data: { stock: Math.max(0, variant.stock - item.quantity) },
+            data: { stock: newStock },
           });
+
+          // Check if total stock for this product is now 0 -> mark isSoldOut
+          const remainingVariants = await prisma.variant.findMany({
+            where: { productId: item.productId },
+          });
+          const totalRemaining = remainingVariants.reduce((sum, v) => sum + (v.id === variant.id ? newStock : v.stock), 0);
+          if (totalRemaining === 0) {
+            await prisma.product.update({
+              where: { id: item.productId },
+              data: { isSoldOut: true },
+            });
+          }
         }
       }
     } catch (stockError) {

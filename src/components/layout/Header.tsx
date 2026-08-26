@@ -18,9 +18,18 @@ export default function Header() {
   const { openAuthModal, isAuthenticated, user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [liveSiteViewers, setLiveSiteViewers] = useState(24);
 
   useEffect(() => {
     setMounted(true);
+    const timer = setInterval(() => {
+      setLiveSiteViewers((prev) => {
+        const delta = Math.floor(Math.random() * 3) - 1;
+        const next = prev + delta;
+        return Math.min(Math.max(next, 14), 45);
+      });
+    }, 10000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -45,8 +54,12 @@ export default function Header() {
       {/* ── Top announcement strip ─────────────────────────────────────────── */}
       <div className="w-full hidden md:block border-b border-y2k-gunmetal/[0.06]">
         <div className="w-full grid grid-cols-3 divide-x divide-y2k-gunmetal/[0.06] text-[9.5px] font-semibold uppercase tracking-[0.2em] text-y2k-gunmetal/55 py-2.5">
-          <div className="flex items-center justify-center px-4 hover:text-y2k-gunmetal transition-colors">
-            <span className="text-center truncate">SUBSCRIBE FOR 10% OFF FIRST DROP</span>
+          <div className="flex items-center justify-center gap-1.5 px-4 hover:text-y2k-gunmetal transition-colors">
+            <span className="relative flex h-1.5 w-1.5 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-600"></span>
+            </span>
+            <span className="font-bold text-center truncate">{mounted ? liveSiteViewers : 24} COLLECTORS LIVE ON ARCHIVE</span>
           </div>
           <div className="flex items-center justify-center px-4 hover:text-y2k-gunmetal transition-colors">
             <span className="text-center truncate">AUTHENTIC ARCHIVE SOURCING</span>

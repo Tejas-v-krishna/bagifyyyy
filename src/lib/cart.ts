@@ -13,6 +13,7 @@ export const FREE_SHIPPING_THRESHOLD = 2000;
 
 export type PricedItem = {
   productId: string;
+  variantId?: string;
   name: string;
   price: number;
   size: string;
@@ -72,8 +73,9 @@ export async function priceCart(options: {
   shippingMethod?: unknown;
   promoCode?: unknown;
   includeCodFee?: boolean;
+  sessionId?: string;
 }): Promise<PricedCart> {
-  const { items, shippingMethod, promoCode, includeCodFee = false } = options;
+  const { items, shippingMethod, promoCode, includeCodFee = false, sessionId } = options;
 
   if (!Array.isArray(items) || items.length === 0) {
     throw new CartError('Cart is empty');
@@ -113,21 +115,43 @@ export async function priceCart(options: {
     const size = typeof item.size === 'string' && item.size ? item.size : 'M';
     const color = typeof item.color === 'string' && item.color ? item.color : 'Default';
 
-    // Only enforce stock when we actually have a variant row to check against —
-    // products without variant records cannot be verified either way.
+    // Only enforce stock when we actually have a variant row to check against
     const variant = product.variants.find((v) => v.size === size && v.color === color);
-    if (variant && variant.stock < quantity) {
-      throw new CartError(
-        variant.stock === 0
-          ? `${product.name} (${size} / ${color}) is out of stock.`
-          : `Only ${variant.stock} left of ${product.name} (${size} / ${color}).`,
-        409
-      );
+    if (variant) {
+      if (variant.stock < quantity) {
+        throw new CartError(
+          variant.stock === 0
+            ? `${product.name} (${size} / ${color}) is out of stock.`
+            : `Only ${variant.stock} left of ${product.name} (${size} / ${color}).`,
+          409
+        );
+      }
+
+      // Check active unexpired reservations from OTHER sessions
+      const now = new Date();
+      const otherReservations = await prisma.stockReservation.findMany({
+        where: {
+          variantId: variant.id,
+          expiresAt: { gt: now },
+          ...(sessionId ? { sessionId: { not: sessionId } } : {}),
+        },
+      });
+
+      const reservedQty = otherReservations.reduce((sum, r) => sum + r.quantity, 0);
+      const availableStock = Math.max(0, variant.stock - reservedQty);
+
+      if (availableStock < quantity) {
+        throw new CartError(
+          `⏳ ${product.name} (${size} / ${color}) is currently held in another collector's checkout. If they do not complete payment within a few minutes, it will unlock automatically.`,
+          409
+        );
+      }
     }
 
     subtotal += product.price * quantity;
     pricedItems.push({
       productId: product.id,
+      variantId: variant?.id,
       name: product.name,
       price: product.price,
       size,

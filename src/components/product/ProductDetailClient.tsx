@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,7 +12,7 @@ import SimilarProducts from "@/components/product/SimilarProducts";
 import ReviewSection from "@/components/product/ReviewSection";
 import SizeGuideModal from "@/components/product/SizeGuideModal";
 import { categoryHref, categoryLabel } from "@/lib/categories";
-import { Heart, Ruler, ShieldCheck, Truck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, Ruler, ShieldCheck, Truck, ChevronLeft, ChevronRight, Eye, Clock } from "lucide-react";
 import type { ProductForDisplay } from "@/lib/product";
 
 /**
@@ -32,6 +32,41 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] ?? "");
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [addedAnimation, setAddedAnimation] = useState(false);
+
+  // Live active viewers state with natural dynamic fluctuation
+  const initialBaseViewers = 6 + ((product.id.charCodeAt(0) + product.id.charCodeAt(product.id.length - 1)) % 8);
+  const [viewersCount, setViewersCount] = useState(initialBaseViewers);
+  const [isReservedInCheckout, setIsReservedInCheckout] = useState(false);
+
+  useEffect(() => {
+    // Dynamic viewer count heartbeat simulation
+    const viewerInterval = setInterval(() => {
+      setViewersCount((prev) => {
+        const delta = Math.floor(Math.random() * 3) - 1; // -1, 0, or +1
+        const next = prev + delta;
+        return Math.min(Math.max(next, 4), 22);
+      });
+    }, 9000);
+
+    // Live stock reservation check
+    const checkStockReservation = async () => {
+      try {
+        const res = await fetch(`/api/stock-status?productId=${product.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setIsReservedInCheckout(Boolean(data.isReserved));
+        }
+      } catch {}
+    };
+
+    checkStockReservation();
+    const reservationInterval = setInterval(checkStockReservation, 15000);
+
+    return () => {
+      clearInterval(viewerInterval);
+      clearInterval(reservationInterval);
+    };
+  }, [product.id]);
 
   // The buy bar below is `position: fixed`, but every storefront page is wrapped
   // in `.page-landing-animate`, which keeps `will-change: transform, opacity,
@@ -114,10 +149,26 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 "A signature piece crafted with heavyweight construction and tailored modern streetwear silhouette."}
             </p>
 
-            {/* Scarcity Indicator */}
-            <div className="flex items-center gap-2.5 py-3 px-4 bg-y2k-ice border border-y2k-gunmetal/[0.1] text-[9px] uppercase tracking-[0.2em] text-y2k-gunmetal/70 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-y2k-gunmetal animate-pulse shrink-0" />
-              <span>LIMITED QUANTITY · 100% AUTHENTIC QUALITY</span>
+            {/* Active Checkout Hold Alert (if 1 collector is currently paying) */}
+            {isReservedInCheckout && (
+              <div className="flex items-center gap-2.5 py-3 px-4 bg-amber-500/10 border border-amber-500/30 text-[9.5px] font-bold uppercase tracking-[0.14em] text-amber-900 mb-3 animate-pulse">
+                <Clock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                <span>IN CHECKOUT · 1 COLLECTOR IS COMPLETING PAYMENT</span>
+              </div>
+            )}
+
+            {/* Live Active Viewers & Scarcity Indicator */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 py-3 px-4 bg-y2k-ice border border-y2k-gunmetal/[0.1] text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/75 mb-8">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                </span>
+                <span className="font-bold text-black">{viewersCount} COLLECTORS VIEWING NOW</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-y2k-gunmetal/50 text-[8.5px]">
+                <span>100% AUTHENTIC ARCHIVE</span>
+              </div>
             </div>
 
             {/* Size Selector */}
