@@ -1,18 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight, ArrowLeft } from "lucide-react";
 import { orderStatusLabel } from "@/lib/orderStatus";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function TrackOrderPage() {
+  const { user, isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [contact, setContact] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<any>(null);
   const [error, setError] = useState("");
   const [copiedTracking, setCopiedTracking] = useState(false);
+
+  // Auto-fill contact from logged-in session to avoid retyping
+  useEffect(() => {
+    if (isAuthenticated && user?.email && !contact) {
+      setContact(user.email);
+    }
+  }, [isAuthenticated, user?.email, contact]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
