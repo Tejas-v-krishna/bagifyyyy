@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { sendOrderConfirmationEmail } from '@/lib/email';
+import { getAuthedUser } from '@/lib/userSession';
 import {
   priceCart,
   cartTotal,
@@ -27,16 +27,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Order total must be greater than zero.' }, { status: 400 });
     }
 
-    // 1. Get logged in user if available
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('user-session');
-    let userId: string | null = null;
-    if (sessionCookie?.value) {
-      const user = await prisma.user.findUnique({ where: { id: sessionCookie.value } });
-      if (user) userId = user.id;
-    }
+    // 1. Get logged in user if available (signed session)
+    const authedUser = await getAuthedUser();
+    const userId: string | null = authedUser?.id || null;
 
-    const orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+    // Generate order number with retry on collision
+    let orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const exists = await prisma.order.findUnique({ where: { orderNumber } });
+      if (!exists) break;
+      orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+    }
 
     // 2. Create or save Address in DB
     const savedAddress = await prisma.address.create({
@@ -80,23 +81,32 @@ export async function POST(request: Request) {
       },
     });
 
-    // 4. Decrement Inventory
-    for (const item of cart.items) {
-      const variant = await prisma.variant.findFirst({
-        where: {
-          productId: item.productId,
-          size: item.size,
-          color: item.color,
-        },
-      });
-
-      if (variant && variant.stock > 0) {
-        await prisma.variant.update({
-          where: { id: variant.id },
-          data: { stock: Math.max(0, variant.stock - item.quantity) },
+    // 4. Decrement Inventory atomically
+    await prisma.$transaction(async (tx) => {
+      for (const item of cart.items) {
+        const variant = await tx.variant.findFirst({
+          where: {
+            productId: item.productId,
+            size: item.size,
+            color: item.color,
+          },
         });
+        if (variant) {
+          if (variant.stock < item.quantity) {
+            throw new Error(`Insufficient stock for ${item.name} (${item.size}/${item.color})`);
+          }
+          await tx.variant.update({
+            where: { id: variant.id },
+            data: { stock: variant.stock - item.quantity },
+          });
+          const remaining = await tx.variant.findMany({ where: { productId: item.productId } });
+          const totalRemaining = remaining.reduce((s, v) => s + (v.id === variant.id ? variant.stock - item.quantity : v.stock), 0);
+          if (totalRemaining <= 0) {
+            await tx.product.update({ where: { id: item.productId }, data: { isSoldOut: true } });
+          }
+        }
       }
-    }
+    });
 
     // 5. Send Transactional Order Confirmation Email
     try {

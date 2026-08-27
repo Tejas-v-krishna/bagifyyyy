@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 export async function POST(request: Request) {
+  // Deprecated: use /api/payment/razorpay/verify which also updates DB, checks amount, and binds order.
+  // This stateless endpoint only checked signature and could be used to spoof verification without side effects.
+  // Keeping it for backwards compat but marking deprecated header.
+  const deprecatedHeaders = { 'X-Deprecated-Endpoint': 'Use /api/payment/razorpay/verify' };
   try {
     const key_secret = process.env.RAZORPAY_KEY_SECRET;
 
@@ -66,10 +70,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Payment verified successfully',
+      message: 'Payment verified successfully (deprecated — order not updated, use /api/payment/razorpay/verify)',
       order_id: orderIdToVerify,
       payment_id: paymentIdToVerify,
-    });
+    }, { headers: deprecatedHeaders });
   } catch (error: any) {
     console.error('Razorpay verify-payment error:', error);
     return NextResponse.json(

@@ -100,7 +100,7 @@ export async function getProductForDisplay(
     isNew: product.isNew,
     isSoldOut: product.isSoldOut,
     isBestSeller: product.isBestSeller,
-    image: product.images[0]?.url || '/mock-1.jpg',
+    image: product.images[0]?.url || '/placeholder.jpg',
     images: product.images.map((img) => img.url),
     colors,
     sizes,

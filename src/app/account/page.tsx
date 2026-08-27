@@ -95,12 +95,14 @@ export default function AccountPage() {
       setWishlistProducts([]);
       return;
     }
+    const ids = wishlistIds.filter((id: string) => !String(id).startsWith('drop-') && !String(id).startsWith('prod-'));
+    if (ids.length === 0) { setWishlistProducts([]); return; }
     setLoadingWishlist(true);
-    fetch("/api/products")
+    fetch(`/api/products?ids=${encodeURIComponent(ids.join(','))}`)
       .then((res) => res.json())
       .then((data: any[]) => {
-        const matches = data.filter((p) => wishlistIds.includes(p.id));
-        setWishlistProducts(matches);
+        const list = Array.isArray(data) ? data : [];
+        setWishlistProducts(list);
       })
       .catch(console.error)
       .finally(() => setLoadingWishlist(false));

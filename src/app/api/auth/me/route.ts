@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { USER_SESSION_COOKIE, verifyUserSessionToken } from '@/lib/userSession';
+import { cookies } from 'next/headers';
 
 const ADMIN_EMAILS = [
   (process.env.ADMIN_EMAIL || 'admin@bagifyyyy.com').toLowerCase(),
@@ -11,14 +12,15 @@ const ADMIN_EMAILS = [
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('user-session');
+    const raw = cookieStore.get(USER_SESSION_COOKIE)?.value;
+    const userId = await verifyUserSessionToken(raw);
 
-    if (!sessionCookie || !sessionCookie.value) {
+    if (!userId) {
       return NextResponse.json({ user: null });
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: sessionCookie.value },
+      where: { id: userId },
       select: {
         id: true,
         email: true,

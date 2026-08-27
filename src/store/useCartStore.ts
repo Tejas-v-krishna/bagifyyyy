@@ -65,8 +65,14 @@ export const useCartStore = create<CartStore>()(
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
       addItem: (item) =>
         set((state) => {
+          const MAX_QTY = 10;
+          const MAX_ITEMS = 50;
+          if (state.items.length >= MAX_ITEMS && !state.items.some((i) => getItemKey(i) === getItemKey(item))) {
+            return state;
+          }
+          const safeQty = Math.max(1, Math.min(MAX_QTY, Math.round(item.quantity) || 1));
           const itemKey = getItemKey(item);
-          const fullItem: CartItem = { ...item, cartItemId: itemKey };
+          const fullItem: CartItem = { ...item, quantity: safeQty, cartItemId: itemKey };
           const existingIndex = state.items.findIndex(
             (i) => getItemKey(i) === itemKey
           );
@@ -75,7 +81,7 @@ export const useCartStore = create<CartStore>()(
             const updatedItems = [...state.items];
             updatedItems[existingIndex] = {
               ...updatedItems[existingIndex],
-              quantity: updatedItems[existingIndex].quantity + item.quantity,
+              quantity: Math.min(MAX_QTY, updatedItems[existingIndex].quantity + safeQty),
             };
             return { items: updatedItems, isOpen: true };
           }
@@ -88,12 +94,14 @@ export const useCartStore = create<CartStore>()(
         set((state) => ({
           items: state.items.filter((i) => getItemKey(i) !== cartItemId),
         })),
-      updateQuantity: (cartItemId, quantity) =>
-        set((state) => ({
+      updateQuantity: (cartItemId, quantity) => {
+        const q = Math.max(1, Math.min(10, Math.round(quantity) || 1));
+        return set((state) => ({
           items: state.items.map((i) =>
-            getItemKey(i) === cartItemId ? { ...i, quantity } : i
+            getItemKey(i) === cartItemId ? { ...i, quantity: q } : i
           ),
-        })),
+        }));
+      },
       clearCart: () => set({ items: [] }),
       cartSubtotal: () => {
         const { items } = get();

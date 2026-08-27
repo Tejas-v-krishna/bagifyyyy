@@ -10,10 +10,11 @@ export default function SmoothCursor() {
   const wiggleTlRef = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    // Only enable on desktop pointer devices
-    if (typeof window === "undefined" || window.matchMedia("(pointer: coarse)").matches) {
+    // Only enable on desktop pointer devices and when user allows motion
+    if (typeof window === "undefined" || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
+    document.documentElement.classList.add('custom-cursor-active');
 
     const cursor = cursorRef.current;
     const icon = iconRef.current;
@@ -138,6 +139,7 @@ export default function SmoothCursor() {
 
     return () => {
       if (wiggleTlRef.current) wiggleTlRef.current.kill();
+      document.documentElement.classList.remove('custom-cursor-active');
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Resend } from 'resend';
 import crypto from 'crypto';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { sendEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
@@ -39,10 +37,9 @@ export async function POST(request: Request) {
       },
     });
 
-    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
 
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'BAGIFYYYY <onboarding@resend.dev>',
+    await sendEmail({
       to: email,
       subject: 'Reset your BAGIFYYYY password',
       html: `

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { getAuthedUser } from '@/lib/userSession';
 import Razorpay from 'razorpay';
 import {
   priceCart,
@@ -17,26 +17,26 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { items, shippingAddress, customerEmail, customerPhone, shippingMethod, promoCode } = body;
 
-    // 1. Get logged in user if available
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('user-session');
-    let userId: string | null = null;
-    if (sessionCookie?.value) {
-      const user = await prisma.user.findUnique({ where: { id: sessionCookie.value } });
-      if (user) userId = user.id;
-    }
+    // 1. Get logged in user if available (signed)
+    const authedUser = await getAuthedUser();
+    const userId: string | null = authedUser?.id || null;
 
     // Every price, name and image below comes from the database — the request
     // body only says which product/size/colour/quantity.
     const address = assertValidShippingAddress(shippingAddress);
     const contact = assertValidContact(customerEmail, customerPhone);
-    const sessionId = sessionCookie?.value || contact.email;
+    const sessionId = userId || contact.email;
     const cart = await priceCart({ items, shippingMethod, promoCode, sessionId });
     const totalAmount = cartTotal(cart);
     const amountInPaise = Math.round(totalAmount * 100);
 
-    // Generate unique order number (e.g. BGF-58291)
-    const orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+    // Generate unique order number with collision retry
+    let orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const exists = await prisma.order.findUnique({ where: { orderNumber } });
+      if (!exists) break;
+      orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+    }
 
     // 2. Initialize Razorpay
     const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;

@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
+import { isStudioAuthed } from '@/lib/requireStudioAuth';
 
 export async function POST(request: Request) {
+  // Legacy endpoint that accepted arbitrary amount from client — now restricted to studio/admin
+  // All storefront orders must go through /api/payment/razorpay/create-order which re-prices from DB.
+  if (!(await isStudioAuthed())) {
+    return NextResponse.json({ error: 'Unauthorized. Use /api/payment/razorpay/create-order for checkout.' }, { status: 401 });
+  }
   try {
     const key_id = process.env.RAZORPAY_KEY_ID;
     const key_secret = process.env.RAZORPAY_KEY_SECRET;

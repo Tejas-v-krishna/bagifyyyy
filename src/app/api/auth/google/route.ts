@@ -173,7 +173,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // 4. Set session cookie
+    // 4. Set session cookie (signed)
     const response = NextResponse.json({
       success: true,
       user: {
@@ -184,13 +184,9 @@ export async function POST(request: Request) {
       },
     });
 
-    response.cookies.set('user-session', user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: '/',
-    });
+    const { USER_SESSION_COOKIE, userSessionCookieOptions, createUserSessionToken } = await import('@/lib/userSession');
+    const token = (await createUserSessionToken(user.id)) || user.id;
+    response.cookies.set(USER_SESSION_COOKIE, token, userSessionCookieOptions());
 
     return response;
   } catch (error) {

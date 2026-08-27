@@ -157,26 +157,30 @@ export default function CartDrawer() {
                             <div className="flex items-center justify-between mt-3">
                               <div className="flex items-center border border-y2k-gunmetal/[0.12]">
                                 <button
+                                  aria-label="Decrease quantity"
+                                  disabled={item.quantity <= 1}
                                   onClick={() =>
                                     updateQuantity(
                                       key,
                                       Math.max(1, item.quantity - 1)
                                     )
                                   }
-                                  className="p-1.5 hover:bg-y2k-gunmetal/[0.06] cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors"
+                                  className="p-1.5 hover:bg-y2k-gunmetal/[0.06] cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
-                                  <Minus className="w-3 h-3" />
+                                  <Minus className="w-3 h-3" aria-hidden="true" />
                                 </button>
-                                <span className="w-8 text-center text-xs text-y2k-gunmetal">
+                                <span className="w-8 text-center text-xs text-y2k-gunmetal" aria-live="polite" aria-label={`Quantity ${item.quantity}`}>
                                   {item.quantity}
                                 </span>
                                 <button
+                                  aria-label="Increase quantity"
+                                  disabled={item.quantity >= 10}
                                   onClick={() =>
                                     updateQuantity(key, item.quantity + 1)
                                   }
-                                  className="p-1.5 hover:bg-y2k-gunmetal/[0.06] cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors"
+                                  className="p-1.5 hover:bg-y2k-gunmetal/[0.06] cursor-pointer text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
-                                  <Plus className="w-3 h-3" />
+                                  <Plus className="w-3 h-3" aria-hidden="true" />
                                 </button>
                               </div>
                               {removingItemKey === key ? (
@@ -235,12 +239,13 @@ export default function CartDrawer() {
                 {appliedPromo ? (
                   <div className="flex items-center justify-between bg-white/50 border border-y2k-gunmetal/[0.1] px-4 py-3">
                     <span className="text-[9.5px] uppercase tracking-wider text-y2k-gunmetal flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3 h-3" />
+                      <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
                       {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                     </span>
                     <button
                       onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
                       className="text-[9.5px] uppercase tracking-wider text-y2k-gunmetal/50 hover:text-y2k-gunmetal underline cursor-pointer"
+                      aria-label="Remove promo code"
                     >
                       Remove
                     </button>
@@ -248,9 +253,11 @@ export default function CartDrawer() {
                 ) : (
                   <div className="flex gap-2 items-end">
                     <div className="flex-1 flex items-center gap-2 border-b border-y2k-gunmetal/20 pb-1.5">
-                      <Tag className="w-3 h-3 text-y2k-gunmetal/35 shrink-0" />
+                      <Tag className="w-3 h-3 text-y2k-gunmetal/35 shrink-0" aria-hidden="true" />
                       <input
                         type="text"
+                        autoComplete="off"
+                        aria-label="Promo code"
                         value={promoInput}
                         onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
                         onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
@@ -261,6 +268,7 @@ export default function CartDrawer() {
                     <button
                       onClick={handleApplyPromo}
                       className="px-4 py-1.5 bg-y2k-gunmetal text-white text-[9.5px] uppercase tracking-[0.18em] hover:opacity-90 transition-opacity cursor-pointer"
+                      aria-label="Apply promo code"
                     >
                       Apply
                     </button>

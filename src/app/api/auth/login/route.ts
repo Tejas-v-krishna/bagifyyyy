@@ -1,14 +1,21 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { createHash } from 'crypto';
+import bcrypt from 'bcryptjs';
 import {
   ADMIN_SESSION_COOKIE,
   adminSessionCookieOptions,
   createAdminSessionToken,
   secretsMatch,
 } from '@/lib/adminSession';
+import {
+  USER_SESSION_COOKIE,
+  userSessionCookieOptions,
+  createUserSessionToken,
+} from '@/lib/userSession';
+import { createHash } from 'crypto';
 
-function hashPassword(password: string): string {
+// Legacy SHA256 for migration — checked only to upgrade old hashes
+function legacyHash(password: string): string {
   return createHash('sha256').update(password + 'bagify-salt').digest('hex');
 }
 
@@ -57,11 +64,12 @@ export async function POST(request: Request) {
       // Upsert admin user in database so all foreign keys / user profile lookups succeed
       let adminUser = await prisma.user.findUnique({ where: { email: cleanEmail } });
       if (!adminUser) {
+        const hashed = await bcrypt.hash(password, 12);
         adminUser = await prisma.user.create({
           data: {
             email: cleanEmail,
             name: 'Bagify Admin',
-            password: hashPassword(password),
+            password: hashed,
           },
         });
       }
@@ -76,14 +84,9 @@ export async function POST(request: Request) {
         },
       });
 
-      // Set user session cookie (7 days)
-      response.cookies.set('user-session', adminUser.id, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7,
-        path: '/',
-      });
+      // Set signed user session cookie
+      const userToken = (await createUserSessionToken(adminUser.id)) || adminUser.id;
+      response.cookies.set(USER_SESSION_COOKIE, userToken, userSessionCookieOptions());
 
       // Signed studio session — see src/lib/adminSession.ts
       response.cookies.set(ADMIN_SESSION_COOKIE, studioToken, adminSessionCookieOptions());
@@ -97,8 +100,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 });
     }
 
-    const hashed = hashPassword(password);
-    if (hashed !== user.password) {
+    if (!user.password) {
+      return NextResponse.json({ error: 'Please sign in with Google.' }, { status: 401 });
+    }
+
+    let passwordValid = false;
+    // Try bcrypt first
+    try {
+      passwordValid = await bcrypt.compare(password, user.password);
+    } catch {
+      passwordValid = false;
+    }
+    // Fallback for legacy SHA256 hashes — upgrade on success
+    if (!passwordValid && user.password === legacyHash(password)) {
+      passwordValid = true;
+      const upgraded = await bcrypt.hash(password, 12);
+      await prisma.user.update({ where: { id: user.id }, data: { password: upgraded } });
+    }
+
+    if (!passwordValid) {
       return NextResponse.json({ error: 'Incorrect email or password' }, { status: 401 });
     }
 
@@ -112,13 +132,8 @@ export async function POST(request: Request) {
       },
     });
 
-    response.cookies.set('user-session', user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
+    const userToken = (await createUserSessionToken(user.id)) || user.id;
+    response.cookies.set(USER_SESSION_COOKIE, userToken, userSessionCookieOptions());
 
     return response;
   } catch (error) {
@@ -130,7 +145,7 @@ export async function POST(request: Request) {
 // DELETE /api/auth/login — log out
 export async function DELETE() {
   const response = NextResponse.json({ success: true });
-  response.cookies.set('user-session', '', { maxAge: 0, path: '/' });
+  response.cookies.set(USER_SESSION_COOKIE, '', { maxAge: 0, path: '/' });
   response.cookies.set(ADMIN_SESSION_COOKIE, '', { maxAge: 0, path: '/' });
   return response;
 }

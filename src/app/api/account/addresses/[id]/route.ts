@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-
-async function getAuthedUser() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('user-session');
-  if (!sessionCookie?.value) return null;
-  return prisma.user.findUnique({ where: { id: sessionCookie.value } });
-}
+import { getAuthedUser } from '@/lib/userSession';
 
 // DELETE: remove an address (must belong to the logged-in user)
 export async function DELETE(

@@ -75,6 +75,13 @@ export default async function Home() {
     };
   });
 
+  // Fetch Vintage Archive once at top to avoid render-time query
+  const vintageArchive = await prisma.product.findMany({
+    take: 6,
+    orderBy: { createdAt: 'asc' },
+    include: { images: true },
+  });
+
   return (
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
@@ -238,7 +245,7 @@ export default async function Home() {
 
         {/* Product Grid */}
         <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-6 gap-y-16">
-          {(await prisma.product.findMany({ take: 6, orderBy: { createdAt: 'asc' }, include: { images: true } })).map((product) => (
+          {vintageArchive.map((product) => (
             <div key={product.id} className="w-full">
               <ProductCard product={{
                 id: product.id,

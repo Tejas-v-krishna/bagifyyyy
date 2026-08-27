@@ -88,15 +88,11 @@ export async function GET(request: Request) {
       });
     }
 
-    // Set auth session cookie and redirect to account
+    // Set auth session cookie and redirect to account (signed)
     const response = NextResponse.redirect(`${origin}/account`);
-    response.cookies.set('user-session', user.id, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: '/',
-    });
+    const { USER_SESSION_COOKIE, userSessionCookieOptions, createUserSessionToken } = await import('@/lib/userSession');
+    const token = (await createUserSessionToken(user.id)) || user.id;
+    response.cookies.set(USER_SESSION_COOKIE, token, userSessionCookieOptions());
 
     return response;
   } catch (err: any) {

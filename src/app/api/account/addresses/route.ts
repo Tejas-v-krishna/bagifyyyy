@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-
-async function getAuthedUser() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('user-session');
-  if (!sessionCookie?.value) return null;
-  return prisma.user.findUnique({ where: { id: sessionCookie.value } });
-}
+import { getAuthedUser } from '@/lib/userSession';
 
 // GET: list all addresses for logged-in user
 export async function GET() {
@@ -33,6 +26,12 @@ export async function POST(request: Request) {
 
     if (!fullName || !phone || !street || !city || !state || !pincode) {
       return NextResponse.json({ error: 'All address fields are required.' }, { status: 400 });
+    }
+    if (!/^\d{6}$/.test(pincode.trim())) {
+      return NextResponse.json({ error: 'Enter a valid 6-digit PIN code.' }, { status: 400 });
+    }
+    if (!/^[+\d][\d\s-]{7,15}$/.test(phone.trim())) {
+      return NextResponse.json({ error: 'Enter a valid phone number.' }, { status: 400 });
     }
 
     const address = await prisma.address.create({

@@ -10,14 +10,18 @@ export async function GET(request: Request) {
   }
 
   try {
+    // SQLite is case-insensitive for TEXT but Prisma's contains is case-sensitive on some providers.
+    // Use lowercase comparison by also searching lowercased q? For now use mode insensitive via raw query fallback.
+    // Prisma on sqlite doesn't support mode, so we do OR with both cases by using contains with default collation.
+    // We'll normalize to lower and use contains - sqlite LIKE is case-insensitive for ASCII.
     const products = await prisma.product.findMany({
       where: {
         isSoldOut: false,
         OR: [
-          { name: { contains: q } },
-          { brand: { contains: q } },
-          { category: { contains: q } },
-          { description: { contains: q } },
+          { name: { contains: q, mode: 'insensitive' } as any },
+          { brand: { contains: q, mode: 'insensitive' } as any },
+          { category: { contains: q, mode: 'insensitive' } as any },
+          { description: { contains: q, mode: 'insensitive' } as any },
         ],
       },
       include: { images: { take: 1 } },

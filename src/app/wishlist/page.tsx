@@ -14,24 +14,35 @@ export default function WishlistPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch all products and filter locally for now
-    fetch("/api/products")
+    if (items.length === 0) {
+      setProducts([]);
+      setLoading(false);
+      return;
+    }
+    // Fetch only wishlisted IDs (supports ids query)
+    const ids = items.filter((id) => !id.startsWith("drop-") && !id.startsWith("prod-"));
+    const mocks = items
+      .filter((id) => id.startsWith("drop-") || id.startsWith("prod-"))
+      .map((id) => ({
+        id,
+        name: id.startsWith("drop-") ? `BAGIFYYYY 'DROP ${id.split('-')[1]}'` : `BAGIFYYYY EXCLUSIVE`,
+        price: 15000,
+        image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop",
+        category: "mock",
+      }));
+
+    if (ids.length === 0) {
+      setProducts(mocks as any);
+      setLoading(false);
+      return;
+    }
+
+    fetch(`/api/products?ids=${encodeURIComponent(ids.join(','))}`)
       .then((res) => res.json())
       .then((data: Product[]) => {
-        const wishlisted = data.filter((p) => items.includes(p.id));
-        
-        // Inject frontend mocks so the demo still works for the homepage items
-        const mockProducts = items
-          .filter((id) => id.startsWith("drop-") || id.startsWith("prod-"))
-          .map((id) => ({
-            id,
-            name: id.startsWith("drop-") ? `BAGIFYYYY 'DROP ${id.split('-')[1]}'` : `BAGIFYYYY EXCLUSIVE`,
-            price: 15000,
-            image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop",
-            category: "mock",
-          }));
-
-        setProducts([...wishlisted, ...mockProducts]);
+        // API returns array directly
+        const list = Array.isArray(data) ? data : [];
+        setProducts([...list, ...(mocks as any)]);
         setLoading(false);
       })
       .catch((err) => {

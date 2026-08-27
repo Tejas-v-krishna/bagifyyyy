@@ -177,6 +177,7 @@ function CheckoutContent() {
   const setDiscount = bundleDiscount();
   const total = cartTotal();
   const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
+  // COD fee is handled server-side via includeCodFee, show upfront to avoid surprise
   const codFee = paymentMethod === 'cod' ? 49 : 0;
   const discountAmount = appliedPromo ? Math.round(total * appliedPromo.discount * 100) / 100 : 0;
   const finalTotal = total - discountAmount + shipping + codFee;
@@ -783,9 +784,9 @@ function CheckoutContent() {
                       
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2 text-xs font-bold">
-                          <button onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-y2k-gunmetal/10 flex items-center justify-center hover:bg-gray-100">-</button>
-                          <span>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-y2k-gunmetal/10 flex items-center justify-center hover:bg-gray-100">+</button>
+                          <button aria-label="Decrease quantity" disabled={item.quantity <= 1} onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-y2k-gunmetal/10 flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed">-</button>
+                          <span aria-live="polite">{item.quantity}{item.quantity >= 10 ? " (max)" : ""}</span>
+                          <button aria-label="Increase quantity" disabled={item.quantity >= 10} onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-y2k-gunmetal/10 flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed">+</button>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-bold">₹{(item.price * item.quantity).toFixed(2)}</span>

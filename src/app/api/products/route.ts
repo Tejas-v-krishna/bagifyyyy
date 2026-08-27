@@ -11,14 +11,24 @@ export async function GET(request: Request) {
 
     const whereClause: Prisma.ProductWhereInput = {};
 
+    // Handle wishlist ids fetch: ?ids=id1,id2
+    const idsParam = searchParams.get('ids');
+    if (idsParam) {
+      const ids = idsParam.split(',').map(s => s.trim()).filter(Boolean).slice(0, 50);
+      if (ids.length > 0) {
+        whereClause.id = { in: ids };
+      }
+    }
+
     // Same fields the search overlay matches on, so "view all results" lands on
     // a catalogue filtered the way the dropdown preview was.
-    if (q && q.length >= 2) {
+    // Only apply text search if not already filtering by ids
+    if (q && q.length >= 2 && !idsParam) {
       whereClause.OR = [
-        { name: { contains: q } },
-        { brand: { contains: q } },
-        { category: { contains: q } },
-        { description: { contains: q } },
+        { name: { contains: q, mode: 'insensitive' } as any },
+        { brand: { contains: q, mode: 'insensitive' } as any },
+        { category: { contains: q, mode: 'insensitive' } as any },
+        { description: { contains: q, mode: 'insensitive' } as any },
       ];
     }
 
@@ -41,9 +51,12 @@ export async function GET(request: Request) {
       whereClause.isBestSeller = true;
     }
 
+    // Pagination safeguard — prevent returning entire DB
+    const takeParam = Math.min(100, Math.max(1, parseInt(searchParams.get('take') || '100', 10) || 100));
     let products = await prisma.product.findMany({
       where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       orderBy: filter === 'grails' || filter === 'curated' ? { price: 'desc' } : { createdAt: 'desc' },
+      take: takeParam,
       include: {
         images: true,
         variants: true,

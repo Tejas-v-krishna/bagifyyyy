@@ -46,8 +46,8 @@ export async function POST(req: Request) {
 
     const suppliedContact = typeof contact === "string" ? contact.trim() : "";
 
-    const cookieStore = await cookies();
-    const sessionUserId = cookieStore.get("user-session")?.value ?? "";
+    const { getAuthedUserId } = await import('@/lib/userSession');
+    const sessionUserId = (await getAuthedUserId()) ?? "";
 
     // Order numbers are five digits, so this used to be a walk from BGF-10000 to
     // BGF-99999 that returned every customer's name, city and order contents.

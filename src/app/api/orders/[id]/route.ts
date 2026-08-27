@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { verifyUserSessionToken, USER_SESSION_COOKIE } from '@/lib/userSession';
+import { cookies } from 'next/headers';
 
 export async function GET(
   request: Request,
@@ -34,7 +35,8 @@ export async function GET(
     // either way so this endpoint never confirms that an order exists.
     if (order.userId) {
       const cookieStore = await cookies();
-      const sessionUserId = cookieStore.get('user-session')?.value;
+      const raw = cookieStore.get(USER_SESSION_COOKIE)?.value;
+      const sessionUserId = await verifyUserSessionToken(raw);
       if (!sessionUserId || sessionUserId !== order.userId) {
         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
       }

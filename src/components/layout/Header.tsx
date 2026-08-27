@@ -171,11 +171,11 @@ export default function Header() {
           <button
             onClick={toggleCart}
             className="relative text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300 cursor-pointer"
-            aria-label="Bag"
+            aria-label={`Shopping bag, ${itemCount} items`}
           >
-            <ShoppingBag className="w-[17px] h-[17px]" strokeWidth={1.5} />
+            <ShoppingBag className="w-[17px] h-[17px]" strokeWidth={1.5} aria-hidden="true" />
             {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 text-[8px] font-black text-white bg-y2k-gunmetal w-[15px] h-[15px] flex items-center justify-center rounded-full leading-none">
+              <span aria-hidden="true" className="absolute -top-1.5 -right-2 text-[8px] font-black text-white bg-y2k-gunmetal w-[15px] h-[15px] flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
@@ -191,11 +191,11 @@ export default function Header() {
           <button
             onClick={toggleCart}
             className="relative text-y2k-gunmetal hover:text-black transition-colors cursor-pointer p-2"
-            aria-label="Bag"
+            aria-label={`Shopping bag, ${itemCount} items`}
           >
-            <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+            <ShoppingBag className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
             {itemCount > 0 && (
-              <span className="absolute top-0.5 right-0.5 text-[8px] font-black text-white bg-y2k-gunmetal w-[16px] h-[16px] flex items-center justify-center rounded-full leading-none">
+              <span aria-hidden="true" className="absolute top-0.5 right-0.5 text-[8px] font-black text-white bg-y2k-gunmetal w-[16px] h-[16px] flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
@@ -205,7 +205,8 @@ export default function Header() {
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-y2k-gunmetal p-2 -mr-2 cursor-pointer"
-            aria-label="Menu"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <X strokeWidth={1.5} className="h-5 w-5" />

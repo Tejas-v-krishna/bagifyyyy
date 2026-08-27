@@ -29,6 +29,14 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
     e.preventDefault();
     e.stopPropagation();
 
+    // If product requires size/color selection, go to product page instead of guessing
+    const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 1;
+    const hasColors = Array.isArray(product.colors) && product.colors.length > 1;
+    if (hasSizes || hasColors) {
+      window.location.href = `/product/${product.id}`;
+      return;
+    }
+
     addItem({
       id: product.id,
       name: product.name,

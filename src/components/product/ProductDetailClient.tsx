@@ -270,30 +270,30 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     className="object-contain object-center transition-all duration-300"
                   />
 
-                  {/* Arrow Controls */}
+                  {/* Arrow Controls — always focusable, visible on hover/focus */}
                   {productImages.length > 1 && (
-                    <div className="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute inset-0 flex items-center justify-between p-4 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none">
                       <button
                         type="button"
+                        aria-label="Previous image"
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : productImages.length - 1));
                         }}
-                        className="w-8 h-8 rounded-full bg-white/85 text-y2k-gunmetal flex items-center justify-center shadow-md hover:bg-white transition-all cursor-pointer"
-                        title="Previous Photo"
+                        className="w-8 h-8 rounded-full bg-white/85 text-y2k-gunmetal flex items-center justify-center shadow-md hover:bg-white transition-all cursor-pointer pointer-events-auto focus:opacity-100"
                       >
-                        <ChevronLeft className="w-4 h-4" />
+                        <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                       </button>
                       <button
                         type="button"
+                        aria-label="Next image"
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveImageIndex((prev) => (prev < productImages.length - 1 ? prev + 1 : 0));
                         }}
-                        className="w-8 h-8 rounded-full bg-white/85 text-y2k-gunmetal flex items-center justify-center shadow-md hover:bg-white transition-all cursor-pointer"
-                        title="Next Photo"
+                        className="w-8 h-8 rounded-full bg-white/85 text-y2k-gunmetal flex items-center justify-center shadow-md hover:bg-white transition-all cursor-pointer pointer-events-auto focus:opacity-100"
                       >
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   )}
@@ -307,11 +307,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
             {/* Image Thumbnails */}
             {productImages.length > 1 && (
-              <div className="flex items-center gap-2.5 mt-5 flex-wrap justify-center">
+              <div className="flex items-center gap-2.5 mt-5 flex-wrap justify-center" role="tablist" aria-label="Product images">
                 {productImages.map((img: string, idx: number) => (
                   <button
                     key={idx}
                     type="button"
+                    role="tab"
+                    aria-selected={activeImageIndex === idx}
+                    aria-label={`View image ${idx + 1} of ${productImages.length}`}
                     onClick={() => setActiveImageIndex(idx)}
                     className={`px-3 py-1.5 border transition-all cursor-pointer font-mono text-[10px] ${
                       activeImageIndex === idx

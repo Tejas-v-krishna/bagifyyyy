@@ -1,20 +1,15 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { AWAITING_PAYMENT } from '@/lib/orderStatus';
+import { getAuthedUser } from '@/lib/userSession';
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('user-session');
+    const user = await getAuthedUser();
 
-    if (!sessionCookie?.value) {
+    if (!user) {
       return NextResponse.json({ orders: [] });
     }
-
-    const user = await prisma.user.findUnique({
-      where: { id: sessionCookie.value },
-    });
 
     if (!user) {
       return NextResponse.json({ orders: [] });

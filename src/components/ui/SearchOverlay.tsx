@@ -106,10 +106,16 @@ export default function SearchOverlay() {
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setHighlighted((h) => Math.max(h - 1, -1));
-    } else if (e.key === "Enter" && activeIndex >= 0 && results[activeIndex]) {
-      const target = `/product/${results[activeIndex].id}`;
-      close();
-      router.push(target);
+    } else if (e.key === "Enter") {
+      if (activeIndex >= 0 && results[activeIndex]) {
+        const target = `/product/${results[activeIndex].id}`;
+        close();
+        router.push(target);
+      } else if (query.trim().length >= 2) {
+        // Allow searching without selecting a result
+        close();
+        router.push(`/products?q=${encodeURIComponent(query.trim())}`);
+      }
     }
   };
 
