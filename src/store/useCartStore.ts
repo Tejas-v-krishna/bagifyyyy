@@ -23,9 +23,13 @@ export type CartItem = {
   bundleSize?: number;
 };
 
+export const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.1 };
+
 type CartStore = {
   isOpen: boolean;
   items: CartItem[];
+  promoCode: string | null;
+  promoDiscount: number;
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
@@ -33,12 +37,18 @@ type CartStore = {
   removeItem: (cartItemId: string) => void;
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
+  applyPromo: (code: string) => { ok: boolean; error?: string };
+  clearPromo: () => void;
   /** Sum of every line at its normal price, before set or promo discounts. */
   cartSubtotal: () => number;
   /** Rupees off for complete curated sets in the bag. */
   bundleDiscount: () => number;
   /** What the goods actually cost: subtotal minus set discounts. */
   cartTotal: () => number;
+  /** Promo amount off goods total */
+  promoAmount: () => number;
+  /** Final total after bundle + promo */
+  finalTotal: () => number;
 };
 
 export const getItemKey = (item: {
@@ -60,6 +70,8 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       isOpen: false,
       items: [],
+      promoCode: null,
+      promoDiscount: 0,
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
@@ -102,7 +114,15 @@ export const useCartStore = create<CartStore>()(
           ),
         }));
       },
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], promoCode: null, promoDiscount: 0 }),
+      applyPromo: (code: string) => {
+        const upper = code.trim().toUpperCase();
+        const discount = VALID_PROMOS[upper];
+        if (!discount) return { ok: false, error: "Invalid promo code." };
+        set({ promoCode: upper, promoDiscount: discount });
+        return { ok: true };
+      },
+      clearPromo: () => set({ promoCode: null, promoDiscount: 0 }),
       cartSubtotal: () => {
         const { items } = get();
         return items.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -125,10 +145,18 @@ export const useCartStore = create<CartStore>()(
         const { cartSubtotal, bundleDiscount } = get();
         return Math.max(0, Math.round((cartSubtotal() - bundleDiscount()) * 100) / 100);
       },
+      promoAmount: () => {
+        const { cartTotal, promoDiscount } = get();
+        return Math.round(cartTotal() * promoDiscount * 100) / 100;
+      },
+      finalTotal: () => {
+        const { cartTotal, promoAmount } = get();
+        return Math.max(0, Math.round((cartTotal() - promoAmount()) * 100) / 100);
+      },
     }),
     {
       name: 'bagify-cart-storage',
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({ items: state.items, promoCode: state.promoCode, promoDiscount: state.promoDiscount }),
     }
   )
 );

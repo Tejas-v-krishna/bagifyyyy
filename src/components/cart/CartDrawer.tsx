@@ -8,20 +8,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.10 };
-
 import { usePathname } from "next/navigation";
 
 export default function CartDrawer() {
   const pathname = usePathname();
-  const { isOpen, closeCart, items, removeItem, updateQuantity, cartSubtotal, bundleDiscount, cartTotal } =
+  const { isOpen, closeCart, items, removeItem, updateQuantity, cartSubtotal, bundleDiscount, cartTotal, promoCode, promoDiscount, applyPromo, clearPromo, promoAmount } =
     useCartStore();
   const { isAuthenticated } = useAuthStore();
 
   const [promoInput, setPromoInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
   const [promoError, setPromoError] = useState("");
   const [removingItemKey, setRemovingItemKey] = useState<string | null>(null);
+  const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
 
   // Body scroll lock — mirrors Header mobile menu, prevents background bleed
   useEffect(() => {
@@ -34,14 +32,9 @@ export default function CartDrawer() {
   }, [isOpen]);
 
   const handleApplyPromo = () => {
-    const upper = promoInput.trim().toUpperCase();
-    if (VALID_PROMOS[upper]) {
-      setAppliedPromo({ code: upper, discount: VALID_PROMOS[upper] });
-      setPromoError("");
-    } else {
-      setPromoError("Invalid promo code.");
-      setAppliedPromo(null);
-    }
+    const res = applyPromo(promoInput);
+    if (res.ok) setPromoError("");
+    else setPromoError(res.error || "Invalid promo code.");
   };
 
   if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
@@ -54,7 +47,7 @@ export default function CartDrawer() {
   const subtotal = cartSubtotal();
   const setDiscount = bundleDiscount();
   const goodsTotal = cartTotal();
-  const discountAmount = appliedPromo ? Math.round(goodsTotal * appliedPromo.discount * 100) / 100 : 0;
+  const discountAmount = promoAmount();
   const finalTotal = goodsTotal - discountAmount;
 
   return (
@@ -253,7 +246,7 @@ export default function CartDrawer() {
                       {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                     </span>
                     <button
-                      onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
+                      onClick={() => { clearPromo(); setPromoInput(""); }}
                       className="text-[9.5px] uppercase tracking-wider text-y2k-gunmetal/50 hover:text-y2k-gunmetal underline cursor-pointer"
                       aria-label="Remove promo code"
                     >
@@ -317,7 +310,7 @@ export default function CartDrawer() {
                 </p>
 
                 <Link
-                  href={`/checkout${appliedPromo ? `?promo=${appliedPromo.code}` : ""}`}
+                  href="/checkout"
                   onClick={closeCart}
                   className="btn-bagify block w-full text-y2k-ice uppercase tracking-[0.18em] py-5 text-center text-[10.5px]"
                 >

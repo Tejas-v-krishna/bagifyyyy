@@ -101,7 +101,7 @@ const loadRazorpayScript = (): Promise<boolean> => {
 
 function CheckoutContent() {
   const router = useRouter();
-  const { items, cartSubtotal, bundleDiscount, cartTotal, updateQuantity, removeItem, clearCart } = useCartStore();
+  const { items, cartSubtotal, bundleDiscount, cartTotal, promoCode, promoDiscount, promoAmount, applyPromo, clearPromo, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user, isAuthenticated, openAuthModal } = useAuthStore();
   const searchParams = useSearchParams();
   const [checkoutMode, setCheckoutMode] = useState<'select' | 'guest' | 'account'>(isAuthenticated ? 'account' : 'select');
@@ -109,21 +109,15 @@ function CheckoutContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Promo code state (pre-filled from cart URL param)
-  const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.10 };
-  const [promoInput, setPromoInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
+  // Promo code — single source in useCartStore
+  const [promoInput, setPromoInput] = useState(promoCode || "");
+  const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
   const [promoError, setPromoError] = useState("");
 
   const handleApplyPromo = () => {
-    const upper = promoInput.trim().toUpperCase();
-    if (VALID_PROMOS[upper]) {
-      setAppliedPromo({ code: upper, discount: VALID_PROMOS[upper] });
-      setPromoError("");
-    } else {
-      setPromoError("Invalid promo code.");
-      setAppliedPromo(null);
-    }
+    const res = applyPromo(promoInput);
+    if (res.ok) setPromoError("");
+    else setPromoError(res.error || "Invalid promo code.");
   };
 
   // Address Form State
@@ -142,13 +136,14 @@ function CheckoutContent() {
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
 
-  // Auto-apply promo from cart URL param
+  // Auto-apply promo from cart URL param (back-compat) or store
   useEffect(() => {
     const promoFromCart = searchParams.get("promo");
-    if (promoFromCart && VALID_PROMOS[promoFromCart.toUpperCase()]) {
-      const upper = promoFromCart.toUpperCase();
-      setAppliedPromo({ code: upper, discount: VALID_PROMOS[upper] });
-      setPromoInput(upper);
+    if (promoFromCart) {
+      const res = applyPromo(promoFromCart);
+      if (res.ok) setPromoInput(promoFromCart.toUpperCase());
+    } else if (promoCode) {
+      setPromoInput(promoCode);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -179,7 +174,7 @@ function CheckoutContent() {
   const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
   // COD fee is handled server-side via includeCodFee, show upfront to avoid surprise
   const codFee = paymentMethod === 'cod' ? 49 : 0;
-  const discountAmount = appliedPromo ? Math.round(total * appliedPromo.discount * 100) / 100 : 0;
+  const discountAmount = promoAmount();
   const finalTotal = total - discountAmount + shipping + codFee;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -808,7 +803,7 @@ function CheckoutContent() {
                     {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
                   </span>
                   <button
-                    onClick={() => { setAppliedPromo(null); setPromoInput(""); }}
+                    onClick={() => { clearPromo(); setPromoInput(""); }}
                     className="text-[10px] font-bold text-y2k-slate hover:text-black underline cursor-pointer"
                   >
                     Remove
