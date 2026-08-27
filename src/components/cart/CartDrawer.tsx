@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.10 };
 
@@ -22,6 +22,16 @@ export default function CartDrawer() {
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
   const [promoError, setPromoError] = useState("");
   const [removingItemKey, setRemovingItemKey] = useState<string | null>(null);
+
+  // Body scroll lock — mirrors Header mobile menu, prevents background bleed
+  useEffect(() => {
+    if (isOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+    document.body.style.overflow = "";
+  }, [isOpen]);
 
   const handleApplyPromo = () => {
     const upper = promoInput.trim().toUpperCase();
