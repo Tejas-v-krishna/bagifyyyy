@@ -2,9 +2,32 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendWelcomeNewsletterEmail } from '@/lib/email';
 
+async function verifyRecaptcha(token?: string): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secret || !token) return true; // skip if not configured
+  try {
+    const res = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(token)}`,
+    });
+    const data = await res.json() as { success?: boolean };
+    return data.success === true;
+  } catch { return false; }
+}
+
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
+    const { email, honeypot, recaptchaToken } = await request.json();
+
+    // Honeypot — bots fill hidden field
+    if (honeypot) {
+      return NextResponse.json({ success: true, message: 'Subscribed! Check your inbox for 10% coupon.' }, { status: 201 });
+    }
+
+    if (!(await verifyRecaptcha(recaptchaToken))) {
+      return NextResponse.json({ error: 'Captcha verification failed' }, { status: 400 });
+    }
 
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });

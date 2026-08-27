@@ -11,6 +11,7 @@ export default function TrackOrderPage() {
   const { user, isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [contact, setContact] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<any>(null);
   const [error, setError] = useState("");
@@ -35,7 +36,7 @@ export default function TrackOrderPage() {
       const res = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: searchQuery, contact }),
+        body: JSON.stringify({ query: searchQuery, contact, honeypot }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -96,6 +97,7 @@ export default function TrackOrderPage() {
           </p>
 
           <form onSubmit={handleSearch} className="max-w-md mx-auto space-y-2">
+            <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             <div>
               <label htmlFor="track-order" className="sr-only">
                 Order number or tracking ID

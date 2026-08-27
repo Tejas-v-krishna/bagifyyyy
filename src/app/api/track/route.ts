@@ -8,6 +8,19 @@ export const dynamic = "force-dynamic";
 /** Same wording whether the order is absent or simply not yours. */
 const NOT_FOUND = "No drop shipment found for that order and contact detail.";
 
+// Simple in-memory rate limit: 10 track attempts per minute per IP/contact
+const trackAttempts = new Map<string, number[]>();
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const windowMs = 60_000;
+  const max = 10;
+  const arr = trackAttempts.get(key) || [];
+  const recent = arr.filter((t) => now - t < windowMs);
+  recent.push(now);
+  trackAttempts.set(key, recent);
+  return recent.length > max;
+}
+
 const digitsOnly = (value: string) => value.replace(/\D/g, "");
 
 function contactMatchesOrder(
@@ -38,7 +51,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
     }
 
-    const { query, contact } = body as { query?: unknown; contact?: unknown };
+    const { query, contact, honeypot, recaptchaToken } = body as { query?: unknown; contact?: unknown; honeypot?: unknown; recaptchaToken?: unknown };
+    if (typeof honeypot === 'string' && honeypot.trim()) {
+      return NextResponse.json({ error: NOT_FOUND }, { status: 404 });
+    }
+    // Optional reCAPTCHA if configured
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    if (recaptchaSecret && typeof recaptchaToken === 'string' && recaptchaToken) {
+      try {
+        const verifyRes = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `secret=${encodeURIComponent(recaptchaSecret)}&response=${encodeURIComponent(recaptchaToken)}`,
+        });
+        const verifyData = await verifyRes.json() as { success?: boolean };
+        if (!verifyData.success) return NextResponse.json({ error: 'Captcha failed' }, { status: 400 });
+      } catch { return NextResponse.json({ error: 'Captcha failed' }, { status: 400 }); }
+    }
+
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    if (isRateLimited(ip) || isRateLimited(String(contact || ''))) {
+      return NextResponse.json({ error: 'Too many attempts. Try again in a minute.' }, { status: 429 });
+    }
 
     if (typeof query !== "string" || !query.trim()) {
       return NextResponse.json({ error: "Order number or tracking ID required." }, { status: 400 });

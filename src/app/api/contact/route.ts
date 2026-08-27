@@ -1,14 +1,39 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { sendEmail } from '@/lib/email';
+async function verifyRecaptcha(token?: string): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secret || !token) return true;
+  try {
+    const res = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${encodeURIComponent(secret)}&response=${encodeURIComponent(token)}`,
+    });
+    const data = await res.json() as { success?: boolean };
+    return data.success === true;
+  } catch { return false; }
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, orderNumber, message } = body;
+    const { name, email, orderNumber, message, honeypot, recaptchaToken } = body;
+
+    if (honeypot) {
+      return NextResponse.json({ success: true, ticketId: 'ok' });
+    }
+    if (!(await verifyRecaptcha(recaptchaToken))) {
+      return NextResponse.json({ error: 'Captcha verification failed' }, { status: 400 });
+    }
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Name, email, and message are required.' }, { status: 400 });
+    }
+
+    // Rate limit before create
+    const recentCount = await prisma.supportTicket.count({
+      where: { email: email.trim().toLowerCase(), createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) } },
+    });
+    if (recentCount >= 5) {
+      return NextResponse.json({ error: 'Too many messages. Please try again later.' }, { status: 429 });
     }
 
     // Save to DB
@@ -21,14 +46,6 @@ export async function POST(request: Request) {
         status: 'OPEN',
       },
     });
-
-    // Basic rate limiting: prevent same email spamming >5 tickets per hour
-    const recentCount = await prisma.supportTicket.count({
-      where: { email: email.trim().toLowerCase(), createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) } },
-    });
-    if (recentCount >= 5) {
-      return NextResponse.json({ error: 'Too many messages. Please try again later.' }, { status: 429 });
-    }
 
     // Sanitize to prevent XSS in email HTML
     const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

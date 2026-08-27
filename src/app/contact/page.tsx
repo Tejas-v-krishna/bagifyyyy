@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Mail, Phone, Clock, Send, CheckCircle2, MessageSquare } from "lucide-react";
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({ name: "", email: "", order: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", order: "", message: "", website: "" });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -27,6 +27,7 @@ export default function ContactPage() {
           email: formData.email,
           orderNumber: formData.order || null,
           message: formData.message,
+          honeypot: formData.website,
         }),
       });
       const data = await res.json();
@@ -82,7 +83,7 @@ export default function ContactPage() {
                 <button
                   onClick={() => {
                     setSubmitted(false);
-                    setFormData({ name: "", email: "", order: "", message: "" });
+                    setFormData({ name: "", email: "", order: "", message: "", website: "" });
                   }}
                   className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
                 >
@@ -91,6 +92,7 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3.5">
+                <input type="text" name="website" value={formData.website} onChange={handleChange} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
                 <div>
                   <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 block mb-1">
                     Your Name *

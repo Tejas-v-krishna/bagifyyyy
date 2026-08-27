@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 export default function Footer() {
   const pathname = usePathname();
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
@@ -26,7 +27,7 @@ export default function Footer() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, honeypot }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -193,6 +194,7 @@ export default function Footer() {
             Subscribe for 10% off your first drop. No spam, only rare archive releases.
           </p>
           <form onSubmit={handleSubscribe} className="flex flex-col gap-5">
+            <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             <input
               type="email"
               placeholder="YOUR EMAIL ADDRESS"
