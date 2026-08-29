@@ -122,9 +122,6 @@ export default async function Home() {
               <p className="mt-4 max-w-xl text-xs leading-5 text-white/95 sm:text-sm sm:leading-6 md:mt-5 md:text-base md:leading-7">
                 Curated archive pieces made to outlive the moment.
               </p>
-              <Link href="/new-arrivals" className="mt-4 border-b border-white pb-1.5 text-[10px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60 md:mt-5 md:text-[11px]">
-                Explore the edit
-              </Link>
             </div>
           </div>
         </div>
