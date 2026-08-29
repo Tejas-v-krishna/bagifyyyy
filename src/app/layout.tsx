@@ -53,20 +53,11 @@ export const metadata: Metadata = {
     title: "BAGIFYYYY (Bagify) | Y2K Archive & Premium Streetwear",
     description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. No restocks, no replicas. Wear history.",
     siteName: "BAGIFYYYY",
-    images: [
-      {
-        url: "/logo.png",
-        width: 1200,
-        height: 630,
-        alt: "BAGIFYYYY (Bagify) Premium Y2K Archive",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear",
     description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. Wear history.",
-    images: ["/logo.png"],
   },
   robots: {
     index: true,

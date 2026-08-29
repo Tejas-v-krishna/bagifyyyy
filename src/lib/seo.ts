@@ -160,13 +160,13 @@ export function collectionMetadata(opts: {
       description: opts.description,
       url: absoluteUrl(canonical),
       siteName: SITE_NAME,
-      images: [{ url: absoluteUrl('/logo.png'), alt: SITE_NAME }],
+      images: [{ url: absoluteUrl('/opengraph-image'), alt: `${SITE_NAME} archive fashion` }],
     },
     twitter: {
       card: 'summary_large_image' as const,
       title: opts.title,
       description: opts.description,
-      images: [absoluteUrl('/logo.png')],
+      images: [absoluteUrl('/opengraph-image')],
     },
   };
 }
