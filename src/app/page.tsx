@@ -146,7 +146,7 @@ export default async function Home() {
       </section>
 
       {/* 1.5. Anti-Fast Fashion Manifesto */}
-      <section className="relative w-full pb-20 pt-12 md:pb-28 md:pt-16 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
+      <section className="relative w-full pb-20 pt-0 md:pb-28 md:pt-0 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
         <div className="w-full max-w-[1800px] mx-auto flex flex-col">
           {/* Massive Masked Text Layout */}
           <div className="w-full">
