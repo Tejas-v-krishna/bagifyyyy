@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Check, LoaderCircle, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 
 export type HomeBundleItem = {
@@ -27,6 +28,14 @@ export type HomeBundle = {
 export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] }) {
   const { addItem } = useCartStore();
   const [addedBundleId, setAddedBundleId] = useState<string | null>(null);
+  const [addingBundleId, setAddingBundleId] = useState<string | null>(null);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    };
+  }, []);
 
   if (!bundles || bundles.length === 0) return null;
 
@@ -34,26 +43,34 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
     // A set is priced as a whole, so it is added as a whole. Dropping the
     // sold-out pieces and adding the rest used to charge full price for a
     // partial set while the card still advertised the set discount.
-    if (bundle.products.some((p) => p.isSoldOut) || bundle.products.length === 0) return;
+    if (
+      addingBundleId ||
+      bundle.products.some((p) => p.isSoldOut) ||
+      bundle.products.length === 0
+    ) return;
 
+    setAddingBundleId(bundle.id);
     const bundleSize = new Set(bundle.products.map((p) => p.id)).size;
-    bundle.products.forEach((p) => {
-      addItem({
-        id: p.id,
-        name: p.name,
-        price: p.price,
-        image: p.image,
-        quantity: 1,
-        size: "One Size",
-        color: "Default",
-        bundleId: bundle.id,
-        bundleName: bundle.name,
-        bundleDiscount: bundle.discount,
-        bundleSize,
+    window.setTimeout(() => {
+      bundle.products.forEach((p) => {
+        addItem({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          image: p.image,
+          quantity: 1,
+          size: "One Size",
+          color: "Default",
+          bundleId: bundle.id,
+          bundleName: bundle.name,
+          bundleDiscount: bundle.discount,
+          bundleSize,
+        });
       });
-    });
-    setAddedBundleId(bundle.id);
-    setTimeout(() => setAddedBundleId(null), 2500);
+      setAddingBundleId(null);
+      setAddedBundleId(bundle.id);
+      resetTimerRef.current = setTimeout(() => setAddedBundleId(null), 2500);
+    }, 280);
   };
 
   return (
@@ -87,6 +104,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
           {bundles.slice(0, 3).map((bundle, i) => {
             const coverImage = bundle.products[0]?.image || "/placeholder.jpg";
             const isAdded = addedBundleId === bundle.id;
+            const isAdding = addingBundleId === bundle.id;
             // The set price only applies to a complete set, so one sold-out
             // piece makes the whole set unbuyable.
             const isUnavailable =
@@ -182,18 +200,41 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                     {/* CTA */}
                     <button
                       onClick={() => handleAddBundle(bundle)}
-                      disabled={isUnavailable}
+                      disabled={isUnavailable || Boolean(addingBundleId)}
+                      aria-live="polite"
                       aria-label={
                         isUnavailable
                           ? `${bundle.name} set is unavailable`
+                          : isAdding
+                            ? `Adding ${bundle.products.length} pieces from ${bundle.name} to bag`
                           : isAdded
-                            ? "Added to bag"
+                            ? `${bundle.products.length} pieces added to bag`
                             : `Add ${bundle.name} set to bag for ₹${bundle.bundlePrice.toLocaleString("en-IN")}`
                       }
-                      className="w-full py-3.5 text-[9.5px] uppercase tracking-[0.22em] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 disabled:opacity-35 disabled:pointer-events-none cursor-pointer
-                        border border-white/25 text-white hover:bg-white hover:text-y2k-gunmetal"
+                      className={`w-full min-h-11 py-3.5 text-[9.5px] uppercase tracking-[0.22em] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 disabled:pointer-events-none cursor-pointer border flex items-center justify-center gap-2.5 ${
+                        isAdded
+                          ? "border-white bg-white text-y2k-gunmetal"
+                          : "border-white/25 text-white hover:bg-white hover:text-y2k-gunmetal disabled:opacity-35"
+                      }`}
                     >
-                      {isUnavailable ? "Set Unavailable" : isAdded ? "✓ Added to Bag" : "Acquire Look"}
+                      {isUnavailable ? (
+                        "Set Unavailable"
+                      ) : isAdding ? (
+                        <>
+                          <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                          Securing look
+                        </>
+                      ) : isAdded ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
+                          {bundle.products.length} pieces added
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="h-3.5 w-3.5" strokeWidth={1.7} aria-hidden="true" />
+                          Acquire look
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
