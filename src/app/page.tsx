@@ -1,16 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, Globe, Barcode, Heart, ShoppingBag, MessageCircle, Send, MoreHorizontal } from "lucide-react";
-import WishlistButton from "@/components/ui/WishlistButton";
-import HeroText from "@/components/ui/HeroText";
+import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import NewsletterForm from "@/components/ui/NewsletterForm";
 import GsapMarquee from "@/components/ui/GsapMarquee";
 import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
-import HeroCarousel from "@/components/ui/HeroCarousel";
 
 export const dynamic = 'force-dynamic';
 
@@ -85,33 +81,65 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
-      {/* 1. Hero Section */}
-      <section className="w-full flex flex-col items-center min-h-[calc(100svh-60px)] md:min-h-[calc(100vh-72px)] md:h-[calc(100vh-72px)]">
-        
-        {/* Visually Hidden SEO H1 - Crucial for Google Ranking BAGIFYYYY */}
+      {/* 1. Editorial seasonal hero */}
+      <section className="w-full bg-[#f2f1ef] px-2 pb-2 pt-5 sm:px-4 sm:pb-4 md:pt-8">
         <h1 className="sr-only">
           BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
         </h1>
 
-        {/* Massive Headline */}
-        <HeroText />
+        <div className="mx-auto w-full max-w-[1800px]">
+          <div className="overflow-hidden pb-1">
+            <p className="font-sans text-[clamp(4rem,13.2vw,15.5rem)] font-medium leading-[0.75] tracking-[-0.075em] text-[#1d211f] select-none whitespace-nowrap">
+              Archive Season
+            </p>
+          </div>
 
-        {/* Full Width Hero Carousel */}
-        <HeroCarousel />
+          <div className="mt-5 flex items-center justify-between border-b border-black/15 pb-3 text-[9px] text-black/70 md:mt-7 md:text-[10px]">
+            <span>Embrace what lasts</span>
+            <a href="#showcase" className="flex items-center gap-2 hover:text-black">
+              <span>Scroll for more</span>
+              <ArrowRight className="h-3 w-3 rotate-90" strokeWidth={1.4} />
+            </a>
+          </div>
 
-        {/* Ticker Strip */}
-        <div className="w-full bg-y2k-gunmetal text-y2k-ice overflow-hidden h-[42px] md:h-[46px] flex items-center">
+          <div className="relative mt-4 min-h-[58vh] overflow-hidden bg-[#202a27] md:min-h-[68vh]">
+            <Image
+              src="/hero-2-editorial.jpg"
+              alt="BAGIFYYYY Archive Season editorial"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />
+
+            <div className="absolute inset-x-4 bottom-8 flex flex-col items-center text-center text-white md:bottom-12">
+              <span className="rounded-full border border-white/65 px-3 py-1 text-[8px] uppercase tracking-[0.18em] md:text-[9px]">
+                Style your season
+              </span>
+              <p className="mt-4 max-w-xl text-[11px] leading-5 text-white/90 md:text-sm md:leading-6">
+                A considered collection of archive pieces designed to carry character, confidence, and history into every day.
+              </p>
+              <Link href="/new-arrivals" className="mt-5 border-b border-white pb-1 text-[9px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60">
+                Explore the edit
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Attached campaign ticker */}
+        <div className="mx-auto w-full max-w-[1800px] bg-[#202321] text-white overflow-hidden h-[40px] md:h-[46px] flex items-center">
           <div className="flex w-full whitespace-nowrap group">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="animate-marquee group-hover:[animation-play-state:paused] flex gap-10 items-center text-[9.5px] md:text-[10px] uppercase tracking-[0.22em] px-6 shrink-0">
-                <span>JOIN THE BAGIFYYYY COMMUNITY</span>
-                <Globe strokeWidth={1} className="w-3 h-3 text-y2k-soft/60" />
-                <span>10% OFF YOUR FIRST ORDER WITH CODE BAGIFY10</span>
-                <Barcode strokeWidth={1} className="w-3 h-3 text-y2k-soft/60" />
-                <span>JOIN THE BAGIFYYYY COMMUNITY</span>
-                <Globe strokeWidth={1} className="w-3 h-3 text-y2k-soft/60" />
-                <span>10% OFF YOUR FIRST ORDER WITH CODE BAGIFY10</span>
-                <Barcode strokeWidth={1} className="w-3 h-3 text-y2k-soft/60" />
+              <div key={i} className="animate-marquee group-hover:[animation-play-state:paused] flex gap-7 items-center text-[11px] md:text-sm px-4 shrink-0">
+                <span>2026 archive collection</span>
+                <Asterisk strokeWidth={2.2} className="h-5 w-5 shrink-0" />
+                <span>10% off your first order</span>
+                <Asterisk strokeWidth={2.2} className="h-5 w-5 shrink-0" />
+                <span>Latest pieces drop now</span>
+                <Asterisk strokeWidth={2.2} className="h-5 w-5 shrink-0" />
+                <span>Curated for longevity</span>
+                <Asterisk strokeWidth={2.2} className="h-5 w-5 shrink-0" />
               </div>
             ))}
           </div>
