@@ -7,6 +7,7 @@ import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import ProductCard from "@/components/product/ProductCard";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
+import VintageArchiveSection from "@/components/ui/VintageArchiveSection";
 
 export const dynamic = 'force-dynamic';
 
@@ -252,56 +253,15 @@ export default async function Home() {
       </section>
 
       {/* 3. Vintage Archive Section */}
-      <section className="w-full bg-y2k-ice py-32 md:py-44 px-6 sm:px-8 lg:px-16 max-w-[1800px] mx-auto">
-        {/* Section Header */}
-        <div className="flex flex-row items-end justify-between gap-4 mb-16 border-b border-y2k-gunmetal/[0.07] pb-8">
-          <div className="flex flex-col">
-            <span className="section-label text-y2k-gunmetal/45 mb-3">CURATED SELECTION</span>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[52px] uppercase tracking-[-0.04em] leading-none text-y2k-gunmetal">
-              Vintage Archive
-            </h2>
-          </div>
-
-          <div className="flex items-baseline gap-1.5 shrink-0 select-none pb-0.5">
-            <span className="font-display text-4xl sm:text-5xl text-y2k-gunmetal leading-none tracking-tight">
-              06
-            </span>
-            <span className="section-label text-y2k-gunmetal/45">
-              PIECES
-            </span>
-          </div>
-        </div>
-
-        {/* Product Grid */}
-        <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-6 gap-y-16">
-          {vintageArchive.map((product) => (
-            <div key={product.id} className="w-full">
-              <ProductCard product={{
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                brand: product.brand || "ARCHIVE VINTAGE",
-                image: product.images[0]?.url || '/placeholder.jpg',
-                hoverImage: product.images[1]?.url,
-                category: product.category,
-                isSoldOut: product.isSoldOut,
-                isNew: product.isNew
-              }} />
-            </div>
-          ))}
-        </div>
-
-        {/* View All CTA */}
-        <div className="flex justify-center mt-20">
-          <Link
-            href="/products"
-            className="flex items-center gap-3 text-[10px] uppercase tracking-[0.22em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors group"
-          >
-            <span>View all archive pieces</span>
-            <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-          </Link>
-        </div>
-      </section>
+      <VintageArchiveSection
+        items={vintageArchive.map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images[0]?.url || "/placeholder.jpg",
+          isSoldOut: product.isSoldOut,
+        }))}
+      />
 
       {/* 3.5. Curated Archive Bundles Section (if bundles exist) */}
       <HomeBundlesSection bundles={formattedBundles} />
