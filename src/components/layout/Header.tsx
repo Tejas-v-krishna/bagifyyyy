@@ -40,21 +40,21 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-y2k-ice/80 backdrop-blur-2xl border-b border-y2k-gunmetal/[0.06] font-sans">
+    <header className="sticky top-0 z-50 w-full bg-[#f7f7f4]/95 backdrop-blur-2xl border-b border-black/15 font-sans text-[#0a0a0a]">
       {/* ── Top announcement strip ─────────────────────────────────────────── */}
-      <div className="w-full hidden md:block border-b border-y2k-gunmetal/[0.06]">
-        <div className="w-full grid grid-cols-3 divide-x divide-y2k-gunmetal/[0.06] text-[9.5px] font-semibold uppercase tracking-[0.2em] text-y2k-gunmetal/55 py-2.5">
-          <div className="flex items-center justify-center gap-1.5 px-4 hover:text-y2k-gunmetal transition-colors">
+      <div className="w-full hidden md:block border-b border-white/15 bg-[#111111] text-white">
+        <div className="w-full grid grid-cols-3 divide-x divide-white/15 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/65 py-2.5">
+          <div className="flex items-center justify-center gap-1.5 px-4 hover:text-white transition-colors">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-y2k-soft opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-y2k-slate"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/65 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
             </span>
             <span className="font-bold text-center truncate">ARCHIVE VERIFIED • NO RESTOCKS</span>
           </div>
-          <div className="flex items-center justify-center px-4 hover:text-y2k-gunmetal transition-colors">
+          <div className="flex items-center justify-center px-4 hover:text-white transition-colors">
             <span className="text-center truncate">AUTHENTIC ARCHIVE SOURCING</span>
           </div>
-          <div className="flex items-center justify-center px-4 hover:text-y2k-gunmetal transition-colors">
+          <div className="flex items-center justify-center px-4 hover:text-white transition-colors">
             <span className="font-bold text-center truncate">COMPLIMENTARY SHIPPING OVER ₹2000</span>
           </div>
         </div>
@@ -66,25 +66,25 @@ export default function Header() {
         <nav className="hidden lg:flex items-center gap-8 xl:gap-10 flex-1">
           <Link
             href="/topwears"
-            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
+            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-black/60 hover:text-black transition-colors duration-300"
           >
             Shirts &amp; Tees
           </Link>
           <Link
             href="/bottomwears"
-            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
+            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-black/60 hover:text-black transition-colors duration-300"
           >
             Pants &amp; Cargos
           </Link>
           <Link
             href="/accessories"
-            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
+            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-black/60 hover:text-black transition-colors duration-300"
           >
             Accessories
           </Link>
           <Link
             href="/bundles"
-            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
+            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-black/60 hover:text-black transition-colors duration-300"
           >
             Bundles
           </Link>
@@ -102,7 +102,7 @@ export default function Header() {
             width={220}
             height={48}
             priority
-            className="object-contain w-[148px] md:w-[180px] lg:w-[210px]"
+            className="object-contain w-[148px] md:w-[180px] lg:w-[210px] grayscale brightness-[0.28] contrast-[1.8]"
           />
         </Link>
 
@@ -110,7 +110,7 @@ export default function Header() {
         <nav className="hidden lg:flex items-center gap-7 flex-1 justify-end">
           <Link
             href="/products"
-            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300 mr-1"
+            className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-black/60 hover:text-black transition-colors duration-300 mr-1"
           >
             All Drops
           </Link>
@@ -120,7 +120,7 @@ export default function Header() {
 
           <Link
             href="/wishlist"
-            className="text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300"
+            className="text-black/60 hover:text-black transition-colors duration-300"
             aria-label="Wishlist"
           >
             <Heart className="w-[17px] h-[17px]" strokeWidth={1.5} />
@@ -130,7 +130,7 @@ export default function Header() {
           {mounted && isAuthenticated ? (
             <Link
               href="/account"
-              className="flex items-center gap-2 text-y2k-gunmetal/70 hover:text-y2k-gunmetal transition-colors duration-300 group"
+              className="flex items-center gap-2 text-black/70 hover:text-black transition-colors duration-300 group"
               aria-label="Account"
             >
               {user?.avatar ? (
@@ -149,7 +149,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="btn-bagify text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.14em] px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-sm hover:opacity-95 text-y2k-ice"
+              className="bg-black text-white border border-black text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.14em] px-3.5 py-1.5 flex items-center gap-1.5 transition-colors hover:bg-white hover:text-black"
               aria-label="Sign In / Sign Up"
             >
               <User className="w-3 h-3 opacity-80" strokeWidth={2} />
@@ -160,12 +160,12 @@ export default function Header() {
           {/* Bag with count badge */}
           <button
             onClick={toggleCart}
-            className="relative text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors duration-300 cursor-pointer"
+            className="relative text-black/60 hover:text-black transition-colors duration-300 cursor-pointer"
             aria-label={`Shopping bag, ${itemCount} items`}
           >
             <ShoppingBag className="w-[17px] h-[17px]" strokeWidth={1.5} aria-hidden="true" />
             {itemCount > 0 && (
-              <span aria-hidden="true" className="absolute -top-1.5 -right-2 text-[8px] font-black text-white bg-y2k-gunmetal w-[15px] h-[15px] flex items-center justify-center rounded-full leading-none">
+              <span aria-hidden="true" className="absolute -top-1.5 -right-2 text-[8px] font-black text-white bg-black w-[15px] h-[15px] flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
@@ -180,12 +180,12 @@ export default function Header() {
           
           <button
             onClick={toggleCart}
-            className="relative text-y2k-gunmetal hover:text-black transition-colors cursor-pointer p-2"
+            className="relative text-black hover:text-black/60 transition-colors cursor-pointer p-2"
             aria-label={`Shopping bag, ${itemCount} items`}
           >
             <ShoppingBag className="w-5 h-5" strokeWidth={1.5} aria-hidden="true" />
             {itemCount > 0 && (
-              <span aria-hidden="true" className="absolute top-0.5 right-0.5 text-[8px] font-black text-white bg-y2k-gunmetal w-[16px] h-[16px] flex items-center justify-center rounded-full leading-none">
+              <span aria-hidden="true" className="absolute top-0.5 right-0.5 text-[8px] font-black text-white bg-black w-[16px] h-[16px] flex items-center justify-center rounded-full leading-none">
                 {itemCount}
               </span>
             )}
@@ -194,7 +194,7 @@ export default function Header() {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-y2k-gunmetal p-2 -mr-2 cursor-pointer"
+            className="text-black p-2 -mr-2 cursor-pointer"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
@@ -228,7 +228,7 @@ export default function Header() {
                   animate={{ x: 0 }}
                   exit={{ x: "-100%" }}
                   transition={{ type: "spring", damping: 30, stiffness: 260 }}
-                  className="fixed inset-y-0 left-0 z-[9999] w-[80vw] max-w-sm bg-y2k-ice text-y2k-gunmetal border-r border-y2k-gunmetal/[0.08] shadow-2xl flex flex-col lg:hidden h-[100dvh]"
+                  className="fixed inset-y-0 left-0 z-[9999] w-[80vw] max-w-sm bg-[#f7f7f4] text-black border-r border-black/15 shadow-2xl flex flex-col lg:hidden h-[100dvh]"
                 >
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between px-7 py-6 border-b border-y2k-gunmetal/[0.08] shrink-0">
@@ -237,7 +237,7 @@ export default function Header() {
                       alt="Bagifyyyy Logo"
                       width={130}
                       height={30}
-                      className="object-contain"
+                      className="object-contain grayscale brightness-[0.28] contrast-[1.8]"
                     />
                     <button
                       type="button"
