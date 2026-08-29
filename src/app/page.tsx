@@ -126,11 +126,11 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Attached campaign ticker */}
+        {/* Attached campaign ticker - continuous seamless loop */}
         <div className="flex h-[38px] w-full shrink-0 items-center overflow-hidden border-t border-white/25 bg-[#111111] text-white md:h-[42px]">
-          <div className="marquee-track flex w-max whitespace-nowrap group">
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex gap-7 items-center text-[11px] md:text-sm px-4 shrink-0">
+          <div className="marquee-track flex w-max whitespace-nowrap" aria-hidden="true">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex gap-7 items-center text-[11px] md:text-sm px-4 shrink-0" aria-hidden={i !== 0}>
                 <span>2026 archive collection</span>
                 <Asterisk strokeWidth={2.2} className="h-5 w-5 shrink-0" />
                 <span>10% off your first order</span>

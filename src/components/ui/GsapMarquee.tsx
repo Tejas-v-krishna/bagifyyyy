@@ -7,9 +7,10 @@ import { useGSAP } from "@gsap/react";
 
 export default function GsapMarquee() {
   const container = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    // GSAP animation for the sparkle icons
+    // GSAP animation for the sparkle icons - scoped to container
     gsap.to(".sparkle-icon", {
       rotation: -360,
       repeat: -1,
@@ -17,13 +18,16 @@ export default function GsapMarquee() {
       ease: "none",
     });
 
-    // Smooth seamless marquee
-    gsap.to(".marquee-track", {
-      xPercent: -50,
-      repeat: -1,
-      duration: 25,
-      ease: "none",
-    });
+    // Smooth seamless marquee - scoped to this component only
+    // Track contains 4 identical copies (50% = 2 copies width), so looping -50% is seamless
+    if (trackRef.current) {
+      gsap.to(trackRef.current, {
+        xPercent: -50,
+        repeat: -1,
+        duration: 25,
+        ease: "none",
+      });
+    }
   }, { scope: container });
 
   return (
@@ -31,10 +35,14 @@ export default function GsapMarquee() {
       ref={container}
       className="w-full py-4 md:py-6 bg-y2k-gunmetal text-y2k-ice border-y border-y2k-slate flex items-center overflow-hidden relative -rotate-1 scale-105 my-16 shadow-lg"
     >
-      <div className="marquee-track flex w-max whitespace-nowrap relative z-10 hover:[animation-play-state:paused]">
-        {/* We use 2 identical halves to allow seamless looping when translating to -50% */}
-        {[...Array(2)].map((_, i) => (
-          <div key={i} className="flex gap-8 items-center text-3xl md:text-5xl font-display font-light uppercase tracking-tighter shrink-0 px-4">
+      <div
+        ref={trackRef}
+        className="flex w-max whitespace-nowrap relative z-10 will-change-transform"
+        style={{ transform: "translateX(0)" }}
+      >
+        {/* 4 identical copies: track is 400% wide, translating -50% (2 copies) loops seamlessly with no gap on any viewport */}
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="flex gap-8 items-center text-3xl md:text-5xl font-display font-light uppercase tracking-tighter shrink-0 px-4" aria-hidden={i !== 0}>
             {[...Array(3)].map((_, j) => (
               <div key={j} className="flex gap-8 items-center shrink-0">
                 <span>1/1 ARCHIVE</span>
