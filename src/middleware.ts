@@ -31,12 +31,11 @@ function isAdminHost(host: string): boolean {
     return true;
   }
 
-  // In local development, permit localhost / 127.0.0.1 unless strict subdomain is configured
-  if (process.env.NODE_ENV === 'development' && (host === 'localhost' || host === '127.0.0.1')) {
-    return true;
-  }
-
   return false;
+}
+
+function isLocalDevelopmentHost(host: string): boolean {
+  return process.env.NODE_ENV === 'development' && (host === 'localhost' || host === '127.0.0.1');
 }
 
 function isAdminPath(pathname: string): boolean {
@@ -55,12 +54,13 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const host = getRequestHost(request);
   const isTargetingAdminHost = isAdminHost(host);
+  const isLocalDevHost = isLocalDevelopmentHost(host);
   const targetingAdminRoute = isAdminPath(path);
 
   // ── LAYER 2: HOST ISOLATION & CLOAKING ─────────────────────────────────────
   // If an admin/studio path is accessed from the public storefront domain (e.g. bagifyyyy.com),
   // return 404 Not Found so the admin portal is completely invisible to visitors and crawlers.
-  if (!isTargetingAdminHost && targetingAdminRoute) {
+  if (!isTargetingAdminHost && !isLocalDevHost && targetingAdminRoute) {
     if (path.startsWith('/api/')) {
       return NextResponse.json({ error: 'Not Found' }, { status: 404 });
     }
