@@ -89,7 +89,7 @@ export default async function Home() {
 
         <div className="flex min-h-0 w-full flex-1 flex-col">
           <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
-            <p className="w-full text-center font-sans text-[clamp(3.3rem,15vw,20.5rem)] font-medium leading-[0.77] tracking-[-0.035em] text-y2k-gunmetal select-none whitespace-nowrap">
+            <p className="w-full text-center font-sans text-[clamp(3.1rem,14.15vw,18rem)] font-medium leading-[0.77] tracking-[-0.055em] text-y2k-gunmetal select-none whitespace-nowrap">
               Archive Season
             </p>
           </div>
