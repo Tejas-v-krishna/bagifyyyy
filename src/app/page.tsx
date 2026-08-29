@@ -82,12 +82,12 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Editorial seasonal hero */}
-      <section className="w-full overflow-hidden bg-y2k-ice pt-3 md:pt-4">
+      <section className="flex h-[calc(100svh-60px)] w-full flex-col overflow-hidden bg-y2k-ice pt-3 md:h-[calc(100svh-106px)] md:pt-4">
         <h1 className="sr-only">
           BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
         </h1>
 
-        <div className="w-full">
+        <div className="flex min-h-0 w-full flex-1 flex-col">
           <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
             <p className="w-full font-sans text-[clamp(3.5rem,16.35vw,21rem)] font-medium leading-[0.76] tracking-[-0.087em] text-y2k-gunmetal select-none whitespace-nowrap">
               Archive Season
@@ -103,7 +103,7 @@ export default async function Home() {
             </a>
           </div>
 
-          <div className="relative h-[42svh] min-h-[280px] max-h-[520px] w-full overflow-hidden bg-[#202a27] sm:h-[46svh] md:h-[48svh]">
+          <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-[#202a27]">
             <Image
               src="/hero-2-editorial.jpg"
               alt="BAGIFYYYY Archive Season editorial"
@@ -146,17 +146,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      {/* Compact transition into the manifesto */}
-      <div className="w-full border-y border-y2k-gunmetal/10 bg-y2k-ice px-5 md:px-10">
-        <div className="mx-auto grid min-h-14 w-full max-w-[1800px] grid-cols-[auto_1fr] items-center gap-6 md:min-h-16 md:grid-cols-[auto_1fr_auto]">
-          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/45">01 / Manifesto</span>
-          <span className="hidden h-px bg-y2k-gunmetal/10 md:block" aria-hidden="true" />
-          <p className="text-right text-[9px] uppercase tracking-[0.16em] text-y2k-gunmetal/55 md:text-[10px]">
-            Fewer objects. Better stories. Longer lives.
-          </p>
-        </div>
-      </div>
 
       {/* 1.5. Anti-Fast Fashion Manifesto */}
       <section className="relative w-full pb-20 pt-12 md:pb-28 md:pt-16 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
