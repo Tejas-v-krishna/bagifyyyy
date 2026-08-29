@@ -147,8 +147,19 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Compact transition into the manifesto */}
+      <div className="w-full border-y border-y2k-gunmetal/10 bg-y2k-ice px-5 md:px-10">
+        <div className="mx-auto grid min-h-14 w-full max-w-[1800px] grid-cols-[auto_1fr] items-center gap-6 md:min-h-16 md:grid-cols-[auto_1fr_auto]">
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/45">01 / Manifesto</span>
+          <span className="hidden h-px bg-y2k-gunmetal/10 md:block" aria-hidden="true" />
+          <p className="text-right text-[9px] uppercase tracking-[0.16em] text-y2k-gunmetal/55 md:text-[10px]">
+            Fewer objects. Better stories. Longer lives.
+          </p>
+        </div>
+      </div>
+
       {/* 1.5. Anti-Fast Fashion Manifesto */}
-      <section className="relative w-full py-24 md:py-32 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
+      <section className="relative w-full pb-20 pt-12 md:pb-28 md:pt-16 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
         <div className="w-full max-w-[1800px] mx-auto flex flex-col">
           {/* Massive Masked Text Layout */}
           <div className="w-full">
