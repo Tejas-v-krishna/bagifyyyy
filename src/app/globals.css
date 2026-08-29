@@ -322,6 +322,15 @@
                 box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
                 color 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  /* The BAGIFYYYY mark is angular, so interactive controls use the same sharp geometry. */
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"] {
+    border-radius: 0 !important;
+  }
 }
 
 body,
