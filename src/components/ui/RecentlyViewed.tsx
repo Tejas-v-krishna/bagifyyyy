@@ -3,14 +3,23 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, History } from "lucide-react";
+
+type RecentProduct = {
+  id: string;
+  name: string;
+  price?: number;
+  image?: string;
+  images?: string[];
+};
 
 interface RecentlyViewedProps {
   productId: string;
 }
 
 export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
-  const [recentProducts, setRecentProducts] = useState<any[]>([]);
+  const [recentProducts, setRecentProducts] = useState<RecentProduct[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -45,13 +54,22 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
         if (idsToFetch.length === 0) return;
 
         const promises = idsToFetch.map((id) =>
-          fetch(`/api/products/${id}`).then((res) => res.json())
+          fetch(`/api/products/${id}`).then((res) =>
+            res.ok ? res.json() : null
+          )
         );
 
         const results = await Promise.all(promises);
-        setRecentProducts(results.filter((r) => !r.error));
+        setRecentProducts(
+          results.filter(
+            (result): result is RecentProduct =>
+              Boolean(result && !result.error && result.id)
+          )
+        );
       } catch (error) {
         console.error("Error managing recently viewed:", error);
+      } finally {
+        setIsReady(true);
       }
     };
 
@@ -68,7 +86,48 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
     return () => el.removeEventListener("scroll", handleScroll);
   }, [handleScroll, recentProducts]);
 
-  if (recentProducts.length === 0) return null;
+  if (!isReady) {
+    return (
+      <div className="w-full" aria-label="Loading recently viewed products">
+        <div className="mb-6 h-3 w-40 animate-pulse bg-y2k-gunmetal/10" />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3" aria-hidden="true">
+          {[0, 1, 2].map((item) => (
+            <div key={item} className={item === 2 ? "hidden sm:block" : "block"}>
+              <div className="aspect-[4/5] animate-pulse bg-y2k-gunmetal/[0.05]" />
+              <div className="mt-3 h-2.5 w-3/4 animate-pulse bg-y2k-gunmetal/[0.07]" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (recentProducts.length === 0) {
+    return (
+      <div className="w-full border-y border-y2k-gunmetal/[0.08] py-8 sm:py-10">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <History className="mt-0.5 h-5 w-5 shrink-0 text-y2k-gunmetal/35" strokeWidth={1.4} aria-hidden="true" />
+            <div>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-y2k-gunmetal/55">
+                Recently viewed archive
+              </h3>
+              <p className="mt-2 max-w-md text-xs leading-5 text-y2k-gunmetal/55">
+                Your recent discoveries will appear here as you explore the archive.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/products"
+            className="inline-flex min-h-11 items-center gap-2 self-start text-[10px] font-semibold uppercase tracking-[0.18em] text-y2k-gunmetal focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4 sm:self-auto"
+          >
+            Explore archive
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const indicatorWidthPercent = Math.max(20, Math.min(40, 100 / Math.max(1, recentProducts.length)));
   const indicatorLeftPercent = scrollProgress * (100 - indicatorWidthPercent);
