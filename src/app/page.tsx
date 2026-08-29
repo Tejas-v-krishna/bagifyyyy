@@ -82,19 +82,19 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Editorial seasonal hero */}
-      <section className="w-full overflow-hidden bg-y2k-ice px-2 pt-3 sm:px-4 md:pt-4">
+      <section className="w-full overflow-hidden bg-y2k-ice pt-3 md:pt-4">
         <h1 className="sr-only">
           BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
         </h1>
 
-        <div className="mx-auto w-full max-w-[1800px]">
-          <div className="shrink-0 overflow-hidden pb-1">
-            <p className="w-full font-sans text-[clamp(3.1rem,12.05vw,14.3rem)] font-medium leading-[0.77] tracking-[-0.082em] text-y2k-gunmetal select-none whitespace-nowrap">
+        <div className="w-full">
+          <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
+            <p className="w-full font-sans text-[clamp(3.5rem,15.1vw,18rem)] font-medium leading-[0.76] tracking-[-0.092em] text-y2k-gunmetal select-none whitespace-nowrap">
               Archive Season
             </p>
           </div>
 
-          <div className="mt-2 grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-5 pb-3 text-[9px] text-y2k-gunmetal/70 md:mt-3 md:gap-7 md:text-[10px]">
+          <div className="mx-3 mt-3 grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-5 pb-4 text-[9px] text-y2k-gunmetal/70 sm:mx-5 md:mx-7 md:mt-4 md:gap-7 md:text-[10px]">
             <span>Embrace what lasts</span>
             <span className="h-px w-full bg-y2k-gunmetal/15" aria-hidden="true" />
             <a href="#showcase" className="flex items-center gap-2 hover:text-black">
@@ -103,7 +103,7 @@ export default async function Home() {
             </a>
           </div>
 
-          <div className="relative h-[42svh] min-h-[280px] max-h-[520px] overflow-hidden bg-[#202a27] sm:h-[46svh] md:h-[48svh]">
+          <div className="relative h-[42svh] min-h-[280px] max-h-[520px] w-full overflow-hidden bg-[#202a27] sm:h-[46svh] md:h-[48svh]">
             <Image
               src="/hero-2-editorial.jpg"
               alt="BAGIFYYYY Archive Season editorial"
@@ -129,7 +129,7 @@ export default async function Home() {
         </div>
 
         {/* Attached campaign ticker */}
-        <div className="mx-auto flex h-[38px] w-full max-w-[1800px] shrink-0 items-center overflow-hidden bg-y2k-gunmetal text-y2k-ice md:h-[42px]">
+        <div className="flex h-[38px] w-full shrink-0 items-center overflow-hidden bg-y2k-gunmetal text-y2k-ice md:h-[42px]">
           <div className="flex w-full whitespace-nowrap group">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="animate-marquee group-hover:[animation-play-state:paused] flex gap-7 items-center text-[11px] md:text-sm px-4 shrink-0">
