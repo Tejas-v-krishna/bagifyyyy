@@ -89,8 +89,8 @@ export default async function Home() {
 
         <div className="flex min-h-0 w-full flex-1 flex-col">
           <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
-            <p className="w-full font-sans text-[clamp(3.5rem,16.35vw,21rem)] font-medium leading-[0.76] tracking-[-0.087em] text-y2k-gunmetal select-none whitespace-nowrap">
-              Archive Season
+            <p className="w-full font-sans text-[clamp(3.3rem,15.15vw,19.5rem)] font-medium leading-[0.77] tracking-[-0.095em] text-y2k-gunmetal select-none whitespace-nowrap">
+              ArchiveSeason
             </p>
           </div>
 
@@ -114,12 +114,12 @@ export default async function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />
 
-            <div className="absolute inset-x-4 bottom-5 flex flex-col items-center text-center text-white md:bottom-8">
+            <div className="absolute bottom-5 left-5 flex max-w-sm flex-col items-start text-left text-white sm:left-8 md:bottom-8 md:left-10">
               <span className="rounded-full border border-white/65 px-3 py-1 text-[8px] uppercase tracking-[0.18em] md:text-[9px]">
                 Style your season
               </span>
-              <p className="mt-3 max-w-xl text-[10px] leading-4 text-white/90 sm:text-[11px] sm:leading-5 md:text-sm md:leading-6">
-                A considered collection of archive pieces designed to carry character, confidence, and history into every day.
+              <p className="mt-3 max-w-sm text-[10px] leading-4 text-white/90 sm:text-[11px] sm:leading-5 md:text-sm md:leading-6">
+                Curated archive pieces made to outlive the moment.
               </p>
               <Link href="/new-arrivals" className="mt-3 border-b border-white pb-1 text-[8px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60 md:mt-4 md:text-[9px]">
                 Explore the edit
@@ -129,7 +129,7 @@ export default async function Home() {
         </div>
 
         {/* Attached campaign ticker */}
-        <div className="flex h-[38px] w-full shrink-0 items-center overflow-hidden bg-y2k-gunmetal text-y2k-ice md:h-[42px]">
+        <div className="flex h-[38px] w-full shrink-0 items-center overflow-hidden border-t border-y2k-ice/35 bg-y2k-gunmetal text-y2k-ice md:h-[42px]">
           <div className="flex w-full whitespace-nowrap group">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="animate-marquee group-hover:[animation-play-state:paused] flex gap-7 items-center text-[11px] md:text-sm px-4 shrink-0">
