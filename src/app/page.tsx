@@ -89,7 +89,7 @@ export default async function Home() {
 
         <div className="w-full">
           <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
-            <p className="w-full font-sans text-[clamp(3.5rem,15.1vw,18rem)] font-medium leading-[0.76] tracking-[-0.092em] text-y2k-gunmetal select-none whitespace-nowrap">
+            <p className="w-full font-sans text-[clamp(3.5rem,16.35vw,21rem)] font-medium leading-[0.76] tracking-[-0.087em] text-y2k-gunmetal select-none whitespace-nowrap">
               Archive Season
             </p>
           </div>
@@ -148,7 +148,7 @@ export default async function Home() {
       </section>
 
       {/* 1.5. Anti-Fast Fashion Manifesto */}
-      <section className="relative w-full py-40 md:py-56 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
+      <section className="relative w-full py-24 md:py-32 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
         <div className="w-full max-w-[1800px] mx-auto flex flex-col">
           {/* Massive Masked Text Layout */}
           <div className="w-full">
