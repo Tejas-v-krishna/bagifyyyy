@@ -41,25 +41,6 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#f7f7f4]/95 backdrop-blur-2xl border-b border-black/15 font-sans text-[#0a0a0a]">
-      {/* ── Top announcement strip ─────────────────────────────────────────── */}
-      <div className="w-full hidden md:block border-b border-white/15 bg-[#111111] text-white">
-        <div className="w-full grid grid-cols-3 divide-x divide-white/15 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/65 py-2.5">
-          <div className="flex items-center justify-center gap-1.5 px-4 hover:text-white transition-colors">
-            <span className="relative flex h-1.5 w-1.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/65 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-            </span>
-            <span className="font-bold text-center truncate">ARCHIVE VERIFIED • NO RESTOCKS</span>
-          </div>
-          <div className="flex items-center justify-center px-4 hover:text-white transition-colors">
-            <span className="text-center truncate">AUTHENTIC ARCHIVE SOURCING</span>
-          </div>
-          <div className="flex items-center justify-center px-4 hover:text-white transition-colors">
-            <span className="font-bold text-center truncate">COMPLIMENTARY SHIPPING OVER ₹2000</span>
-          </div>
-        </div>
-      </div>
-
       {/* ── Main nav bar ───────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-6 sm:px-8 lg:px-12 h-[60px] md:h-[72px] relative">
         {/* Desktop nav — left side */}
