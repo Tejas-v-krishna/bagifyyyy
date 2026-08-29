@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Urbanist } from "next/font/google";
 import "./globals.css";
+import "./monochrome.css";
 
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
@@ -118,7 +119,7 @@ export default function RootLayout({
         <JsonLd data={webSiteJsonLd()} />
       </head>
       <body
-        className="min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"
+        className="monochrome-site min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"
         suppressHydrationWarning
       >
         <SmoothCursor />

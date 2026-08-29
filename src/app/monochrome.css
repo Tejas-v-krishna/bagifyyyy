@@ -1,0 +1,127 @@
+/* One monochrome visual language for every visible route. Product imagery remains in color. */
+
+:root {
+  --mono-paper: #f5f5f2;
+  --mono-white: #ffffff;
+  --mono-ink: #0b0b0b;
+  --mono-soft-ink: #5e5e5e;
+  --mono-line: rgba(11, 11, 11, .18);
+  --mono-soft-line: rgba(11, 11, 11, .1);
+  --mono-panel: #efefec;
+}
+
+body.monochrome-site,
+body.monochrome-site main,
+body.monochrome-site main > div {
+  color: var(--mono-ink) !important;
+  background-color: var(--mono-paper) !important;
+}
+
+body.monochrome-site .text-y2k-gunmetal,
+body.monochrome-site .text-y2k-deep,
+body.monochrome-site .text-y2k-slate,
+body.monochrome-site .text-y2k-mist,
+body.monochrome-site .text-y2k-soft,
+body.monochrome-site .text-y2k-pale,
+body.monochrome-site .text-y2k-ice { color: var(--mono-ink) !important; }
+
+body.monochrome-site .text-y2k-gunmetal\/60,
+body.monochrome-site .text-y2k-gunmetal\/55,
+body.monochrome-site .text-y2k-gunmetal\/50,
+body.monochrome-site .text-y2k-gunmetal\/45,
+body.monochrome-site .text-y2k-gunmetal\/40,
+body.monochrome-site .text-y2k-gunmetal\/35,
+body.monochrome-site .text-y2k-gunmetal\/30,
+body.monochrome-site .text-y2k-slate\/60 { color: var(--mono-soft-ink) !important; }
+
+body.monochrome-site .bg-y2k-ice,
+body.monochrome-site .bg-y2k-ice\/40,
+body.monochrome-site .bg-y2k-ice\/30,
+body.monochrome-site .bg-y2k-ice\/15,
+body.monochrome-site .bg-y2k-pale\/20,
+body.monochrome-site .bg-y2k-pale\/25,
+body.monochrome-site .bg-y2k-pale\/30,
+body.monochrome-site .bg-y2k-pale\/35,
+body.monochrome-site .bg-white\/50,
+body.monochrome-site .bg-white\/60,
+body.monochrome-site .bg-white\/80,
+body.monochrome-site .bg-white\/90 { background-color: var(--mono-panel) !important; }
+
+body.monochrome-site .bg-y2k-gunmetal,
+body.monochrome-site .bg-y2k-deep,
+body.monochrome-site .bg-y2k-slate { background-color: var(--mono-ink) !important; }
+
+body.monochrome-site .text-white,
+body.monochrome-site .text-y2k-ice { color: var(--mono-white) !important; }
+
+body.monochrome-site [class*="border-y2k-gunmetal"],
+body.monochrome-site [class*="border-y2k-pale"],
+body.monochrome-site [class*="border-y2k-soft"] { border-color: var(--mono-line) !important; }
+
+body.monochrome-site .btn-bagify {
+  color: #fff !important;
+  background: var(--mono-ink) !important;
+  border-color: var(--mono-ink) !important;
+  box-shadow: none !important;
+}
+body.monochrome-site .btn-bagify:hover { color: #000 !important; background: #fff !important; }
+
+body.monochrome-site input,
+body.monochrome-site textarea,
+body.monochrome-site select {
+  color: #000 !important;
+  background: #fff !important;
+  border-color: var(--mono-line) !important;
+  box-shadow: none !important;
+}
+
+body.monochrome-site .chrome-gradient,
+body.monochrome-site .text-chrome-gradient,
+body.monochrome-site .text-heading-gradient,
+body.monochrome-site .text-vibe-gradient,
+body.monochrome-site .text-animated-vibe {
+  background-image: none !important;
+  background-color: transparent !important;
+  color: var(--mono-ink) !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+body.monochrome-site .bg-gradient-to-t,
+body.monochrome-site .bg-gradient-to-l,
+body.monochrome-site .bg-gradient-to-r,
+body.monochrome-site .bg-gradient-to-b { background-image: linear-gradient(to top, rgba(0,0,0,.64), transparent) !important; }
+
+body.monochrome-site .bg-emerald-400,
+body.monochrome-site .bg-emerald-500,
+body.monochrome-site .bg-emerald-600,
+body.monochrome-site .bg-green-500,
+body.monochrome-site .bg-green-600 { background-color: #111 !important; }
+body.monochrome-site .text-emerald-300,
+body.monochrome-site .text-emerald-600,
+body.monochrome-site .text-emerald-700,
+body.monochrome-site .text-green-600,
+body.monochrome-site .text-green-700,
+body.monochrome-site .text-green-800 { color: #222 !important; }
+
+body.monochrome-site .bg-red-50,
+body.monochrome-site .bg-red-100,
+body.monochrome-site .bg-red-500 { background-color: #ededeb !important; }
+body.monochrome-site .text-red-500,
+body.monochrome-site .text-red-600,
+body.monochrome-site .text-red-700,
+body.monochrome-site .text-red-800 { color: #111 !important; }
+
+body.monochrome-site .bg-amber-500\/10,
+body.monochrome-site .bg-blue-50 { background-color: #ededeb !important; }
+body.monochrome-site .text-amber-600,
+body.monochrome-site .text-amber-700,
+body.monochrome-site .text-blue-600,
+body.monochrome-site .text-blue-900 { color: #222 !important; }
+
+body.monochrome-site .retro-led,
+body.monochrome-site .bg-emerald-600 { background-color: #111 !important; box-shadow: none !important; }
+
+body.monochrome-site [class*="shadow-"] { box-shadow: none !important; }
+
+/* Keep image content colorful; only UI surfaces are monochrome. */
+body.monochrome-site img { filter: none; }
