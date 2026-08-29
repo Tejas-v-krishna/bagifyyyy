@@ -82,27 +82,28 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Editorial seasonal hero */}
-      <section className="flex h-[calc(100svh-60px)] w-full flex-col overflow-hidden bg-y2k-ice px-2 pt-3 sm:px-4 md:h-[calc(100svh-106px)] md:pt-5">
+      <section className="w-full overflow-hidden bg-y2k-ice px-2 pt-3 sm:px-4 md:pt-4">
         <h1 className="sr-only">
           BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
         </h1>
 
-        <div className="mx-auto flex min-h-0 w-full max-w-[1800px] flex-1 flex-col">
+        <div className="mx-auto w-full max-w-[1800px]">
           <div className="shrink-0 overflow-hidden pb-1">
-            <p className="font-sans text-[clamp(3.15rem,min(11.5vw,17svh),13rem)] font-medium leading-[0.76] tracking-[-0.075em] text-y2k-gunmetal select-none whitespace-nowrap">
+            <p className="w-full font-sans text-[clamp(3.1rem,12.05vw,14.3rem)] font-medium leading-[0.77] tracking-[-0.082em] text-y2k-gunmetal select-none whitespace-nowrap">
               Archive Season
             </p>
           </div>
 
-          <div className="mt-2 flex shrink-0 items-center justify-between border-b border-y2k-gunmetal/15 pb-2 text-[9px] text-y2k-gunmetal/70 md:mt-3 md:text-[10px]">
+          <div className="mt-2 grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-5 pb-3 text-[9px] text-y2k-gunmetal/70 md:mt-3 md:gap-7 md:text-[10px]">
             <span>Embrace what lasts</span>
+            <span className="h-px w-full bg-y2k-gunmetal/15" aria-hidden="true" />
             <a href="#showcase" className="flex items-center gap-2 hover:text-black">
               <span>Scroll for more</span>
               <ArrowRight className="h-3 w-3 rotate-90" strokeWidth={1.4} />
             </a>
           </div>
 
-          <div className="relative mt-3 min-h-0 flex-1 overflow-hidden bg-[#202a27]">
+          <div className="relative h-[42svh] min-h-[280px] max-h-[520px] overflow-hidden bg-[#202a27] sm:h-[46svh] md:h-[48svh]">
             <Image
               src="/hero-2-editorial.jpg"
               alt="BAGIFYYYY Archive Season editorial"
