@@ -426,6 +426,26 @@ html.lenis body {
   animation: marquee 40s linear infinite;
 }
 
+/* The track contains two identical copies. Moving exactly one copy's width
+   makes the second copy occupy the first copy's starting position with no jump. */
+.marquee-track {
+  animation: marquee-seamless 28s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-seamless {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
 @keyframes pageBlurFadeIn {
   0% {
     opacity: 0;
