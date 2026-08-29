@@ -82,19 +82,19 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Editorial seasonal hero */}
-      <section className="w-full bg-[#f2f1ef] px-2 pb-2 pt-5 sm:px-4 sm:pb-4 md:pt-8">
+      <section className="flex h-[calc(100svh-60px)] w-full flex-col overflow-hidden bg-y2k-ice px-2 pt-3 sm:px-4 md:h-[calc(100svh-106px)] md:pt-5">
         <h1 className="sr-only">
           BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
         </h1>
 
-        <div className="mx-auto w-full max-w-[1800px]">
-          <div className="overflow-hidden pb-1">
-            <p className="font-sans text-[clamp(4rem,13.2vw,15.5rem)] font-medium leading-[0.75] tracking-[-0.075em] text-[#1d211f] select-none whitespace-nowrap">
+        <div className="mx-auto flex min-h-0 w-full max-w-[1800px] flex-1 flex-col">
+          <div className="shrink-0 overflow-hidden pb-1">
+            <p className="font-sans text-[clamp(3.15rem,min(11.5vw,17svh),13rem)] font-medium leading-[0.76] tracking-[-0.075em] text-y2k-gunmetal select-none whitespace-nowrap">
               Archive Season
             </p>
           </div>
 
-          <div className="mt-5 flex items-center justify-between border-b border-black/15 pb-3 text-[9px] text-black/70 md:mt-7 md:text-[10px]">
+          <div className="mt-2 flex shrink-0 items-center justify-between border-b border-y2k-gunmetal/15 pb-2 text-[9px] text-y2k-gunmetal/70 md:mt-3 md:text-[10px]">
             <span>Embrace what lasts</span>
             <a href="#showcase" className="flex items-center gap-2 hover:text-black">
               <span>Scroll for more</span>
@@ -102,7 +102,7 @@ export default async function Home() {
             </a>
           </div>
 
-          <div className="relative mt-4 min-h-[58vh] overflow-hidden bg-[#202a27] md:min-h-[68vh]">
+          <div className="relative mt-3 min-h-0 flex-1 overflow-hidden bg-[#202a27]">
             <Image
               src="/hero-2-editorial.jpg"
               alt="BAGIFYYYY Archive Season editorial"
@@ -113,14 +113,14 @@ export default async function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />
 
-            <div className="absolute inset-x-4 bottom-8 flex flex-col items-center text-center text-white md:bottom-12">
+            <div className="absolute inset-x-4 bottom-5 flex flex-col items-center text-center text-white md:bottom-8">
               <span className="rounded-full border border-white/65 px-3 py-1 text-[8px] uppercase tracking-[0.18em] md:text-[9px]">
                 Style your season
               </span>
-              <p className="mt-4 max-w-xl text-[11px] leading-5 text-white/90 md:text-sm md:leading-6">
+              <p className="mt-3 max-w-xl text-[10px] leading-4 text-white/90 sm:text-[11px] sm:leading-5 md:text-sm md:leading-6">
                 A considered collection of archive pieces designed to carry character, confidence, and history into every day.
               </p>
-              <Link href="/new-arrivals" className="mt-5 border-b border-white pb-1 text-[9px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60">
+              <Link href="/new-arrivals" className="mt-3 border-b border-white pb-1 text-[8px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60 md:mt-4 md:text-[9px]">
                 Explore the edit
               </Link>
             </div>
@@ -128,7 +128,7 @@ export default async function Home() {
         </div>
 
         {/* Attached campaign ticker */}
-        <div className="mx-auto w-full max-w-[1800px] bg-[#202321] text-white overflow-hidden h-[40px] md:h-[46px] flex items-center">
+        <div className="mx-auto flex h-[38px] w-full max-w-[1800px] shrink-0 items-center overflow-hidden bg-y2k-gunmetal text-y2k-ice md:h-[42px]">
           <div className="flex w-full whitespace-nowrap group">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="animate-marquee group-hover:[animation-play-state:paused] flex gap-7 items-center text-[11px] md:text-sm px-4 shrink-0">
