@@ -89,8 +89,8 @@ export default async function Home() {
 
         <div className="flex min-h-0 w-full flex-1 flex-col">
           <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
-            <p className="w-full font-sans text-[clamp(3.3rem,15.15vw,19.5rem)] font-medium leading-[0.77] tracking-[-0.095em] text-y2k-gunmetal select-none whitespace-nowrap">
-              ArchiveSeason
+            <p className="w-full text-center font-sans text-[clamp(3.3rem,15vw,20.5rem)] font-medium leading-[0.77] tracking-[-0.035em] text-y2k-gunmetal select-none whitespace-nowrap">
+              Archive Season
             </p>
           </div>
 
@@ -114,7 +114,7 @@ export default async function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />
 
-            <div className="absolute bottom-5 left-5 flex max-w-sm flex-col items-start text-left text-white sm:left-8 md:bottom-8 md:left-10">
+            <div className="absolute inset-x-4 bottom-5 flex flex-col items-center text-center text-white md:bottom-8">
               <span className="rounded-full border border-white/65 px-3 py-1 text-[8px] uppercase tracking-[0.18em] md:text-[9px]">
                 Style your season
               </span>
