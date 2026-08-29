@@ -114,14 +114,14 @@ export default async function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />
 
-            <div className="absolute inset-x-4 bottom-5 flex flex-col items-center text-center text-white md:bottom-8">
-              <span className="rounded-full border border-white/65 px-3 py-1 text-[8px] uppercase tracking-[0.18em] md:text-[9px]">
+            <div className="absolute inset-x-4 bottom-6 flex flex-col items-center text-center text-white md:bottom-10">
+              <span className="rounded-full border border-white/65 px-4 py-1.5 text-[10px] uppercase tracking-[0.18em] md:px-5 md:py-2 md:text-xs">
                 Style your season
               </span>
-              <p className="mt-3 max-w-sm text-[10px] leading-4 text-white/90 sm:text-[11px] sm:leading-5 md:text-sm md:leading-6">
+              <p className="mt-4 max-w-xl text-xs leading-5 text-white/95 sm:text-sm sm:leading-6 md:mt-5 md:text-base md:leading-7">
                 Curated archive pieces made to outlive the moment.
               </p>
-              <Link href="/new-arrivals" className="mt-3 border-b border-white pb-1 text-[8px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60 md:mt-4 md:text-[9px]">
+              <Link href="/new-arrivals" className="mt-4 border-b border-white pb-1.5 text-[10px] uppercase tracking-[0.18em] transition-opacity hover:opacity-60 md:mt-5 md:text-[11px]">
                 Explore the edit
               </Link>
             </div>
