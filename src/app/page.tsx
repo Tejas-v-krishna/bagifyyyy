@@ -95,12 +95,20 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="mx-3 mt-3 grid shrink-0 grid-cols-[auto_1fr_auto] items-center gap-5 pb-4 text-[11px] font-medium text-black/65 sm:mx-5 md:mx-7 md:mt-4 md:gap-7 md:text-xs">
-            <span>Embrace what lasts</span>
-            <span className="h-px w-full bg-black/15" aria-hidden="true" />
-            <a href="#showcase" className="flex items-center gap-2 hover:text-black">
+          <div className="mx-3 mt-3 flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2.5 pb-4 text-[10.5px] font-medium uppercase tracking-[0.14em] text-black/60 sm:mx-5 md:mx-7 md:mt-4 md:gap-x-7 md:text-[11px]">
+            <span className="flex items-center gap-2">
+              <span className="inline-block h-1 w-1 rounded-full bg-black/70" aria-hidden="true" />
+              SS26 Archive
+            </span>
+            <span className="hidden sm:inline text-black/35">Embrace what lasts</span>
+            <span className="hidden md:inline text-black/35">Mumbai · India</span>
+            <span className="hidden lg:block h-px flex-1 bg-black/15 min-w-[40px]" aria-hidden="true" />
+            <a
+              href="#showcase"
+              className="ml-auto inline-flex items-center gap-1.5 text-black/70 hover:text-black transition-colors focus-visible:outline focus-visible:outline-1 focus-visible:outline-black focus-visible:outline-offset-4"
+            >
               <span>Scroll for more</span>
-              <ArrowRight className="h-3 w-3 rotate-90" strokeWidth={1.4} />
+              <ArrowRight className="h-3 w-3 rotate-90" strokeWidth={1.6} />
             </a>
           </div>
 
