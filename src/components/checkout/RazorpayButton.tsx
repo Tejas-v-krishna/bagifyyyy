@@ -68,8 +68,8 @@ export default function RazorpayButton({
   onSuccess,
   onFailure,
   onDismiss,
-  createOrderEndpoint = "/api/create-order",
-  verifyEndpoint = "/api/verify-payment",
+  createOrderEndpoint = "/api/payment/razorpay/create-order",
+  verifyEndpoint = "/api/payment/razorpay/verify",
 }: RazorpayButtonProps) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

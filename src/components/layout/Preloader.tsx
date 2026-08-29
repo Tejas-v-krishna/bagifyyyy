@@ -14,18 +14,22 @@ export default function Preloader() {
   const isDashboard = pathname?.startsWith("/studio") || pathname?.startsWith("/admin");
 
   useEffect(() => {
-    // Studio/admin never shows the storefront preloader, but downstream animations
-    // wait on this flag — so mark it finished immediately instead of gating on a timer.
-    if (isDashboard) {
+    // Studio/admin or reduced motion never delays downstream animations
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (isDashboard || prefersReducedMotion) {
+      setIsLoading(false);
       setPreloaderFinished(true);
       return;
     }
 
-    // Atmospheric brand reveal
+    // Atmospheric brand reveal (snappy 600ms reveal)
     const timer = setTimeout(() => {
       setIsLoading(false);
       setPreloaderFinished(true);
-    }, 2200);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [isDashboard, setPreloaderFinished]);

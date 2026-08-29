@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ShoppingBag, Check } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 
@@ -18,6 +19,7 @@ interface AddToBagButtonProps {
 }
 
 export default function AddToBagButton({ product, className = "" }: AddToBagButtonProps) {
+  const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
 
@@ -33,7 +35,7 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
     const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 1;
     const hasColors = Array.isArray(product.colors) && product.colors.length > 1;
     if (hasSizes || hasColors) {
-      window.location.href = `/product/${product.id}`;
+      router.push(`/product/${product.id}`);
       return;
     }
 

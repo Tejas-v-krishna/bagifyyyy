@@ -112,17 +112,17 @@ export async function priceCart(options: {
       throw new CartError(`${product.name} is sold out.`, 409);
     }
 
-    const size = typeof item.size === 'string' && item.size ? item.size : 'M';
-    const color = typeof item.color === 'string' && item.color ? item.color : 'Default';
+    const size = typeof item.size === 'string' && item.size ? item.size : (product.variants[0]?.size || 'OS');
+    const color = typeof item.color === 'string' && item.color ? item.color : (product.variants[0]?.color || 'Default');
 
-    // Only enforce stock when we actually have a variant row to check against
-    const variant = product.variants.find((v) => v.size === size && v.color === color);
+    // Resolve variant row: match exact size & color, or fallback to first available variant
+    const variant = product.variants.find((v) => v.size === size && v.color === color) || product.variants[0];
     if (variant) {
       if (variant.stock < quantity) {
         throw new CartError(
           variant.stock === 0
-            ? `${product.name} (${size} / ${color}) is out of stock.`
-            : `Only ${variant.stock} left of ${product.name} (${size} / ${color}).`,
+            ? `${product.name} (${variant.size} / ${variant.color}) is out of stock.`
+            : `Only ${variant.stock} left of ${product.name} (${variant.size} / ${variant.color}).`,
           409
         );
       }

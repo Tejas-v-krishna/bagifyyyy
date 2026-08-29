@@ -148,7 +148,7 @@ function CheckoutContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load user details if authenticated
+  // Load user details & saved addresses if authenticated
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
@@ -157,6 +157,24 @@ function CheckoutContent() {
         email: prev.email || user.email || "",
       }));
       setCheckoutMode('account');
+
+      fetch('/api/account/addresses')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.addresses?.length > 0) {
+            const latest = data.addresses[0];
+            setFormData((prev) => ({
+              ...prev,
+              fullName: prev.fullName || latest.fullName || "",
+              phone: prev.phone || latest.phone || "",
+              street: prev.street || latest.street || "",
+              city: prev.city || latest.city || "",
+              state: prev.state || latest.state || "Maharashtra",
+              pincode: prev.pincode || latest.pincode || "",
+            }));
+          }
+        })
+        .catch(() => {});
     }
   }, [user]);
 

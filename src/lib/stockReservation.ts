@@ -46,10 +46,11 @@ export async function reserveCartStock(params: {
 
     // 3. Create fresh reservations for each item
     for (const item of items) {
-      if (!item.variantId) continue;
+      const targetVariantId = item.variantId || item.productId;
+      if (!targetVariantId) continue;
       await prisma.stockReservation.create({
         data: {
-          variantId: item.variantId,
+          variantId: targetVariantId,
           productId: item.productId,
           sessionId,
           orderId: orderId || null,

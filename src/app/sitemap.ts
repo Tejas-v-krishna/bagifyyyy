@@ -37,20 +37,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: route === "" || route === "/products" ? "daily" : "weekly",
-    priority: route === "" ? 1.0 : route.startsWith("/products") ? 0.9 : 0.7,
+    priority:
+      route === ""
+        ? 1.0
+        : route === "/products"
+          ? 0.9
+          : ["/topwears", "/bottomwears", "/unisex", "/accessories", "/bundles", "/new-arrivals", "/curated-grails"].includes(route)
+            ? 0.85
+            : 0.6,
   }));
 
   try {
     const products = await prisma.product.findMany({
       select: { id: true, updatedAt: true },
-      take: 1000,
+      take: 2000,
     });
 
     const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
       url: `${baseUrl}/product/${product.id}`,
       lastModified: product.updatedAt || new Date(),
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.7,
     }));
 
     return [...staticRoutes, ...productRoutes];

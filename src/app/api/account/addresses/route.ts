@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ address });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Create address error:', error);
     return NextResponse.json({ error: 'Failed to save address.' }, { status: 500 });
   }

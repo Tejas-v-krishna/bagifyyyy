@@ -144,25 +144,6 @@ function LoginContent() {
     setSuccess("");
     setLoading(true);
 
-    // Silent admin login check
-    if (!email && password && view === "login") {
-      try {
-        const res = await fetch("/api/studio/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ password }),
-        });
-        if (res.ok) {
-          router.push("/studio");
-          setLoading(false);
-          return;
-        }
-      } catch {}
-      setError("Incorrect email or password.");
-      setLoading(false);
-      return;
-    }
-
     if (view === "register") {
       try {
         const res = await fetch("/api/auth/register", {

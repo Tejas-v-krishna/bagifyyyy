@@ -166,41 +166,43 @@ export async function POST(request: Request) {
       });
     }
 
-    // 6. Clean up Stock Reservation Hold & Decrement Variant Stock
+    // 6. Clean up Stock Reservation Hold & Decrement Variant Stock atomically
     try {
-      await prisma.stockReservation.deleteMany({
-        where: { orderId: order.id },
-      });
-
-      for (const item of order.items) {
-        const variant = await prisma.variant.findFirst({
-          where: {
-            productId: item.productId,
-            size: item.size,
-            ...(item.color ? { color: item.color } : {}),
-          },
+      await prisma.$transaction(async (tx) => {
+        await tx.stockReservation.deleteMany({
+          where: { orderId: order.id },
         });
 
-        if (variant) {
-          const newStock = Math.max(0, variant.stock - item.quantity);
-          await prisma.variant.update({
-            where: { id: variant.id },
-            data: { stock: newStock },
+        for (const item of order.items) {
+          const variant = await tx.variant.findFirst({
+            where: {
+              productId: item.productId,
+              size: item.size,
+              ...(item.color ? { color: item.color } : {}),
+            },
           });
 
-          // Check if total stock for this product is now 0 -> mark isSoldOut
-          const remainingVariants = await prisma.variant.findMany({
-            where: { productId: item.productId },
-          });
-          const totalRemaining = remainingVariants.reduce((sum, v) => sum + (v.id === variant.id ? newStock : v.stock), 0);
-          if (totalRemaining === 0) {
-            await prisma.product.update({
-              where: { id: item.productId },
-              data: { isSoldOut: true },
+          if (variant) {
+            const newStock = Math.max(0, variant.stock - item.quantity);
+            await tx.variant.update({
+              where: { id: variant.id },
+              data: { stock: newStock },
             });
+
+            // Check if total stock for this product is now 0 -> mark isSoldOut
+            const remainingVariants = await tx.variant.findMany({
+              where: { productId: item.productId },
+            });
+            const totalRemaining = remainingVariants.reduce((sum, v) => sum + (v.id === variant.id ? newStock : v.stock), 0);
+            if (totalRemaining === 0) {
+              await tx.product.update({
+                where: { id: item.productId },
+                data: { isSoldOut: true },
+              });
+            }
           }
         }
-      }
+      });
     } catch (stockError) {
       console.warn('Inventory decrement warning:', stockError);
     }

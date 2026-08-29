@@ -54,8 +54,8 @@ export async function POST(
     });
 
     return NextResponse.json({ review });
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error) {
+    if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: 'You have already reviewed this product.' }, { status: 409 });
     }
     console.error('Review POST error:', error);

@@ -7,22 +7,49 @@ import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight, ArrowLef
 import { orderStatusLabel } from "@/lib/orderStatus";
 import { useAuthStore } from "@/store/useAuthStore";
 
+interface TrackedOrderItem {
+  id: string;
+  name: string;
+  price: number;
+  size: string;
+  color: string;
+  quantity: number;
+  image: string;
+}
+
+interface TrackedOrder {
+  orderNumber: string;
+  createdAt: string;
+  orderStatus: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  trackingId: string | null;
+  totalAmount: number;
+  shippingAddress: {
+    fullName: string;
+    city: string;
+    state: string;
+    pincode: string;
+  } | null;
+  items: TrackedOrderItem[];
+}
+
 export default function TrackOrderPage() {
   const { user, isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
-  const [contact, setContact] = useState("");
+  const [contact, setContact] = useState(user?.email || "");
   const [honeypot, setHoneypot] = useState("");
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<TrackedOrder | null>(null);
   const [error, setError] = useState("");
   const [copiedTracking, setCopiedTracking] = useState(false);
 
-  // Auto-fill contact from logged-in session to avoid retyping
+  // Auto-fill contact from logged-in user whenever user/auth updates
   useEffect(() => {
-    if (isAuthenticated && user?.email && !contact) {
-      setContact(user.email);
+    if (user?.email) {
+      setContact((prev) => prev || user.email || "");
     }
-  }, [isAuthenticated, user?.email, contact]);
+  }, [user?.email, isAuthenticated]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,11 +59,13 @@ export default function TrackOrderPage() {
     setOrder(null);
     setLoading(true);
 
+    const effectiveContact = contact.trim() || user?.email || "";
+
     try {
       const res = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: searchQuery, contact, honeypot }),
+        body: JSON.stringify({ query: searchQuery, contact: effectiveContact, honeypot }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -213,7 +242,8 @@ export default function TrackOrderPage() {
                   <span className="font-mono font-bold text-y2k-gunmetal">{order.trackingId}</span>
                 </div>
                 <button
-                  onClick={() => handleCopy(order.trackingId)}
+                  type="button"
+                  onClick={() => order.trackingId && handleCopy(order.trackingId)}
                   className="btn-bagify text-[8px] font-bold uppercase px-2.5 py-1.5 flex items-center gap-1 cursor-pointer"
                 >
                   <Copy className="w-2.5 h-2.5" />
@@ -224,7 +254,7 @@ export default function TrackOrderPage() {
 
             {/* Items */}
             <div className="divide-y divide-y2k-gunmetal/5">
-              {order.items?.map((it: any) => (
+              {order.items?.map((it: TrackedOrderItem) => (
                 <div key={it.id} className="py-2.5 flex items-center justify-between text-xs gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="relative w-10 h-12 bg-gray-100 shrink-0 overflow-hidden border border-y2k-gunmetal/10">

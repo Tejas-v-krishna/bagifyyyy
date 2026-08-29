@@ -32,57 +32,16 @@ export async function POST(request: Request) {
     const userId: string | null = authedUser?.id || null;
 
     // Generate order number with retry on collision
-    let orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
-    for (let attempt = 0; attempt < 3; attempt++) {
+    let orderNumber = `BGF-${Math.floor(100000 + Math.random() * 900000)}`;
+    for (let attempt = 0; attempt < 5; attempt++) {
       const exists = await prisma.order.findUnique({ where: { orderNumber } });
       if (!exists) break;
-      orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+      orderNumber = `BGF-${Math.floor(100000 + Math.random() * 900000)}`;
     }
 
-    // 2. Create or save Address in DB
-    const savedAddress = await prisma.address.create({
-      data: {
-        userId,
-        fullName: address.fullName,
-        phone: contact.phone,
-        street: address.street,
-        city: address.city,
-        state: address.state,
-        pincode: address.pincode,
-        country: address.country,
-      },
-    });
-
-    // 3. Create Order record in DB (COD)
-    const order = await prisma.order.create({
-      data: {
-        orderNumber,
-        userId,
-        customerEmail: contact.email,
-        customerPhone: contact.phone,
-        totalAmount,
-        shippingAmount: cart.shippingFee,
-        discountAmount: cart.discountAmount,
-        paymentStatus: 'PENDING',
-        orderStatus: 'PROCESSING',
-        paymentMethod: 'COD',
-        shippingAddressId: savedAddress.id,
-        items: {
-          create: cart.items.map((item) => ({
-            productId: item.productId,
-            name: item.name,
-            price: item.price,
-            size: item.size,
-            color: item.color,
-            quantity: item.quantity,
-            image: item.image,
-          })),
-        },
-      },
-    });
-
-    // 4. Decrement Inventory atomically
-    await prisma.$transaction(async (tx) => {
+    // Atomic order creation + inventory check & decrement
+    const order = await prisma.$transaction(async (tx) => {
+      // 1. Check and decrement stock first
       for (const item of cart.items) {
         const variant = await tx.variant.findFirst({
           where: {
@@ -93,7 +52,7 @@ export async function POST(request: Request) {
         });
         if (variant) {
           if (variant.stock < item.quantity) {
-            throw new Error(`Insufficient stock for ${item.name} (${item.size}/${item.color})`);
+            throw new CartError(`Insufficient stock for ${item.name} (${item.size}/${item.color})`, 409);
           }
           await tx.variant.update({
             where: { id: variant.id },
@@ -106,6 +65,50 @@ export async function POST(request: Request) {
           }
         }
       }
+
+      // 2. Save Address in DB
+      const savedAddress = await tx.address.create({
+        data: {
+          userId,
+          fullName: address.fullName,
+          phone: contact.phone,
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          pincode: address.pincode,
+          country: address.country,
+        },
+      });
+
+      // 3. Create Order record in DB (COD)
+      const createdOrder = await tx.order.create({
+        data: {
+          orderNumber,
+          userId,
+          customerEmail: contact.email,
+          customerPhone: contact.phone,
+          totalAmount,
+          shippingAmount: cart.shippingFee,
+          discountAmount: cart.discountAmount,
+          paymentStatus: 'PENDING',
+          orderStatus: 'PROCESSING',
+          paymentMethod: 'COD',
+          shippingAddressId: savedAddress.id,
+          items: {
+            create: cart.items.map((item) => ({
+              productId: item.productId,
+              name: item.name,
+              price: item.price,
+              size: item.size,
+              color: item.color,
+              quantity: item.quantity,
+              image: item.image,
+            })),
+          },
+        },
+      });
+
+      return createdOrder;
     });
 
     // 5. Send Transactional Order Confirmation Email

@@ -31,11 +31,11 @@ export async function POST(request: Request) {
     const amountInPaise = Math.round(totalAmount * 100);
 
     // Generate unique order number with collision retry
-    let orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
-    for (let attempt = 0; attempt < 3; attempt++) {
+    let orderNumber = `BGF-${Math.floor(100000 + Math.random() * 900000)}`;
+    for (let attempt = 0; attempt < 5; attempt++) {
       const exists = await prisma.order.findUnique({ where: { orderNumber } });
       if (!exists) break;
-      orderNumber = `BGF-${Math.floor(10000 + Math.random() * 90000)}`;
+      orderNumber = `BGF-${Math.floor(100000 + Math.random() * 900000)}`;
     }
 
     // 2. Initialize Razorpay

@@ -16,19 +16,35 @@ export default function CartDrawer() {
     useCartStore();
   const { isAuthenticated } = useAuthStore();
 
-  const [promoInput, setPromoInput] = useState("");
+  const [promoInput, setPromoInput] = useState(promoCode || "");
   const [promoError, setPromoError] = useState("");
   const [removingItemKey, setRemovingItemKey] = useState<string | null>(null);
   const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
 
-  // Body scroll lock — mirrors Header mobile menu, prevents background bleed
+  // Sync promo input if promo code changes in store
+  useEffect(() => {
+    if (promoCode) {
+      setPromoInput(promoCode);
+    }
+  }, [promoCode]);
+
+  // Body scroll lock — stops background scroll including Lenis smooth scrolling
   useEffect(() => {
     if (isOpen) {
-      const prev = document.body.style.overflow;
+      const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = prev; };
+      document.documentElement.classList.add("lenis-stopped");
+      window.__lenis?.stop();
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        document.documentElement.classList.remove("lenis-stopped");
+        window.__lenis?.start();
+      };
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.classList.remove("lenis-stopped");
+      window.__lenis?.start();
     }
-    document.body.style.overflow = "";
   }, [isOpen]);
 
   const handleApplyPromo = () => {
@@ -69,6 +85,7 @@ export default function CartDrawer() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 220 }}
+            data-lenis-prevent="true"
             className="fixed inset-y-0 right-0 z-[10000] w-full max-w-md bg-y2k-ice border-l border-y2k-gunmetal/[0.08] shadow-2xl flex flex-col h-[100dvh]"
           >
             {/* Header */}
@@ -93,7 +110,7 @@ export default function CartDrawer() {
             </div>
 
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto px-8 py-6">
+            <div data-lenis-prevent="true" className="flex-1 overflow-y-auto px-8 py-6">
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-y2k-gunmetal/40 space-y-5">
                   <ShoppingBag className="w-10 h-10" strokeWidth={1} />

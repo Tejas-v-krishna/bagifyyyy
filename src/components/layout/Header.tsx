@@ -18,18 +18,8 @@ export default function Header() {
   const { openAuthModal, isAuthenticated, user } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [liveSiteViewers, setLiveSiteViewers] = useState(24);
-
   useEffect(() => {
     setMounted(true);
-    const timer = setInterval(() => {
-      setLiveSiteViewers((prev) => {
-        const delta = Math.floor(Math.random() * 3) - 1;
-        const next = prev + delta;
-        return Math.min(Math.max(next, 14), 45);
-      });
-    }, 10000);
-    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -59,7 +49,7 @@ export default function Header() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-600"></span>
             </span>
-            <span className="font-bold text-center truncate">{mounted ? liveSiteViewers : 24} COLLECTORS LIVE ON ARCHIVE</span>
+            <span className="font-bold text-center truncate">ARCHIVE VERIFIED • NO RESTOCKS</span>
           </div>
           <div className="flex items-center justify-center px-4 hover:text-y2k-gunmetal transition-colors">
             <span className="text-center truncate">AUTHENTIC ARCHIVE SOURCING</span>

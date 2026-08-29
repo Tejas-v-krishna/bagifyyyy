@@ -23,11 +23,13 @@ function StarRow({ rating, interactive = false, onRate }: {
       {[1, 2, 3, 4, 5].map((s) => (
         <button
           key={s}
-          type={interactive ? "button" : undefined}
+          type="button"
+          disabled={!interactive}
+          aria-label={interactive ? `Rate ${s} star${s > 1 ? 's' : ''}` : `${rating} stars`}
           onClick={interactive && onRate ? () => onRate(s) : undefined}
           onMouseEnter={interactive ? () => setHover(s) : undefined}
           onMouseLeave={interactive ? () => setHover(0) : undefined}
-          className={interactive ? "cursor-pointer" : "cursor-default pointer-events-none"}
+          className={interactive ? "cursor-pointer p-0.5" : "cursor-default pointer-events-none p-0.5"}
         >
           <Star
             className={`w-4 h-4 transition-colors ${
@@ -158,8 +160,21 @@ export default function ReviewSection({ productId }: { productId: string }) {
             <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal mb-4">Write a Review</p>
 
             {formSuccess ? (
-              <div className="flex items-center gap-2 text-green-700 text-xs font-bold uppercase tracking-wider">
-                <CheckCircle2 className="w-4 h-4" /> Review submitted — thank you!
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-green-700 text-xs font-bold uppercase tracking-wider">
+                  <CheckCircle2 className="w-4 h-4" /> Review submitted — thank you!
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormSuccess(false);
+                    setFormRating(0);
+                    setFormBody("");
+                  }}
+                  className="text-[10.5px] uppercase tracking-wider text-y2k-gunmetal/60 hover:text-y2k-gunmetal underline text-left cursor-pointer mt-2"
+                >
+                  Write another review
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">

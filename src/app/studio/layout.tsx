@@ -114,7 +114,7 @@ export default function StudioLayout({
 
           {/* Quick Return to Store Button */}
           <Link
-            href="/"
+            href={process.env.NEXT_PUBLIC_APP_URL || "/"}
             target="_blank"
             className="mt-4 flex items-center justify-between w-full bg-y2k-ice border border-y2k-gunmetal/10 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white transition-all cursor-pointer shadow-xs"
           >
@@ -155,7 +155,7 @@ export default function StudioLayout({
               <span>SYSTEM ONLINE</span>
             </div>
             <Link
-              href="/"
+              href={process.env.NEXT_PUBLIC_APP_URL || "/"}
               target="_blank"
               className="hidden sm:flex items-center gap-1.5 text-y2k-slate hover:text-black transition-colors"
             >

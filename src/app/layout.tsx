@@ -113,8 +113,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="preload" as="style" href="https://db.onlinewebfonts.com/c/88f10bf18a36407ef36bf30bc25a3618?family=SuisseIntl-Regular" />
-        <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/88f10bf18a36407ef36bf30bc25a3618?family=SuisseIntl-Regular" media="print" onLoad="this.media='all'" />
         {/* Ties the brand-name searches (BAGIFYYYY / Bagify / Bagifyy) to one entity. */}
         <JsonLd data={organizationJsonLd()} />
         <JsonLd data={webSiteJsonLd()} />

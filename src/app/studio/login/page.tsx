@@ -46,7 +46,7 @@ function LoginForm() {
     <div className="w-full min-h-screen bg-y2k-ice text-y2k-gunmetal flex flex-col items-center justify-center px-4 font-sans relative">
       {/* Return to Public Store link */}
       <Link
-        href="/"
+        href={process.env.NEXT_PUBLIC_APP_URL || "/"}
         className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-y2k-slate hover:text-black transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />

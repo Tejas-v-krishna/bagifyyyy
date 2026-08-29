@@ -47,9 +47,9 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, subscriber, message: 'Subscribed! Check your inbox for 10% coupon.' }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating subscriber:', error);
-    if (error.code === 'P2002') {
+    if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2002') {
       return NextResponse.json({ error: 'Email already subscribed' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 });

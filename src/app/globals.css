@@ -352,8 +352,13 @@ b {
    Uses universal selector so no hand/pointer leaks alongside the image. */
 @media (pointer: fine) and (prefers-reduced-motion: no-preference) {
   html.custom-cursor-active,
-  html.custom-cursor-active * {
+  html.custom-cursor-active *:not(input):not(textarea):not(select) {
     cursor: none !important;
+  }
+  html.custom-cursor-active input,
+  html.custom-cursor-active textarea,
+  html.custom-cursor-active select {
+    cursor: auto;
   }
 }
 

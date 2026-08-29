@@ -174,7 +174,7 @@ export default function Footer() {
             </h4>
             <nav className="flex flex-col gap-4">
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/bagifyyyy"
                 target="_blank"
                 rel="noreferrer"
                 className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"

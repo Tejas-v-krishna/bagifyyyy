@@ -21,7 +21,7 @@ export default function WishlistPage() {
     }
     // Fetch only wishlisted IDs (supports ids query)
     const ids = items.filter((id) => !id.startsWith("drop-") && !id.startsWith("prod-"));
-    const mocks = items
+    const mocks: Product[] = items
       .filter((id) => id.startsWith("drop-") || id.startsWith("prod-"))
       .map((id) => ({
         id,
@@ -32,7 +32,7 @@ export default function WishlistPage() {
       }));
 
     if (ids.length === 0) {
-      setProducts(mocks as any);
+      setProducts(mocks);
       setLoading(false);
       return;
     }
@@ -42,7 +42,7 @@ export default function WishlistPage() {
       .then((data: Product[]) => {
         // API returns array directly
         const list = Array.isArray(data) ? data : [];
-        setProducts([...list, ...(mocks as any)]);
+        setProducts([...list, ...mocks]);
         setLoading(false);
       })
       .catch((err) => {

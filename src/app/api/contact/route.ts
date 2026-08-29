@@ -1,3 +1,7 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { sendEmail } from '@/lib/email';
+
 async function verifyRecaptcha(token?: string): Promise<boolean> {
   const secret = process.env.RECAPTCHA_SECRET_KEY;
   if (!secret || !token) return true;
@@ -111,7 +115,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, ticketId: ticket.id });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Contact form error:', error);
     return NextResponse.json({ error: 'Failed to submit your message.' }, { status: 500 });
   }
