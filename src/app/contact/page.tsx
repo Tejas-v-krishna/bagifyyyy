@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, Phone, Clock, Send, CheckCircle2, MessageSquare } from "lucide-react";
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: "", email: "", order: "", message: "", website: "" });
@@ -19,6 +20,7 @@ export default function ContactPage() {
     setError("");
     setLoading(true);
     try {
+      const recaptchaToken = await getRecaptchaToken("contact");
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,6 +30,7 @@ export default function ContactPage() {
           orderNumber: formData.order || null,
           message: formData.message,
           honeypot: formData.website,
+          recaptchaToken,
         }),
       });
       const data = await res.json();

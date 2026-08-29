@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -16,10 +17,11 @@ export default function NewsletterForm() {
     setMessage("");
 
     try {
+      const recaptchaToken = await getRecaptchaToken("subscribe");
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, honeypot }),
+        body: JSON.stringify({ email, honeypot, recaptchaToken }),
       });
 
       const data = await res.json();

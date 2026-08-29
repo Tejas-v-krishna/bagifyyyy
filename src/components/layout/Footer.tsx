@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 import { usePathname } from "next/navigation";
 
@@ -24,10 +25,11 @@ export default function Footer() {
     setMessage("");
 
     try {
+      const recaptchaToken = await getRecaptchaToken("subscribe");
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, honeypot }),
+        body: JSON.stringify({ email, honeypot, recaptchaToken }),
       });
       const data = await res.json();
       if (res.ok) {

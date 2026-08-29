@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight, ArrowLeft } from "lucide-react";
 import { orderStatusLabel } from "@/lib/orderStatus";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 interface TrackedOrderItem {
   id: string;
@@ -62,10 +63,11 @@ export default function TrackOrderPage() {
     const effectiveContact = contact.trim() || user?.email || "";
 
     try {
+      const recaptchaToken = await getRecaptchaToken("track");
       const res = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: searchQuery, contact: effectiveContact, honeypot }),
+        body: JSON.stringify({ query: searchQuery, contact: effectiveContact, honeypot, recaptchaToken }),
       });
       const data = await res.json();
       if (!res.ok) {
