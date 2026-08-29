@@ -172,6 +172,29 @@ export default function InteractiveShowcase({
     goToCard(prevIdx);
   }, [currentIndex, maxIndex, goToCard]);
 
+  // ── Keyboard navigation (Left/Right/Home/End) ─────────────────────────────
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goPrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        goNext();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        goToCard(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        goToCard(maxIndex);
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        (e.target as HTMLElement).blur();
+      }
+    },
+    [goNext, goPrev, goToCard, maxIndex]
+  );
+
   // ── 3.5. Autoplay (5s Interval) ─────────────────────────────────────────────
   const isHoveredRef = useRef(false);
   useEffect(() => {
@@ -391,7 +414,9 @@ export default function InteractiveShowcase({
           <button
             type="button"
             onClick={() => handleTabChange("new")}
-            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer ${
+            aria-pressed={activeTab === "new"}
+            aria-label="Show new arrivals"
+            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4 ${
               activeTab === "new"
                 ? "text-y2k-gunmetal font-medium scale-[1.02]"
                 : "text-y2k-gunmetal/30 hover:text-y2k-gunmetal/70 font-normal hover:scale-[1.01]"
@@ -415,7 +440,9 @@ export default function InteractiveShowcase({
           <button
             type="button"
             onClick={() => handleTabChange("top")}
-            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer ${
+            aria-pressed={activeTab === "top"}
+            aria-label="Show curated grails"
+            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4 ${
               activeTab === "top"
                 ? "text-y2k-gunmetal font-medium scale-[1.02]"
                 : "text-y2k-gunmetal/30 hover:text-y2k-gunmetal/70 font-normal hover:scale-[1.01]"
@@ -438,13 +465,21 @@ export default function InteractiveShowcase({
       </div>
 
       {/* ── 2. GSAP Draggable Viewport & Track ──────────────────────────────── */}
-      <div 
+      <div
         ref={viewportRef}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label={`${activeTab === "new" ? "New arrivals" : "Curated grails"} product carousel`}
+        aria-live="off"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onMouseEnter={() => (isHoveredRef.current = true)}
         onMouseLeave={() => (isHoveredRef.current = false)}
-        className="w-full overflow-hidden mb-4 py-2 cursor-grab active:cursor-grabbing touch-pan-y select-none"
+        onFocusCapture={() => (isHoveredRef.current = true)}
+        onBlurCapture={() => (isHoveredRef.current = false)}
+        className="w-full overflow-hidden mb-4 py-2 cursor-grab active:cursor-grabbing touch-pan-y select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal/60 focus-visible:outline-offset-4 rounded-none"
       >
         <div
           ref={trackRef}
@@ -459,6 +494,7 @@ export default function InteractiveShowcase({
               <Link
                 key={`${activeTab}-${product.id || productIdx}`}
                 href={`/product/${product.id}`}
+                aria-label={`${product.name} — ₹${product.price.toLocaleString("en-IN")}${product.isSoldOut ? ", sold out" : ""}`}
                 onClick={(e) => {
                   // Prevent navigation if the user was actively dragging
                   if (isDraggingRef.current) {
@@ -466,7 +502,7 @@ export default function InteractiveShowcase({
                     e.stopPropagation();
                   }
                 }}
-                className="showcase-card interactive-card group flex flex-col shrink-0 w-[160px] sm:w-[200px] md:w-[240px] lg:w-[calc(16.666%-20px)] select-none"
+                className="showcase-card interactive-card group flex flex-col shrink-0 w-[160px] sm:w-[200px] md:w-[240px] lg:w-[calc(16.666%-20px)] select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
               >
                 {/* Borderless Floating Image Container with Alternate View on Hover */}
                 <div className="relative w-full aspect-[4/5] flex items-center justify-center overflow-hidden bg-black/[0.02] group-hover:bg-black/[0.05] transition-colors duration-500">
@@ -574,37 +610,48 @@ export default function InteractiveShowcase({
           <span>{String(total).padStart(2, "0")}</span>
         </div>
 
-        {/* Center: Slide Step Indicators */}
-        <div className="flex items-center gap-1.5">
+        {/* Center: Slide Step Indicators (44×44 hit target) */}
+        <div className="flex items-center gap-0.5" role="tablist" aria-label="Slide position">
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => goToCard(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-[2px] rounded-full transition-all duration-300 cursor-pointer ${
-                i === currentIndex
-                  ? "w-7 bg-y2k-gunmetal"
-                  : "w-2.5 bg-y2k-gunmetal/20 hover:bg-y2k-gunmetal/50"
-              }`}
-            />
+              aria-label={`Go to slide ${i + 1} of ${maxIndex + 1}`}
+              aria-current={i === currentIndex}
+              role="tab"
+              aria-selected={i === currentIndex}
+              className="p-2 -m-1 flex items-center justify-center cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+            >
+              <span
+                aria-hidden
+                className={`block rounded-full transition-all duration-300 h-[2px] ${
+                  i === currentIndex
+                    ? "w-7 bg-y2k-gunmetal"
+                    : "w-2.5 bg-y2k-gunmetal/20 hover:bg-y2k-gunmetal/50"
+                }`}
+              />
+            </button>
           ))}
         </div>
 
-        {/* Right: Arrow Buttons */}
-        <div className="flex items-center gap-2">
+        {/* Right: Arrow Buttons (44×44 hit target) */}
+        <div className="flex items-center gap-1.5">
           <button
+            type="button"
             onClick={goPrev}
             aria-label="Previous products"
-            className="w-8 h-8 rounded-full border border-y2k-gunmetal/10 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
+            className="w-11 h-11 md:w-9 md:h-9 rounded-full border border-y2k-gunmetal/15 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
           >
-            <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <ChevronLeft className="w-4 h-4 md:w-3.5 md:h-3.5" strokeWidth={1.75} />
           </button>
           <button
+            type="button"
             onClick={goNext}
             aria-label="Next products"
-            className="w-8 h-8 rounded-full border border-y2k-gunmetal/10 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer"
+            className="w-11 h-11 md:w-9 md:h-9 rounded-full border border-y2k-gunmetal/15 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
           >
-            <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <ChevronRight className="w-4 h-4 md:w-3.5 md:h-3.5" strokeWidth={1.75} />
           </button>
         </div>
       </div>
