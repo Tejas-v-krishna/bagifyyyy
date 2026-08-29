@@ -63,7 +63,7 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
       title="Add to bag"
       className={`group/bagbtn flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer ${
         added
-          ? "bg-[#232D3B] text-white"
+          ? "bg-y2k-gunmetal text-white"
           : "bg-white/90 hover:bg-white text-y2k-gunmetal hover:text-black shadow-sm"
       } ${className}`}
     >

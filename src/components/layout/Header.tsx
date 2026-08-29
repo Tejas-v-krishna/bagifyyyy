@@ -46,8 +46,8 @@ export default function Header() {
         <div className="w-full grid grid-cols-3 divide-x divide-y2k-gunmetal/[0.06] text-[9.5px] font-semibold uppercase tracking-[0.2em] text-y2k-gunmetal/55 py-2.5">
           <div className="flex items-center justify-center gap-1.5 px-4 hover:text-y2k-gunmetal transition-colors">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-600"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-y2k-soft opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-y2k-slate"></span>
             </span>
             <span className="font-bold text-center truncate">ARCHIVE VERIFIED • NO RESTOCKS</span>
           </div>
@@ -149,7 +149,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="btn-bagify text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.14em] px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-sm hover:opacity-95 text-[#F8F5E9]"
+              className="btn-bagify text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.14em] px-3.5 py-1.5 flex items-center gap-1.5 transition-all shadow-sm hover:opacity-95 text-y2k-ice"
               aria-label="Sign In / Sign Up"
             >
               <User className="w-3 h-3 opacity-80" strokeWidth={2} />

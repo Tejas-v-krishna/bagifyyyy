@@ -33,7 +33,7 @@ function StarRow({ rating, interactive = false, onRate }: {
         >
           <Star
             className={`w-4 h-4 transition-colors ${
-              s <= (hover || rating) ? "fill-[#232D3B] text-[#232D3B]" : "text-gray-300"
+              s <= (hover || rating) ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-gray-300"
             }`}
             strokeWidth={1.5}
           />
@@ -49,7 +49,7 @@ function RatingBar({ label, count, total }: { label: string; count: number; tota
     <div className="flex items-center gap-2 text-[10px] font-bold">
       <span className="w-3 text-right text-y2k-gunmetal/60">{label}</span>
       <div className="flex-1 h-1.5 bg-gray-100">
-        <div className="h-full bg-[#232D3B] transition-all duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-y2k-gunmetal transition-all duration-500" style={{ width: `${pct}%` }} />
       </div>
       <span className="w-5 text-y2k-gunmetal/50">{count}</span>
     </div>
@@ -217,7 +217,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="bg-[#232D3B] text-white text-[10px] font-bold uppercase tracking-wider py-3 hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="bg-y2k-gunmetal text-white text-[10px] font-bold uppercase tracking-wider py-3 hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   {submitting ? "Submitting…" : "Submit Review →"}
@@ -241,7 +241,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                 <div key={review.id} className="py-6 first:pt-0">
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#232D3B] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-xs font-bold shrink-0">
                         {review.authorName[0]?.toUpperCase() ?? "?"}
                       </div>
                       <div>

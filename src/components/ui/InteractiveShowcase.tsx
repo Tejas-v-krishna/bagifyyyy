@@ -474,7 +474,7 @@ export default function InteractiveShowcase({
                   {/* Minimalist Brand "NEW" Label */}
                   {product.isNew && (
                     <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
-                      <span className="text-[8px] font-bold uppercase tracking-wider bg-[#232D3B] text-white px-1.5 py-0.5 shadow-sm">
+                      <span className="text-[8px] font-bold uppercase tracking-wider bg-y2k-gunmetal text-white px-1.5 py-0.5 shadow-sm">
                         NEW
                       </span>
                     </div>
@@ -524,7 +524,7 @@ export default function InteractiveShowcase({
                   {/* Sold Out Badge */}
                   {product.isSoldOut && (
                     <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                      <span className="bg-[#232D3B] text-white text-[9px] font-bold px-3 py-1 uppercase tracking-wider">
+                      <span className="bg-y2k-gunmetal text-white text-[9px] font-bold px-3 py-1 uppercase tracking-wider">
                         SOLD OUT
                       </span>
                     </div>

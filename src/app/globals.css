@@ -14,13 +14,14 @@
 }
 
 @theme {
-  --color-y2k-ice: #E8EDF2;
-  --color-y2k-pale: #C7D2DE;
-  --color-y2k-soft: #A8B8CB;
-  --color-y2k-mist: #8598B0;
-  --color-y2k-slate: #5F7591;
-  --color-y2k-deep: #3E4E64;
-  --color-y2k-gunmetal: #28323F;
+  /* Sampled and normalized from the BAGIFYYYY ice-chrome logo. */
+  --color-y2k-ice: #EAF1F6;
+  --color-y2k-pale: #D5E2EC;
+  --color-y2k-soft: #B8CDDC;
+  --color-y2k-mist: #91AEC3;
+  --color-y2k-slate: #6B8BA5;
+  --color-y2k-deep: #405E78;
+  --color-y2k-gunmetal: #24374C;
 
   --color-background: var(--color-y2k-ice);
   --color-foreground: var(--color-y2k-gunmetal);
@@ -155,17 +156,17 @@
 
   /* ── Existing Utilities ────────────────────────────────────────────── */
   .chrome-gradient {
-    background: linear-gradient(135deg, #E8EDF2 0%, #A8B8CB 40%, #5F7591 70%, #3E4E64 100%);
+    background: linear-gradient(135deg, #EAF1F6 0%, #B8CDDC 40%, #6B8BA5 70%, #405E78 100%);
   }
   .text-chrome-gradient {
-    background: linear-gradient(135deg, #E8EDF2 0%, #A8B8CB 40%, #5F7591 70%, #3E4E64 100%);
+    background: linear-gradient(135deg, #EAF1F6 0%, #B8CDDC 40%, #6B8BA5 70%, #405E78 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .btn-bagify {
-    background: #232D3B;
-    color: #F8F5E9;
+    background: var(--color-y2k-gunmetal);
+    color: var(--color-y2k-ice);
     letter-spacing: 0.06em;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -175,12 +176,12 @@
   }
   .btn-bagify:hover {
     filter: brightness(1.08);
-    box-shadow: 0 6px 24px rgba(35, 45, 59, 0.18);
+    box-shadow: 0 6px 24px rgba(36, 55, 76, 0.18);
   }
   .btn-bagify:active {
     transform: scale(0.985);
     filter: brightness(0.95);
-    box-shadow: 0 1px 4px rgba(35, 45, 59, 0.08);
+    box-shadow: 0 1px 4px rgba(36, 55, 76, 0.08);
     transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
                 filter 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
                 box-shadow 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);

@@ -103,7 +103,7 @@ export default async function Home() {
             </a>
           </div>
 
-          <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-[#202a27]">
+          <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-y2k-deep">
             <Image
               src="/hero-2-editorial.jpg"
               alt="BAGIFYYYY Archive Season editorial"
