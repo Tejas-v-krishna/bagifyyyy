@@ -333,7 +333,7 @@ function CheckoutContent() {
         currency: orderData.currency || "INR",
         name: "BAGIFYYYY",
         description: `Order #${orderData.orderNumber}`,
-        image: "https://i.ibb.co/vzrBsmS/logo.png",
+        image: `${window.location.origin}/bagifyyyy-wordmark-black.png`,
         order_id: orderData.razorpayOrderId,
         handler: function (response: any) {
           handlePaymentSuccess(orderData.orderId, response);

@@ -78,12 +78,12 @@ export default function Header() {
         >
           <span className="sr-only">BAGIFYYYY (Bagify) Home</span>
           <Image
-            src="/logo.png"
+            src="/bagifyyyy-wordmark-black.png"
             alt="BAGIFYYYY (Bagify) Premium Streetwear Logo"
-            width={220}
-            height={48}
+            width={1024}
+            height={274}
             priority
-            className="object-contain w-[148px] md:w-[180px] lg:w-[210px]"
+            className="h-auto w-[170px] object-contain md:w-[205px] lg:w-[238px]"
           />
         </Link>
 
@@ -214,11 +214,11 @@ export default function Header() {
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between px-7 py-6 border-b border-y2k-gunmetal/[0.08] shrink-0">
                     <Image
-                      src="/logo.png"
+                      src="/bagifyyyy-wordmark-black.png"
                       alt="Bagifyyyy Logo"
-                      width={130}
-                      height={30}
-                      className="object-contain"
+                      width={1024}
+                      height={274}
+                      className="h-auto w-[150px] object-contain"
                     />
                     <button
                       type="button"

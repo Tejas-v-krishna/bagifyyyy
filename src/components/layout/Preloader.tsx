@@ -56,7 +56,7 @@ export default function Preloader() {
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
             <Image
-              src="/logo.png"
+              src="/bagifyyyy-wordmark-black.png"
               alt="Bagifyyyy Logo"
               fill
               sizes="(max-width: 768px) 256px, 320px"

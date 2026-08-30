@@ -76,7 +76,7 @@ export async function GET() {
           profile: {
             username: profile.username || "bagifyyyy",
             name: profile.name || "BAGIFYYYY",
-            avatar: profile.profile_picture_url || "/logo.png",
+            avatar: profile.profile_picture_url || "/bagifyyyy-wordmark-black.png",
             followersCount: profile.followers_count ?? 5502,
             followingCount: profile.follows_count ?? 1,
             postsCount: profile.media_count ?? 1256,
@@ -106,7 +106,7 @@ export async function GET() {
     profile: {
       username: "bagifyyyy",
       name: "BAGIFYYYY",
-      avatar: "/logo.png",
+      avatar: "/bagifyyyy-wordmark-black.png",
       followersCount: 5502,
       followingCount: 1,
       postsCount: 1256,

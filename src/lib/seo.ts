@@ -117,7 +117,7 @@ export function organizationJsonLd() {
     name: SITE_NAME,
     alternateName: ['Bagify', 'Bagifyy'],
     url: SITE_URL,
-    logo: absoluteUrl('/logo.png'),
+    logo: absoluteUrl('/bagifyyyy-wordmark-black.png'),
     sameAs: SOCIAL_PROFILES,
   };
 }

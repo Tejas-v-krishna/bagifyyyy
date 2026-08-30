@@ -57,7 +57,7 @@ function LoginForm() {
         {/* Brand Header */}
         <div className="text-center mb-8 pb-6 border-b border-y2k-gunmetal/15">
           <Image
-            src="/logo.png"
+            src="/bagifyyyy-wordmark-black.png"
             alt="Bagifyyyy Logo"
             width={160}
             height={36}
