@@ -83,7 +83,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Editorial seasonal hero */}
-      <section className="flex h-[calc(100svh-60px)] w-full flex-col overflow-hidden bg-[#f5f5f2] pt-3 md:h-[calc(100svh-106px)] md:pt-4">
+      <section className="flex h-[calc(100svh-60px)] w-full flex-col overflow-hidden bg-[#f5f5f2] pt-3 md:h-[calc(100svh-72px)] md:pt-4">
         <h1 className="sr-only">
           BAGIFYYYY (Bagify) - Premium Y2K Streetwear, Archive Fashion, and Exclusive Drops
         </h1>
