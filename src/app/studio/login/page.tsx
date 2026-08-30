@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
 
 function LoginForm() {
@@ -56,13 +55,12 @@ function LoginForm() {
       <div className="w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-8 shadow-xl">
         {/* Brand Header */}
         <div className="text-center mb-8 pb-6 border-b border-y2k-gunmetal/15">
-          <Image
-            src="/bagifyyyy-wordmark-black.png"
+          <img
+            src="/bagifyyyy-wordmark-animated.gif"
             alt="Bagifyyyy Logo"
-            width={160}
-            height={36}
+            width={845}
+            height={219}
             className="object-contain mx-auto mb-3"
-            priority
           />
           <div className="inline-flex items-center gap-1.5 bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal">
             <ShieldCheck className="w-3.5 h-3.5" />

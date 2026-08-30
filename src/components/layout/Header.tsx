@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState, useEffect } from "react";
@@ -77,12 +76,12 @@ export default function Header() {
           className="hover:opacity-80 flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-opacity duration-300"
         >
           <span className="sr-only">BAGIFYYYY (Bagify) Home</span>
-          <Image
-            src="/bagifyyyy-wordmark-black.png"
+          <img
+            src="/bagifyyyy-wordmark-animated.gif"
             alt="BAGIFYYYY (Bagify) Premium Streetwear Logo"
             width={1024}
             height={265}
-            priority
+            fetchPriority="high"
             className="h-auto w-[170px] object-contain md:w-[205px] lg:w-[238px]"
           />
         </Link>
@@ -213,11 +212,11 @@ export default function Header() {
                 >
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between px-7 py-6 border-b border-y2k-gunmetal/[0.08] shrink-0">
-                    <Image
-                      src="/bagifyyyy-wordmark-black.png"
+                    <img
+                      src="/bagifyyyy-wordmark-animated.gif"
                       alt="Bagifyyyy Logo"
-                      width={1024}
-                      height={265}
+                      width={845}
+                      height={219}
                       className="h-auto w-[150px] object-contain"
                     />
                     <button

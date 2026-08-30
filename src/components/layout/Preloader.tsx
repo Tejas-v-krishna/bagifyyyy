@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { useAppStore } from "@/store/useAppStore";
 
 import { usePathname } from "next/navigation";
@@ -55,13 +54,13 @@ export default function Preloader() {
             transition={{ duration: 1.4, ease: "easeOut" }}
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
-            <Image
-              src="/bagifyyyy-wordmark-black.png"
+            <img
+              src="/bagifyyyy-wordmark-animated.gif"
               alt="Bagifyyyy Logo"
-              fill
-              sizes="(max-width: 768px) 256px, 320px"
-              priority
-              className="object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
+              width={845}
+              height={219}
+              fetchPriority="high"
+              className="h-full w-full object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
             />
           </motion.div>
         </motion.div>
