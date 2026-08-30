@@ -83,7 +83,7 @@ export default function Header() {
             width={220}
             height={48}
             priority
-            className="object-contain w-[148px] md:w-[180px] lg:w-[210px] grayscale brightness-[0.28] contrast-[1.8]"
+            className="object-contain w-[148px] md:w-[180px] lg:w-[210px]"
           />
         </Link>
 
@@ -218,7 +218,7 @@ export default function Header() {
                       alt="Bagifyyyy Logo"
                       width={130}
                       height={30}
-                      className="object-contain grayscale brightness-[0.28] contrast-[1.8]"
+                      className="object-contain"
                     />
                     <button
                       type="button"

@@ -61,7 +61,7 @@ export default function Preloader() {
               fill
               sizes="(max-width: 768px) 256px, 320px"
               priority
-              className="object-contain drop-shadow-[0_0_15px_rgba(232,237,242,0.9)]"
+              className="object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
             />
           </motion.div>
         </motion.div>
