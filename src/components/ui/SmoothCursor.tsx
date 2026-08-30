@@ -156,13 +156,13 @@ export default function SmoothCursor() {
     >
       <div
         ref={iconRef}
-        className="relative w-8 h-8 -translate-x-[2px] -translate-y-[2px] drop-shadow-[0_3px_10px_rgba(0,0,0,0.22)]"
+        className="relative h-[38px] w-9 -translate-x-[3px] -translate-y-[3px] origin-[3px_3px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
       >
         <Image
-          src="/cursor-32.png"
-          alt="cursor"
-          width={32}
-          height={32}
+          src="/bagifyyyy-cursor.png"
+          alt=""
+          width={88}
+          height={94}
           className="object-contain w-full h-full select-none pointer-events-none"
           priority
           unoptimized
