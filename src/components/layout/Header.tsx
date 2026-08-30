@@ -81,7 +81,7 @@ export default function Header() {
             src="/bagifyyyy-wordmark-black.png"
             alt="BAGIFYYYY (Bagify) Premium Streetwear Logo"
             width={1024}
-            height={274}
+            height={265}
             priority
             className="h-auto w-[170px] object-contain md:w-[205px] lg:w-[238px]"
           />
@@ -217,7 +217,7 @@ export default function Header() {
                       src="/bagifyyyy-wordmark-black.png"
                       alt="Bagifyyyy Logo"
                       width={1024}
-                      height={274}
+                      height={265}
                       className="h-auto w-[150px] object-contain"
                     />
                     <button
