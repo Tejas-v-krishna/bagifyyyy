@@ -89,27 +89,10 @@ export default async function Home() {
         </h1>
 
         <div className="flex min-h-0 w-full flex-1 flex-col">
-          <div className="shrink-0 overflow-hidden px-3 pb-1 sm:px-5 md:px-7">
-            <p className="w-full text-center font-sans text-[clamp(3.1rem,14.15vw,18rem)] font-medium leading-[0.77] tracking-[-0.055em] text-[#0a0a0a] select-none whitespace-nowrap">
-              Archive Season
+          <div className="relative z-10 shrink-0 overflow-hidden px-2 pb-2 pt-1 sm:px-4 md:px-6 md:pb-3">
+            <p className="w-full whitespace-nowrap text-center font-sans text-[clamp(3.75rem,13.4vw,16rem)] font-medium uppercase leading-[0.78] tracking-[-0.07em] text-[#050505] select-none">
+              Wear History
             </p>
-          </div>
-
-          <div className="mx-3 mt-3 flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2.5 pb-4 text-[10.5px] font-medium uppercase tracking-[0.14em] text-black/60 sm:mx-5 md:mx-7 md:mt-4 md:gap-x-7 md:text-[11px]">
-            <span className="flex items-center gap-2">
-              <span className="inline-block h-1 w-1 rounded-full bg-black/70" aria-hidden="true" />
-              SS26 Archive
-            </span>
-            <span className="hidden sm:inline text-black/35">Embrace what lasts</span>
-            <span className="hidden md:inline text-black/35">Mumbai · India</span>
-            <span className="hidden lg:block h-px flex-1 bg-black/15 min-w-[40px]" aria-hidden="true" />
-            <a
-              href="#showcase"
-              className="ml-auto inline-flex items-center gap-1.5 text-black/70 hover:text-black transition-colors focus-visible:outline focus-visible:outline-1 focus-visible:outline-black focus-visible:outline-offset-4"
-            >
-              <span>Scroll for more</span>
-              <ArrowRight className="h-3 w-3 rotate-90" strokeWidth={1.6} />
-            </a>
           </div>
 
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-[#1a1a1a]">
@@ -121,15 +104,22 @@ export default async function Home() {
               sizes="100vw"
               className="object-cover object-center grayscale contrast-[1.08]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/5" />
 
-            <div className="absolute inset-x-4 bottom-6 flex flex-col items-center text-center text-white md:bottom-10">
-              <span className="rounded-full border border-white/65 px-4 py-1.5 text-[10px] uppercase tracking-[0.18em] md:px-5 md:py-2 md:text-xs">
-                Style your season
-              </span>
-              <p className="mt-4 max-w-xl text-xs leading-5 text-white/95 sm:text-sm sm:leading-6 md:mt-5 md:text-base md:leading-7">
-                Curated archive pieces made to outlive the moment.
+            <div className="absolute inset-x-5 top-3 z-10 flex justify-center text-center text-white md:top-4">
+              <p className="max-w-[28rem] text-[9px] font-semibold uppercase leading-[1.15] tracking-[-0.02em] drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)] sm:text-[10px] md:text-[11px]">
+                Discover archive pieces made to outlive the moment,<br className="hidden sm:block" /> curated for the present and worn into history.
               </p>
+            </div>
+
+            <div className="absolute inset-x-4 bottom-5 z-10 flex justify-center md:bottom-7">
+              <Link
+                href="/new-arrivals"
+                className="group inline-flex min-h-11 min-w-[180px] items-center justify-center gap-2 border border-black bg-white px-8 py-3 text-[11px] font-bold uppercase tracking-[-0.02em] text-black shadow-[0_3px_18px_rgba(0,0,0,0.24)] transition-colors hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-3 md:min-w-[210px] md:text-xs"
+              >
+                Shop now
+                <ArrowRight className="h-3.5 w-3.5 -rotate-45 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.8} aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>
