@@ -24,11 +24,11 @@ export default function Preloader() {
       return;
     }
 
-    // Atmospheric brand reveal (snappy 600ms reveal)
+    // Keep the animated wordmark visible long enough for the motion to register.
     const timer = setTimeout(() => {
       setIsLoading(false);
       setPreloaderFinished(true);
-    }, 600);
+    }, 3200);
 
     return () => clearTimeout(timer);
   }, [isDashboard, setPreloaderFinished]);
@@ -51,7 +51,7 @@ export default function Preloader() {
           <motion.div
             initial={{ filter: "blur(20px)", opacity: 0, scale: 0.9 }}
             animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
-            transition={{ duration: 1.4, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
             <img
