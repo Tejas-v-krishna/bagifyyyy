@@ -97,12 +97,12 @@ export default async function Home() {
 
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-[#1a1a1a]">
             <Image
-              src="/hero-2-editorial.jpg"
+              src="/hero-main.png"
               alt="BAGIFYYYY Archive Season editorial"
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center grayscale contrast-[1.08]"
+              className="object-cover object-center contrast-[1.08]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/5" />
 
@@ -144,29 +144,52 @@ export default async function Home() {
       </section>
 
       {/* 1.5. Anti-Fast Fashion Manifesto */}
-      <section className="relative w-full pb-20 pt-0 md:pb-28 md:pt-0 flex flex-col items-center justify-center border-b border-y2k-gunmetal/[0.07] bg-y2k-ice overflow-hidden px-6 md:px-16">
-        <div className="w-full max-w-[1800px] mx-auto flex flex-col">
-          {/* Massive Masked Text Layout */}
-          <div className="w-full">
-            <h2 
-              className="w-full flex flex-col font-display uppercase m-0 text-[14vw] lg:text-[11vw] tracking-[-0.05em] leading-[0.9] py-2 text-transparent bg-clip-text bg-[url('/rebel-bg.jpg')] bg-cover bg-center bg-no-repeat"
-            >
-              <div className="self-start text-left">
-                F*CK FAST<br/>
-                FASHION.
-              </div>
-              <div className="self-end text-right mt-8 md:-mt-4 lg:-mt-12">
-                WEAR<br/>
-                HISTORY.
-              </div>
-            </h2>
+      <section
+        className="group/manifesto relative flex min-h-[660px] w-full items-center justify-center overflow-hidden border-b border-y2k-gunmetal/[0.1] bg-y2k-ice px-6 py-20 md:min-h-[800px] md:px-16 md:py-28"
+        aria-labelledby="manifesto-heading"
+      >
+        {/* Quiet editorial frame */}
+        <div className="pointer-events-none absolute inset-4 border border-y2k-gunmetal/[0.08] md:inset-7" aria-hidden="true" />
+        <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px bg-y2k-gunmetal/[0.045]" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-7 top-1/2 h-px bg-y2k-gunmetal/[0.045]" aria-hidden="true" />
+
+        <div className="relative z-10 flex w-full max-w-[1800px] flex-col">
+          <div className="mb-8 flex items-center justify-between px-1 text-[9px] font-semibold uppercase tracking-[0.24em] text-y2k-gunmetal/45 md:mb-12 md:px-2">
+            <span className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-y2k-gunmetal" aria-hidden="true" />
+              Manifesto / 001
+            </span>
+            <span className="hidden sm:block">The anti-trend archive</span>
+            <span>SS26</span>
           </div>
 
-          {/* Subtext */}
-          <div className="w-full flex justify-end mt-14 md:mt-20" data-animate="text-up">
-            <p className="text-y2k-gunmetal/60 text-[10.5px] md:text-xs uppercase tracking-[0.18em] leading-loose max-w-xs text-right border-r border-y2k-gunmetal/[0.12] pr-6">
+          <div className="relative">
+            <h2
+              id="manifesto-heading"
+              className="flex w-full flex-col py-2 font-display text-[14vw] uppercase leading-[0.86] tracking-[-0.07em] text-transparent bg-[url('/rebel-bg.jpg')] bg-cover bg-center bg-clip-text bg-no-repeat sm:text-[13vw] lg:text-[11vw]"
+            >
+              <span className="self-start text-left">F*CK FAST<br />FASHION.</span>
+              <span className="mt-10 self-end text-right md:-mt-4 lg:-mt-12">WEAR<br />HISTORY.</span>
+            </h2>
+
+            {/* Rotating archive seal adds motion without competing with the message. */}
+            <div className="absolute left-1/2 top-1/2 hidden h-28 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-y2k-gunmetal/25 bg-y2k-ice/80 backdrop-blur-sm transition-transform duration-700 group-hover/manifesto:rotate-12 md:flex">
+              <span className="absolute inset-2 rounded-full border border-dashed border-y2k-gunmetal/25" aria-hidden="true" />
+              <span className="text-center text-[8px] font-bold uppercase leading-[1.45] tracking-[0.16em] text-y2k-gunmetal/65">No trends<br />Just taste<br /><span className="text-lg leading-none">*</span></span>
+            </div>
+          </div>
+
+          <div className="mt-12 flex flex-col items-start justify-between gap-8 border-t border-y2k-gunmetal/[0.12] pt-5 sm:flex-row sm:items-end md:mt-16 md:px-2" data-animate="text-up">
+            <p className="max-w-xs text-[10.5px] uppercase leading-[1.8] tracking-[0.16em] text-y2k-gunmetal/60 md:max-w-sm md:text-xs">
               Curated 1-of-1 vintage garments built to outlive fast fashion trends.
             </p>
+            <Link
+              href="#showcase"
+              className="group/cta inline-flex min-h-11 items-center gap-4 border-b border-y2k-gunmetal/35 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-y2k-gunmetal transition-colors hover:border-y2k-gunmetal hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4"
+            >
+              Explore the archive
+              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/cta:translate-x-1" strokeWidth={1.7} aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </section>
