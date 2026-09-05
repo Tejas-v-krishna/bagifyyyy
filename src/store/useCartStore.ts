@@ -6,6 +6,12 @@ export type CartItem = {
   id: string;
   name: string;
   price: number;
+  /**
+   * Studio-set original MRP snapshot for this line. Falls back to price when
+   * absent (older saved bags) — so a missing MRP never invents a discount.
+   * Counted only when it exceeds price.
+   */
+  mrp?: number | null;
   image: string;
   quantity: number;
   color?: string;
@@ -41,6 +47,10 @@ type CartStore = {
   clearPromo: () => void;
   /** Sum of every line at its normal price, before set or promo discounts. */
   cartSubtotal: () => number;
+  /** Sum of every line at studio MRP (falls back to price). Display only. */
+  mrpTotal: () => number;
+  /** Rupees off MRP before set/promo discounts. Display only. */
+  mrpDiscount: () => number;
   /** Rupees off for complete curated sets in the bag. */
   bundleDiscount: () => number;
   /** What the goods actually cost: subtotal minus set discounts. */
@@ -126,6 +136,14 @@ export const useCartStore = create<CartStore>()(
       cartSubtotal: () => {
         const { items } = get();
         return items.reduce((total, item) => total + item.price * item.quantity, 0);
+      },
+      mrpTotal: () => {
+        const { items } = get();
+        return items.reduce((total, item) => total + (item.mrp && item.mrp > item.price ? item.mrp : item.price) * item.quantity, 0);
+      },
+      mrpDiscount: () => {
+        const { items } = get();
+        return items.reduce((total, item) => total + ((item.mrp && item.mrp > item.price ? item.mrp : item.price) - item.price) * item.quantity, 0);
       },
       bundleDiscount: () => {
         const { items } = get();

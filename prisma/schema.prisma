@@ -30,6 +30,9 @@ model Product {
   name          String
   description   String
   price         Float
+  // Original MRP set by the studio. Shown as strikethrough / "Discount on
+  // MRP" only when higher than price; null means no MRP claim.
+  compareAtPrice Float?
   brand         String?
   category      String
   isNew         Boolean  @default(false)

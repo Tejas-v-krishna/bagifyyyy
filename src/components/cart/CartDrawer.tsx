@@ -15,6 +15,7 @@ type UpsellProduct = {
   id: string;
   name: string;
   price: number;
+  compareAtPrice?: number | null;
   image?: string;
   images?: { url: string }[] | string[];
   sizes?: string[];
@@ -69,6 +70,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
       id: p.id,
       name: p.name,
       price: p.price,
+      mrp: p.compareAtPrice ?? null,
       image: img,
       quantity: 1,
       size: p.sizes?.[0] || "One Size",

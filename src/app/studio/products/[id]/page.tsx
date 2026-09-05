@@ -133,13 +133,13 @@ export default function StudioEditProduct() {
       if (!data.error) {
         setProduct(data);
         const originalPrice = data.price ? String(data.price) : "";
-        const estComparePrice = data.price ? String(Math.round(data.price * 1.35)) : "";
+        const savedComparePrice = data.compareAtPrice ? String(data.compareAtPrice) : "";
 
         setForm({
           name: data.name || "",
           description: data.description || "",
           price: originalPrice,
-          comparePrice: estComparePrice,
+          comparePrice: savedComparePrice,
           brand: data.brand || "BAGIFYYYY",
           collectionTag: data.collectionTag || data.brand || "BAGIFYYYY",
           category: canonicalCategory(data.category) || CATEGORIES[0].slug,

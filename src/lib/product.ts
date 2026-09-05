@@ -13,6 +13,8 @@ export type DisplayProduct = {
   id: string;
   name: string;
   price: number;
+  /** Original MRP from the studio, or null when none is set. */
+  compareAtPrice: number | null;
   brand: string | null;
   description: string;
   category: string;
@@ -108,6 +110,7 @@ export async function getProductForDisplay(
     id: product.id,
     name: product.name,
     price: product.price,
+    compareAtPrice: product.compareAtPrice ?? null,
     brand: product.brand,
     description: product.description,
     category: product.category,

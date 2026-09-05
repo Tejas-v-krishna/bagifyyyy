@@ -19,6 +19,8 @@ export type PricedItem = {
   color: string;
   quantity: number;
   image: string;
+  /** Studio-set original MRP for this line (unit). Null when none. */
+  mrp: number | null;
   /** Set this line was added as part of, if any. */
   bundleId: string | null;
 };
@@ -26,6 +28,10 @@ export type PricedItem = {
 export type PricedCart = {
   items: PricedItem[];
   subtotal: number;
+  /** Sum of every line at studio MRP (falls back to price). Display only. */
+  mrpTotal: number;
+  /** Rupees off MRP before set/promo discounts. Display only. */
+  mrpDiscount: number;
   /** Rupees off for complete curated sets, before any promo code. */
   bundleDiscount: number;
   bundleSavings: BundleSaving[];
@@ -170,6 +176,9 @@ export async function priceCart(options: {
       variantId: variant?.id ?? null,
       name: product.name,
       price: product.price,
+      mrp: typeof product.compareAtPrice === 'number' && product.compareAtPrice > product.price
+        ? product.compareAtPrice
+        : null,
       size,
       color,
       quantity,
@@ -207,6 +216,8 @@ export async function priceCart(options: {
   return {
     items: pricedItems,
     subtotal,
+    mrpTotal: pricedItems.reduce((t, i) => t + (i.mrp ?? i.price) * i.quantity, 0),
+    mrpDiscount: pricedItems.reduce((t, i) => t + ((i.mrp ?? i.price) - i.price) * i.quantity, 0),
     bundleDiscount,
     bundleSavings,
     promoAmount,

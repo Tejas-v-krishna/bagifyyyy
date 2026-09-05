@@ -10,6 +10,7 @@ interface AddToBagButtonProps {
     id: string;
     name: string;
     price: number;
+    compareAtPrice?: number | null;
     image: string;
     isSoldOut?: boolean;
     sizes?: string[];
@@ -44,6 +45,7 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
       id: product.id,
       name: product.name,
       price: product.price,
+      mrp: product.compareAtPrice ?? null,
       image: product.image,
       quantity: 1,
       size: product.sizes?.[0] || "OS",

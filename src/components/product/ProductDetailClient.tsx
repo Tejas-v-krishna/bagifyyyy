@@ -98,6 +98,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
       id: product.id,
       name: product.name,
       price: product.price,
+      mrp: product.compareAtPrice ?? null,
       image: productImages[activeImageIndex] || productImages[0] || "/placeholder.jpg",
       quantity: 1,
       size: selectedSize || (product.sizes?.[0] ?? "One Size"),

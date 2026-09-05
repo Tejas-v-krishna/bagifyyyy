@@ -120,6 +120,7 @@ export default function StudioNewProduct() {
         body: JSON.stringify({
           name: form.name,
           price: parseFloat(form.price) || 0,
+          compareAtPrice: form.comparePrice.trim() ? parseFloat(form.comparePrice) : null,
           category: form.category,
           description: form.description,
           isNew: form.isNew,

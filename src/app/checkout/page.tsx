@@ -131,7 +131,7 @@ const loadRazorpayScript = (): Promise<boolean> => {
 
 function CheckoutContent() {
   const router = useRouter();
-  const { items, cartSubtotal, bundleDiscount, cartTotal, promoCode, promoDiscount, promoAmount, applyPromo, clearPromo, updateQuantity, removeItem, clearCart } = useCartStore();
+  const { items, cartSubtotal, bundleDiscount, cartTotal, mrpTotal, mrpDiscount, promoCode, promoDiscount, promoAmount, applyPromo, clearPromo, updateQuantity, removeItem, clearCart } = useCartStore();
   const { user, isAuthenticated } = useAuthStore();
   const searchParams = useSearchParams();
   const promoFromCart = searchParams.get("promo");
@@ -263,6 +263,9 @@ function CheckoutContent() {
   // judged on that same post-discount figure. The server re-derives all of it.
   const subtotal = cartSubtotal();
   const setDiscount = bundleDiscount();
+  // Studio MRP rows. Display only — they never change what is charged.
+  const mrpTotalValue = mrpTotal();
+  const mrpDiscountValue = mrpDiscount();
   const total = cartTotal();
   const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
   const discountAmount = promoAmount();
@@ -1003,6 +1006,18 @@ function CheckoutContent() {
 
             {/* Calculations Breakdown */}
             <div className="flex flex-col gap-2.5 text-xs border-t border-black/10 pt-4">
+              {mrpDiscountValue > 0 && (
+                <>
+                  <div className="flex justify-between items-center text-black/65">
+                    <span>MRP Total:</span>
+                    <span className="font-semibold text-black">₹{mrpTotalValue.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-black font-semibold">
+                    <span>Discount on MRP:</span>
+                    <span>−₹{mrpDiscountValue.toFixed(2)}</span>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between items-center text-black/65">
                 <span>Items Subtotal:</span>
                 <span className="font-semibold text-black">₹{subtotal.toFixed(2)}</span>
@@ -1023,8 +1038,12 @@ function CheckoutContent() {
                 <span>Shipping ({shippingMethod === 'express' ? 'Express' : 'Standard'}):</span>
                 <span className="font-semibold text-black">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
               </div>
+              <div className="flex justify-between items-center text-black/65">
+                <span>Tax:</span>
+                <span className="font-semibold text-black">Included</span>
+              </div>
               <div className="flex justify-between items-center font-semibold text-sm border-t border-black/10 pt-3 mt-1 text-black">
-                <span>Total Amount:</span>
+                <span>To Pay:</span>
                 <span className="font-sans font-medium text-base">₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
               </div>
             </div>

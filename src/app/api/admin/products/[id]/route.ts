@@ -7,6 +7,8 @@ type ProductPatchBody = {
   name?: unknown;
   description?: unknown;
   price?: unknown;
+  compareAtPrice?: unknown;
+  comparePrice?: unknown;
   image?: unknown;
   collectionTag?: unknown;
   isNew?: unknown;
@@ -38,7 +40,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    const { name, description, price, image, collectionTag, isNew, isSoldOut, isBestSeller, category } = body;
+    const { name, description, price, compareAtPrice, comparePrice, image, collectionTag, isNew, isSoldOut, isBestSeller, category } = body;
 
     if (name !== undefined && (typeof name !== 'string' || !name.trim())) {
       return NextResponse.json({ error: 'Product name is required' }, { status: 400 });
@@ -51,6 +53,21 @@ export async function PATCH(
       if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
         return NextResponse.json({ error: 'Price must be greater than zero' }, { status: 400 });
       }
+    }
+    // Original MRP. Accepts compareAtPrice (canonical) or comparePrice (studio
+    // form alias). Empty string / null clears it; otherwise must be positive.
+    const rawMrp = compareAtPrice !== undefined ? compareAtPrice : comparePrice;
+    let parsedMrp: number | null | undefined;
+    if (rawMrp === undefined) {
+      parsedMrp = undefined;
+    } else if (rawMrp === null || rawMrp === '') {
+      parsedMrp = null;
+    } else {
+      const n = Number(rawMrp);
+      if (!Number.isFinite(n) || n <= 0) {
+        return NextResponse.json({ error: 'Compare-at price must be a positive number or empty' }, { status: 400 });
+      }
+      parsedMrp = n;
     }
     if (category !== undefined && (typeof category !== 'string' || !canonicalCategory(category))) {
       return NextResponse.json({ error: 'A valid category is required' }, { status: 400 });
@@ -71,6 +88,7 @@ export async function PATCH(
         ...(category !== undefined && { category: canonicalCategory(category as string) }),
         ...(description !== undefined && { description: (description as string).trim() }),
         ...(price !== undefined && { price: Number(price) }),
+        ...(parsedMrp !== undefined && { compareAtPrice: parsedMrp }),
         ...(collectionTag !== undefined && {
           brand: typeof collectionTag === 'string' && collectionTag.trim() ? collectionTag.trim() : 'BAGIFYYYY',
         }),

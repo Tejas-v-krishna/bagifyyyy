@@ -30,18 +30,26 @@ export async function POST(request: Request) {
     if (!body || typeof body !== 'object') {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
-    const { name, price, category, description, isNew, isSoldOut, isBestSeller, image, collectionTag } = body as Record<string, unknown>;
+    const { name, price, category, description, isNew, isSoldOut, isBestSeller, image, collectionTag, compareAtPrice, comparePrice } = body as Record<string, unknown>;
     const parsedPrice = Number(price);
     if (typeof name !== 'string' || !name.trim() || !Number.isFinite(parsedPrice) || parsedPrice <= 0 ||
         typeof category !== 'string' || !canonicalCategory(category) || typeof description !== 'string' || !description.trim() ||
         typeof image !== 'string' || !image.trim()) {
       return NextResponse.json({ error: 'Name, description, category, image, and a valid price are required.' }, { status: 400 });
     }
+    // Original MRP. Optional; stored only when a positive number above zero.
+    // The storefront counts it only when it exceeds the selling price.
+    const rawMrp = compareAtPrice !== undefined ? compareAtPrice : comparePrice;
+    const parsedMrp = rawMrp === undefined || rawMrp === null || rawMrp === '' ? null : Number(rawMrp);
+    if (parsedMrp !== null && (!Number.isFinite(parsedMrp) || parsedMrp <= 0)) {
+      return NextResponse.json({ error: 'Compare-at price must be a positive number or left empty.' }, { status: 400 });
+    }
 
     const product = await prisma.product.create({
       data: {
         name: name.trim(),
         price: parsedPrice,
+        compareAtPrice: parsedMrp,
         // Stored canonically so the storefront breadcrumb and the category
         // route always agree. Clients have sent both "topwear" and "topwears".
         category: canonicalCategory(category),

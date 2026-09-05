@@ -86,6 +86,7 @@ export async function GET(request: Request) {
         id: product.id,
         name: product.name,
         price: product.price,
+        compareAtPrice: product.compareAtPrice ?? null,
         brand: product.brand,
         description: product.description,
         category: product.category,
