@@ -1,14 +1,154 @@
 "use client";
 
-import { X, Minus, Plus, Tag, CheckCircle2, Truck, ChevronRight } from "lucide-react";
+import { X, Minus, Plus, Tag, CheckCircle2, Truck, ChevronRight, ChevronLeft } from "lucide-react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+type UpsellProduct = {
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
+  images?: { url: string }[] | string[];
+  sizes?: string[];
+  colors?: string[];
+  isSoldOut?: boolean;
+};
+
+/** "You may also like" rail inside the bag: live catalogue minus what's in it. */
+function CartUpsell({ closeCart }: { closeCart: () => void }) {
+  const router = useRouter();
+  const items = useCartStore((s) => s.items);
+  const addItem = useCartStore((s) => s.addItem);
+  const [products, setProducts] = useState<UpsellProduct[]>([]);
+  const [addedId, setAddedId] = useState<string | null>(null);
+  const railRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/products")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: unknown) => {
+        if (cancelled) return;
+        const list: UpsellProduct[] = Array.isArray(data)
+          ? data
+          : (data as { products?: UpsellProduct[] }).products ?? [];
+        const inBag = new Set(items.map((i) => i.id));
+        setProducts(list.filter((p) => !inBag.has(p.id) && !p.isSoldOut).slice(0, 6));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [items]);
+
+  if (products.length === 0) return null;
+
+  const scrollRail = (dir: 1 | -1) => {
+    railRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
+  };
+
+  const handleAdd = (p: UpsellProduct) => {
+    const hasOptions =
+      (Array.isArray(p.sizes) && p.sizes.length > 1) ||
+      (Array.isArray(p.colors) && p.colors.length > 1);
+    if (hasOptions) {
+      closeCart();
+      router.push(`/product/${p.id}`);
+      return;
+    }
+    const img = p.image
+      ?? (typeof p.images?.[0] === "string" ? p.images[0] : (p.images?.[0] as { url?: string } | undefined)?.url)
+      ?? "/placeholder.jpg";
+    addItem({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      image: img,
+      quantity: 1,
+      size: p.sizes?.[0] || "One Size",
+      color: p.colors?.[0] || "Default",
+    });
+    setAddedId(p.id);
+    window.setTimeout(() => setAddedId((cur) => (cur === p.id ? null : cur)), 1200);
+  };
+
+  return (
+    <div className="mt-6">
+      <div className="flex items-center justify-between mb-3">
+        <p className="font-sans text-[15px] font-medium tracking-tight text-black">
+          You may also like…
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => scrollRail(-1)}
+            aria-label="Scroll recommendations back"
+            className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-colors cursor-pointer text-black"
+          >
+            <ChevronLeft className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollRail(1)}
+            aria-label="Scroll recommendations forward"
+            className="w-8 h-8 rounded-full bg-black hover:bg-black/80 flex items-center justify-center transition-colors cursor-pointer text-white"
+          >
+            <ChevronRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+      <div
+        ref={railRef}
+        className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {products.map((p) => {
+          const img = p.image
+            ?? (typeof p.images?.[0] === "string" ? p.images[0] : (p.images?.[0] as { url?: string } | undefined)?.url)
+            ?? "/placeholder.jpg";
+          const added = addedId === p.id;
+          return (
+            <div
+              key={p.id}
+              className="snap-start shrink-0 w-[240px] sm:w-[260px] border border-black/10 bg-white rounded-sm p-3 flex items-center gap-3"
+            >
+              <Link
+                href={`/product/${p.id}`}
+                onClick={closeCart}
+                className="relative w-14 h-[72px] bg-[#f2f2f2] rounded-xs shrink-0 overflow-hidden"
+                aria-label={p.name}
+              >
+                <Image src={img} alt={p.name} fill draggable={false} sizes="60px" className="object-contain p-1 mix-blend-multiply" />
+              </Link>
+              <div className="flex-1 min-w-0">
+                <Link href={`/product/${p.id}`} onClick={closeCart} className="block truncate text-[11px] font-bold uppercase tracking-tight text-black hover:opacity-60 transition-opacity" title={p.name}>
+                  {p.name}
+                </Link>
+                <p className="text-[11px] font-medium text-black mt-0.5 tabular-nums">
+                  ₹{p.price.toLocaleString("en-IN")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleAdd(p)}
+                disabled={added}
+                className={`shrink-0 px-4 py-2 rounded-md text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${added ? "bg-emerald-700 text-white" : "bg-black text-white hover:bg-black/80 active:scale-95"}`}
+              >
+                {added ? "Added" : "Add"}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function CartDrawer() {
   const pathname = usePathname();
@@ -245,6 +385,7 @@ export default function CartDrawer() {
                       );
                     })}
                   </ul>
+                  <CartUpsell closeCart={closeCart} />
                 </>
               )}
             </div>
