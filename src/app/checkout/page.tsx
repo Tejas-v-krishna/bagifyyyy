@@ -507,21 +507,33 @@ function CheckoutContent() {
 
         {/* Fullscreen Processing Overlay */}
         {(paymentState === 'initiating' || paymentState === 'verifying') && (
-          <div className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="max-w-md w-full rounded-2xl border border-black/15 bg-[#f5f5f2] p-8 sm:p-10 text-center shadow-[0_24px_55px_rgba(0,0,0,0.18)]">
-              <div className="w-14 h-14 rounded-full border border-black/15 bg-white flex items-center justify-center mx-auto mb-5 text-black shadow-xs">
-                <Loader2 className="w-6 h-6 animate-spin text-black" aria-hidden="true" />
+          <div className="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-md flex items-center justify-center p-4" role="status" aria-live="polite">
+            <div className="max-w-md w-full rounded-2xl border border-white/10 bg-[#0b0b0b] p-8 sm:p-10 text-center text-white shadow-[0_32px_80px_rgba(0,0,0,0.55)]">
+              <div className="relative w-14 h-14 mx-auto mb-6" aria-hidden="true">
+                <span className="absolute inset-0 rounded-full border border-white/15" />
+                <span className="absolute inset-0 rounded-full border-t-2 border-t-white animate-spin" />
+                <span className="absolute inset-0 flex items-center justify-center font-microgramma text-base font-bold text-white">
+                  ₹
+                </span>
               </div>
-              <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-black mb-3">
+              <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-white mb-3">
                  {paymentState === 'initiating' ? "Opening payment…" : "Processing payment…"}
               </h2>
-              <p className="text-xs leading-relaxed text-black/60 mb-5 max-w-sm mx-auto">
+              <p className="text-xs sm:text-[13px] leading-relaxed text-white/60 mb-6 max-w-sm mx-auto">
                 {paymentState === 'initiating'
-                  ? "Opening encrypted 256-bit payment window. Please do not close or refresh this tab."
+                  ? "Opening the secure Razorpay window. Please do not close or refresh this tab."
                    : "Checking your payment and preparing your receipt. Please wait."}
               </p>
-              <div className="h-0.5 w-full bg-black/10 overflow-hidden rounded-full mt-4">
-                <div className="h-full bg-black animate-pulse" />
+              <p className="inline-flex items-baseline gap-2 border border-white/15 bg-white/5 px-5 py-2.5 rounded-full">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50">To pay</span>
+                <span className="text-base font-bold tabular-nums text-white">
+                  ₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                </span>
+              </p>
+              <div className="flex items-center justify-center gap-1.5 mt-7" aria-hidden="true">
+                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -529,15 +541,15 @@ function CheckoutContent() {
 
         {/* Fullscreen Failure Modal */}
         {paymentState === 'failed' && (
-          <div className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="max-w-md w-full rounded-2xl border border-black/15 bg-[#f5f5f2] p-8 sm:p-10 text-center shadow-[0_24px_55px_rgba(0,0,0,0.18)]">
-              <div className="w-14 h-14 rounded-full border border-black/15 bg-white flex items-center justify-center mx-auto mb-5 text-black shadow-xs">
-                <AlertCircle className="w-6 h-6 text-black" aria-hidden="true" />
+          <div className="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-md flex items-center justify-center p-4" role="alertdialog" aria-modal="true" aria-labelledby="pay-fail-title">
+            <div className="max-w-md w-full rounded-2xl border border-white/10 bg-[#0b0b0b] p-8 sm:p-10 text-center text-white shadow-[0_32px_80px_rgba(0,0,0,0.55)]">
+              <div className="w-14 h-14 rounded-full border border-white/15 bg-white/5 flex items-center justify-center mx-auto mb-6 text-white">
+                <AlertCircle className="w-6 h-6 text-white" aria-hidden="true" />
               </div>
-              <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-black mb-3">
+              <h2 id="pay-fail-title" className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-white mb-3">
                 {failureDetails?.title || "Payment Incomplete"}
               </h2>
-              <p className="text-xs leading-relaxed text-black/60 mb-6 max-w-sm mx-auto">
+              <p className="text-xs sm:text-[13px] leading-relaxed text-white/60 mb-8 max-w-sm mx-auto">
                 {failureDetails?.message || "Your transaction was not completed. No amount was debited, and your cart pieces remain safely saved."}
               </p>
               <div className="flex flex-col gap-3">
@@ -548,13 +560,13 @@ function CheckoutContent() {
                     setFailureDetails(null);
                     setLoading(false);
                   }}
-                  className="w-full bg-black text-white px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors cursor-pointer shadow-xs"
+                  className="w-full bg-white text-black px-6 py-4 text-xs font-bold uppercase tracking-[0.14em] hover:bg-white/85 active:scale-[0.99] transition-all cursor-pointer rounded-sm"
                 >
                   Try Again / Back to Checkout →
                 </button>
                 <Link
                   href="/"
-                  className="w-full border border-black/15 bg-white text-black px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:border-black hover:bg-black/[0.02] transition-colors text-center cursor-pointer"
+                  className="w-full border border-white/20 bg-transparent text-white px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-white/10 active:scale-[0.99] transition-all text-center cursor-pointer rounded-sm"
                 >
                   Return to Home Screen
                 </Link>
