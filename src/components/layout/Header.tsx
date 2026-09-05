@@ -4,9 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { X, Menu, Heart, User, ShoppingBag } from "lucide-react";
+import { X, Heart, User, ShoppingBag } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -143,6 +143,19 @@ export default function Header() {
 
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
+  // Bag bump: pops the cart icon whenever a piece lands in the bag.
+  const [cartBump, setCartBump] = useState(false);
+  const prevCountRef = useRef(itemCount);
+  useEffect(() => {
+    if (itemCount > prevCountRef.current) {
+      setCartBump(true);
+      const t = window.setTimeout(() => setCartBump(false), 450);
+      prevCountRef.current = itemCount;
+      return () => window.clearTimeout(t);
+    }
+    prevCountRef.current = itemCount;
+  }, [itemCount]);
+
   // Studio/admin stay chromeless. /account keeps the navbar so first-time
   // members always have full navigation (shop, search, bag) — the inline
   // "Back to shop" link alone wasn't discoverable enough.
@@ -204,18 +217,24 @@ export default function Header() {
         {/* Brand wordmark / Logo (Centered, desktop only — mobile bar has its own) */}
         <Link
           href="/"
-          className="hover:opacity-75 hidden lg:flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
+          className="group/logo hover:opacity-75 hidden lg:flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
         >
           <span className="sr-only">BAGIFYYYY Home</span>
-          <Image
-            src="/bagifyyyy-wordmark-animated.gif"
-            alt="BAGIFYYYY Logo"
-            width={1024}
-            height={265}
-            fetchPriority="high"
-            unoptimized
-            className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
-          />
+          <span className="relative inline-block overflow-hidden transition-transform duration-300 group-hover/logo:scale-[1.03]">
+            <Image
+              src="/bagifyyyy-wordmark-animated.gif"
+              alt="BAGIFYYYY Logo"
+              width={1024}
+              height={265}
+              fetchPriority="high"
+              unoptimized
+              className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
+            />
+            <span
+              className="pointer-events-none absolute inset-0 -translate-x-[110%] bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover/logo:translate-x-[110%]"
+              aria-hidden="true"
+            />
+          </span>
         </Link>
 
         {/* Desktop nav — right side: labels morph into glass icons on hover */}
@@ -258,7 +277,7 @@ export default function Header() {
             onClick={toggleCart}
             label={`Cart (${itemCount})`}
             icon={
-              <span className="relative inline-flex">
+              <span className={`relative inline-flex transition-transform duration-300 ${cartBump ? "scale-125" : "scale-100"}`}>
                 <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.8} />
                 {itemCount > 0 && (
                   <span className={`absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-0.5 text-[9px] font-bold tabular-nums ${isDark ? "bg-white text-black" : "bg-black text-white"}`}>
@@ -279,23 +298,33 @@ export default function Header() {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`${navTextColor} ${navHoverColor} transition-colors cursor-pointer text-xs font-medium tracking-tight flex items-center gap-1.5 p-1`}
-            aria-label="Open menu"
+            className={`${navTextColor} ${navHoverColor} transition-colors cursor-pointer text-xs font-medium tracking-tight flex items-center gap-2 p-1`}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
-            <Menu className="w-4 h-4" />
+            <span className="relative flex h-4 w-4 items-center justify-center" aria-hidden="true">
+              <span className={`absolute h-[1.5px] w-4 bg-current transition-all duration-300 ${isMobileMenuOpen ? "rotate-45" : "-translate-y-[4px]"}`} />
+              <span className={`absolute h-[1.5px] w-4 bg-current transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45" : "translate-y-[4px]"}`} />
+            </span>
             <span>Menu</span>
           </button>
 
-          <Link href="/" className="hover:opacity-75 transition-opacity">
+          <Link href="/" className="group/logo hover:opacity-75 transition-opacity">
             <span className="sr-only">BAGIFYYYY Home</span>
-            <Image
-              src="/bagifyyyy-wordmark-animated.gif"
-              alt="BAGIFYYYY Logo"
-              width={1024}
-              height={265}
-              unoptimized
-              className={`h-auto w-[120px] object-contain transition-all duration-300 ${logoFilter}`}
-            />
+            <span className="relative inline-block overflow-hidden transition-transform duration-300 group-hover/logo:scale-[1.03]">
+              <Image
+                src="/bagifyyyy-wordmark-animated.gif"
+                alt="BAGIFYYYY Logo"
+                width={1024}
+                height={265}
+                unoptimized
+                className={`h-auto w-[120px] object-contain transition-all duration-300 ${logoFilter}`}
+              />
+              <span
+                className="pointer-events-none absolute inset-0 -translate-x-[110%] bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover/logo:translate-x-[110%]"
+                aria-hidden="true"
+              />
+            </span>
           </Link>
 
           <div className="flex items-center gap-2">
@@ -306,7 +335,9 @@ export default function Header() {
               className={`${navTextColor} ${navHoverColor} transition-colors cursor-pointer text-xs font-medium`}
               aria-label={`Cart, ${itemCount} items`}
             >
-              Cart ({itemCount})
+              <span className={`inline-block transition-transform duration-300 ${cartBump ? "scale-125" : "scale-100"}`}>
+                Cart ({itemCount})
+              </span>
             </button>
           </div>
         </div>
@@ -361,16 +392,23 @@ export default function Header() {
                         { href: "/accessories", label: "Accessories" },
                         { href: "/bundles", label: "Bundles" },
                         { href: "/wishlist", label: "Wishlist" },
-                      ].map(({ href, label }) => (
-                        <Link
+                      ].map(({ href, label }, i) => (
+                        <motion.span
                           key={href}
-                          href={href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="text-[17px] sm:text-lg font-normal tracking-tight text-black hover:opacity-60 active:opacity-40 transition-opacity flex items-center justify-between py-2.5 min-h-[44px]"
+                          initial={{ opacity: 0, x: -14 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.12 + i * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                          className="block"
                         >
-                          <span>{label}</span>
-                          <span className="text-black/30 text-xs">→</span>
-                        </Link>
+                          <Link
+                            href={href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-[17px] sm:text-lg font-normal tracking-tight text-black hover:opacity-60 active:opacity-40 transition-opacity flex items-center justify-between py-2.5 min-h-[44px] group/drawer-link"
+                          >
+                            <span>{label}</span>
+                            <span className="text-black/30 text-xs transition-transform duration-300 group-hover/drawer-link:translate-x-1 group-active/drawer-link:translate-x-1">→</span>
+                          </Link>
+                        </motion.span>
                       ))}
                     </div>
 
