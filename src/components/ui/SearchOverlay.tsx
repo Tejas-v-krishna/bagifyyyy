@@ -40,8 +40,10 @@ function useDebounce<T>(value: T, delay: number): T {
 
 export default function SearchOverlay({
   variant = "text",
+  dark = false,
 }: {
-  variant?: "text" | "pill" | "icon";
+  variant?: "text" | "pill" | "icon" | "morph";
+  dark?: boolean;
 }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -172,6 +174,23 @@ export default function SearchOverlay({
           <kbd className="hidden xl:inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold text-black/40 bg-black/5 rounded">
             ⌘K
           </kbd>
+        </button>
+      ) : variant === "morph" ? (
+        <button
+          ref={triggerRef}
+          onClick={open}
+          aria-label="Search products"
+          aria-expanded={isOpen}
+          className={`group relative inline-flex h-9 min-w-9 items-center justify-center overflow-hidden rounded-full border border-transparent px-2 transition-all duration-300 hover:backdrop-blur-md cursor-pointer text-current ${
+            dark ? "hover:border-white/25 hover:bg-white/10" : "hover:border-black/10 hover:bg-black/[0.04]"
+          }`}
+        >
+          <span className="text-[13px] md:text-[13.5px] font-normal tracking-tight whitespace-nowrap transition-all duration-300 group-hover:-translate-y-5 group-hover:opacity-0">
+            Search
+          </span>
+          <span className="absolute inset-0 flex translate-y-5 items-center justify-center opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" aria-hidden="true">
+            <Search className="w-[18px] h-[18px]" strokeWidth={1.8} />
+          </span>
         </button>
       ) : (
         <button

@@ -120,6 +120,28 @@
     }
   }
 
+  /* ── Navbar link underline sweep ─────────────────────────────── */
+  .nav-link-animated {
+    position: relative;
+  }
+  .nav-link-animated::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link-animated:hover::after,
+  .nav-link-animated:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
   /* ── Premium Design System Utilities ─────────────────────────────── */
 
   /* Consistent section label — small uppercase eyebrow above headings */

@@ -6,7 +6,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState, useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { X, Menu } from "lucide-react";
+import { X, Menu, Heart, User, ShoppingBag } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -14,6 +14,56 @@ import { usePathname } from "next/navigation";
 const subscribeToClient = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
+
+/**
+ * Desktop navbar action that morphs on hover: the text label slides up and
+ * fades while a glass-blurred icon pill takes its place.
+ */
+function NavAction({
+  label,
+  icon,
+  href,
+  onClick,
+  dark,
+  textColor,
+  hoverColor,
+  ariaLabel,
+}: {
+  label: React.ReactNode;
+  icon: React.ReactNode;
+  href?: string;
+  onClick?: () => void;
+  dark: boolean;
+  textColor: string;
+  hoverColor: string;
+  ariaLabel: string;
+}) {
+  const className = `group relative inline-flex h-9 min-w-9 items-center justify-center overflow-hidden rounded-full border border-transparent px-2 transition-all duration-300 hover:backdrop-blur-md cursor-pointer ${textColor} ${hoverColor} ${
+    dark ? "hover:border-white/25 hover:bg-white/10" : "hover:border-black/10 hover:bg-black/[0.04]"
+  }`;
+  const text = (
+    <>
+      <span className="text-[13px] md:text-[13.5px] font-normal tracking-tight whitespace-nowrap transition-all duration-300 group-hover:-translate-y-5 group-hover:opacity-0">
+        {label}
+      </span>
+      <span className="absolute inset-0 flex translate-y-5 items-center justify-center opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" aria-hidden="true">
+        {icon}
+      </span>
+    </>
+  );
+  if (href) {
+    return (
+      <Link href={href} className={className} aria-label={ariaLabel}>
+        {text}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" onClick={onClick} className={className} aria-label={ariaLabel}>
+      {text}
+    </button>
+  );
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -121,31 +171,31 @@ export default function Header() {
         <nav className={`hidden lg:flex items-center gap-5 xl:gap-6 flex-1 ${navTextColor} pointer-events-auto transition-colors duration-200`}>
           <Link
             href="/new-arrivals"
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
+            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
           >
             New in
           </Link>
           <Link
             href="/topwears"
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
+            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
           >
              Tops
           </Link>
           <Link
             href="/bottomwears"
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
+            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
           >
              Bottoms
           </Link>
           <Link
             href="/accessories"
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
+            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
           >
             Accessories
           </Link>
           <Link
             href="/bundles"
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
+            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
           >
             Bundles
           </Link>
@@ -168,41 +218,60 @@ export default function Header() {
           />
         </Link>
 
-        {/* Desktop nav — right side matching reference */}
-        <nav className={`hidden lg:flex items-center gap-5 xl:gap-6 flex-1 justify-end ${navTextColor} pointer-events-auto transition-colors duration-200`}>
-          <Link
+        {/* Desktop nav — right side: labels morph into glass icons on hover */}
+        <nav className={`hidden lg:flex items-center gap-1.5 xl:gap-2 flex-1 justify-end ${navTextColor} pointer-events-auto transition-colors duration-200`}>
+          <NavAction
             href="/wishlist"
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
-          >
-            Wishlist
-          </Link>
+            label="Wishlist"
+            icon={<Heart className="w-[18px] h-[18px]" strokeWidth={1.8} />}
+            dark={isDark}
+            textColor={navTextColor}
+            hoverColor={navHoverColor}
+            ariaLabel="Wishlist"
+          />
 
-          <SearchOverlay variant="text" />
+          <SearchOverlay variant="morph" dark={isDark} />
 
           {mounted && isAuthenticated ? (
-            <Link
+            <NavAction
               href="/account"
-              className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors flex items-center gap-1.5`}
-            >
-              <span>{user?.name?.split(" ")[0] || "Account"}</span>
-            </Link>
+              label={user?.name?.split(" ")[0] || "Account"}
+              icon={<User className="w-[18px] h-[18px]" strokeWidth={1.8} />}
+              dark={isDark}
+              textColor={navTextColor}
+              hoverColor={navHoverColor}
+              ariaLabel="Your account"
+            />
           ) : (
-            <Link
+            <NavAction
               href="/login"
-              className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
-            >
-              Account
-            </Link>
+              label="Account"
+              icon={<User className="w-[18px] h-[18px]" strokeWidth={1.8} />}
+              dark={isDark}
+              textColor={navTextColor}
+              hoverColor={navHoverColor}
+              ariaLabel="Account"
+            />
           )}
 
-          <button
-            type="button"
+          <NavAction
             onClick={toggleCart}
-            className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors cursor-pointer flex items-center gap-1`}
-            aria-label={`Cart, ${itemCount} items`}
-          >
-            <span>Cart ({itemCount})</span>
-          </button>
+            label={`Cart (${itemCount})`}
+            icon={
+              <span className="relative inline-flex">
+                <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                {itemCount > 0 && (
+                  <span className={`absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-0.5 text-[9px] font-bold tabular-nums ${isDark ? "bg-white text-black" : "bg-black text-white"}`}>
+                    {itemCount}
+                  </span>
+                )}
+              </span>
+            }
+            dark={isDark}
+            textColor={navTextColor}
+            hoverColor={navHoverColor}
+            ariaLabel={`Cart, ${itemCount} items`}
+          />
         </nav>
 
         {/* Mobile top bar */}
