@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useCartStore, getItemKey, VALID_PROMOS } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Loader2, ArrowRight, ArrowLeft, User, Truck, CreditCard, Banknote, Tag, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, User, Truck, CreditCard, Tag, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -142,9 +142,9 @@ function CheckoutContent() {
   const [paymentState, setPaymentState] = useState<'idle' | 'initiating' | 'verifying' | 'failed'>('idle');
   const [failureDetails, setFailureDetails] = useState<{ title: string; message: string } | null>(null);
   const paymentCompletedRef = useRef(false);
-  const checkoutIdsRef = useRef<{ razorpay: string | null; cod: string | null }>({ razorpay: null, cod: null });
+  const checkoutIdsRef = useRef<{ razorpay: string | null }>({ razorpay: null });
 
-  const getCheckoutIdFor = (method: 'razorpay' | 'cod'): string => {
+  const getCheckoutIdFor = (method: 'razorpay'): string => {
     const storageKey = `bagify-checkout-${method}`;
     const existing = checkoutIdsRef.current[method];
     if (existing) return existing;
@@ -165,7 +165,7 @@ function CheckoutContent() {
     return fresh;
   };
 
-  const rotateCheckoutId = (method: 'razorpay' | 'cod') => {
+  const rotateCheckoutId = (method: 'razorpay') => {
     checkoutIdsRef.current[method] = null;
     try {
       window.sessionStorage.removeItem(`bagify-checkout-${method}`);
@@ -204,9 +204,8 @@ function CheckoutContent() {
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
 
-  // Shipping & Payment Options
+  // Shipping options (online payment only)
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
-  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
 
   // Auto-apply promo from cart URL param (back-compat) or store
   useEffect(() => {
@@ -266,10 +265,8 @@ function CheckoutContent() {
   const setDiscount = bundleDiscount();
   const total = cartTotal();
   const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
-  // COD fee is handled server-side via includeCodFee, show upfront to avoid surprise
-  const codFee = paymentMethod === 'cod' ? 49 : 0;
   const discountAmount = promoAmount();
-  const finalTotal = total - discountAmount + shipping + codFee;
+  const finalTotal = total - discountAmount + shipping;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -361,34 +358,7 @@ function CheckoutContent() {
     try {
       setLoading(true);
 
-      // Handle Cash on Delivery
-      if (paymentMethod === 'cod') {
-        setPaymentState('initiating');
-        const res = await fetch('/api/payment/cod', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            items,
-            shippingAddress: formData,
-            customerEmail: formData.email,
-            customerPhone: formData.phone,
-            shippingMethod,
-            promoCode: appliedPromo?.code || null,
-            checkoutId: getCheckoutIdFor('cod'),
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || 'Failed to place COD order');
-        }
-
-        rotateCheckoutId('cod');
-        clearCart();
-        router.push(`/checkout/success?order_id=${data.orderId}`);
-        return;
-      }
-
-      // Handle Official Razorpay Standard Web Checkout
+      // Online payment only — Razorpay Standard Web Checkout
       setPaymentState('initiating');
       const isScriptLoaded = await loadRazorpayScript();
       if (!isScriptLoaded) {
@@ -902,16 +872,9 @@ function CheckoutContent() {
 
                 {activeStep === 3 && (
                   <div className="flex flex-col gap-4">
-                    {/* Option A: Razorpay */}
-                    <label className={`flex items-start justify-between p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'border-black bg-black/[0.02] shadow-xs' : 'border-black/10 hover:border-black/30'}`}>
+                    {/* Online payment only */}
+                    <div className="flex items-start justify-between p-4 border border-black bg-black/[0.02] rounded-xl shadow-xs">
                       <div className="flex items-start gap-3">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={paymentMethod === 'razorpay'}
-                          onChange={() => setPaymentMethod('razorpay')}
-                          className="accent-black mt-1"
-                        />
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] flex items-center gap-2 text-black">
                             <CreditCard className="w-4 h-4 text-blue-600" /> UPI / Cards / NetBanking (Official Razorpay Gateway)
@@ -927,29 +890,7 @@ function CheckoutContent() {
                           </div>
                         </div>
                       </div>
-                    </label>
-
-                    {/* Option B: Cash on Delivery */}
-                    <label className={`flex items-start justify-between p-4 border rounded-xl cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-black bg-black/[0.02] shadow-xs' : 'border-black/10 hover:border-black/30'}`}>
-                      <div className="flex items-start gap-3">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={paymentMethod === 'cod'}
-                          onChange={() => setPaymentMethod('cod')}
-                          className="accent-black mt-1"
-                        />
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] flex items-center gap-2 text-black">
-                            <Banknote className="w-4 h-4 text-emerald-700" /> Cash on Delivery (COD)
-                          </p>
-                          <p className="text-[11px] text-black/60 mt-1">
-                            Pay in cash upon doorstep delivery (+₹49 handling fee).
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-xs font-semibold uppercase text-black">+₹49</span>
-                    </label>
+                    </div>
 
                     <div className="mt-8 pt-6 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <p className="text-xs text-black/70">
@@ -968,8 +909,6 @@ function CheckoutContent() {
                           ? 'Opening payment…'
                           : paymentState === 'verifying'
                           ? 'Verifying Payment…'
-                          : paymentMethod === 'cod'
-                          ? 'Place COD Order →'
                           : 'Pay with Razorpay →'}
                       </Button>
                     </div>
@@ -1082,12 +1021,6 @@ function CheckoutContent() {
                 <span>Shipping ({shippingMethod === 'express' ? 'Express' : 'Standard'}):</span>
                 <span className="font-semibold text-black">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
               </div>
-              {codFee > 0 && (
-                <div className="flex justify-between items-center text-black/65">
-                  <span>COD Handling:</span>
-                  <span className="font-semibold text-black">₹{codFee.toFixed(2)}</span>
-                </div>
-              )}
               <div className="flex justify-between items-center font-semibold text-sm border-t border-black/10 pt-3 mt-1 text-black">
                 <span>Total Amount:</span>
                 <span className="font-sans font-medium text-base">₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>

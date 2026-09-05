@@ -63,7 +63,7 @@ export default function TermsPage() {
               6. ORDERS, CANCELLATIONS &amp; SERVICE
             </h2>
             <p>
-              An order is accepted only after payment confirmation or COD approval. Items are limited and may become unavailable before payment is completed. For order questions, contact support@bagifyyyy.com with your order number. Any cancellation, refund, or exception is handled according to the applicable policy shown at checkout and on the relevant policy page.
+              An order is accepted only after online payment confirmation. Items are limited and may become unavailable before payment is completed. For order questions, contact support@bagifyyyy.com with your order number. Any cancellation, refund, or exception is handled according to the applicable policy shown at checkout and on the relevant policy page.
             </p>
           </div>
 

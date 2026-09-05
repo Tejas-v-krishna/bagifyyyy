@@ -6,7 +6,6 @@ export const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
 
 export const MAX_QUANTITY_PER_ITEM = 10;
 export const MAX_ITEMS_PER_ORDER = 50;
-export const COD_HANDLING_FEE = 49;
 export const EXPRESS_SHIPPING_FEE = 99;
 export const STANDARD_SHIPPING_FEE = 49;
 export const FREE_SHIPPING_THRESHOLD = 2000;
@@ -72,10 +71,9 @@ export async function priceCart(options: {
   items: unknown;
   shippingMethod?: unknown;
   promoCode?: unknown;
-  includeCodFee?: boolean;
   sessionId?: string;
 }): Promise<PricedCart> {
-  const { items, shippingMethod, promoCode, includeCodFee = false, sessionId } = options;
+  const { items, shippingMethod, promoCode, sessionId } = options;
 
   if (!Array.isArray(items) || items.length === 0) {
     throw new CartError('Cart is empty');
@@ -200,11 +198,11 @@ export async function priceCart(options: {
   // Free-shipping eligibility is judged on what the shopper actually pays for
   // goods, not on the pre-discount subtotal.
   const shippingFee =
-    (shippingMethod === 'express'
+    shippingMethod === 'express'
       ? EXPRESS_SHIPPING_FEE
       : discountableSubtotal >= FREE_SHIPPING_THRESHOLD
         ? 0
-        : STANDARD_SHIPPING_FEE) + (includeCodFee ? COD_HANDLING_FEE : 0);
+        : STANDARD_SHIPPING_FEE;
 
   return {
     items: pricedItems,

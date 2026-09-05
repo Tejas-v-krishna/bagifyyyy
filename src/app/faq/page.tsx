@@ -45,7 +45,7 @@ const FAQ_DATA = [
       },
       {
         q: "What payment methods are supported?",
-        a: "We accept UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, and Net Banking via Razorpay. We also support Cash on Delivery (COD) for eligible pin codes.",
+        a: "We accept UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, and Net Banking via Razorpay. All payments are online and secured.",
       },
     ],
   },

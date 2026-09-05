@@ -155,7 +155,6 @@ function SuccessContent() {
     );
   }
 
-  const isCod = order.paymentMethod === "COD";
   const isPaid = order.paymentStatus === "PAID";
 
   if (isAwaitingPayment(order)) {
@@ -165,9 +164,6 @@ function SuccessContent() {
           <div className="w-14 h-14 bg-[#f5f5f2] border border-black/15 rounded-full flex items-center justify-center mx-auto mb-5 text-black">
             <AlertCircle strokeWidth={2} className="w-6 h-6" aria-hidden="true" />
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/45 mb-2">
-            TRANSACTION PENDING
-          </p>
           <h1 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black mb-3">
             Payment Not Completed
           </h1>
@@ -237,25 +233,19 @@ function SuccessContent() {
               <Check strokeWidth={2.5} className="w-6 h-6 text-black" aria-hidden="true" />
             </div>
 
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.24em] text-black/45 block mb-2">
-              ✦ ORDER CONFIRMED
-            </span>
-
             <h1 className="font-microgramma font-bold text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight leading-tight text-black mb-3">
-              {isCod ? "Order Placed (COD)" : "Payment Successful"}
+              Payment Successful
             </h1>
 
             <p className="text-xs sm:text-sm text-black/60 max-w-md mx-auto leading-relaxed mb-6 font-sans">
-              {isCod
-                ? "Your cash on delivery order is confirmed and queued for dispatch. Please keep the exact amount ready upon delivery."
-                 : "Your payment went through and your pieces are reserved."}
+              Your payment went through and your pieces are reserved.
             </p>
 
             <div className="inline-flex flex-wrap items-center justify-center gap-3 bg-[#f5f5f2] border border-black/10 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-black">
               <span>Order #{order.orderNumber}</span>
               <span className="text-black/30" aria-hidden="true">•</span>
               <span>
-                {isPaid ? "Paid via Razorpay" : isCod ? "Pay on Delivery" : "Payment Pending"}
+                {isPaid ? "Paid via Razorpay" : "Payment Pending"}
               </span>
               <span className="text-black/30" aria-hidden="true">•</span>
               <span>{orderDate}</span>
@@ -396,7 +386,7 @@ function SuccessContent() {
               </div>
             )}
             <div className="flex justify-between items-center text-xs text-black/65">
-              <span>{isCod ? "Shipping & COD Handling" : "Shipping"}</span>
+              <span>Shipping</span>
               <span
                 className={
                   order.shippingAmount === 0
@@ -410,7 +400,7 @@ function SuccessContent() {
             <div className="border-t border-black/10 pt-4 mt-1 flex justify-between items-center">
               <div>
                 <span className="font-bold text-xs uppercase tracking-wider text-black block">
-                  {isPaid ? "Total Paid" : "Amount Due on Delivery"}
+                  {isPaid ? "Total Paid" : "Total"}
                 </span>
                 <span className="text-[10px] text-black/45 font-medium">
                   Inclusive of all taxes &amp; GST
