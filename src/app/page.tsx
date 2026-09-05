@@ -7,6 +7,7 @@ import EditorialManifesto from "@/components/home/EditorialManifesto";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
 import VintageArchiveSection from "@/components/ui/VintageArchiveSection";
+import DropCountdown from "@/components/ui/DropCountdown";
 import Footer from "@/components/layout/Footer";
 export const dynamic = 'force-dynamic';
 
@@ -191,6 +192,9 @@ export default async function Home() {
 
       {/* 1.5. Editorial Dark Manifesto with Live Style Switcher */}
       <EditorialManifesto />
+
+      {/* 1.6. Next-drop countdown (studio-set; hidden until scheduled) */}
+      <DropCountdown />
 
       {/* 2. New Arrivals & Curated Grails Showcase Section */}
       <section id="showcase" className="w-full bg-white px-3 pt-24 pb-16 sm:px-6 sm:py-24 md:py-32 lg:px-10 scroll-mt-20 overflow-hidden">

@@ -184,8 +184,15 @@ model MarketingCampaign {
   createdAt   DateTime @default(now())
 }
 
+/// Key-value studio settings (drop countdown, banners, …).
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model SupportTicket {
-  id          String   @id @default(uuid())
+  id        String   @id @default(uuid())
   name        String
   email       String
   orderNumber String?

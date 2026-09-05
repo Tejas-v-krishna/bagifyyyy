@@ -56,6 +56,12 @@ export default function MarketingStudioPage() {
     recentSubscribers: [] as Subscriber[],
   });
 
+  // Next-drop countdown (storefront band)
+  const [dropLabel, setDropLabel] = useState("");
+  const [dropAt, setDropAt] = useState("");
+  const [dropStatus, setDropStatus] = useState<string | null>(null);
+  const [dropSaving, setDropSaving] = useState(false);
+
   // Form Fields
   const [campaignTitle, setCampaignTitle] = useState("Y2K Cyber Drop Release");
   const [subjectLine, setSubjectLine] = useState("✦ RIGHT TO FASHION SALE: New Y2K Drop is Live (50-80% OFF)");
@@ -65,6 +71,64 @@ export default function MarketingStudioPage() {
   const [testEmail, setTestEmail] = useState("admin@bagifyyyy.in");
 
   // 1. Load Store Products & Stats
+  useEffect(() => {
+    fetch("/api/drop")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { targetAt?: string | null; label?: string | null } | null) => {
+        if (data?.targetAt) {
+          const d = new Date(data.targetAt);
+          const pad = (n: number) => String(n).padStart(2, "0");
+          setDropAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
+          setDropLabel(data.label || "");
+          setDropStatus(`Live on site — counting to ${d.toLocaleString()}`);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const saveDrop = async () => {
+    if (!dropAt) {
+      setDropStatus("Pick a date and time first.");
+      return;
+    }
+    setDropSaving(true);
+    setDropStatus(null);
+    try {
+      const res = await fetch("/api/drop", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetAt: new Date(dropAt).toISOString(), label: dropLabel }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setDropStatus(data.error || "Could not save countdown.");
+      } else {
+        setDropStatus(`Live on site — counting to ${new Date(data.targetAt).toLocaleString()}`);
+      }
+    } catch {
+      setDropStatus("Could not save countdown.");
+    } finally {
+      setDropSaving(false);
+    }
+  };
+
+  const clearDrop = async () => {
+    setDropSaving(true);
+    try {
+      await fetch("/api/drop", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetAt: null }),
+      });
+      setDropAt("");
+      setDropLabel("");
+      setDropStatus("Countdown removed from the site.");
+    } catch {
+      setDropStatus("Could not remove countdown.");
+    } finally {
+      setDropSaving(false);
+    }
+  };
   useEffect(() => {
     async function loadData() {
       try {
@@ -240,6 +304,65 @@ export default function MarketingStudioPage() {
           <span>{statusMessage.text}</span>
         </div>
       )}
+
+      {/* Next-Drop Countdown control */}
+      <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 shadow-xs">
+        <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal mb-1 flex items-center gap-2 pb-3 border-b border-y2k-gunmetal/10">
+          <Eye className="w-4 h-4 text-y2k-gunmetal" /> Next-Drop Countdown
+        </h2>
+        <p className="text-[11px] text-y2k-gunmetal/60 mb-5">
+          Shows a Day / Hr / Min / Sec band on the homepage above New Arrivals. Empty schedule hides it automatically.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+          <div>
+            <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+              Drop label
+            </label>
+            <input
+              type="text"
+              value={dropLabel}
+              onChange={(e) => setDropLabel(e.target.value)}
+              placeholder="e.g. FW26 Drop 09"
+              maxLength={60}
+              className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+            />
+          </div>
+          <div>
+            <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+              Date &amp; time *
+            </label>
+            <input
+              type="datetime-local"
+              value={dropAt}
+              onChange={(e) => setDropAt(e.target.value)}
+              className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={saveDrop}
+              disabled={dropSaving}
+              className="bg-y2k-gunmetal text-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+            >
+              {dropSaving ? "Saving…" : "Set live"}
+            </button>
+            <button
+              type="button"
+              onClick={clearDrop}
+              disabled={dropSaving}
+              className="border border-y2k-gunmetal/20 text-y2k-gunmetal px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        {dropStatus && (
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-y2k-gunmetal/70">
+            {dropStatus}
+          </p>
+        )}
+      </div>
 
       {/* Main 2-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-8">
