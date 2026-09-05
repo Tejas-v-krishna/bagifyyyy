@@ -111,9 +111,9 @@ export default function Header() {
         isScrolled ? "is-scrolled" : "is-top"
       } ${isDark ? "is-dark" : "is-light"}`}
     >
-      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-10 h-[64px] lg:h-[72px] flex items-center justify-between relative">
+      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-10 h-[56px] lg:h-[60px] flex items-center justify-between relative">
         {/* Desktop nav — left side matching reference */}
-        <nav className={`hidden lg:flex items-center gap-7 xl:gap-9 flex-1 ${navTextColor} pointer-events-auto transition-colors duration-200`}>
+        <nav className={`hidden lg:flex items-center gap-5 xl:gap-6 flex-1 ${navTextColor} pointer-events-auto transition-colors duration-200`}>
           <Link
             href="/new-arrivals"
             className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
@@ -159,12 +159,12 @@ export default function Header() {
             height={265}
             fetchPriority="high"
             unoptimized
-            className={`h-auto w-[130px] sm:w-[150px] lg:w-[180px] object-contain transition-all duration-300 ${logoFilter}`}
+            className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
           />
         </Link>
 
         {/* Desktop nav — right side matching reference */}
-        <nav className={`hidden lg:flex items-center gap-6 xl:gap-8 flex-1 justify-end ${navTextColor} pointer-events-auto transition-colors duration-200`}>
+        <nav className={`hidden lg:flex items-center gap-5 xl:gap-6 flex-1 justify-end ${navTextColor} pointer-events-auto transition-colors duration-200`}>
           <Link
             href="/wishlist"
             className={`text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
@@ -224,7 +224,7 @@ export default function Header() {
             />
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <SearchOverlay variant="icon" />
             <button
               type="button"
