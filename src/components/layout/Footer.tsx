@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { getRecaptchaToken } from "@/lib/recaptcha";
+import { openBugReport } from "@/components/ui/BugReportModal";
 
 const shopLinks = [
   { href: "/topwears", label: "Topwears" },
@@ -206,9 +207,10 @@ export default function Footer() {
         </div>
 
         <div className="mt-24 grid grid-cols-2 gap-8 text-[11px] tracking-tight text-white/80 sm:mt-32 sm:grid-cols-4 sm:text-[12px] lg:mt-[6vw] lg:grid-cols-12">
-          <p className="col-span-2 sm:col-span-2 lg:col-span-6">© 2026 BAGIFYYYY. All rights reserved.</p>
-          <Link href="/privacy-policy" className="w-fit transition-opacity hover:opacity-50 lg:col-span-4">Privacy</Link>
+          <p className="col-span-2 sm:col-span-2 lg:col-span-5">© 2026 BAGIFYYYY. All rights reserved.</p>
+          <Link href="/privacy-policy" className="w-fit transition-opacity hover:opacity-50 lg:col-span-3">Privacy</Link>
           <Link href="/terms" className="w-fit transition-opacity hover:opacity-50 lg:col-span-2">Terms</Link>
+          <button type="button" onClick={openBugReport} className="w-fit cursor-pointer text-left transition-opacity hover:opacity-50 lg:col-span-2">Report a bug</button>
         </div>
 
         <video

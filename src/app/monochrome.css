@@ -117,7 +117,18 @@ body.monochrome-site .text-y2k-gunmetal\/45,
 body.monochrome-site .text-y2k-gunmetal\/40,
 body.monochrome-site .text-y2k-gunmetal\/35,
 body.monochrome-site .text-y2k-gunmetal\/30,
-body.monochrome-site .text-y2k-slate\/60 { color: var(--mono-soft-ink) !important; }
+body.monochrome-site .text-y2k-gunmetal\/65,
+body.monochrome-site .text-y2k-gunmetal\/70,
+body.monochrome-site .text-y2k-gunmetal\/75,
+body.monochrome-site .text-y2k-gunmetal\/80,
+body.monochrome-site .text-y2k-gunmetal\/85,
+body.monochrome-site .text-y2k-gunmetal\/90,
+body.monochrome-site .text-y2k-slate\/60,
+body.monochrome-site .text-y2k-slate\/65,
+body.monochrome-site .text-y2k-slate\/70,
+body.monochrome-site .text-y2k-slate\/75,
+body.monochrome-site .text-y2k-slate\/80,
+body.monochrome-site .text-y2k-slate\/85 { color: var(--mono-soft-ink) !important; }
 
 body.monochrome-site .bg-y2k-ice,
 body.monochrome-site .bg-y2k-ice\/40,
@@ -260,6 +271,23 @@ body.monochrome-site .mono-payment [class*="text-gray-700"] { color: var(--mono-
 
 body.monochrome-site .mono-payment [class*="bg-emerald-600"] { background-color: var(--mono-ink) !important; }
 body.monochrome-site .mono-payment [class*="bg-emerald-600"]:hover { background-color: var(--mono-white) !important; color: var(--mono-ink) !important; }
+
+/* ── Studio admin coverage: remaining y2k opacity variants ──────────────
+   The admin screens use token/opacity combos the storefront never did.
+   Map them into the same mono surfaces so the whole studio matches. */
+body.monochrome-site .bg-y2k-ice\/80,
+body.monochrome-site .bg-y2k-ice\/60,
+body.monochrome-site .hover\:bg-y2k-ice\/80:hover { background-color: var(--mono-panel) !important; }
+
+body.monochrome-site .bg-y2k-gunmetal\/5,
+body.monochrome-site .bg-y2k-gunmetal\/10 { background-color: var(--mono-panel) !important; }
+
+body.monochrome-site [class*="divide-y2k-gunmetal"],
+body.monochrome-site [class*="divide-y2k-pale"],
+body.monochrome-site [class*="divide-y2k-soft"] { border-color: var(--mono-soft-line) !important; }
+
+body.monochrome-site [class*="fill-y2k-gunmetal"],
+body.monochrome-site [class*="fill-y2k-slate"] { fill: var(--mono-ink) !important; }
 
 /* Unified brand headline font priority: ITCAvantGardeStd */
 body.monochrome-site .font-microgramma,

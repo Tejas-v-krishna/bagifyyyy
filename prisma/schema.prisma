@@ -191,6 +191,19 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 }
 
+/// Shopper-filed bug reports. Surfaced in studio as notifications.
+model BugReport {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String?
+  page      String   @default("")
+  message   String
+  status    String   @default("OPEN") // OPEN, RESOLVED
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
 model SupportTicket {
   id        String   @id @default(uuid())
   name        String

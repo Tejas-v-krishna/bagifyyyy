@@ -80,6 +80,7 @@ import Header from "@/components/layout/Header";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Preloader from "@/components/layout/Preloader";
 import AuthModal from "@/components/auth/AuthModal";
+import BugReportModal from "@/components/ui/BugReportModal";
 import GsapScrollAnimations from "@/components/ui/GsapScrollAnimations";
 import LenisProvider from "@/components/ui/LenisProvider";
 import GlobalAnimator from "@/components/ui/GlobalAnimator";
@@ -121,6 +122,7 @@ export default function RootLayout({
             <GsapScrollAnimations />
             <Preloader />
             <AuthModal />
+            <BugReportModal />
             <Header />
             <main className="flex-1 flex flex-col">
               <PageTransitionProvider>{children}</PageTransitionProvider>
