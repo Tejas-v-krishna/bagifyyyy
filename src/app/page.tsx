@@ -119,9 +119,9 @@ export default async function Home() {
               focusable="false"
             >
               <text
-                x="0"
+                x="66"
                 y="100"
-                textLength="342"
+                textLength="300"
                 lengthAdjust="spacing"
                 className="font-microgramma font-bold uppercase"
                 fontSize="124"
@@ -130,9 +130,9 @@ export default async function Home() {
                 Wear
               </text>
               <text
-                x="402"
+                x="394"
                 y="100"
-                textLength="598"
+                textLength="540"
                 lengthAdjust="spacing"
                 className="font-microgramma font-bold uppercase"
                 fontSize="124"
