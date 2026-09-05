@@ -127,9 +127,6 @@ export default function EditorialManifesto() {
 
         {/* ── TOP MANIFESTO & HEADLINE ── */}
         <div className="absolute top-[8%] left-[4%] max-w-[50%] sm:max-w-[48%] z-25 pointer-events-none">
-          <p className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.26em] text-white/40 mb-2">
-             01 // THE IDEA
-          </p>
           <h2
             id="manifesto-heading"
             className="uppercase font-bold leading-[0.96] tracking-[-0.03em] text-[clamp(1.1rem,3vw,3rem)] text-white"

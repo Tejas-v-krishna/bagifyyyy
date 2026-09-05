@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useCartStore, getItemKey, VALID_PROMOS } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Loader2, ArrowRight, ArrowLeft, User, ShieldCheck, Truck, CreditCard, Banknote, Tag, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, User, Truck, CreditCard, Banknote, Tag, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -511,7 +511,7 @@ function CheckoutContent() {
       <div className="max-w-[1300px] mx-auto">
 
         {/* Top Navigation Bar */}
-        <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-3">
+        <div className="mb-8 flex items-center justify-start border-b border-black/10 pb-3">
           <Link
             href="/"
             className="editorial-back inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
@@ -519,23 +519,14 @@ function CheckoutContent() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to store
           </Link>
-          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/35">
-            BAGIFYYYY / ARCHIVE
-          </span>
         </div>
         
         {/* Header */}
-        <div className="mb-8 border-b border-black/10 pb-6 sm:mb-12 sm:pb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-8 border-b border-black/10 pb-6 sm:mb-12 sm:pb-8">
           <div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-black/45">
-              CHECKOUT // FINAL STEP
-            </p>
             <h1 className="font-microgramma text-[clamp(1.9rem,4.5vw,4.2rem)] font-bold uppercase leading-[0.88] tracking-tight text-black">
               Secure Checkout
             </h1>
-          </div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60">
-            <ShieldCheck className="w-4 h-4 text-black" /> 256-Bit Encrypted (Razorpay)
           </div>
         </div>
 
@@ -546,9 +537,6 @@ function CheckoutContent() {
               <div className="w-14 h-14 rounded-full border border-black/15 bg-white flex items-center justify-center mx-auto mb-5 text-black shadow-xs">
                 <Loader2 className="w-6 h-6 animate-spin text-black" aria-hidden="true" />
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/45 mb-2">
-                {paymentState === 'initiating' ? "03 // RAZORPAY GATEWAY" : "03 // PAYMENT VERIFICATION"}
-              </p>
               <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-black mb-3">
                  {paymentState === 'initiating' ? "Opening payment…" : "Processing payment…"}
               </h2>
@@ -571,9 +559,6 @@ function CheckoutContent() {
               <div className="w-14 h-14 rounded-full border border-black/15 bg-white flex items-center justify-center mx-auto mb-5 text-black shadow-xs">
                 <AlertCircle className="w-6 h-6 text-black" aria-hidden="true" />
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/45 mb-2">
-                TRANSACTION STATUS // NOTICE
-              </p>
               <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-black mb-3">
                 {failureDetails?.title || "Payment Incomplete"}
               </h2>
@@ -642,7 +627,6 @@ function CheckoutContent() {
                     </Link>
                   </div>
                 </div>
-                <p className="text-[10px] text-black/45 uppercase tracking-wider">🔒 All transactions are secured via Razorpay India.</p>
               </div>
             </div>
           ) : (

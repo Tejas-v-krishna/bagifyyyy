@@ -79,16 +79,16 @@ function CatalogueRailCard({ product }: { product: Product }) {
 export default function CategoryPageClient({
   category,
   filter,
-  prefix = "Collection",
   title,
   subtitle,
-  badge,
 }: {
   category?: string;
   filter?: string;
+  /** Kept for call-site compatibility; micro-kickers are no longer rendered. */
   prefix?: string;
   title: string;
   subtitle?: string;
+  /** Kept for call-site compatibility; micro-kickers are no longer rendered. */
   badge?: string;
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -105,18 +105,6 @@ export default function CategoryPageClient({
     if (category) return category.toUpperCase();
     return "ALL DROPS";
   }, [title, category, query]);
-
-  const displayEyebrow = useMemo(() => {
-    if (badge) return badge.toUpperCase();
-     if (query) return "SEARCH RESULTS";
-     if (category === "topwears") return "TOPS";
-     if (category === "bottomwears") return "BOTTOMS";
-     if (category === "accessories") return "ACCESSORIES";
-     if (category === "unisex") return "UNISEX";
-     if (filter === "new") return "JUST IN";
-     if (filter === "curated-grails") return "HARD-TO-FIND PIECES";
-     return "ALL PIECES";
-  }, [badge, query, category, filter]);
 
   const [sortBy, setSortBy] = useState("Newest");
   const [sizeFilter, setSizeFilter] = useState("");
@@ -296,7 +284,7 @@ export default function CategoryPageClient({
     <div className="editorial-page min-h-screen bg-[#f5f5f2] px-4 py-8 font-sans text-black sm:px-6 sm:py-12 lg:px-10 selection:bg-black selection:text-white">
       <div className="mx-auto w-full max-w-[1440px]">
         {/* Navigation Bar matching Wishlist page */}
-        <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-3">
+        <div className="mb-8 flex items-center justify-start border-b border-black/10 pb-3">
           <Link
             href="/"
             className="editorial-back inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
@@ -304,18 +292,12 @@ export default function CategoryPageClient({
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to store
           </Link>
-          <span className="hidden font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/35 sm:block">
-            BAGIFYYYY / ARCHIVE
-          </span>
         </div>
 
         {/* Monumental Editorial Header matching Wishlist page */}
         <header className="editorial-page-header mb-8 border-b border-black/10 pb-6 sm:mb-12 sm:pb-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-2xl">
-              <p className="editorial-kicker mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-black/45">
-                {displayEyebrow}
-              </p>
               <h1 className="max-w-[16ch] font-microgramma text-[clamp(2rem,5.5vw,5.2rem)] font-bold uppercase leading-[0.88] tracking-tight text-[#050505]">
                 {cleanTitle}
               </h1>
@@ -476,9 +458,6 @@ export default function CategoryPageClient({
                 ) : (
                   <>
                     <div className="min-w-0 border-t border-black/10 pt-5 pr-4 lg:sticky lg:top-24 lg:h-fit">
-                      <p className="mb-3 text-[10.5px] font-semibold tracking-[0.14em] text-black/45">
-                        {displayEyebrow}
-                      </p>
                       <h2 className="w-full max-w-full font-microgramma text-[clamp(1.4rem,2vw,2.1rem)] font-bold uppercase leading-[0.92] tracking-tight text-black break-words">
                         {cleanTitle}
                       </h2>

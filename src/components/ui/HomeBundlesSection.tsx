@@ -85,7 +85,6 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
         {/* Section Header */}
         <div className="flex items-end justify-between mb-16 md:mb-20">
           <div>
-            <p className="section-label text-y2k-gunmetal/45 mb-3">Fits that work together</p>
             <h2
               id="bundles-heading"
               className="font-microgramma uppercase text-2xl sm:text-3xl md:text-4xl tracking-tight leading-none text-y2k-gunmetal animate-fade-up"

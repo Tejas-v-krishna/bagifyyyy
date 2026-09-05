@@ -113,9 +113,6 @@ function SuccessContent() {
           <div className="w-14 h-14 bg-[#f5f5f2] border border-black/15 rounded-full flex items-center justify-center mx-auto mb-5 text-black">
             <AlertCircle strokeWidth={2} className="w-6 h-6" aria-hidden="true" />
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/45 mb-2">
-            ORDER LOOKUP // NOTICE
-          </p>
           <h1 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black mb-3">
             {isMissing ? "Receipt Not Found" : "Could Not Load Receipt"}
           </h1>
@@ -220,7 +217,7 @@ function SuccessContent() {
       <div className="max-w-[840px] mx-auto">
 
         {/* Top Navigation Bar matching website standard */}
-        <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-3">
+        <div className="mb-8 flex items-center justify-start border-b border-black/10 pb-3">
           <Link
             href="/"
             className="editorial-back inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
@@ -228,9 +225,6 @@ function SuccessContent() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to store
           </Link>
-          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/35">
-            BAGIFYYYY / ARCHIVE
-          </span>
         </div>
 
         {/* Main receipt card */}

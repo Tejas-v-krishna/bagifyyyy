@@ -143,12 +143,6 @@ export default async function Home() {
             {/* Soft atmospheric gradient fading down towards ticker */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
-            <div className="absolute inset-x-5 top-4 sm:top-5 md:top-6 z-10 flex justify-center text-center">
-              <p className="font-mono text-[9px] sm:text-[10px] md:text-[10.5px] uppercase tracking-[0.2em] font-medium text-white/90 select-none">
-                 FW26 <span className="text-white/35 mx-2">/</span> Small-run streetwear
-              </p>
-            </div>
-
             {/* Clearly visible Shop Now CTA positioned just above the marquee with a generous gap */}
             <div className="absolute inset-x-4 bottom-[clamp(5.5rem,11.5vh,7.5rem)] z-30 flex justify-center">
               <Link
