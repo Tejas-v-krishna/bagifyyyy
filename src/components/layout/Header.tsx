@@ -81,8 +81,13 @@ export default function Header() {
     } else {
       document.body.style.overflow = "";
     }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
     };
   }, [isMobileMenuOpen]);
 
@@ -206,9 +211,9 @@ export default function Header() {
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`${navTextColor} ${navHoverColor} transition-colors cursor-pointer text-xs font-medium tracking-tight flex items-center gap-1.5 p-1`}
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label="Open menu"
           >
-            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            <Menu className="w-4 h-4" />
             <span>Menu</span>
           </button>
 
@@ -257,29 +262,29 @@ export default function Header() {
                   animate={{ x: 0 }}
                   exit={{ x: "-100%" }}
                   transition={{ type: "spring", damping: 30, stiffness: 260 }}
-                   className="fixed inset-y-0 left-0 z-[9999] w-[82vw] max-w-sm bg-[var(--surface-paper)] text-black border-r border-black/10 flex flex-col lg:hidden h-[100dvh]"
+                   className="fixed inset-y-0 left-0 z-[9999] w-[86vw] max-w-sm sm:w-[70vw] sm:max-w-md bg-[#f5f5f2] text-black border-r border-black/10 flex flex-col lg:hidden h-[100dvh]"
                 >
-                  <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.08] shrink-0">
+                  <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-black/[0.08] shrink-0">
                     <Image
                       src="/bagifyyyy-wordmark-animated.gif"
                       alt="BAGIFYYYY Logo"
                       width={845}
                       height={219}
                       unoptimized
-                      className="h-auto w-[120px] object-contain"
+                      className="h-auto w-[110px] sm:w-[120px] object-contain"
                     />
                     <button
                       type="button"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="p-1 text-black/60 hover:text-black transition-colors cursor-pointer"
+                      className="p-2 -mr-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-black/60 hover:text-black active:text-black transition-colors cursor-pointer"
                       aria-label="Close menu"
                     >
                       <X className="h-5 w-5" />
                     </button>
                   </div>
 
-                  <nav className="flex flex-col px-6 py-6 gap-6 flex-1 overflow-y-auto">
-                    <div className="flex flex-col gap-4">
+                  <nav className="flex flex-col px-5 sm:px-6 py-5 sm:py-6 gap-5 sm:gap-6 flex-1 overflow-y-auto">
+                    <div className="flex flex-col gap-1 sm:gap-2">
                       {[
                         { href: "/new-arrivals", label: "New in" },
                          { href: "/topwears", label: "Tops" },
@@ -292,7 +297,7 @@ export default function Header() {
                           key={href}
                           href={href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="text-base font-normal tracking-tight text-black hover:opacity-60 transition-opacity flex items-center justify-between py-1"
+                          className="text-[17px] sm:text-lg font-normal tracking-tight text-black hover:opacity-60 active:opacity-40 transition-opacity flex items-center justify-between py-2.5 min-h-[44px]"
                         >
                           <span>{label}</span>
                           <span className="text-black/30 text-xs">→</span>
@@ -300,22 +305,22 @@ export default function Header() {
                       ))}
                     </div>
 
-                    <div className="mt-auto flex items-center justify-between gap-4 px-1 py-3 text-[11px] font-medium tracking-tight text-black/70">
-                      <Link href="/track" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-black transition-colors">
+                    <div className="mt-auto flex items-center justify-between gap-4 px-1 py-2 text-[12px] sm:text-[11px] font-medium tracking-tight text-black/70">
+                      <Link href="/track" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-black active:text-black transition-colors py-2 min-h-[44px] flex items-center">
                         Track Order
                       </Link>
-                      <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-black transition-colors">
+                      <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-black active:text-black transition-colors py-2 min-h-[44px] flex items-center">
                         Contact
                       </Link>
                     </div>
                   </nav>
 
-                  <div className="p-6 border-t border-black/[0.08] shrink-0">
+                  <div className="px-5 sm:px-6 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-black/[0.08] shrink-0">
                     {isAuthenticated ? (
                       <Link
                         href="/account"
                         onClick={() => setIsMobileMenuOpen(false)}
-                         className="flex items-center gap-3 p-3.5 bg-white rounded-[var(--radius-image)] border border-black/10 text-[12px] font-medium tracking-tight text-black hover:bg-[var(--surface-panel)] transition-colors"
+                          className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-black/10 text-[12px] font-medium tracking-tight text-black hover:bg-black/5 active:bg-black/10 transition-colors"
                       >
                         <div className="flex flex-col truncate min-w-0">
                           <span className="font-semibold text-black">

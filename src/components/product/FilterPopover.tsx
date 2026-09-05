@@ -181,19 +181,35 @@ export default function FilterPopover({
         )}
       </button>
 
-      {/* ── Filter Popover Card matching site background (#f5f5f2) ── */}
+      {/* ── Filter Panel: bottom sheet on mobile, anchored popover on sm+ ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.button
+            key="filter-scrim"
+            type="button"
+            aria-label="Close filters"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[80] bg-black/40 cursor-pointer sm:hidden"
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            key="filter-panel"
             ref={popoverRef}
-            initial={{ opacity: 0, y: 6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.98 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            role="dialog"
-            aria-label="Filter products"
-            className="absolute right-0 top-full mt-2.5 z-50 w-[min(94vw,390px)] sm:w-[410px] rounded-2xl border border-black/15 bg-[#f5f5f2] p-5 sm:p-6 shadow-[0_24px_55px_rgba(0,0,0,0.13)] font-sans text-black"
-          >
+              initial={{ opacity: 0, y: 24, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.99 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              role="dialog"
+              aria-label="Filter products"
+              className="fixed inset-x-3 bottom-3 top-auto z-[90] max-h-[82dvh] overflow-y-auto rounded-2xl border border-black/15 bg-[#f5f5f2] p-5 shadow-[0_24px_55px_rgba(0,0,0,0.25)] font-sans text-black sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:bottom-auto sm:z-50 sm:mt-2.5 sm:w-[410px] sm:max-h-none sm:overflow-visible sm:p-6 sm:shadow-[0_24px_55px_rgba(0,0,0,0.13)]"
+            >
             {/* Header: Title + Active Count + Reset + Close */}
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-black/10">
               <div className="flex items-center gap-2">

@@ -187,7 +187,7 @@ export default async function Home() {
       <EditorialManifesto />
 
       {/* 2. New Arrivals & Curated Grails Showcase Section */}
-      <section id="showcase" className="w-full bg-white px-3 py-16 sm:px-6 sm:py-24 md:py-32 lg:px-10 scroll-mt-20 overflow-hidden">
+      <section id="showcase" className="w-full bg-white px-3 pt-24 pb-16 sm:px-6 sm:py-24 md:py-32 lg:px-10 scroll-mt-20 overflow-hidden">
         <InteractiveShowcase
           products={newArrivals.map((p) => ({
             id: p.id,

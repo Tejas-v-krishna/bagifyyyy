@@ -104,8 +104,8 @@ export default function InstagramFeed() {
       aria-labelledby="instagram-heading"
     >
       <div className="mx-auto w-full max-w-[1700px]">
-        <div className="flex items-end justify-between gap-8 border-t border-black/15 pt-5">
-          <div>
+        <div className="flex flex-col gap-4 border-t border-black/15 pt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+          <div className="min-w-0">
             <a
               href={profileLink}
               target="_blank"
@@ -125,10 +125,11 @@ export default function InstagramFeed() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Follow ${handle} on Instagram`}
-            className="h-10 inline-flex shrink-0 items-center gap-2 rounded-[0.35rem] bg-[#111111] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+            className="h-10 inline-flex w-fit shrink-0 items-center gap-2 rounded-[0.35rem] bg-[#111111] px-4 sm:px-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
           >
-            <InstagramIcon className="h-3.5 w-3.5" />
-            <span>Follow {handle}</span>
+            <InstagramIcon className="h-3.5 w-3.5 shrink-0" />
+            <span className="sm:hidden">Follow</span>
+            <span className="hidden sm:inline">Follow {handle}</span>
           </a>
         </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,9 +11,9 @@ import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import NotifyMeSection from "@/components/product/NotifyMeSection";
 import ReviewSection from "@/components/product/ReviewSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
-import SizeGuideModal from "@/components/product/SizeGuideModal";
 import { categoryHref, categoryLabel } from "@/lib/categories";
-import { Clock, Heart } from "lucide-react";
+import { Clock, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { ProductForDisplay } from "@/lib/product";
 
 /**
@@ -32,14 +32,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const { toggleItem, isInWishlist } = useWishlistStore();
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<string>(
+  const [selectedSize] = useState<string>(
     firstAvailableVariant?.size ?? product.sizes[0] ?? ""
   );
-  const [selectedColor, setSelectedColor] = useState<string>(
+  const [selectedColor] = useState<string>(
     firstAvailableVariant?.color ?? product.colors[0] ?? ""
   );
   const [addedAnimation, setAddedAnimation] = useState(false);
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [selectionError, setSelectionError] = useState("");
   const [isReservedInCheckout, setIsReservedInCheckout] = useState(false);
 
@@ -51,6 +50,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
   const wishlisted = isInWishlist(id);
   const productImages = product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean) as string[];
+  const touchStartX = useRef<number | null>(null);
+
+  const goToImage = (idx: number) => {
+    if (productImages.length === 0) return;
+    setActiveImageIndex(((idx % productImages.length) + productImages.length) % productImages.length);
+  };
+  const goToNextImage = () => goToImage(activeImageIndex + 1);
+  const goToPrevImage = () => goToImage(activeImageIndex - 1);
   const hasVariants = product.variants.length > 0;
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize && variant.color === selectedColor
@@ -83,7 +90,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
   const handleAddToCart = () => {
     if (!canAddSelectedVariant) {
-      setSelectionError("Select an available size and color before adding this piece.");
+      setSelectionError("This piece is no longer available.");
       return;
     }
 
@@ -99,34 +106,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     setSelectionError("");
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 1500);
-  };
-
-  const handleSizeChange = (size: string) => {
-    setSelectedSize(size);
-    setSelectionError("");
-
-    if (hasVariants && !product.variants.some(
-      (variant) => variant.size === size && variant.color === selectedColor && variant.stock > 0
-    )) {
-      const replacement = product.variants.find(
-        (variant) => variant.size === size && variant.stock > 0
-      );
-      if (replacement) setSelectedColor(replacement.color);
-    }
-  };
-
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    setSelectionError("");
-
-    if (hasVariants && !product.variants.some(
-      (variant) => variant.color === color && variant.size === selectedSize && variant.stock > 0
-    )) {
-      const replacement = product.variants.find(
-        (variant) => variant.color === color && variant.stock > 0
-      );
-      if (replacement) setSelectedSize(replacement.size);
-    }
   };
 
   // Turn the product description into short detail bullets.
@@ -197,22 +176,97 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             </div>
           </div>
 
-          {/* ── CENTER COLUMN: Hero Image ────────────────────────────────────── */}
+          {/* ── CENTER COLUMN: Hero Image (swipe / slide through images) ─────── */}
           <div className="order-1 lg:order-2 flex flex-col">
-            <div className="relative w-full aspect-[3/4] md:aspect-[4/5] lg:aspect-auto lg:flex-1 lg:min-h-[560px] xl:min-h-[680px] bg-[#F2F2F2] overflow-hidden">
+            <div
+              className="relative w-full aspect-[3/4] md:aspect-[4/5] lg:aspect-auto lg:flex-1 lg:min-h-[560px] xl:min-h-[680px] bg-[#F2F2F2] overflow-hidden touch-pan-y select-none"
+              onTouchStart={(e) => {
+                touchStartX.current = e.touches[0]?.clientX ?? null;
+              }}
+              onTouchEnd={(e) => {
+                if (touchStartX.current === null) return;
+                const endX = e.changedTouches[0]?.clientX ?? touchStartX.current;
+                const deltaX = endX - touchStartX.current;
+                touchStartX.current = null;
+                if (Math.abs(deltaX) < 40 || productImages.length < 2) return;
+                if (deltaX < 0) goToNextImage();
+                else goToPrevImage();
+              }}
+            >
               {productImages.length > 0 ? (
-                <Image
-                  src={productImages[activeImageIndex] || productImages[0]}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 45vw"
-                  className="object-contain object-center"
-                />
+                <AnimatePresence initial={false} mode="popLayout">
+                  <motion.div
+                    key={activeImageIndex}
+                    initial={{ opacity: 0, x: 48 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -48 }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute inset-0"
+                    drag={productImages.length > 1 ? "x" : false}
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.6}
+                    onDragEnd={(_, info) => {
+                      if (productImages.length < 2) return;
+                      if (info.offset.x < -60 || info.velocity.x < -300) goToNextImage();
+                      else if (info.offset.x > 60 || info.velocity.x > 300) goToPrevImage();
+                    }}
+                  >
+                    <Image
+                      src={productImages[activeImageIndex] || productImages[0]}
+                      alt={product.name}
+                      fill
+                      priority
+                      draggable={false}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 45vw"
+                      className="object-contain object-center pointer-events-none"
+                    />
+                  </motion.div>
+                </AnimatePresence>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-[9.5px] uppercase tracking-[0.2em] text-y2k-gunmetal/30">
                   Image unavailable
                 </div>
+              )}
+
+              {/* Prev / next arrows */}
+              {productImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={goToPrevImage}
+                    aria-label="Previous image"
+                    className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 backdrop-blur border border-black/10 flex items-center justify-center text-black shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
+                  >
+                    <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNextImage}
+                    aria-label="Next image"
+                    className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 backdrop-blur border border-black/10 flex items-center justify-center text-black shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
+                  >
+                    <ChevronRight className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                  {/* Counter + dots */}
+                  <div className="absolute bottom-3 inset-x-0 z-10 flex flex-col items-center gap-2 pointer-events-none">
+                    <span className="text-[10px] font-mono tracking-[0.14em] text-black/70 bg-white/85 backdrop-blur px-2.5 py-1 rounded-full border border-black/10">
+                      {activeImageIndex + 1} / {productImages.length}
+                    </span>
+                    <div className="flex items-center gap-1.5 pointer-events-auto">
+                      {productImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => goToImage(idx)}
+                          aria-label={`View image ${idx + 1}`}
+                          className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                            activeImageIndex === idx ? "w-6 bg-black" : "w-1.5 bg-black/25 hover:bg-black/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -281,66 +335,11 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 ₹{product.price.toLocaleString("en-IN")}
               </p>
 
-              {/* Size Selector */}
-              {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[9.5px] uppercase tracking-[0.18em] text-y2k-gunmetal/50 font-semibold">
-                      SIZE
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setIsSizeGuideOpen(true)}
-                      className="text-[9px] uppercase tracking-[0.16em] text-y2k-gunmetal/40 hover:text-y2k-gunmetal transition-colors cursor-pointer underline underline-offset-2"
-                    >
-                      Size Guide
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {product.sizes.map((s: string) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => handleSizeChange(s)}
-                        disabled={hasVariants && !product.variants.some((variant) => variant.size === s && variant.stock > 0)}
-                        className={`text-[10.5px] uppercase tracking-wider px-4 py-2 min-h-[44px] border transition-all cursor-pointer font-semibold disabled:cursor-not-allowed disabled:opacity-25
-                          ${selectedSize === s
-                            ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
-                            : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
-                          }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Color Selector */}
-              {product.colors && product.colors.length > 0 && (
-                <div className="mb-6">
-                  <span className="mb-3 block text-[9.5px] uppercase tracking-[0.18em] text-y2k-gunmetal/50 font-semibold">
-                    COLOR / FINISH
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {product.colors.map((color) => (
-                      <button
-                        key={color}
-                        type="button"
-                        onClick={() => handleColorChange(color)}
-                        disabled={hasVariants && !product.variants.some((variant) => variant.color === color && variant.stock > 0)}
-                        className={`text-[10.5px] uppercase tracking-wider px-4 py-2 min-h-[44px] border transition-all cursor-pointer font-semibold disabled:cursor-not-allowed disabled:opacity-25
-                          ${selectedColor === color
-                            ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
-                            : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
-                          }`}
-                      >
-                        {color}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Single rare piece — size & finish are set by the studio.
+                  Shoppers buy the piece as listed; no variant picking. */}
+              <p className="mb-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-y2k-gunmetal/50">
+                One-of-one piece · sold as shown
+              </p>
 
               {selectionError && (
                 <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-600" role="alert">
@@ -400,13 +399,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         </div>
 
       </div>
-
-      {/* ── Size Guide Modal ─────────────────────────────────────────────────── */}
-      <SizeGuideModal
-        isOpen={isSizeGuideOpen}
-        onClose={() => setIsSizeGuideOpen(false)}
-        category={product.category}
-      />
 
       {/* ── Mobile Sticky Buy Bar ────────────────────────────────────────────── */}
       {!product.isSoldOut && mounted && createPortal(

@@ -98,7 +98,7 @@ function validateAddress(data: AddressForm): Partial<Record<keyof AddressForm, s
 }
 
 const fieldClass = (hasError: boolean) =>
-  `w-full border px-4 py-3 text-sm outline-none transition-colors rounded-sm ${
+  `w-full border px-4 py-3.5 text-sm outline-none transition-colors rounded-sm ${
     hasError
       ? "border-red-500 focus:border-red-600 bg-red-50/20"
       : "border-black/15 focus:border-black bg-white"
@@ -603,7 +603,7 @@ function CheckoutContent() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 sm:gap-12 lg:gap-16">
           
           {/* Left Column: Form Stepper */}
           {checkoutMode === 'select' ? (
@@ -646,18 +646,19 @@ function CheckoutContent() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-6 sm:gap-8">
+              <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   type="button"
                   onClick={() => setCheckoutMode('select')}
-                  className="text-xs font-semibold text-black/60 hover:text-black transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-black/60 hover:text-black active:text-black transition-colors cursor-pointer py-1"
                 >
                   ← Change checkout mode
                 </button>
                 {user && (
-                  <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1">
-                    Logged in as <b>{user.email}</b>
+                  <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5 max-w-full">
+                    <span className="shrink-0">Logged in as</span>
+                    <b className="truncate min-w-0">{user.email}</b>
                   </span>
                 )}
               </div>
@@ -684,7 +685,7 @@ function CheckoutContent() {
                 </div>
 
                 {activeStep === 1 ? (
-                  <form onSubmit={handleAddressSubmit} className="flex flex-col gap-4">
+                  <form onSubmit={handleAddressSubmit} className="flex flex-col gap-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="checkout-fullName" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">Full Name *</label>
@@ -996,7 +997,7 @@ function CheckoutContent() {
           )}
 
           {/* Right Column: Order Summary */}
-          <div className="flex flex-col sticky top-24 h-fit bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+          <div className="flex flex-col lg:sticky lg:top-24 h-fit bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
             <h3 className="font-sans font-medium text-lg uppercase tracking-tight mb-6 pb-4 border-b border-black/10 text-black">
               ORDER SUMMARY ({items.length})
             </h3>

@@ -19,7 +19,6 @@ export default function CartDrawer() {
   const [promoInput, setPromoInput] = useState<string | null>(null);
   const promoInputValue = promoInput ?? promoCode ?? "";
   const [promoError, setPromoError] = useState("");
-  const [removingItemKey, setRemovingItemKey] = useState<string | null>(null);
   const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
 
   // Body scroll lock — stops background scroll including Lenis smooth scrolling
@@ -196,15 +195,13 @@ export default function CartDrawer() {
                               <div className="flex items-center rounded-lg border border-black/10 bg-[#f8f8f8] p-0.5">
                                 <button
                                   type="button"
-                                  aria-label="Decrease quantity"
-                                  disabled={item.quantity <= 1}
+                                  aria-label={item.quantity <= 1 ? "Remove item" : "Decrease quantity"}
                                   onClick={() =>
-                                    updateQuantity(
-                                      key,
-                                      Math.max(1, item.quantity - 1)
-                                    )
+                                    item.quantity <= 1
+                                      ? removeItem(key)
+                                      : updateQuantity(key, item.quantity - 1)
                                   }
-                                  className="p-1 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="p-1 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors"
                                 >
                                   <Minus className="w-3 h-3" aria-hidden="true" />
                                 </button>
@@ -223,33 +220,13 @@ export default function CartDrawer() {
                                   <Plus className="w-3 h-3" aria-hidden="true" />
                                 </button>
                               </div>
-                              {removingItemKey === key ? (
-                                <div className="flex items-center gap-2 text-[9.5px] uppercase tracking-wider">
-                                  <span className="text-red-500 font-bold">Remove?</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => removeItem(key)}
-                                    className="text-black font-bold underline cursor-pointer"
-                                  >
-                                    Yes
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setRemovingItemKey(null)}
-                                    className="text-black/40 hover:text-black cursor-pointer"
-                                  >
-                                    No
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => setRemovingItemKey(key)}
-                                  className="text-[9.5px] font-mono uppercase tracking-wider text-black/40 hover:text-red-600 underline underline-offset-2 cursor-pointer transition-colors"
-                                >
-                                  Remove
-                                </button>
-                              )}
+                              <button
+                                type="button"
+                                onClick={() => removeItem(key)}
+                                className="text-[9.5px] font-mono uppercase tracking-wider text-black/40 hover:text-red-600 underline underline-offset-2 cursor-pointer transition-colors"
+                              >
+                                Remove
+                              </button>
                             </div>
                           </div>
                         </li>

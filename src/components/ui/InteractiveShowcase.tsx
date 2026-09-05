@@ -71,6 +71,16 @@ export default function InteractiveShowcase({
   const total = baseList.length;
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Compact stagger on phones so side cards peek instead of flying off-screen
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   // Drag state
   const [isDragging, setIsDragging] = useState(false);
   const dragX = useMotionValue(0);
@@ -141,9 +151,9 @@ export default function InteractiveShowcase({
       tabIndex={0}
       aria-label={ariaLabel}
     >
-      {/* ── TOP HEADER (Matching Reference Layout Exactly) ── */}
-      <div className="w-full flex items-start justify-between mb-6 sm:mb-10 px-2 sm:px-4 md:px-6 z-30">
-        <div className="flex flex-col gap-1 select-none pointer-events-none">
+      {/* ── TOP HEADER (stacks on mobile, single row on sm+) ── */}
+      <div className="w-full flex flex-col gap-3 mb-6 sm:mb-10 px-2 sm:px-4 md:px-6 z-30 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-1 select-none pointer-events-none shrink-0">
           <span className={`font-sans text-[11px] sm:text-[12px] tracking-[0.14em] font-medium select-none ${tone === "dark" ? "text-white/50" : "text-black/50"}`}>
             {eyebrow}
           </span>
@@ -153,7 +163,7 @@ export default function InteractiveShowcase({
         </div>
 
         {showTabs && (
-        <div className="flex items-center gap-2" role="tablist" aria-label="Showcase edits">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-2 px-2 sm:mx-0 sm:px-0 sm:pb-0 sm:overflow-visible" role="tablist" aria-label="Showcase edits">
           <button
             type="button"
             role="tab"
@@ -162,7 +172,7 @@ export default function InteractiveShowcase({
               setActiveTab("new");
               setActiveIndex(0);
             }}
-            className={`h-9 px-4 rounded-[0.35rem] text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "new" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
+            className={`h-8 px-3 sm:h-9 sm:px-4 whitespace-nowrap shrink-0 rounded-[0.35rem] text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "new" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
           >
             New In
           </button>
@@ -174,7 +184,7 @@ export default function InteractiveShowcase({
               setActiveTab("top");
               setActiveIndex(0);
             }}
-            className={`h-9 px-4 rounded-[0.35rem] text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "top" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
+            className={`h-8 px-3 sm:h-9 sm:px-4 whitespace-nowrap shrink-0 rounded-[0.35rem] text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "top" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
           >
             Curated Grails
           </button>
@@ -182,19 +192,20 @@ export default function InteractiveShowcase({
         )}
 
         {/* View-all CTA + Carousel Arrow Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2 sm:justify-start sm:self-auto">
           <Link
             href={viewAllHref}
-            className={`h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${tone === "dark" ? "bg-white text-black hover:bg-white/85 focus-visible:outline-white" : "bg-[#111111] text-white hover:bg-black/80 focus-visible:outline-black"}`}
+            className={`h-9 sm:h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${tone === "dark" ? "bg-white text-black hover:bg-white/85 focus-visible:outline-white" : "bg-[#111111] text-white hover:bg-black/80 focus-visible:outline-black"}`}
           >
             <span>See all pieces</span>
             <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
           </Link>
+          <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={goPrev}
             aria-label="Previous product"
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
+            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
             <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
@@ -202,10 +213,11 @@ export default function InteractiveShowcase({
             type="button"
             onClick={goNext}
             aria-label="Next product"
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
+            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
             <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
+          </div>
         </div>
       </div>
 
@@ -291,21 +303,27 @@ export default function InteractiveShowcase({
               } else if (offset === -1) {
                 slotY = mirroredLayout ? 100 : -115;
                 horizontalX = -380;
+                if (isMobile) { slotY = mirroredLayout ? 56 : -64; horizontalX = -236; }
               } else if (offset === -2) {
                 slotY = mirroredLayout ? -115 : 100;
                 horizontalX = -685;
+                if (isMobile) { slotY = mirroredLayout ? -64 : 56; horizontalX = -430; }
               } else if (offset === -3) {
                 slotY = mirroredLayout ? 100 : -115;
                 horizontalX = -990;
+                if (isMobile) { slotY = mirroredLayout ? 56 : -64; horizontalX = -624; }
               } else if (offset === 1) {
                 slotY = mirroredLayout ? -115 : 100;
                 horizontalX = 380;
+                if (isMobile) { slotY = mirroredLayout ? -64 : 56; horizontalX = 236; }
               } else if (offset === 2) {
                 slotY = mirroredLayout ? 100 : -115;
                 horizontalX = 685;
+                if (isMobile) { slotY = mirroredLayout ? 56 : -64; horizontalX = 430; }
               } else if (offset === 3) {
                 slotY = mirroredLayout ? -115 : 100;
                 horizontalX = 990;
+                if (isMobile) { slotY = mirroredLayout ? -64 : 56; horizontalX = 624; }
               } else {
                 slotY = 0;
                 horizontalX = offset * 320;
