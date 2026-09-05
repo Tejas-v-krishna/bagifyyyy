@@ -7,10 +7,17 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = collectionMetadata({
   title: "Bottomwear — Pants & Cargos",
   description:
-    "Cyber cargos, heavy denim, and archive bottomwear from BAGIFYYYY. Y2K streetwear cuts, limited quantity, no restocks.",
+     "Cargos, heavy denim, and wide-leg trousers from BAGIFYYYY. Y2K cuts in small runs.",
   path: "/bottomwears",
 });
 
 export default function BottomwearsPage() {
-  return <CategoryPageClient category="bottomwears" title="PANTS & CARGOS" />;
+  return (
+    <CategoryPageClient
+      category="bottomwears"
+      prefix="Collection"
+      title="Bottomwears"
+       subtitle="Cargos, heavy denim, and wide-leg trousers in small runs."
+    />
+  );
 }

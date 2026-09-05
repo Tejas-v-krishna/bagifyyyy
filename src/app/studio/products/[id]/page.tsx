@@ -11,7 +11,6 @@ import {
   Loader2,
   CheckCircle,
   Trash2,
-  Plus,
   X,
   ExternalLink,
   AlertCircle,
@@ -26,12 +25,8 @@ import {
   ChevronRight,
   Eye,
   Star,
-  Layers,
-  FileText,
   Heart,
   Ruler,
-  ShoppingBag,
-  RotateCcw
 } from "lucide-react";
 
 interface ProductImage {
@@ -52,6 +47,9 @@ interface Product {
   images: ProductImage[];
 }
 
+type RawProductImage = string | { id?: string; url?: string };
+const passthroughLoader = ({ src }: { src: string }) => src;
+
 function ConfirmDeleteModal({
   productName,
   onConfirm,
@@ -69,7 +67,7 @@ function ConfirmDeleteModal({
           <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">Delete Product?</h2>
         </div>
         <p className="text-y2k-gunmetal/70 text-xs mb-6 leading-relaxed">
-          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">"{productName}"</span>? This action cannot be undone.
+          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">&quot;{productName}&quot;</span>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button
@@ -156,7 +154,7 @@ export default function StudioEditProduct() {
           setImages(rawImages);
         } else {
           setImages(
-            (data.images || []).map((img: any, i: number) => ({
+            (data.images || []).map((img: RawProductImage, i: number) => ({
               id: typeof img === "object" ? img.id || `img-${i}` : `img-${i}`,
               url: typeof img === "object" ? img.url : img,
             }))
@@ -171,7 +169,10 @@ export default function StudioEditProduct() {
   }, [id]);
 
   useEffect(() => {
-    fetchProduct();
+    async function loadProduct() {
+      await fetchProduct();
+    }
+    loadProduct();
   }, [fetchProduct]);
 
   const handleChange = (
@@ -248,9 +249,9 @@ export default function StudioEditProduct() {
       }
 
       setActiveImageIndex(images.length);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to upload image from device.");
+      alert(err instanceof Error ? err.message : "Failed to upload image from device.");
     } finally {
       setUploadingFiles(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -568,10 +569,13 @@ export default function StudioEditProduct() {
               <div className="w-full aspect-[3/4] sm:aspect-[4/5] relative bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden group">
                 {activeImgUrl ? (
                   <>
-                    <img
-                      src={activeImgUrl}
-                      alt={form.name}
-                      className="w-full h-full object-cover select-none"
+                     <Image
+                       src={activeImgUrl}
+                       alt={form.name}
+                       fill
+                       loader={passthroughLoader}
+                       unoptimized
+                       className="w-full h-full object-cover select-none"
                     />
 
                     {/* Previous / Next Arrow Controls */}
@@ -639,9 +643,12 @@ export default function StudioEditProduct() {
                               : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
                           }`}
                         >
-                          <img
+                          <Image
                             src={img.url}
                             alt={`Thumbnail ${idx + 1}`}
+                            fill
+                            loader={passthroughLoader}
+                            unoptimized
                             className="w-full h-full object-cover"
                           />
 
@@ -999,10 +1006,13 @@ export default function StudioEditProduct() {
                 <div className="w-full aspect-[3/4] md:aspect-[4/5] relative bg-[#FAFAFA] border border-y2k-gunmetal/10 overflow-hidden group">
                   {images.length > 0 ? (
                     <>
-                      <img
-                        src={activeImgUrl}
-                        alt={form.name}
-                        className="w-full h-full object-cover"
+                       <Image
+                         src={activeImgUrl}
+                         alt={form.name}
+                         fill
+                         loader={passthroughLoader}
+                         unoptimized
+                         className="w-full h-full object-cover"
                       />
 
                       {images.length > 1 && (
@@ -1074,7 +1084,7 @@ export default function StudioEditProduct() {
                 {form.isSoldOut ? (
                   <div className="p-5 bg-y2k-ice/70 border border-y2k-gunmetal/15 text-center space-y-3">
                     <p className="text-xs font-bold uppercase text-red-600">This piece is sold out</p>
-                    <p className="text-[10px] text-y2k-slate">Customers will see a "Notify Me" restock alert form</p>
+                    <p className="text-[10px] text-y2k-slate">Customers will see a &quot;Notify Me&quot; restock alert form</p>
                   </div>
                 ) : (
                   <div className="space-y-3">

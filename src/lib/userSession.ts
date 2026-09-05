@@ -30,12 +30,9 @@ function base64UrlToBytes(value: string): Uint8Array<ArrayBuffer> {
   return bytes;
 }
 
-const DEV_SECRET = 'bagify-dev-secret-key-32-chars-long-min!';
-
-async function getSigningKey(): Promise<CryptoKey> {
-  const secret = process.env.AUTH_SECRET && process.env.AUTH_SECRET.length >= MIN_SECRET_LENGTH
-    ? process.env.AUTH_SECRET
-    : DEV_SECRET;
+async function getSigningKey(): Promise<CryptoKey | null> {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret || secret.length < MIN_SECRET_LENGTH) return null;
 
   return crypto.subtle.importKey(
     'raw',
@@ -51,6 +48,10 @@ export async function createUserSessionToken(
   maxAgeSeconds: number = USER_SESSION_MAX_AGE_SECONDS
 ): Promise<string> {
   const key = await getSigningKey();
+  if (!key) {
+    throw new Error('AUTH_SECRET is missing or too short for user sessions.');
+  }
+
   const payload: UserSessionPayload = {
     sub: userId,
     exp: Date.now() + maxAgeSeconds * 1000,
@@ -63,6 +64,9 @@ export async function createUserSessionToken(
 export async function verifyUserSessionToken(token: string | undefined | null): Promise<string | null> {
   if (!token) return null;
   const key = await getSigningKey();
+
+  // Missing or weak configuration invalidates all sessions.
+  if (!key) return null;
 
   // Signed token format: payload.signature
   const separator = token.indexOf('.');
@@ -88,7 +92,7 @@ export async function verifyUserSessionToken(token: string | undefined | null): 
     }
   }
 
-  // Grace period fallback: if token is legacy raw UUID in development, check format
+  // Grace period fallback: legacy raw UUIDs are accepted only in development.
   if (process.env.NODE_ENV !== 'production' && /^[0-9a-fA-F-]{36}$/.test(token)) {
     return token;
   }

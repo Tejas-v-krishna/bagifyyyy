@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  Camera,
   Save,
   Film,
   Copy,
@@ -23,6 +23,8 @@ interface InstagramPostItem {
   caption: string;
   link: string;
 }
+
+const passthroughLoader = ({ src }: { src: string }) => src;
 
 export default function StudioInstagramPage() {
   const [handle, setHandle] = useState("bagifyyyy");
@@ -65,14 +67,12 @@ export default function StudioInstagramPage() {
     },
   ]);
 
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     async function loadData() {
       try {
-        setLoading(true);
         const res = await fetch("/api/studio/instagram");
         const data = await res.json();
         if (data.posts && Array.isArray(data.posts) && data.posts.length > 0) {
@@ -83,15 +83,13 @@ export default function StudioInstagramPage() {
         }
       } catch (err) {
         console.error("Failed to load instagram feed:", err);
-      } finally {
-        setLoading(false);
       }
     }
 
     loadData();
   }, []);
 
-  const handlePostChange = (index: number, field: keyof InstagramPostItem, value: any) => {
+  const handlePostChange = (index: number, field: keyof InstagramPostItem, value: string) => {
     setPosts((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: value };
@@ -119,8 +117,8 @@ export default function StudioInstagramPage() {
 
       setMessage({ type: "success", text: "Instagram feed updated successfully on homepage!" });
       setTimeout(() => setMessage(null), 4000);
-    } catch (err: any) {
-      setMessage({ type: "error", text: err.message || "Failed to update." });
+    } catch (err) {
+      setMessage({ type: "error", text: err instanceof Error ? err.message : "Failed to update." });
     } finally {
       setSaving(false);
     }
@@ -214,10 +212,12 @@ export default function StudioInstagramPage() {
               {/* Image Preview & URL */}
               <div className="flex gap-4 mb-4">
                 <div className="w-24 h-24 shrink-0 bg-y2k-ice relative border border-y2k-gunmetal/10 overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={post.url}
                     alt="Preview"
+                    fill
+                    loader={passthroughLoader}
+                    unoptimized
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/placeholder.jpg";
@@ -248,7 +248,12 @@ export default function StudioInstagramPage() {
                     </label>
                     <select
                       value={post.type}
-                      onChange={(e) => handlePostChange(idx, "type", e.target.value as any)}
+                       onChange={(e) => {
+                         const value = e.target.value;
+                         if (value === "reel" || value === "carousel" || value === "image") {
+                           handlePostChange(idx, "type", value);
+                         }
+                       }}
                       className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal text-[10px] uppercase font-bold px-2.5 py-2 outline-none cursor-pointer w-full"
                     >
                       <option value="reel">Reel / Video</option>

@@ -7,10 +7,10 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = collectionMetadata({
   title: "Unisex",
   description:
-    "Unisex pieces from BAGIFYYYY — Y2K streetwear and archive fashion cut to be worn by anyone. Limited quantity, no restocks.",
+     "Unisex pieces from BAGIFYYYY: Y2K streetwear made for whoever wants to wear it.",
   path: "/unisex",
 });
 
 export default function UnisexPage() {
-  return <CategoryPageClient category="unisex" title="UNISEX" />;
+  return <CategoryPageClient category="unisex" prefix="Collection" title="Unisex" />;
 }

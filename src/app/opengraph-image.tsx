@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "BAGIFYYYY (Bagify) — Premium Y2K Streetwear, Archive Fashion & Limited Drops";
+  "BAGIFYYYY (Bagify) — Y2K Streetwear & Vintage Finds";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -51,7 +51,7 @@ export default function Image() {
                 background: GUNMETAL,
               }}
             />
-            <span>SS26 Archive</span>
+           <span>FW26 / Small Run</span>
          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
             <span>Y2K Streetwear</span>
@@ -93,7 +93,7 @@ export default function Image() {
                 marginTop: 18,
               }}
             >
-              Archive. Wear History.
+               Small runs. Good clothes.
            </span>
          </div>
        </div>
@@ -129,7 +129,7 @@ export default function Image() {
               letterSpacing: 4,
             }}
           >
-            <span>Curated 1-of-1 Vintage</span>
+             <span>One-off Vintage + Y2K</span>
             <span style={{ fontSize: 26 }}>*</span>
          </div>
        </div>

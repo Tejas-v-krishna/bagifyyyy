@@ -2,9 +2,6 @@
 
 import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/store/useWishlistStore";
-import { useAuthStore } from "@/store/useAuthStore";
-
-import { useRouter } from "next/navigation";
 
 type Props = {
   productId: string;
@@ -23,8 +20,8 @@ export default function WishlistButton({ productId, className = "" }: Props) {
         e.stopPropagation();
         toggleItem(productId);
       }}
-      className={`absolute top-4 right-4 bg-white/90 p-2 rounded-full z-20 hover:bg-white transition-all shadow-sm cursor-pointer ${
-        wishlisted ? "text-red-500 hover:text-red-600" : "text-y2k-slate hover:text-y2k-gunmetal"
+      className={`absolute top-4 right-4 z-20 rounded-full border border-black/10 bg-white/90 p-2 transition-all cursor-pointer hover:bg-white ${
+        wishlisted ? "text-black" : "text-black/45 hover:text-black"
       } ${className}`}
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
     >

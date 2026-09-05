@@ -6,10 +6,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 import ProductCard, { Product } from "@/components/product/ProductCard";
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import EditorialPageShell from "@/components/layout/EditorialPageShell";
 
 export default function WishlistPage() {
   const { items } = useWishlistStore();
-  const { isAuthenticated, openAuthModal } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,20 +20,10 @@ export default function WishlistPage() {
       setLoading(false);
       return;
     }
-    // Fetch only wishlisted IDs (supports ids query)
+    // Fetch only wishlisted IDs
     const ids = items.filter((id) => !id.startsWith("drop-") && !id.startsWith("prod-"));
-    const mocks: Product[] = items
-      .filter((id) => id.startsWith("drop-") || id.startsWith("prod-"))
-      .map((id) => ({
-        id,
-        name: id.startsWith("drop-") ? `BAGIFYYYY 'DROP ${id.split('-')[1]}'` : `BAGIFYYYY EXCLUSIVE`,
-        price: 15000,
-        image: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1000&auto=format&fit=crop",
-        category: "mock",
-      }));
-
     if (ids.length === 0) {
-      setProducts(mocks);
+      setProducts([]);
       setLoading(false);
       return;
     }
@@ -40,9 +31,8 @@ export default function WishlistPage() {
     fetch(`/api/products?ids=${encodeURIComponent(ids.join(','))}`)
       .then((res) => res.json())
       .then((data: Product[]) => {
-        // API returns array directly
         const list = Array.isArray(data) ? data : [];
-        setProducts([...list, ...mocks]);
+        setProducts(list);
         setLoading(false);
       })
       .catch((err) => {
@@ -52,57 +42,64 @@ export default function WishlistPage() {
   }, [items]);
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24 min-h-[calc(100vh-72px)]">
-      <div className="flex flex-col items-center mb-16">
-        <h1 className="font-display text-[40px] md:text-[56px] font-bold uppercase tracking-tight text-heading-gradient text-center mb-4">
-          YOUR WISHLIST
-        </h1>
-        <p className="text-sm md:text-base text-y2k-slate font-medium text-center max-w-lg">
-          The pieces you've been eyeing. Ready when you are.
-        </p>
+    <EditorialPageShell
+      eyebrow="Saved pieces"
+      title="Wishlist"
+      description="Keep an eye on pieces you like. Stock can change, especially on one-off items."
+      wide
+    >
+      <div className="w-full">
+        {!isAuthenticated && (
+          <div className="mb-8 p-4 sm:p-5 bg-white border border-black/10 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-black">
+                Wishlist saved here
+              </p>
+              <p className="text-xs text-black/55 mt-0.5">
+                These saves live in this browser. Sign in to see them on your other devices.
+              </p>
+            </div>
+            <Link
+              href="/login?from=/wishlist"
+              className="btn-bagify btn-bagify-dark px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] shrink-0 cursor-pointer"
+            >
+              Sign In to Sync
+            </Link>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="aspect-[4/5] rounded-xl bg-black/[0.04] animate-pulse" />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="w-full flex flex-col items-center justify-center py-24 sm:py-32 rounded-2xl bg-white border border-black/10 text-center px-4">
+            <div className="w-14 h-14 rounded-full bg-[#f2f2f2] flex items-center justify-center mb-5">
+              <Heart strokeWidth={1.4} className="w-6 h-6 text-black/40" />
+            </div>
+            <h2 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black mb-2">
+              YOUR WISHLIST IS EMPTY
+            </h2>
+            <p className="text-xs text-black/50 max-w-sm mb-8 leading-relaxed">
+              Nothing saved yet. Start with the latest pieces.
+            </p>
+            <Link
+              href="/products"
+              className="btn-bagify btn-bagify-dark px-8 py-3.5 text-[10.5px] font-bold uppercase tracking-[0.18em]"
+            >
+              Shop New Pieces
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
-
-      {!isAuthenticated && (
-        <div className="mb-8 p-4 bg-y2k-ice border border-y2k-gunmetal/15 text-xs text-y2k-gunmetal/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span>Wishlist items are saved in this browser. Sign in to sync across device sessions.</span>
-          <Link
-            href="/login?from=/wishlist"
-            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white hover:opacity-90 shrink-0"
-          >
-            SIGN IN TO SYNC →
-          </Link>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="w-full flex justify-center py-20 text-y2k-slate uppercase tracking-wider font-bold">
-          LOADING WISHLIST...
-        </div>
-      ) : products.length === 0 ? (
-        <div className="w-full flex flex-col items-center justify-center py-20 border border-y2k-soft bg-y2k-ice">
-          <Heart strokeWidth={1} className="w-16 h-16 text-y2k-slate mb-6 opacity-50" />
-          <h2 className="text-xl md:text-2xl font-display uppercase tracking-tight text-y2k-gunmetal mb-2">
-            NOTHING HERE YET
-          </h2>
-          <p className="text-sm text-y2k-slate mb-8">
-            You haven't added any items to your wishlist.
-          </p>
-          <Link
-            href="/products"
-            className="btn-bagify px-8 py-4 rounded-none shadow-xl hover:-translate-y-1 transition-transform"
-          >
-            <span className="text-bagify font-bold uppercase text-sm tracking-wider">
-              DISCOVER PIECES
-            </span>
-          </Link>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
-    </div>
+    </EditorialPageShell>
   );
 }

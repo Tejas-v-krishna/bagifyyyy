@@ -20,7 +20,7 @@ export async function DELETE(
 
     await prisma.address.delete({ where: { id } });
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Delete address error:', error);
     return NextResponse.json({ error: 'Failed to delete address.' }, { status: 500 });
   }

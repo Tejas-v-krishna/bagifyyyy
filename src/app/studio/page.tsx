@@ -5,6 +5,10 @@ import Link from "next/link";
 import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, ChevronRight, Printer, Layers } from "lucide-react";
 import ShippingLabelModal from "./orders/ShippingLabelModal";
 import { countsAsRevenue, orderStatusLabel } from "@/lib/orderStatus";
+import Image from "next/image";
+import type { LucideIcon } from "lucide-react";
+
+type ProductImage = string | { id?: string; url?: string | null } | null;
 
 interface Product {
   id: string;
@@ -15,7 +19,7 @@ interface Product {
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
-  images: { id: string; url: string }[];
+  images: ProductImage[];
   _count?: { variants: number };
 }
 
@@ -63,6 +67,20 @@ interface Stats {
   pendingOrders: number;
 }
 
+function getProductImageUrl(image: ProductImage | undefined): string | null {
+  if (typeof image === "string") {
+    const url = image.trim();
+    return url || null;
+  }
+
+  if (image && typeof image.url === "string") {
+    const url = image.url.trim();
+    return url || null;
+  }
+
+  return null;
+}
+
 function ConfirmModal({
   productName,
   onConfirm,
@@ -74,13 +92,13 @@ function ConfirmModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
-      <div className="bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
+      <div className="editorial-panel bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full text-y2k-gunmetal">
         <div className="flex items-center gap-3 mb-4">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
           <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">Delete Product?</h2>
         </div>
         <p className="text-y2k-gunmetal/70 text-xs mb-6 leading-relaxed">
-          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">"{productName}"</span>? This action cannot be undone.
+          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">&quot;{productName}&quot;</span>? This action cannot be undone.
         </p>
         <div className="flex gap-3">
           <button
@@ -110,7 +128,7 @@ function StatCard({
 }: {
   label: string;
   value: number | string;
-  icon: any;
+   icon: LucideIcon;
   accent?: string;
   subtitle?: string;
 }) {
@@ -154,16 +172,13 @@ export default function StudioDashboard() {
   const fetchData = useCallback(async () => {
     try {
       const [prodRes, orderRes] = await Promise.allSettled([
-        fetch("/api/products").then((r) => r.json()),
+        fetch("/api/admin/products").then((r) => r.json()),
         fetch("/api/studio/orders").then((r) => r.json()),
       ]);
 
       let allProducts: Product[] = [];
       if (prodRes.status === "fulfilled" && Array.isArray(prodRes.value)) {
-        const detailed = await Promise.all(
-          prodRes.value.map((p) => fetch(`/api/products/${p.id}`).then((r) => r.json()))
-        );
-        allProducts = detailed.filter((p) => !p.error);
+        allProducts = prodRes.value;
         setProducts(allProducts);
       }
 
@@ -206,7 +221,10 @@ export default function StudioDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    async function loadData() {
+      await fetchData();
+    }
+    loadData();
   }, [fetchData]);
 
   const handleDelete = async (product: Product) => {
@@ -281,7 +299,7 @@ export default function StudioDashboard() {
           </Link>
           <Link
             href="/studio/products/new"
-            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm cursor-pointer"
+            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Product</span>
@@ -348,9 +366,12 @@ export default function StudioDashboard() {
               >
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="w-10 h-12 bg-y2k-ice shrink-0 overflow-hidden relative border border-y2k-gunmetal/10">
-                    <img
+                    <Image
                       src={order.items?.[0]?.image || "/placeholder.jpg"}
                       alt={order.items?.[0]?.name || "Order item"}
+                      fill
+                      loader={({ src }) => src}
+                      unoptimized
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -454,20 +475,26 @@ export default function StudioDashboard() {
           </div>
         ) : (
           <div className="divide-y divide-y2k-gunmetal/10">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="flex items-center gap-4 px-6 py-3.5 hover:bg-y2k-ice/30 transition-colors group"
-              >
+            {products.map((product) => {
+              const imageUrl = getProductImageUrl(product.images?.[0]);
+
+              return (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-4 px-6 py-3.5 hover:bg-y2k-ice/30 transition-colors group"
+                >
                 {/* Thumbnail */}
                 <Link
                   href={`/studio/products/${product.id}`}
                   className="w-12 h-14 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
                 >
-                  {product.images?.[0] && (
-                    <img
-                      src={product.images[0].url || (product.images[0] as any)}
+                  {imageUrl && (
+                    <Image
+                      src={imageUrl}
                       alt={product.name}
+                      fill
+                      loader={({ src }) => src}
+                      unoptimized
                       className="w-full h-full object-cover"
                     />
                   )}
@@ -572,8 +599,9 @@ export default function StudioDashboard() {
                     </span>
                   </button>
                 </div>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

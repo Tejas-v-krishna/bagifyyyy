@@ -18,6 +18,24 @@ export interface DropCampaignOptions {
   appUrl?: string;
 }
 
+export interface OrderConfirmationItem {
+  name: string;
+  price: number;
+  quantity: number;
+  size: string;
+  image: string;
+}
+
+export interface OrderConfirmation {
+  customerEmail?: string | null;
+  orderNumber: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  totalAmount: number;
+  shippingAddress?: { fullName?: string | null } | null;
+  items: OrderConfirmationItem[];
+}
+
 /**
  * High-converting visual Fashion Drop Email Template
  * Inspired by modern streetwear & retail drop campaigns (Myntra / Kith / Supreme / ASOS)
@@ -27,7 +45,6 @@ export function generateDropAnnouncementEmailHtml(options: DropCampaignOptions):
   const headline = options.headline || 'RIGHT TO FASHION DROP';
   const subheadline = options.subheadline || 'Exclusive Y2K Streetwear & Cyber Archive Collection';
   const promoBadge = options.promoBadge || '50–80% OFF';
-  const bannerImage = options.bannerImage || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop&q=80';
 
   // Build product grid rows (2 items per row)
   const productRowsHtml = [];
@@ -237,8 +254,11 @@ export function generateDropAnnouncementEmailHtml(options: DropCampaignOptions):
 /**
  * Transactional Order Confirmation Email Template
  */
-export function generateOrderConfirmationEmailHtml(order: any, appUrl = 'http://localhost:3000'): string {
-  const itemsHtml = order.items.map((it: any) => `
+export function generateOrderConfirmationEmailHtml(
+  order: OrderConfirmation,
+  appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+): string {
+  const itemsHtml = order.items.map((it) => `
     <tr>
       <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
         <table cellpadding="0" cellspacing="0" width="100%">
@@ -320,7 +340,10 @@ export function generateOrderConfirmationEmailHtml(order: any, appUrl = 'http://
 /**
  * Newsletter Welcome Email Template
  */
-export function generateWelcomeEmailHtml(email: string, appUrl = 'http://localhost:3000'): string {
+export function generateWelcomeEmailHtml(
+  email: string,
+  appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+): string {
   return `
 <!DOCTYPE html>
 <html>

@@ -205,7 +205,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                     onChange={(e) => setFormBody(e.target.value)}
                     required
                     rows={4}
-                    placeholder="Share your honest thoughts about the fit, quality, and style…"
+                    placeholder="How did it fit? What did you notice?"
                     className="w-full border border-gray-200 px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal transition-colors resize-none"
                   />
                 </div>
@@ -233,7 +233,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
             <div className="text-xs text-gray-400 uppercase tracking-wider py-8">Loading reviews…</div>
           ) : reviews.length === 0 ? (
             <div className="text-sm text-gray-400 py-8">
-              No reviews yet — be the first to share your thoughts!
+              No reviews yet. Own this piece? Tell us how it fits.
             </div>
           ) : (
             <div className="flex flex-col divide-y divide-gray-100">

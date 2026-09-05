@@ -1,17 +1,13 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { useAppStore } from "@/store/useAppStore";
+import { useRouter } from "next/navigation";
+import { motion, useMotionValue } from "framer-motion";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import AddToBagButton from "@/components/ui/AddToBagButton";
-
-gsap.registerPlugin(ScrollTrigger);
+import ProductMetaRow from "@/components/product/ProductMetaRow";
 
 export type ShowcaseProduct = {
   id: string;
@@ -23,637 +19,390 @@ export type ShowcaseProduct = {
   category?: string;
   brand?: string | null;
   images: { url: string }[];
+  sizes?: string[];
+  colors?: string[];
 };
 
 export default function InteractiveShowcase({
-  products,
-  topPicks,
+  products = [],
+  topPicks = [],
+   eyebrow = "JUST IN",
+   heading = "NEW IN",
+  viewAllHref = "/new-arrivals",
+   ariaLabel = "New pieces",
+  mirroredLayout = false,
+  tone = "light",
 }: {
   products: ShowcaseProduct[];
   topPicks?: ShowcaseProduct[];
+  eyebrow?: string;
+  heading?: string;
+  viewAllHref?: string;
+  ariaLabel?: string;
+  mirroredLayout?: boolean;
+  tone?: "light" | "dark";
 }) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"new" | "top">("new");
-  const isPreloaderFinished = useAppStore((state) => state.isPreloaderFinished);
 
-  const currentList = activeTab === "new" 
-    ? products 
-    : (topPicks && topPicks.length > 0 ? topPicks : [...products].reverse());
-  const total = currentList.length;
+  // Build a rich infinite list: if catalogue has < 8 products, repeat to guarantee smooth infinite carousel
+  const baseList = useMemo(() => {
+    const list = activeTab === "new"
+      ? (products.length > 0 ? products : [])
+      : (topPicks && topPicks.length > 0 ? topPicks : [...products].reverse());
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [maxIndex, setMaxIndex] = useState(0);
+    if (list.length === 0) return [];
+    if (list.length < 8) {
+      // Repeat list so wrap-around has plenty of unique elements
+      return [...list, ...list, ...list].map((item, idx) => ({
+        ...item,
+        uniqueKey: `${item.id}-${idx}`,
+      }));
+    }
+    return list.map((item, idx) => ({
+      ...item,
+      uniqueKey: `${item.id}-${idx}`,
+    }));
+  }, [products, topPicks, activeTab]);
 
+  const total = baseList.length;
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false);
+  const dragX = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
 
-  // Position & Drag Refs
-  const currentXRef = useRef(0);
-  const targetXRef = useRef(0);
-  const minXRef = useRef(0);
-  const isPressedRef = useRef(false);
-  const isDraggingRef = useRef(false);
-  const dragStartXRef = useRef(0);
-  const trackStartXRef = useRef(0);
-  const lastMouseXRef = useRef(0);
-  const lastTimeRef = useRef(0);
-  const velocityXRef = useRef(0);
-
-  // ── 1. Calculate Track Limits & Step Sizes ──────────────────────────────────
-  const calculateLimits = useCallback(() => {
-    const viewport = viewportRef.current;
-    const track = trackRef.current;
-    if (!viewport || !track) return { cardStep: 280, minX: 0, maxIdx: 0 };
-
-    const firstCard = track.children[0] as HTMLElement | null;
-    const cardWidth = firstCard ? firstCard.offsetWidth : 240;
-    const gap = window.innerWidth < 768 ? 16 : 24;
-    const cardStep = cardWidth + gap;
-
-    const totalTrackWidth = total * cardStep - gap;
-    const viewportWidth = viewport.offsetWidth;
-    const minX = Math.min(0, -(totalTrackWidth - viewportWidth));
-
-    const visibleCards = Math.max(1, Math.floor(viewportWidth / cardStep));
-    const maxIdx = Math.max(0, total - visibleCards);
-
-    minXRef.current = minX;
-    setMaxIndex(maxIdx);
-
-    return { cardStep, minX, maxIdx };
+  // Navigation handlers
+  const goNext = useCallback(() => {
+    if (total === 0) return;
+    setActiveIndex((prev) => (prev + 1) % total);
   }, [total]);
 
-  // Recalculate on resize
-  useEffect(() => {
-    const handleResize = () => {
-      const { minX, cardStep, maxIdx } = calculateLimits();
-      // Clamp current position
-      const clampedX = Math.max(minX, Math.min(0, targetXRef.current));
-      targetXRef.current = clampedX;
-      currentXRef.current = clampedX;
-      if (trackRef.current) {
-        gsap.set(trackRef.current, { x: clampedX });
-      }
-      const idx = Math.round(-clampedX / cardStep);
-      setCurrentIndex(Math.min(maxIdx, Math.max(0, idx)));
-    };
-
-    calculateLimits();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [calculateLimits]);
-
-  // ── 2. Switch Tabs with Clean Fade-in ──────────────────────────────────────
-  const handleTabChange = (newTab: "new" | "top") => {
-    if (newTab === activeTab) return;
-    setActiveTab(newTab);
-    setCurrentIndex(0);
-    targetXRef.current = 0;
-    currentXRef.current = 0;
-
-    if (trackRef.current) {
-      gsap.killTweensOf(trackRef.current);
-      gsap.fromTo(
-        trackRef.current,
-        {
-          opacity: 0,
-          x: newTab === "top" ? 40 : -40,
-          filter: "blur(10px)",
-        },
-        {
-          opacity: 1,
-          x: 0,
-          filter: "blur(0px)",
-          duration: 0.5,
-          ease: "power3.out",
-          clearProps: "filter",
-        }
-      );
-    }
-  };
-
-  // ── 3. Smooth Navigation to a Specific Index ──────────────────────────────
-  const animateToX = useCallback((newX: number, duration = 0.65) => {
-    const { minX, cardStep, maxIdx } = calculateLimits();
-    const clampedX = Math.max(minX, Math.min(0, newX));
-    targetXRef.current = clampedX;
-    currentXRef.current = clampedX;
-
-    if (trackRef.current) {
-      gsap.to(trackRef.current, {
-        x: clampedX,
-        duration: duration,
-        ease: "power3.out",
-        overwrite: "auto",
-        onUpdate: () => {
-          if (trackRef.current) {
-            const x = gsap.getProperty(trackRef.current, "x") as number;
-            currentXRef.current = x;
-            const currentIdx = Math.round(-x / cardStep);
-            setCurrentIndex(Math.min(maxIdx, Math.max(0, currentIdx)));
-          }
-        },
-      });
-    }
-  }, [calculateLimits]);
-
-  const goToCard = useCallback((index: number) => {
-    const { cardStep } = calculateLimits();
-    animateToX(-index * cardStep);
-  }, [calculateLimits, animateToX]);
-
-  const goNext = useCallback(() => {
-    const nextIdx = currentIndex >= maxIndex ? 0 : currentIndex + 1;
-    goToCard(nextIdx);
-  }, [currentIndex, maxIndex, goToCard]);
-
   const goPrev = useCallback(() => {
-    const prevIdx = currentIndex <= 0 ? maxIndex : currentIndex - 1;
-    goToCard(prevIdx);
-  }, [currentIndex, maxIndex, goToCard]);
+    if (total === 0) return;
+    setActiveIndex((prev) => (prev - 1 + total) % total);
+  }, [total]);
 
-  // ── Keyboard navigation (Left/Right/Home/End) ─────────────────────────────
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const goTo = useCallback((idx: number) => {
+    if (idx >= 0 && idx < total) {
+      setActiveIndex(idx);
+    }
+  }, [total]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect || rect.bottom < 0 || rect.top > window.innerHeight) return;
+
       if (e.key === "ArrowLeft") {
         e.preventDefault();
         goPrev();
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
         goNext();
-      } else if (e.key === "Home") {
-        e.preventDefault();
-        goToCard(0);
-      } else if (e.key === "End") {
-        e.preventDefault();
-        goToCard(maxIndex);
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        (e.target as HTMLElement).blur();
-      }
-    },
-    [goNext, goPrev, goToCard, maxIndex]
-  );
-
-  // ── 3.5. Autoplay (5s Interval) ─────────────────────────────────────────────
-  const isHoveredRef = useRef(false);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!isPressedRef.current && !isDraggingRef.current && !isHoveredRef.current) {
-        goNext();
-      }
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [goNext]);
-
-  // ── 4. Robust GSAP Mouse / Touch Drag Engine ───────────────────────────────
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // Only primary mouse button (0) or touch
-    if (e.button !== 0 && e.pointerType === "mouse") return;
-
-    const track = trackRef.current;
-    if (!track) return;
-
-    calculateLimits();
-    gsap.killTweensOf(track);
-
-    isPressedRef.current = true;
-    isDraggingRef.current = false;
-    dragStartXRef.current = e.clientX;
-    trackStartXRef.current = gsap.getProperty(track, "x") as number || 0;
-    currentXRef.current = trackStartXRef.current;
-    targetXRef.current = trackStartXRef.current;
-    lastMouseXRef.current = e.clientX;
-    lastTimeRef.current = performance.now();
-    velocityXRef.current = 0;
-  };
-
-  useEffect(() => {
-    const handleGlobalPointerMove = (e: PointerEvent) => {
-      if (!isPressedRef.current) return;
-
-      // Absolute safety guard: If user released left mouse button, cancel drag immediately
-      if (e.pointerType === "mouse" && e.buttons !== 1) {
-        isPressedRef.current = false;
-        return;
-      }
-
-      const deltaX = e.clientX - dragStartXRef.current;
-      if (Math.abs(deltaX) > 6) {
-        isDraggingRef.current = true;
-      }
-
-      const now = performance.now();
-      const dt = Math.max(1, now - lastTimeRef.current);
-      velocityXRef.current = (e.clientX - lastMouseXRef.current) / dt;
-      lastMouseXRef.current = e.clientX;
-      lastTimeRef.current = now;
-
-      // Direct dragging position with boundary resistance (rubber-band)
-      const minX = minXRef.current;
-      let rawX = trackStartXRef.current + deltaX;
-
-      if (rawX > 0) {
-        rawX = rawX * 0.3; // Right pull resistance
-      } else if (rawX < minX) {
-        rawX = minX + (rawX - minX) * 0.3; // Left pull resistance
-      }
-
-      targetXRef.current = rawX;
-      currentXRef.current = rawX;
-
-      if (trackRef.current) {
-        gsap.set(trackRef.current, { x: rawX });
       }
     };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goNext, goPrev]);
 
-    const handleGlobalPointerUp = () => {
-      if (!isPressedRef.current) return;
-      isPressedRef.current = false;
-
-      const track = trackRef.current;
-      if (!track) return;
-
-      const { minX, cardStep, maxIdx } = calculateLimits();
-      const currentPos = gsap.getProperty(track, "x") as number;
-
-      // Calculate inertia target based on release velocity
-      const velocity = velocityXRef.current;
-      const momentumDistance = velocity * 180;
-      const projectedX = currentPos + momentumDistance;
-
-      // Snap to nearest card step
-      const nearestCardIdx = Math.round(-projectedX / cardStep);
-      const clampedIdx = Math.min(maxIdx, Math.max(0, nearestCardIdx));
-      const snapTargetX = Math.max(minX, Math.min(0, -clampedIdx * cardStep));
-
-      gsap.to(track, {
-        x: snapTargetX,
-        duration: Math.min(0.85, Math.max(0.4, 0.5 + Math.abs(velocity) * 0.2)),
-        ease: "power3.out",
-        overwrite: "auto",
-        onUpdate: () => {
-          if (trackRef.current) {
-            const x = gsap.getProperty(trackRef.current, "x") as number;
-            currentXRef.current = x;
-            const idx = Math.round(-x / cardStep);
-            setCurrentIndex(Math.min(maxIdx, Math.max(0, idx)));
-          }
-        },
-      });
-
-      // Clear dragging state slightly after release so clicks don't accidentally navigate
-      setTimeout(() => {
-        isDraggingRef.current = false;
-      }, 60);
-    };
-
-    window.addEventListener("pointermove", handleGlobalPointerMove, { passive: true });
-    window.addEventListener("pointerup", handleGlobalPointerUp);
-    window.addEventListener("pointercancel", handleGlobalPointerUp);
-
-    return () => {
-      window.removeEventListener("pointermove", handleGlobalPointerMove);
-      window.removeEventListener("pointerup", handleGlobalPointerUp);
-      window.removeEventListener("pointercancel", handleGlobalPointerUp);
-    };
-  }, [calculateLimits]);
-
-  // ── 5. Trackpad & Wheel Horizontal Scrolling ──────────────────────────────
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    // Only capture if scrolling horizontally or Shift key is held
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
-    if (delta === 0) return;
-
-    e.preventDefault();
-    const { minX, cardStep, maxIdx } = calculateLimits();
-    const newTargetX = Math.max(minX, Math.min(0, targetXRef.current - delta * 1.2));
-    targetXRef.current = newTargetX;
-
-    if (trackRef.current) {
-      gsap.to(trackRef.current, {
-        x: newTargetX,
-        duration: 0.45,
-        ease: "power2.out",
-        overwrite: "auto",
-        onUpdate: () => {
-          if (trackRef.current) {
-            const x = gsap.getProperty(trackRef.current, "x") as number;
-            currentXRef.current = x;
-            const idx = Math.round(-x / cardStep);
-            setCurrentIndex(Math.min(maxIdx, Math.max(0, idx)));
-          }
-        },
-      });
+  // Handle Card Click
+  const handleCardClick = (index: number, productId: string) => {
+    if (isDragging) return;
+    if (index === activeIndex) {
+      router.push(`/product/${productId}`);
+    } else {
+      setActiveIndex(index);
     }
   };
-
-  // ── 6. Scroll-Triggered Stagger Card Animation ────────────────────────────
-  useGSAP(() => {
-    if (!isPreloaderFinished) {
-      gsap.set(".showcase-card", { opacity: 0, y: 60, x: -30 });
-      return;
-    }
-
-    // Kill any previous ScrollTriggers scoped to this container
-    ScrollTrigger.getAll()
-      .filter((st) => st.vars?.id === "showcase-stagger")
-      .forEach((st) => st.kill());
-
-    const cards = gsap.utils.toArray<HTMLElement>(".showcase-card", containerRef.current!);
-    if (cards.length === 0) return;
-
-    // Set all cards hidden initially
-    gsap.set(cards, { opacity: 0, y: 60, x: -30, scale: 0.97 });
-
-    // Create a timeline triggered by the section entering the viewport
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",       // fires when section top reaches 80% of viewport
-        end: "top 30%",
-        toggleActions: "play none none none",
-        id: "showcase-stagger",
-      },
-    });
-
-    tl.to(cards, {
-      opacity: 1,
-      y: 0,
-      x: 0,
-      scale: 1,
-      duration: 0.7,
-      stagger: {
-        each: 0.09,           // 90ms gap between each card
-        from: "start",        // left to right
-        ease: "power2.out",
-      },
-      ease: "power3.out",
-      clearProps: "transform",
-    });
-
-    return () => {
-      ScrollTrigger.getAll()
-        .filter((st) => st.vars?.id === "showcase-stagger")
-        .forEach((st) => st.kill());
-    };
-  }, { dependencies: [isPreloaderFinished], scope: containerRef });
 
   if (total === 0) return null;
+
+  // Compute circular slot offset relative to activeIndex (-3 to +3 for 7 visible slots)
+  const getSlotOffset = (index: number) => {
+    let diff = index - activeIndex;
+    if (total > 7) {
+      if (diff > total / 2) diff -= total;
+      if (diff < -total / 2) diff += total;
+    }
+    return diff;
+  };
 
   return (
     <div
       ref={containerRef}
-      className="w-full flex flex-col select-none"
+      className="relative w-full select-none flex flex-col justify-between"
+      style={{ userSelect: "none", WebkitUserSelect: "none" }}
+      tabIndex={0}
+      aria-label={ariaLabel}
     >
-      {/* ── 1. Header with Animated Tabs ── */}
-      <div className="flex flex-col items-center justify-center mb-12 text-center">
-        <div className="flex items-center gap-6 sm:gap-12 select-none relative">
-          
-          {/* Tab 1: New Arrivals */}
+      {/* ── TOP HEADER (Matching Reference Layout Exactly) ── */}
+      <div className="w-full flex items-start justify-between mb-6 sm:mb-10 px-2 sm:px-4 md:px-6 z-30">
+        <div className="flex flex-col gap-1 select-none pointer-events-none">
+          <span className={`font-sans text-[11px] sm:text-[12px] tracking-[0.14em] font-medium select-none ${tone === "dark" ? "text-white/50" : "text-black/50"}`}>
+            {eyebrow}
+          </span>
+          <h2 className={`font-display uppercase text-[20px] sm:text-[26px] md:text-[32px] font-bold tracking-[-0.03em] leading-none select-none ${tone === "dark" ? "text-white" : "text-[#111111]"}`}>
+            {heading}
+          </h2>
+        </div>
+
+        <div className="flex items-center gap-2" role="tablist" aria-label="Showcase edits">
           <button
             type="button"
-            onClick={() => handleTabChange("new")}
-            aria-pressed={activeTab === "new"}
-            aria-label="Show new arrivals"
-            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4 ${
-              activeTab === "new"
-                ? "text-y2k-gunmetal font-medium scale-[1.02]"
-                : "text-y2k-gunmetal/30 hover:text-y2k-gunmetal/70 font-normal hover:scale-[1.01]"
-            }`}
-          >
-            <span>New Arrivals</span>
-            {activeTab === "new" && (
-              <motion.div
-                layoutId="showcaseTabUnderline"
-                className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-y2k-gunmetal shadow-sm"
-                transition={{
-                  type: "spring",
-                  stiffness: 380,
-                  damping: 30,
-                }}
-              />
-            )}
-          </button>
-
-          {/* Tab 2: Curated Grails */}
-          <button
-            type="button"
-            onClick={() => handleTabChange("top")}
-            aria-pressed={activeTab === "top"}
-            aria-label="Show curated grails"
-            className={`relative pb-3 font-display text-2xl sm:text-3xl md:text-4xl lg:text-[46px] uppercase tracking-[-0.03em] leading-none transition-all duration-300 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4 ${
-              activeTab === "top"
-                ? "text-y2k-gunmetal font-medium scale-[1.02]"
-                : "text-y2k-gunmetal/30 hover:text-y2k-gunmetal/70 font-normal hover:scale-[1.01]"
-            }`}
-          >
-            <span>Curated Grails</span>
-            {activeTab === "top" && (
-              <motion.div
-                layoutId="showcaseTabUnderline"
-                className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-y2k-gunmetal shadow-sm"
-                transition={{
-                  type: "spring",
-                  stiffness: 380,
-                  damping: 30,
-                }}
-              />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* ── 2. GSAP Draggable Viewport & Track ──────────────────────────────── */}
-      <div
-        ref={viewportRef}
-        role="region"
-        aria-roledescription="carousel"
-        aria-label={`${activeTab === "new" ? "New arrivals" : "Curated grails"} product carousel`}
-        aria-live="off"
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        onWheel={handleWheel}
-        onPointerDown={handlePointerDown}
-        onMouseEnter={() => (isHoveredRef.current = true)}
-        onMouseLeave={() => (isHoveredRef.current = false)}
-        onFocusCapture={() => (isHoveredRef.current = true)}
-        onBlurCapture={() => (isHoveredRef.current = false)}
-        className="w-full overflow-hidden mb-4 py-2 cursor-grab active:cursor-grabbing touch-pan-y select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal/60 focus-visible:outline-offset-4 rounded-none"
-      >
-        <div
-          ref={trackRef}
-          className="flex gap-4 md:gap-6 will-change-transform"
-          style={{ transform: "translate3d(0px, 0px, 0px)" }}
-        >
-          {currentList.map((product, productIdx) => {
-            const imgUrl = product.images[0]?.url || "/placeholder.jpg";
-            const hoverImgUrl = product.images[1]?.url || null;
-
-            return (
-              <Link
-                key={`${activeTab}-${product.id || productIdx}`}
-                href={`/product/${product.id}`}
-                aria-label={`${product.name} — ₹${product.price.toLocaleString("en-IN")}${product.isSoldOut ? ", sold out" : ""}`}
-                onClick={(e) => {
-                  // Prevent navigation if the user was actively dragging
-                  if (isDraggingRef.current) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }
-                }}
-                className="showcase-card interactive-card group flex flex-col shrink-0 w-[160px] sm:w-[200px] md:w-[240px] lg:w-[calc(16.666%-20px)] select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
-              >
-                {/* Borderless Floating Image Container with Alternate View on Hover */}
-                <div className="relative w-full aspect-[4/5] flex items-center justify-center overflow-hidden bg-black/[0.02] group-hover:bg-black/[0.05] transition-colors duration-500">
-                  
-                  {/* Minimalist Brand "NEW" Label */}
-                  {product.isNew && (
-                    <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
-                      <span className="text-[8px] font-bold uppercase tracking-wider bg-y2k-gunmetal text-white px-1.5 py-0.5 shadow-sm">
-                        NEW
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Add to Bag Button Top Right */}
-                  <div onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}>
-                    <AddToBagButton
-                      product={{
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: imgUrl,
-                        isSoldOut: product.isSoldOut,
-                      }}
-                      className="absolute top-2.5 right-2.5 p-2 bg-white/90 hover:bg-white text-y2k-gunmetal hover:text-black z-20 shadow-sm rounded-none border-0"
-                    />
-                  </div>
-
-                  {/* Base Product Image */}
-                  <Image
-                    src={imgUrl}
-                    alt={product.name}
-                    fill
-                    draggable={false}
-                    sizes="(max-width: 640px) 160px, (max-width: 1024px) 240px, 16vw"
-                    className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] select-none pointer-events-none ${
-                      hoverImgUrl ? "group-hover:opacity-0" : ""
-                    } ${product.isSoldOut ? "blur-sm opacity-70" : "opacity-100"}`}
-                  />
-
-                  {/* Alternate Image on Hover */}
-                  {hoverImgUrl && (
-                    <Image
-                      src={hoverImgUrl}
-                      alt={`${product.name} alternate view`}
-                      fill
-                      draggable={false}
-                      sizes="(max-width: 640px) 160px, (max-width: 1024px) 240px, 16vw"
-                      className="object-cover opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none"
-                    />
-                  )}
-
-                  {/* Sold Out Badge */}
-                  {product.isSoldOut && (
-                    <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                      <span className="bg-y2k-gunmetal text-white text-[9px] font-bold px-3 py-1 uppercase tracking-wider">
-                        SOLD OUT
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Product Details Below Image */}
-                <div className="flex flex-col pt-3 pb-1 pointer-events-none">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 truncate">
-                    {product.brand || "BAGIFYYYY ARCHIVE"}
-                  </p>
-                  <h3 className="font-sans text-xs md:text-[13px] font-semibold text-y2k-gunmetal group-hover:text-black transition-colors line-clamp-2 leading-snug mt-0.5">
-                    {product.name}
-                  </h3>
-                  <p className="font-bold font-sans text-xs md:text-sm font-extrabold text-y2k-gunmetal mt-1.5">
-                    ₹{product.price.toLocaleString("en-IN")}
-                  </p>
-                  <p className="text-[10px] text-y2k-gunmetal/45 font-medium capitalize mt-0.5 truncate">
-                    {product.category || "Topwears"} · Archive Edition
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── 3. Continuous Scroll Progress Line (Phone & Desktop) ──────────────── */}
-      <div className="w-full mt-2 mb-4 px-1">
-        <div className="relative w-full h-[1.5px] bg-gray-200 overflow-hidden">
-          <div
-            className="absolute top-0 h-full bg-y2k-gunmetal transition-all duration-150 ease-out"
-            style={{
-              width: `${Math.max(15, 100 / Math.max(1, total))}%`,
-              left: `${maxIndex > 0 ? (currentIndex / maxIndex) * (100 - Math.max(15, 100 / Math.max(1, total))) : 0}%`,
+            role="tab"
+            aria-selected={activeTab === "new"}
+            onClick={() => {
+              setActiveTab("new");
+              setActiveIndex(0);
             }}
-          />
-        </div>
-      </div>
-
-      {/* ── 4. Synchronized Controls Below Track ─────────────────────────────── */}
-      <div className="w-full flex items-center justify-between px-1">
-        {/* Left: Product Counter */}
-        <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal/60">
-          <span className="text-y2k-gunmetal">{String(currentIndex + 1).padStart(2, "0")}</span>
-          <span className="opacity-30">/</span>
-          <span>{String(total).padStart(2, "0")}</span>
-        </div>
-
-        {/* Center: Slide Step Indicators (44×44 hit target) */}
-        <div className="flex items-center gap-0.5" role="tablist" aria-label="Slide position">
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => goToCard(i)}
-              aria-label={`Go to slide ${i + 1} of ${maxIndex + 1}`}
-              aria-current={i === currentIndex}
-              role="tab"
-              aria-selected={i === currentIndex}
-              className="p-2 -m-1 flex items-center justify-center cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
-            >
-              <span
-                aria-hidden
-                className={`block rounded-full transition-all duration-300 h-[2px] ${
-                  i === currentIndex
-                    ? "w-7 bg-y2k-gunmetal"
-                    : "w-2.5 bg-y2k-gunmetal/20 hover:bg-y2k-gunmetal/50"
-                }`}
-              />
-            </button>
-          ))}
+            className={`h-9 px-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "new" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
+          >
+            New In
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "top"}
+            onClick={() => {
+              setActiveTab("top");
+              setActiveIndex(0);
+            }}
+            className={`h-9 px-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "top" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
+          >
+            Curated Grails
+          </button>
         </div>
 
-        {/* Right: Arrow Buttons (44×44 hit target) */}
-        <div className="flex items-center gap-1.5">
+        {/* Carousel Arrow Controls */}
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={goPrev}
-            aria-label="Previous products"
-            className="w-11 h-11 md:w-9 md:h-9 rounded-full border border-y2k-gunmetal/15 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+            aria-label="Previous product"
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
-            <ChevronLeft className="w-4 h-4 md:w-3.5 md:h-3.5" strokeWidth={1.75} />
+            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
           <button
             type="button"
             onClick={goNext}
-            aria-label="Next products"
-            className="w-11 h-11 md:w-9 md:h-9 rounded-full border border-y2k-gunmetal/15 hover:border-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white flex items-center justify-center text-y2k-gunmetal transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-2"
+            aria-label="Next product"
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
-            <ChevronRight className="w-4 h-4 md:w-3.5 md:h-3.5" strokeWidth={1.75} />
+            <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
+      </div>
+
+      {/* ── DISPLAY AREA WITH PURE TRANSPARENT GLASS BLUR & FADE ── */}
+      <div
+        className="relative w-full overflow-hidden py-4"
+        style={{
+          maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 2%, rgba(0,0,0,0.85) 9%, black 15%, black 85%, rgba(0,0,0,0.85) 91%, rgba(0,0,0,0.1) 98%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 2%, rgba(0,0,0,0.85) 9%, black 15%, black 85%, rgba(0,0,0,0.85) 91%, rgba(0,0,0,0.1) 98%, transparent 100%)",
+        }}
+      >
+        {/* Left Side Pure Transparent Glass Blur (No Dark/Grey Background Tint) */}
+        <div
+          className="pointer-events-none absolute left-0 inset-y-0 w-20 sm:w-32 md:w-48 lg:w-60 z-40 backdrop-blur-[5px]"
+          style={{
+            maskImage: "linear-gradient(to right, black 0%, black 30%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, black 0%, black 30%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Right Side Pure Transparent Glass Blur (No Dark/Grey Background Tint) */}
+        <div
+          className="pointer-events-none absolute right-0 inset-y-0 w-20 sm:w-32 md:w-48 lg:w-60 z-40 backdrop-blur-[5px]"
+          style={{
+            maskImage: "linear-gradient(to left, black 0%, black 30%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to left, black 0%, black 30%, transparent 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* ── DRAGGABLE STAGGERED CAROUSEL TRACK ── */}
+        <motion.div
+          className="relative w-full flex items-center justify-center min-h-[520px] sm:min-h-[580px] md:min-h-[640px] lg:min-h-[680px] cursor-grab active:cursor-grabbing select-none"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragStart={() => {
+            setIsDragging(true);
+          }}
+          onDrag={(_, info) => {
+            dragX.set(info.offset.x);
+          }}
+          onDragEnd={(_, info) => {
+            dragX.set(0);
+            const swipeThreshold = 45;
+            if (info.offset.x < -swipeThreshold || info.velocity.x < -200) {
+              goNext();
+            } else if (info.offset.x > swipeThreshold || info.velocity.x > 200) {
+              goPrev();
+            }
+            setTimeout(() => setIsDragging(false), 60);
+          }}
+        >
+          <div className="relative w-full flex items-center justify-center pointer-events-none select-none">
+            {baseList.map((product, idx) => {
+              const offset = getSlotOffset(idx);
+              const isVisible = Math.abs(offset) <= 4;
+              if (!isVisible) return null;
+
+              const isCenter = offset === 0;
+              const imgUrl = product.images[0]?.url || "/placeholder.jpg";
+
+              // ── Dynamic Generous Spacing Geometry (No overlap, genuine gaps):
+              // Center card: ~390px wide (half: 195px)
+              // Side cards: ~250px wide (half: 125px)
+              // Generous Gap: 60px
+              // Distance to offset 1: 195 + 125 + 60 = 380px
+              // Distance to offset 2: 380 + 250 + 55 = 685px
+              // Distance to offset 3: 685 + 250 + 55 = 990px
+
+              let slotY = 0;
+              let cardWidth = "w-[170px] sm:w-[210px] md:w-[245px] lg:w-[260px]";
+              let cardHeight = "h-[200px] sm:h-[250px] md:h-[280px] lg:h-[295px]";
+              let horizontalX = 0;
+
+              if (isCenter) {
+                // Tall Hero Card in Center
+                cardWidth = "w-[270px] sm:w-[330px] md:w-[380px] lg:w-[410px]";
+                cardHeight = "h-[450px] sm:h-[520px] md:h-[580px] lg:h-[620px]";
+                slotY = 0;
+                horizontalX = 0;
+              } else if (offset === -1) {
+                slotY = mirroredLayout ? 100 : -115;
+                horizontalX = -380;
+              } else if (offset === -2) {
+                slotY = mirroredLayout ? -115 : 100;
+                horizontalX = -685;
+              } else if (offset === -3) {
+                slotY = mirroredLayout ? 100 : -115;
+                horizontalX = -990;
+              } else if (offset === 1) {
+                slotY = mirroredLayout ? -115 : 100;
+                horizontalX = 380;
+              } else if (offset === 2) {
+                slotY = mirroredLayout ? 100 : -115;
+                horizontalX = 685;
+              } else if (offset === 3) {
+                slotY = mirroredLayout ? -115 : 100;
+                horizontalX = 990;
+              } else {
+                slotY = 0;
+                horizontalX = offset * 320;
+              }
+
+              return (
+                <motion.div
+                  key={product.uniqueKey || product.id}
+                  layout
+                  initial={false}
+                  animate={{
+                    x: horizontalX,
+                    y: slotY,
+                    scale: isCenter ? 1 : 0.94,
+                    opacity: Math.abs(offset) > 3 ? 0 : Math.abs(offset) === 3 ? 0.45 : 1,
+                    zIndex: isCenter ? 30 : 20 - Math.abs(offset),
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 280,
+                    damping: 28,
+                    mass: 0.85,
+                  }}
+                  onClick={() => handleCardClick(idx, product.id)}
+                  className="absolute flex flex-col cursor-pointer group pointer-events-auto select-none"
+                  style={{
+                    willChange: "transform, opacity",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                  }}
+                  onDragStart={(e) => e.preventDefault()}
+                >
+                  {/* Card Body with Clean Rounded Soft Grey Surface (Matching Reference) */}
+                  <div
+                    className={`relative ${cardWidth} ${cardHeight} rounded-xl sm:rounded-2xl bg-[#ebebeb] hover:bg-[#e4e4e4] transition-colors duration-300 overflow-hidden flex items-center justify-center p-4 sm:p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.03)] select-none`}
+                    style={{ userSelect: "none", WebkitUserSelect: "none" }}
+                  >
+                    {/* Centered Product Cutout Image (Protected from Selection / Ghost Drag) */}
+                    <div className="relative w-full h-full flex items-center justify-center pointer-events-none select-none">
+                      <Image
+                        src={imgUrl}
+                        alt={product.name}
+                        fill
+                        draggable={false}
+                        sizes={isCenter ? "(max-width: 768px) 330px, 410px" : "260px"}
+                        className="object-contain object-center drop-shadow-[0_8px_16px_rgba(0,0,0,0.08)] transition-transform duration-500 group-hover:scale-105 pointer-events-none select-none"
+                        priority={isCenter}
+                      />
+                    </div>
+
+                    {/* Quick Add to Bag on Center Active Card */}
+                    {isCenter && (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 pointer-events-auto"
+                      >
+                        <AddToBagButton
+                          product={{
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            image: imgUrl,
+                            isSoldOut: product.isSoldOut,
+                            sizes: product.sizes,
+                            colors: product.colors,
+                          }}
+                          className="h-8 w-8 p-0"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <ProductMetaRow name={product.name} price={product.price} tone={tone} className="pointer-events-none select-none px-1" />
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ── BOTTOM FOOTER: PROGRESS STEP DOTS & VIEW ALL LINK ── */}
+      <div className="w-full flex items-center justify-between mt-6 sm:mt-10 px-2 sm:px-4 md:px-6 z-30">
+        {/* Step dots for all products */}
+        <div className="flex items-center gap-1.5 overflow-x-auto max-w-[60%] py-1">
+          {products.slice(0, Math.min(12, products.length)).map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`Go to product ${i + 1}`}
+              className={`h-1.5 transition-all duration-300 rounded-full cursor-pointer ${
+                  (activeIndex % Math.min(12, products.length)) === i
+                    ? `w-6 ${tone === "dark" ? "bg-white" : "bg-[#111111]"}`
+                    : `w-1.5 ${tone === "dark" ? "bg-white/20 hover:bg-white/40" : "bg-black/20 hover:bg-black/40"}`
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* View All → Link (Bottom-Right corner) */}
+        <Link
+          href={viewAllHref}
+          className={`font-sans font-semibold text-[11px] sm:text-[12px] tracking-[0.1em] transition-colors inline-flex items-center gap-1.5 group ${tone === "dark" ? "text-white/70 hover:text-white" : "text-black/70 hover:text-black"}`}
+        >
+           <span>See all pieces</span>
+          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+        </Link>
       </div>
     </div>
   );

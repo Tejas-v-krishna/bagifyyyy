@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { generateDropAnnouncementEmailHtml } from '@/lib/email-templates';
+import { generateDropAnnouncementEmailHtml, type DropProductItem } from '@/lib/email-templates';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const { headline, subheadline, promoBadge, productIds, bannerImage } = body;
 
     // Fetch product details from DB
-    let products: any[] = [];
+    let products: DropProductItem[] = [];
     if (productIds && productIds.length > 0) {
       const dbProducts = await prisma.product.findMany({
         where: { id: { in: productIds } },
@@ -55,8 +55,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, html });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error generating email preview:', error);
-    return NextResponse.json({ error: error.message || 'Failed to preview email' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to preview email';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

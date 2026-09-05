@@ -18,7 +18,7 @@ async function main() {
   const products = [
     {
       name: "Chrome Logo Hoodie",
-      description: "Heavyweight 450gsm custom-milled fleece hoodie with hand-finished metallic chrome chest motif. Features dropped shoulders, double-layered hood, and boxy vintage silhouette.",
+      description: "450gsm fleece hoodie with a chrome chest logo, dropped shoulders, a double-layer hood, and a boxy fit.",
       price: 3499,
       brand: "BAGIFYYYY AW24",
       category: "topwears",
@@ -33,7 +33,7 @@ async function main() {
     },
     {
       name: "Acid Wash Cyber Cargo Pants",
-      description: "Artisanal mineral-washed heavyweight cotton twill cargo trousers with 8 modular pockets, adjustable ankle cinch cords, and articulated knee darting.",
+      description: "Mineral-washed cotton twill cargos with eight pockets, ankle cinch cords, and articulated knees.",
       price: 3999,
       brand: "BAGIFYYYY AW24",
       category: "bottomwears",
@@ -48,7 +48,7 @@ async function main() {
     },
     {
       name: "Metallic Star Baby Tee",
-      description: "Micro-ribbed luxury stretch cotton cropped baby tee with liquid-foil chrome star centerpiece. Precision-cut neckline and retro contrast stitch.",
+      description: "Stretch cotton baby tee with a chrome star graphic, a clean neckline, and contrast stitching.",
       price: 1899,
       brand: "BAGIFYYYY ARCHIVE",
       category: "topwears",
@@ -63,7 +63,7 @@ async function main() {
     },
     {
       name: "Oversized Cyber Zip-Up Jacket",
-      description: "Dual-zipper tactical archive fleece jacket with technical contrast paneling, heavyweight brushed interior, and engraved stainless steel zipper pulls.",
+      description: "Heavy fleece zip-up with two-way zips, contrast panels, and stainless-steel pulls.",
       price: 4499,
       brand: "BAGIFYYYY AW24",
       category: "topwears",
@@ -78,7 +78,7 @@ async function main() {
     },
     {
       name: "Futuristic Nylon Shoulder Bag",
-      description: "Ballistic water-resistant ripstop nylon utility sling bag featuring high-polish chrome buckle hardware, quick-release strap, and dual storm-sealed compartments.",
+      description: "Water-resistant ripstop sling bag with a chrome buckle, quick-release strap, and two sealed compartments.",
       price: 2499,
       brand: "BAGIFYYYY ACCESSORIES",
       category: "accessories",
@@ -93,7 +93,7 @@ async function main() {
     },
     {
       name: "Raw Hem Heavy Denim Jacket",
-      description: "14.5oz Japanese selvedge denim trucker jacket featuring distressed abrasions, custom gunmetal shank buttons, and raw frayed waist hems.",
+      description: "14.5oz Japanese selvedge denim trucker with worn abrasions, gunmetal buttons, and a raw frayed hem.",
       price: 4999,
       brand: "BAGIFYYYY ARCHIVE",
       category: "topwears",
@@ -108,7 +108,7 @@ async function main() {
     },
     {
       name: "Chrome Star Studded Leather Belt",
-      description: "Full-grain Italian harness leather belt adorned with alternating 3D chrome pyramid studs and star emblems with a heavy alloy roller buckle.",
+      description: "Full-grain Italian leather belt with chrome pyramid studs, star details, and a heavy roller buckle.",
       price: 1999,
       brand: "BAGIFYYYY ACCESSORIES",
       category: "accessories",
@@ -124,7 +124,7 @@ async function main() {
 
     {
       name: "Vintage Baggy Skater Jeans",
-      description: "Authentic 2000s wide-leg skater denim featuring deep wash whiskering, reinforced back heel guards, and relaxed puddle hem stacking.",
+      description: "Wide-leg denim from the 2000s with a faded wash, reinforced heel guards, and a puddle hem.",
       price: 3699,
       brand: "BAGIFYYYY ARCHIVE",
       category: "bottomwears",
@@ -181,7 +181,7 @@ async function main() {
     const b1 = await prisma.bundle.create({
       data: {
         name: 'The Full Drip',
-        description: 'The signature head-to-toe BAGIFYYYY AW24 look. Hoodie, cargos, and a baby tee — curated for maximum archive energy.',
+        description: 'A hoodie, cargos, and baby tee for an easy head-to-toe fit. Take 15% off the set.',
         discount: 15,
       },
     });
@@ -197,7 +197,7 @@ async function main() {
     const b2 = await prisma.bundle.create({
       data: {
         name: 'Cyber Armor Stack',
-        description: 'The finishing touches. Pair the Japanese denim trucker with the studded star belt and nylon shoulder bag for the complete BAGIFYYYY aesthetic.',
+        description: 'A denim jacket, studded belt, and nylon shoulder bag. The finishing pieces, 20% off together.',
         discount: 20,
       },
     });

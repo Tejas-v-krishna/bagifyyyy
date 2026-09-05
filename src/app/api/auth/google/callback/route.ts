@@ -34,11 +34,15 @@ export async function GET(request: Request) {
         audience: clientId,
       });
       const payload = ticket.getPayload();
-      if (payload && payload.email) {
+      if (payload && payload.email && payload.email_verified) {
         email = payload.email.toLowerCase();
         name = payload.name || payload.given_name || 'Google Member';
         avatar = payload.picture || '';
         googleId = payload.sub;
+      } else if (payload?.email && !payload.email_verified) {
+        return NextResponse.redirect(
+          `${origin}/?auth_error=${encodeURIComponent('Your Google email address is not verified')}`
+        );
       }
     }
 
@@ -47,6 +51,14 @@ export async function GET(request: Request) {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       });
       const userInfo = await userInfoRes.json();
+      if (
+        !userInfo.email ||
+        (userInfo.email_verified !== true && userInfo.email_verified !== 'true')
+      ) {
+        return NextResponse.redirect(
+          `${origin}/?auth_error=${encodeURIComponent('Your Google email address is not verified')}`
+        );
+      }
       email = (userInfo.email || '').toLowerCase();
       name = userInfo.name || userInfo.given_name || 'Google Member';
       avatar = userInfo.picture || '';
@@ -95,8 +107,9 @@ export async function GET(request: Request) {
     response.cookies.set(USER_SESSION_COOKIE, token, userSessionCookieOptions());
 
     return response;
-  } catch (err: any) {
+  } catch (err) {
     console.error("Google Callback Error:", err);
-    return NextResponse.redirect(`${origin}/?auth_error=${encodeURIComponent(err.message || "OAuth failed")}`);
+    const message = err instanceof Error ? err.message : "OAuth failed";
+    return NextResponse.redirect(`${origin}/?auth_error=${encodeURIComponent(message)}`);
   }
 }

@@ -30,6 +30,20 @@ interface EditorialPost {
   link: string;
 }
 
+const postLayouts = [
+  "col-span-2 md:col-span-7 md:row-span-2",
+  "md:col-span-5",
+  "md:col-span-3",
+  "col-span-2 md:col-span-2",
+];
+
+const postRatios = [
+  "aspect-[1.04] md:aspect-auto md:min-h-[700px]",
+  "aspect-[1.35] md:aspect-auto md:min-h-[330px]",
+  "aspect-[0.9] md:aspect-auto md:min-h-[330px]",
+  "aspect-[0.9] md:aspect-auto md:min-h-[330px]",
+];
+
 const EDITORIAL_POSTS: EditorialPost[] = [
   {
     id: "post-1",
@@ -40,7 +54,7 @@ const EDITORIAL_POSTS: EditorialPost[] = [
   {
     id: "post-2",
     url: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg",
-    caption: "Raw Denim Trucker — Archive",
+    caption: "Raw Denim Trucker",
     link: "https://www.instagram.com/bagifyyyy",
   },
   {
@@ -52,7 +66,7 @@ const EDITORIAL_POSTS: EditorialPost[] = [
   {
     id: "post-4",
     url: "/assets/ai/prod_model_4_cyberzip_1786659858926.jpg",
-    caption: "480GSM Dual-Zip Fleece — Archive",
+    caption: "480GSM Dual-Zip Fleece",
     link: "https://www.instagram.com/bagifyyyy",
   },
 ];
@@ -72,10 +86,10 @@ export default function InstagramFeed() {
         }
         if (data.posts && Array.isArray(data.posts) && data.posts.length >= 4) {
           setPosts(
-            data.posts.slice(0, 4).map((p: any) => ({
+            data.posts.slice(0, 4).map((p: { id: string; url: string; caption?: string; link?: string }) => ({
               id: p.id,
               url: p.url,
-              caption: p.caption || "Archive drop.",
+              caption: p.caption || "New piece.",
               link: p.link || "https://instagram.com/bagifyyyy",
             }))
           );
@@ -86,38 +100,31 @@ export default function InstagramFeed() {
 
   return (
     <section
-      className="w-full bg-y2k-ice pt-20 md:pt-28 pb-16 border-t border-y2k-gunmetal/[0.06]"
+      className="w-full bg-white px-4 py-20 text-black sm:px-7 md:py-28 lg:px-10"
       aria-labelledby="instagram-heading"
     >
-      {/* Header — right aligned, display type */}
-      <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-16 mb-8 md:mb-10 flex items-end justify-between gap-4">
-        <a
-          href={profileLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2.5 text-[9.5px] uppercase tracking-[0.22em] text-y2k-gunmetal/50 hover:text-y2k-gunmetal transition-colors focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4"
-          aria-label={`Follow us on Instagram — ${handle}`}
-        >
-          <InstagramIcon className="w-3.5 h-3.5" />
-          <span>{handle}</span>
-        </a>
-        <h2
-          id="instagram-heading"
-          className="font-display text-4xl sm:text-5xl md:text-[56px] uppercase tracking-[-0.05em] leading-none text-y2k-gunmetal select-none"
-          aria-label="Follow us on Instagram"
-        >
-          FOLLOW
-        </h2>
-      </div>
+      <div className="mx-auto w-full max-w-[1700px]">
+        <div className="flex items-end justify-between gap-8 border-t border-black/15 pt-5">
+          <div>
+            <a
+              href={profileLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-fit items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-black/45 transition-colors hover:text-black sm:text-[10px]"
+              aria-label={`Follow us on Instagram — ${handle}`}
+            >
+              <InstagramIcon className="h-3.5 w-3.5" />
+              <span>{handle}</span>
+            </a>
+            <h2 id="instagram-heading" className="mt-2 text-[clamp(2.5rem,6vw,7rem)] font-display font-bold uppercase leading-[0.84] tracking-[-0.03em] select-none text-black">
+               On<br />Instagram
+            </h2>
+          </div>
 
-      {/* Flush photo grid — no borders, no gaps except 1px between cells */}
-      <div
-        className="w-full max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-16"
-        role="list"
-        aria-label="Instagram posts"
-      >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-y2k-gunmetal/[0.06]">
-          {posts.map((post) => (
+        </div>
+
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-12 md:grid-rows-2" role="list" aria-label="Instagram posts">
+          {posts.slice(0, 4).map((post, index) => (
             <a
               key={post.id}
               href={post.link}
@@ -125,36 +132,29 @@ export default function InstagramFeed() {
               rel="noopener noreferrer"
               role="listitem"
               aria-label={post.caption}
-              className="group relative aspect-square bg-y2k-pale/20 overflow-hidden block focus-visible:outline focus-visible:outline-2 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-0"
+              className={`group relative block overflow-hidden rounded-xl bg-[#e9ecef] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-3 sm:rounded-2xl ${postLayouts[index]} ${postRatios[index]}`}
             >
-              {/* Photo */}
               <Image
                 src={post.url}
                 alt={post.caption}
                 fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+                sizes={index === 0 ? "(max-width: 768px) 100vw, 58vw" : "(max-width: 768px) 50vw, 30vw"}
+                className="object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.025]"
               />
 
-              {/* Hover overlay — dark glass, minimal copy */}
-              <div
-                className="absolute inset-0 glass-dark opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col items-center justify-center gap-3"
-                aria-hidden="true"
-              >
-                <ArrowUpRight className="w-5 h-5 text-white/70" strokeWidth={1} />
-                <span className="text-[9px] uppercase tracking-[0.22em] text-white/60">View</span>
+              <div className="absolute bottom-4 right-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:bottom-5 sm:right-5">
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.4} aria-hidden="true" />
               </div>
             </a>
           ))}
         </div>
 
-        {/* Follow CTA — below grid, minimal */}
-        <div className="pt-6 flex justify-end">
+        <div className="flex justify-end pt-7">
           <a
             href={profileLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-[9.5px] uppercase tracking-[0.22em] text-y2k-gunmetal/45 hover:text-y2k-gunmetal transition-colors duration-300 group focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4"
+            className="group flex items-center gap-2 border-b border-black/25 pb-1 text-[9px] font-medium uppercase tracking-[0.14em] text-black/55 transition-colors hover:border-black hover:text-black focus-visible:outline focus-visible:outline-1 focus-visible:outline-black focus-visible:outline-offset-4 sm:text-[10px]"
             aria-label="Open Instagram profile"
           >
             <span>Follow on Instagram</span>

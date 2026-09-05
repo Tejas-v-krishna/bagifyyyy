@@ -14,6 +14,7 @@ import {
   ExternalLink,
   ShieldCheck
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 const navItems = [
   { href: "/studio", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -33,7 +34,7 @@ function NavItem({
 }: {
   href: string;
   label: string;
-  icon: any;
+  icon: LucideIcon;
   exact?: boolean;
 }) {
   const pathname = usePathname();
@@ -93,8 +94,8 @@ export default function StudioLayout({
 
   return (
     <div className="min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans relative">
-      {/* ── Fixed Studio Left Sidebar (100% fixed & pinned to left viewport) ── */}
-      <aside className="w-64 fixed top-0 left-0 bottom-0 h-screen z-50 flex flex-col border-r border-y2k-gunmetal/15 bg-white shadow-xs select-none overflow-hidden">
+      {/* Desktop sidebar; mobile keeps the same navigation in a horizontal rail. */}
+      <aside className="hidden w-64 fixed top-0 left-0 bottom-0 h-screen z-50 lg:flex flex-col border-r border-y2k-gunmetal/15 bg-white shadow-xs select-none overflow-hidden">
         {/* Brand Studio Header */}
         <div className="px-5 py-6 border-b border-y2k-gunmetal/15 bg-white shrink-0">
           <div className="flex items-center justify-between mb-2">
@@ -140,10 +141,13 @@ export default function StudioLayout({
       </aside>
 
       {/* ── Main Studio Workspace ───────────────────────────────────────────── */}
-      <div className="pl-64 min-h-screen flex flex-col min-w-0">
+      <div className="min-h-screen flex flex-col min-w-0 lg:pl-64">
         {/* Sticky Top Control Bar */}
         <header className="h-16 border-b border-y2k-gunmetal/15 bg-white px-8 flex items-center justify-between sticky top-0 z-40 shadow-2xs">
           <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
+            <Link href="/studio" className="lg:hidden text-y2k-gunmetal" aria-label="Studio dashboard">
+              <LayoutDashboard className="h-4 w-4" />
+            </Link>
             <span className="text-y2k-slate">ADMIN</span>
             <span className="text-y2k-gunmetal/30">/</span>
             <span className="text-y2k-gunmetal">{currentNav?.label || "DASHBOARD"}</span>
@@ -166,7 +170,12 @@ export default function StudioLayout({
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-8 bg-y2k-ice">{children}</main>
+        <nav className="flex gap-1 overflow-x-auto border-b border-y2k-gunmetal/15 bg-white px-3 py-2 lg:hidden" aria-label="Studio navigation">
+          {navItems.map((item) => (
+            <NavItem key={item.href} {...item} />
+          ))}
+        </nav>
+        <main className="flex-1 bg-y2k-ice p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

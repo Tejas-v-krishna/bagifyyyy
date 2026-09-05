@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useAppStore } from "@/store/useAppStore";
@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 
 export default function HeroText() {
   const containerRef = useRef<HTMLHeadingElement>(null);
-  const text = "CARRY THE VIBE";
+  const text = "WEAR IT OUT";
   const words = text.split(" ");
   const isPreloaderFinished = useAppStore((state) => state.isPreloaderFinished);
 

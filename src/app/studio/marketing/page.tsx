@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { 
-  Mail, 
-  Send, 
   Smartphone, 
   Monitor, 
   Users, 
@@ -12,26 +10,50 @@ import {
   AlertCircle, 
   Loader2, 
   Tag, 
-  RefreshCw,
   Eye,
-  ShieldCheck
 } from "lucide-react";
 import Image from "next/image";
 
+interface MarketingProductImage {
+  url: string;
+}
+
+interface MarketingProduct {
+  id: string;
+  name: string;
+  price: number;
+  image?: string;
+  images?: (MarketingProductImage | string)[];
+}
+
+interface Campaign {
+  id?: string;
+  title?: string;
+  subject?: string;
+  createdAt?: string;
+}
+
+interface Subscriber {
+  id?: string;
+  email?: string;
+  createdAt?: string;
+}
+
+const passthroughLoader = ({ src }: { src: string }) => src;
+
 export default function MarketingStudioPage() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<MarketingProduct[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [previewHtml, setPreviewHtml] = useState("");
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Marketing Stats
   const [stats, setStats] = useState({
     subscriberCount: 0,
-    campaigns: [] as any[],
-    recentSubscribers: [] as any[],
+    campaigns: [] as Campaign[],
+    recentSubscribers: [] as Subscriber[],
   });
 
   // Form Fields
@@ -58,12 +80,12 @@ export default function MarketingStudioPage() {
         const rawProducts = Array.isArray(prodData) ? prodData : (prodData.products || []);
         if (rawProducts.length > 0) {
           setProducts(rawProducts);
-          setSelectedProductIds(rawProducts.slice(0, 4).map((p: any) => p.id));
+           setSelectedProductIds(rawProducts.slice(0, 4).map((p: MarketingProduct) => p.id));
         }
 
-        if (statsData.subscribersCount !== undefined) {
+        if (statsData.subscriberCount !== undefined) {
           setStats({
-            subscriberCount: statsData.subscribersCount || 0,
+            subscriberCount: statsData.subscriberCount || 0,
             campaigns: statsData.campaigns || [],
             recentSubscribers: statsData.recentSubscribers || [],
           });
@@ -79,8 +101,8 @@ export default function MarketingStudioPage() {
   }, []);
 
   // 2. Generate Live Email HTML Preview
-  useEffect(() => {
-    if (products.length === 0) return;
+  const previewHtml = useMemo(() => {
+    if (products.length === 0) return "";
 
     const selectedProds = products.filter((p) => selectedProductIds.includes(p.id));
 
@@ -117,7 +139,7 @@ export default function MarketingStudioPage() {
     <div className="grid" style="padding: 20px 10px;">
       ${selectedProds.map(p => `
         <div class="card">
-          <img src="${p.image || p.images?.[0]?.url || '/placeholder.jpg'}" class="card-img" />
+           <img src="${p.image || (typeof p.images?.[0] === "string" ? p.images[0] : p.images?.[0]?.url) || '/placeholder.jpg'}" class="card-img" />
           <div class="card-body">
             <div class="card-title">${p.name}</div>
             <div class="card-price">₹${p.price}</div>
@@ -135,7 +157,7 @@ export default function MarketingStudioPage() {
 </html>
     `;
 
-    setPreviewHtml(html);
+    return html;
   }, [headline, subheadline, promoBadge, products, selectedProductIds]);
 
   const toggleProductSelection = (id: string) => {
@@ -150,20 +172,17 @@ export default function MarketingStudioPage() {
       setSending(true);
       setStatusMessage(null);
 
-      const selectedProds = products.filter((p) => selectedProductIds.includes(p.id));
-
       const res = await fetch("/api/marketing/broadcast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          isTest,
-          testEmail,
-          campaignTitle,
-          subjectLine,
+          title: campaignTitle,
+          subject: subjectLine,
+          testRecipient: isTest ? testEmail : undefined,
+          productIds: selectedProductIds,
           headline,
           subheadline,
           promoBadge,
-          products: selectedProds,
         }),
       });
 
@@ -174,10 +193,10 @@ export default function MarketingStudioPage() {
         type: "success",
         text: isTest
           ? `Test email sent to ${testEmail} successfully!`
-          : `Broadcast campaign "${campaignTitle}" sent to all ${data.recipientCount || stats.subscriberCount} subscribers!`,
+          : `Broadcast campaign "${campaignTitle}" sent to all ${data.sentCount || stats.subscriberCount} subscribers!`,
       });
-    } catch (err: any) {
-      setStatusMessage({ type: "error", text: err.message || "Failed to send email broadcast." });
+    } catch (err) {
+      setStatusMessage({ type: "error", text: err instanceof Error ? err.message : "Failed to send email broadcast." });
     } finally {
       setSending(false);
     }
@@ -343,9 +362,11 @@ export default function MarketingStudioPage() {
                       >
                         <div className="relative w-10 h-12 bg-y2k-ice border border-y2k-gunmetal/10 overflow-hidden shrink-0">
                           <Image
-                            src={prod.image || prod.images?.[0]?.url || prod.images?.[0] || "/placeholder.jpg"}
-                            alt={prod.name}
-                            fill
+                             src={prod.image || (typeof prod.images?.[0] === "string" ? prod.images[0] : prod.images?.[0]?.url) || "/placeholder.jpg"}
+                             alt={prod.name}
+                             fill
+                             loader={passthroughLoader}
+                             unoptimized
                             className="object-cover"
                           />
                         </div>
@@ -431,7 +452,7 @@ export default function MarketingStudioPage() {
           </div>
 
           {/* Iframe Preview Container */}
-          <div className="bg-y2k-ice border border-y2k-gunmetal/15 p-4 flex justify-center min-h-[640px] shadow-xs">
+          <div className="bg-y2k-ice border border-y2k-gunmetal/15 p-4 flex justify-center min-h-[640px]">
             <div
               className={`transition-all duration-300 bg-white border border-y2k-gunmetal/15 shadow-xl overflow-hidden ${
                 previewDevice === "mobile" ? "w-[375px] max-h-[680px]" : "w-full max-h-[680px]"

@@ -1,18 +1,28 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireStudioAuth } from '@/lib/requireStudioAuth';
 
 // POST — add a new image to a product
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const { id } = await params;
-    const { url } = await request.json();
+    const body = await request.json().catch(() => null);
+    const url = body && typeof body === 'object' && typeof (body as { url?: unknown }).url === 'string'
+      ? (body as { url: string }).url.trim()
+      : '';
 
-    if (!url) {
+    if (!url || !/^https?:\/\/[^\s]+$/i.test(url) && !url.startsWith('/uploads/')) {
       return NextResponse.json({ error: 'Image URL is required' }, { status: 400 });
     }
+
+    const product = await prisma.product.findUnique({ where: { id }, select: { id: true } });
+    if (!product) return NextResponse.json({ error: 'Product not found' }, { status: 404 });
 
     const image = await prisma.image.create({
       data: { url, productId: id },
@@ -30,6 +40,9 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const { id: productId } = await params;
     const { imageId } = await request.json();

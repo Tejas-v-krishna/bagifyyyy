@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireStudioAuth } from '@/lib/requireStudioAuth';
 
 // Returns raw image records (id + url) for a product — used by studio edit page
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const { id } = await params;
     const images = await prisma.image.findMany({

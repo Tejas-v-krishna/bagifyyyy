@@ -15,8 +15,10 @@ const PUBLIC_STORE_PATHS = new Set([
 ]);
 
 function getRequestHost(request: NextRequest): string {
-  const forwardedHost = request.headers.get('x-forwarded-host');
-  const host = forwardedHost || request.headers.get('host') || '';
+  // Prefer the platform-controlled Host header. Forwarded headers can be
+  // supplied by an untrusted client when the deployment proxy does not
+  // overwrite them, which would make host isolation spoofable.
+  const host = request.headers.get('host') || request.headers.get('x-forwarded-host') || '';
   return host.toLowerCase().split(':')[0]; // strip port if present
 }
 

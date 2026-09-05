@@ -4,8 +4,13 @@ import {
   generateDropAnnouncementEmailHtml, 
   generateOrderConfirmationEmailHtml, 
   generateWelcomeEmailHtml, 
-  DropCampaignOptions 
+  type DropCampaignOptions,
+  type OrderConfirmation,
 } from './email-templates';
+
+function errorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
 
 // 1. Resend Setup
 const resendApiKey = process.env.RESEND_API_KEY;
@@ -35,10 +40,11 @@ if (smtpUser && smtpPass) {
   });
 }
 
-const FROM_EMAIL = process.env.EMAIL_FROM || (smtpUser ? `BAGIFYYYY <${smtpUser}>` : 'BAGIFYYYY <onboarding@resend.dev>');
+export const FROM_EMAIL = process.env.EMAIL_FROM || (smtpUser ? `BAGIFYYYY <${smtpUser}>` : 'BAGIFYYYY <onboarding@resend.dev>');
 
 interface SendEmailParams {
   to: string | string[];
+  bcc?: string | string[];
   subject: string;
   html: string;
 }
@@ -46,21 +52,22 @@ interface SendEmailParams {
 /**
  * Universal email sender with Resend & SMTP/Gmail fallbacks
  */
-export async function sendEmail({ to, subject, html }: SendEmailParams) {
+export async function sendEmail({ to, bcc, subject, html }: SendEmailParams) {
   // Option A: Send via Resend
   if (isRealResend && resendClient) {
     try {
       const data = await resendClient.emails.send({
         from: FROM_EMAIL,
         to,
+        ...(bcc ? { bcc } : {}),
         subject,
         html,
       });
       console.log('[RESEND SUCCESS]', data);
       return { success: true, provider: 'resend', data };
-    } catch (error: any) {
+    } catch (error) {
       console.error('Resend delivery error:', error);
-      return { success: false, error: error.message || 'Resend error' };
+      return { success: false, error: errorMessage(error, 'Resend error') };
     }
   }
 
@@ -70,14 +77,15 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
       const info = await smtpTransporter.sendMail({
         from: FROM_EMAIL,
         to: Array.isArray(to) ? to.join(', ') : to,
+        ...(bcc ? { bcc: Array.isArray(bcc) ? bcc.join(', ') : bcc } : {}),
         subject,
         html,
       });
       console.log('[SMTP SUCCESS] Message ID:', info.messageId);
       return { success: true, provider: 'smtp', messageId: info.messageId };
-    } catch (error: any) {
+    } catch (error) {
       console.error('SMTP delivery error:', error);
-      return { success: false, error: error.message || 'SMTP error' };
+      return { success: false, error: errorMessage(error, 'SMTP error') };
     }
   }
 
@@ -111,7 +119,7 @@ export async function sendDropCampaignBroadcast(
 /**
  * Send Transactional Order Confirmation Receipt
  */
-export async function sendOrderConfirmationEmail(order: any) {
+export async function sendOrderConfirmationEmail(order: OrderConfirmation) {
   if (!order.customerEmail) return;
 
   const html = generateOrderConfirmationEmailHtml(order);

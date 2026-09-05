@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ArrowLeft, Shield, FileText } from "lucide-react";
+import EditorialPageShell, { EditorialPanel } from "@/components/layout/EditorialPageShell";
 
 export const metadata = {
   title: "Terms of Service | BAGIFYYYY",
@@ -8,46 +7,27 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
-          <Link href="/" className="hover:text-black">HOME</Link>
-          <span>/</span>
-          <span className="text-y2k-gunmetal">TERMS OF SERVICE</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-6 pb-4 border-b border-y2k-gunmetal/15">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-            LEGAL &amp; CONDITIONS OF SALE
-          </span>
-          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            TERMS OF SERVICE
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-1">
-            Last updated: August 2026 · Governing drop purchases, payment processing, and vault orders.
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-5 sm:p-8 shadow-xs divide-y divide-y2k-gunmetal/10 space-y-6 text-xs text-y2k-gunmetal/80 leading-relaxed">
+    <EditorialPageShell
+      eyebrow="Legal / Conditions of sale"
+      title="Terms of service"
+      description="Last updated: August 2026. These terms cover purchases, payments, and orders."
+    >
+        <EditorialPanel className="divide-y divide-y2k-gunmetal/10 space-y-6 text-xs leading-relaxed text-y2k-gunmetal/80">
           <div>
             <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
               1. OVERVIEW &amp; APPLICABILITY
             </h2>
             <p>
-              This website is operated by <strong>BAGIFYYYY ARCHIVE Ltd.</strong> By accessing our platform and acquiring garments from our drops, you agree to be bound by these Terms of Service.
+              This website is operated by <strong>BAGIFYYYY ARCHIVE Ltd.</strong> By using the site or buying from us, you agree to these Terms of Service.
             </p>
           </div>
 
           <div className="pt-6">
             <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
-              2. DROP CULTURE &amp; ORDER ALLOCATION
+              2. ORDERS &amp; AVAILABILITY
             </h2>
             <p>
-              Due to the limited 1-of-1 archive nature of our pieces, items in your bag are not reserved until checkout payment is confirmed. We reserve the right to limit order quantities to prevent automated bot abuse.
+              Items in your bag are not reserved until payment is confirmed. We may limit quantities to keep one-off and small-run pieces available to individual customers.
             </p>
           </div>
 
@@ -62,10 +42,10 @@ export default function TermsPage() {
 
           <div className="pt-6">
             <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
-              4. ARCHIVE POLICY (FINAL SALE)
+              4. FINAL SALE POLICY
             </h2>
             <p>
-              Because every piece is an authenticated 1-of-1 vintage or archive artifact, all sales are strictly final. Please inspect sizing measurements and photography before purchase.
+              One-off vintage and small-run pieces are final sale. Check the measurements, condition notes, and photos before ordering.
             </p>
           </div>
 
@@ -77,9 +57,25 @@ export default function TermsPage() {
               All branding, typography, photography, and digital visual assets are the exclusive property of BAGIFYYYY ARCHIVE Ltd.
             </p>
           </div>
-        </div>
 
-      </div>
-    </div>
+          <div className="pt-6">
+            <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
+              6. ORDERS, CANCELLATIONS &amp; SERVICE
+            </h2>
+            <p>
+              An order is accepted only after payment confirmation or COD approval. Items are limited and may become unavailable before payment is completed. For order questions, contact support@bagifyyyy.com with your order number. Any cancellation, refund, or exception is handled according to the applicable policy shown at checkout and on the relevant policy page.
+            </p>
+          </div>
+
+          <div className="pt-6">
+            <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
+              7. LIABILITY &amp; GOVERNING TERMS
+            </h2>
+            <p>
+              We work to keep product information, availability, pricing, and delivery estimates accurate, but minor errors or service interruptions may occur. These terms are subject to applicable Indian law. Any mandatory consumer rights remain unaffected by these terms.
+            </p>
+          </div>
+        </EditorialPanel>
+    </EditorialPageShell>
   );
 }

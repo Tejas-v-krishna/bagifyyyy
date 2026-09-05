@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   Plus,
@@ -16,7 +17,6 @@ import {
   ShieldCheck,
   Truck,
   Sparkles,
-  Save,
   Star,
   ToggleLeft,
   ToggleRight
@@ -79,9 +79,9 @@ export default function StudioNewProduct() {
       const uploadedUrls: string[] = uploadData.urls || [uploadData.url];
       setImages((prev) => [...prev, ...uploadedUrls]);
       setActiveImageIndex(images.length);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to upload image from device.");
+      alert(err instanceof Error ? err.message : "Failed to upload image from device.");
     } finally {
       setUploadingFiles(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -321,9 +321,12 @@ export default function StudioNewProduct() {
             <div className="w-full aspect-[3/4] sm:aspect-[4/5] relative bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden group">
               {activeImgUrl ? (
                 <>
-                  <img
+                  <Image
                     src={activeImgUrl}
                     alt={form.name || "Product preview"}
+                    fill
+                    loader={({ src }) => src}
+                    unoptimized
                     className="w-full h-full object-cover select-none"
                   />
 
@@ -392,9 +395,12 @@ export default function StudioNewProduct() {
                             : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
                         }`}
                       >
-                        <img
+                        <Image
                           src={url}
                           alt={`Thumbnail ${idx + 1}`}
+                          fill
+                          loader={({ src }) => src}
+                          unoptimized
                           className="w-full h-full object-cover"
                         />
 

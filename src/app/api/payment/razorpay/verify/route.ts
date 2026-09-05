@@ -1,264 +1,168 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { sendOrderConfirmationEmail } from '@/lib/email';
-import crypto from 'crypto';
 import Razorpay from 'razorpay';
+import { prisma } from '@/lib/prisma';
+import { completeRazorpayOrder, PaymentFinalizationError } from '@/lib/completeRazorpayOrder';
+import { recoverCapturedPayment } from '@/lib/paymentRecovery';
+import { sendOrderConfirmationIfNeeded } from '@/lib/orderEmail';
+import { getRazorpayKeyId, validateRazorpayConfig, verifyRazorpaySignature } from '@/lib/razorpay';
+
+function statusFromStatus(status: string | undefined, fallback: number): number {
+  if (status === 'AWAITING_PAYMENT' || status === 'PENDING') return 409;
+  if (status === 'PAID') return 200;
+  return fallback;
+}
 
 export async function POST(request: Request) {
+  const configError = validateRazorpayConfig();
+  if (configError) {
+    return NextResponse.json({ error: configError }, { status: 503 });
+  }
+
+  let payload: {
+    razorpay_order_id?: string;
+    razorpay_payment_id?: string;
+    razorpay_signature?: string;
+    orderId?: string;
+  };
+
   try {
-    const body = await request.json();
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = body;
+    payload = (await request.json()) as typeof payload;
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
+  }
 
-    if (
-      typeof orderId !== 'string' ||
-      typeof razorpay_order_id !== 'string' ||
-      typeof razorpay_payment_id !== 'string' ||
-      typeof razorpay_signature !== 'string'
-    ) {
-      return NextResponse.json(
-        { error: 'Missing required payment verification fields (orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature)' },
-        { status: 400 }
-      );
-    }
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = payload;
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderId) {
+    return NextResponse.json(
+      { error: 'razorpay_order_id, razorpay_payment_id, razorpay_signature and orderId are required' },
+      { status: 400 }
+    );
+  }
 
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
-      include: { items: true },
-    });
+  if (!verifyRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)) {
+    return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
+  }
 
-    if (!order) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    }
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
 
-    // 1. Bind the receipt to THIS order.
-    //
-    // The signature below only proves "some payment happened on some Razorpay
-    // order" — it says nothing about *which* of our orders it belongs to.
-    // Without this check a genuine receipt from a cheap order could be replayed
-    // against an arbitrarily expensive one, because orderId is an independent
-    // client-supplied field.
-    if (!order.razorpayOrderId || order.razorpayOrderId !== razorpay_order_id) {
-      return NextResponse.json(
-        { error: 'Payment does not belong to this order' },
-        { status: 400 }
-      );
-    }
+  if (!order) {
+    return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+  }
+  if (order.razorpayOrderId !== razorpay_order_id) {
+    return NextResponse.json({ error: 'Payment does not belong to this order' }, { status: 400 });
+  }
 
-    // 2. Idempotency — a verified receipt must only ever be banked once.
-    // Replaying it previously re-awarded loyalty points and re-decremented
-    // stock on every call.
-    if (order.paymentStatus === 'PAID') {
-      return NextResponse.json({
-        success: true,
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        message: 'Payment already verified',
-      });
-    }
-
-    if (order.paymentStatus !== 'PENDING') {
-      return NextResponse.json(
-        { error: 'This order is not awaiting payment' },
-        { status: 409 }
-      );
-    }
-
-    // 3. Signature Verification: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (!keySecret) {
-      return NextResponse.json(
-        { error: 'Razorpay secret key not configured on server' },
-        { status: 500 }
-      );
-    }
-
-    const generatedSignature = crypto
-      .createHmac('sha256', keySecret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest('hex');
-
-    let isSignatureValid = false;
-    try {
-      const genBuf = Buffer.from(generatedSignature, 'utf-8');
-      const sigBuf = Buffer.from(razorpay_signature, 'utf-8');
-      if (genBuf.length === sigBuf.length) {
-        isSignatureValid = crypto.timingSafeEqual(genBuf, sigBuf);
-      }
-    } catch {
-      isSignatureValid = false;
-    }
-
-    if (!isSignatureValid) {
-      // Only reachable now that the receipt is already proven to belong to this
-      // order, so this can no longer be used to mark someone else's order FAILED.
-      // The order status moves off AWAITING_PAYMENT too, so a rejected receipt
-      // does not leave the row sitting in the studio as still-open.
-      await prisma.order.update({
-        where: { id: orderId },
-        data: { paymentStatus: 'FAILED', orderStatus: 'CANCELLED' },
-      });
-      return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
-    }
-
-    // 4. Confirm with Razorpay that the money was actually captured, for the
-    // amount we expect. The signature proves authenticity, not settlement.
-    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-    const expectedPaise = Math.round(order.totalAmount * 100);
-
-    if (keyId) {
-      try {
-        const rzp = new Razorpay({ key_id: keyId, key_secret: keySecret });
-        const payment = await rzp.payments.fetch(razorpay_payment_id);
-
-        if (payment.order_id !== razorpay_order_id) {
-          return NextResponse.json(
-            { error: 'Payment does not belong to this order' },
-            { status: 400 }
-          );
-        }
-
-        if (payment.status !== 'captured') {
-          return NextResponse.json(
-            { error: `Payment is not captured (status: ${payment.status})` },
-            { status: 400 }
-          );
-        }
-
-        if (Number(payment.amount) !== expectedPaise) {
-          console.error(
-            `Payment amount mismatch on order ${order.orderNumber}: captured ${payment.amount} paise, expected ${expectedPaise}`
-          );
-          return NextResponse.json(
-            { error: 'Paid amount does not match the order total' },
-            { status: 400 }
-          );
-        }
-      } catch (fetchErr) {
-        console.error('Razorpay payment fetch failed:', fetchErr);
-        return NextResponse.json(
-          { error: 'Could not confirm payment with the payment provider' },
-          { status: 502 }
-        );
-      }
-    }
-
-    // 5. Mark Order as PAID — conditionally, so two concurrent verifications
-    // cannot both proceed to bank points and stock. This is also the moment the
-    // order stops being a started-but-unpaid checkout and joins the fulfilment
-    // queue as PROCESSING.
-    const claimed = await prisma.order.updateMany({
-      where: { id: orderId, paymentStatus: 'PENDING' },
-      data: {
-        paymentStatus: 'PAID',
-        paymentId: razorpay_payment_id,
-        signature: razorpay_signature,
-        orderStatus: 'PROCESSING',
-      },
-    });
-
-    if (claimed.count === 0) {
-      // Another request won the race and already banked this payment.
-      return NextResponse.json({
-        success: true,
-        orderId: order.id,
-        orderNumber: order.orderNumber,
-        message: 'Payment already verified',
-      });
-    }
-
-    // 6. Clean up Stock Reservation Hold & Decrement Variant Stock atomically
-    try {
-      await prisma.$transaction(async (tx) => {
-        await tx.stockReservation.deleteMany({
-          where: { orderId: order.id },
-        });
-
-        for (const item of order.items) {
-          const variant = await tx.variant.findFirst({
-            where: {
-              productId: item.productId,
-              size: item.size,
-              ...(item.color ? { color: item.color } : {}),
-            },
-          });
-
-          if (variant) {
-            const newStock = Math.max(0, variant.stock - item.quantity);
-            await tx.variant.update({
-              where: { id: variant.id },
-              data: { stock: newStock },
-            });
-
-            // Check if total stock for this product is now 0 -> mark isSoldOut
-            const remainingVariants = await tx.variant.findMany({
-              where: { productId: item.productId },
-            });
-            const totalRemaining = remainingVariants.reduce((sum, v) => sum + (v.id === variant.id ? newStock : v.stock), 0);
-            if (totalRemaining === 0) {
-              await tx.product.update({
-                where: { id: item.productId },
-                data: { isSoldOut: true },
-              });
-            }
-          }
-        }
-      });
-    } catch (stockError) {
-      console.warn('Inventory decrement warning:', stockError);
-    }
-
-    // 7. Award Loyalty Chrome Points (1 pt per ₹10 spent)
-    try {
-      const earnedPoints = Math.floor(order.totalAmount / 10);
-      if (earnedPoints > 0 && order.customerEmail) {
-        let loyalty = await prisma.loyaltyAccount.findUnique({
-          where: { email: order.customerEmail },
-        });
-
-        if (!loyalty) {
-          loyalty = await prisma.loyaltyAccount.create({
-            data: { email: order.customerEmail, points: earnedPoints },
-          });
-        } else {
-          loyalty = await prisma.loyaltyAccount.update({
-            where: { id: loyalty.id },
-            data: { points: loyalty.points + earnedPoints },
-          });
-        }
-
-        await prisma.pointTransaction.create({
-          data: {
-            loyaltyAccountId: loyalty.id,
-            points: earnedPoints,
-            reason: `Order #${order.orderNumber} Completed`,
-          },
-        });
-      }
-    } catch (loyaltyError) {
-      console.warn('Loyalty points warning:', loyaltyError);
-    }
-
-    // 8. Send Transactional Order Confirmation Email
-    try {
-      const fullOrder = await prisma.order.findUnique({
-        where: { id: orderId },
-        include: { items: true, shippingAddress: true },
-      });
-      if (fullOrder) {
-        await sendOrderConfirmationEmail(fullOrder);
-      }
-    } catch (emailErr) {
-      console.warn('Order confirmation email warning:', emailErr);
-    }
-
+  if (order.paymentStatus === 'PAID') {
+    await sendOrderConfirmationIfNeeded(order.id).catch(() => {});
     return NextResponse.json({
       success: true,
       orderId: order.id,
       orderNumber: order.orderNumber,
-      message: 'Payment verified and order confirmed',
+      message: 'Payment already verified',
+    });
+  }
+  if (order.paymentStatus !== 'PENDING') {
+    return NextResponse.json(
+      { error: `This order cannot accept payments (status: ${order.paymentStatus})` },
+      { status: statusFromStatus(order.paymentStatus, 409) }
+    );
+  }
+
+  const keyId = getRazorpayKeyId();
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keyId || !keySecret) {
+    return NextResponse.json({ error: 'Razorpay is not configured.' }, { status: 503 });
+  }
+
+  let payment: { order_id?: string; status?: string; amount?: number | string };
+  try {
+    const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
+    payment = await razorpay.payments.fetch(razorpay_payment_id);
+  } catch (providerError) {
+    console.error('Razorpay payment fetch failed:', providerError);
+    return NextResponse.json(
+      { error: 'Could not confirm payment with the payment provider' },
+      { status: 502 }
+    );
+  }
+
+  if (payment.order_id !== razorpay_order_id) {
+    return NextResponse.json({ error: 'Payment does not belong to this order' }, { status: 400 });
+  }
+  if (payment.status !== 'captured') {
+    return NextResponse.json(
+      { error: `Payment is not captured (status: ${payment.status || 'unknown'})` },
+      { status: 409 }
+    );
+  }
+
+  const expectedPaise = Math.round(order.totalAmount * 100);
+  if (Number(payment.amount) !== expectedPaise) {
+    const recovery = await recoverCapturedPayment({
+      orderId: order.id,
+      paymentId: razorpay_payment_id,
+      signature: razorpay_signature,
+      amountInPaise: Number(payment.amount) || expectedPaise,
+      receipt: order.orderNumber,
+    }).catch(() => 'REFUND_PENDING' as const);
+    console.error(
+      `Payment amount mismatch on order ${order.orderNumber}: captured ${payment.amount}, expected ${expectedPaise}. Recovery: ${recovery}`
+    );
+    return NextResponse.json(
+      {
+        error:
+          recovery === 'REFUNDED'
+            ? 'Paid amount did not match the order total. The payment has been refunded.'
+            : 'Paid amount did not match the order total. Support will review this payment.',
+      },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const result = await completeRazorpayOrder({
+      orderId: order.id,
+      razorpayOrderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      signature: razorpay_signature,
+    });
+
+    await sendOrderConfirmationIfNeeded(result.orderId).catch((emailError) => {
+      console.warn('Order confirmation email warning:', emailError);
+    });
+
+    return NextResponse.json({
+      success: true,
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+      message: result.alreadyPaid ? 'Payment already verified' : 'Payment verified and order confirmed',
     });
   } catch (error) {
-    console.error('Error verifying payment:', error);
-    return NextResponse.json({ error: 'Payment verification failed' }, { status: 500 });
+    if (error instanceof PaymentFinalizationError) {
+      if (error.shortfall) {
+        const recovery = await recoverCapturedPayment({
+          orderId: order.id,
+          paymentId: razorpay_payment_id,
+          signature: razorpay_signature,
+          amountInPaise: expectedPaise,
+          receipt: order.orderNumber,
+        }).catch(() => 'REFUND_PENDING' as const);
+        return NextResponse.json(
+          {
+            error:
+              recovery === 'REFUNDED'
+                ? 'Insufficient stock to finalize this order. The captured payment has been refunded.'
+                : 'Insufficient stock to finalize this order. The payment is held for support review.',
+            shortfall: error.shortfall,
+          },
+          { status: 409 }
+        );
+      }
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    console.error('Razorpay verify error:', error);
+    return NextResponse.json({ error: 'Failed to verify payment' }, { status: 500 });
   }
 }

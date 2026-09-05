@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight, ArrowLeft } from "lucide-react";
+import { Search, Package, Truck, CheckCircle2, Clock, Copy } from "lucide-react";
 import { orderStatusLabel } from "@/lib/orderStatus";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getRecaptchaToken } from "@/lib/recaptcha";
+import EditorialPageShell from "@/components/layout/EditorialPageShell";
 
 interface TrackedOrderItem {
   id: string;
@@ -36,21 +36,14 @@ interface TrackedOrder {
 }
 
 export default function TrackOrderPage() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
-  const [contact, setContact] = useState(user?.email || "");
+  const [contact, setContact] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<TrackedOrder | null>(null);
   const [error, setError] = useState("");
   const [copiedTracking, setCopiedTracking] = useState(false);
-
-  // Auto-fill contact from logged-in user whenever user/auth updates
-  useEffect(() => {
-    if (user?.email) {
-      setContact((prev) => prev || user.email || "");
-    }
-  }, [user?.email, isAuthenticated]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,28 +99,18 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="bg-y2k-ice min-h-screen text-y2k-gunmetal py-8 sm:py-12 font-sans">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <EditorialPageShell
+      eyebrow="Orders / Tracking"
+      title="Track your order"
+      description="Enter your order number or tracking ID, plus the email address or phone number used at checkout."
+    >
+      <div className="w-full">
+        <div className="rounded-2xl bg-white border border-black/10 p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.02)] mb-8 text-center">
+          <div className="w-12 h-12 rounded-full bg-[#f2f2f2] flex items-center justify-center mx-auto mb-4">
+            <Truck className="w-6 h-6 text-black" />
+          </div>
 
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
-          <Link href="/" className="hover:text-black">HOME</Link>
-          <span>/</span>
-          <span className="text-y2k-gunmetal">TRACK SHIPMENT</span>
-        </div>
-
-        {/* Search Box */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 shadow-xs mb-6 text-center">
-          <Truck className="w-8 h-8 text-y2k-gunmetal/40 mx-auto mb-2" />
-          <h1 className="font-display font-medium text-2xl uppercase tracking-tight mb-1 text-y2k-gunmetal">
-            TRACK ARCHIVE DROP
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mb-5 max-w-sm mx-auto">
-            Enter your order number (e.g. 1001) or airway bill tracking ID, plus the
-            email address or phone number you used at checkout.
-          </p>
-
-          <form onSubmit={handleSearch} className="max-w-md mx-auto space-y-2">
+          <form onSubmit={handleSearch} className="max-w-md mx-auto space-y-3">
             <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             <div>
               <label htmlFor="track-order" className="sr-only">
@@ -137,10 +120,10 @@ export default function TrackOrderPage() {
                 required
                 id="track-order"
                 type="text"
-                placeholder="e.g. 1001 or BGF-TRACK-XXXX"
+                placeholder="BGF-123456 or tracking ID"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal uppercase font-mono"
+                className="w-full bg-[#f8f8f8] border border-black/10 rounded-lg px-3.5 py-2.5 text-xs text-black outline-none focus:bg-white focus:border-black transition-colors uppercase font-mono"
               />
             </div>
             <div>
@@ -153,25 +136,25 @@ export default function TrackOrderPage() {
                 type="text"
                 autoComplete="email"
                 placeholder="Email or phone used on the order"
-                value={contact}
+                value={contact || user?.email || ""}
                 onChange={(e) => setContact(e.target.value)}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs outline-none focus:border-y2k-gunmetal font-mono"
+                className="w-full bg-[#f8f8f8] border border-black/10 rounded-lg px-3.5 py-2.5 text-xs text-black outline-none focus:bg-white focus:border-black transition-colors font-mono"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="btn-bagify w-full px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="btn-bagify btn-bagify-dark w-full py-3 text-xs font-bold uppercase tracking-[0.18em] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               <Search className="w-3.5 h-3.5" />
-              <span>{loading ? "Locating…" : "Track"}</span>
+              <span>{loading ? "Looking up…" : "Track order"}</span>
             </button>
           </form>
 
           {error && (
             <p
               role="alert"
-              className="text-xs font-bold text-red-600 bg-red-50 p-2.5 border border-red-200 mt-4 max-w-md mx-auto"
+              className="text-xs font-bold text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200 mt-4 max-w-md mx-auto"
             >
               {error}
             </p>
@@ -180,14 +163,14 @@ export default function TrackOrderPage() {
 
         {/* Order Details Panel */}
         {order && (
-          <div className="bg-white border border-y2k-gunmetal/15 p-5 sm:p-6 shadow-xs space-y-5">
+          <div className="rounded-2xl bg-white border border-black/10 p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.02)] space-y-6">
             {/* Status Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-y2k-gunmetal/10 pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 pb-5">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-display text-base font-bold">#{order.orderNumber}</span>
-                  <span className="text-xs text-y2k-gunmetal/60">·</span>
-                  <span className="text-xs text-y2k-gunmetal/70">
+                  <span className="font-sans text-lg font-bold text-black">#{order.orderNumber}</span>
+                  <span className="text-xs text-black/35">·</span>
+                  <span className="text-xs text-black/60 font-mono">
                     {new Date(order.createdAt).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
@@ -195,18 +178,18 @@ export default function TrackOrderPage() {
                     })}
                   </span>
                 </div>
-                <p className="text-[10px] text-y2k-gunmetal/60 uppercase mt-0.5">
+                <p className="text-[10px] font-mono text-black/50 uppercase mt-1">
                   Ship to: {order.shippingAddress?.fullName} ({order.shippingAddress?.city}, {order.shippingAddress?.state})
                 </p>
               </div>
 
-              <span className="text-[9px] font-bold uppercase px-3 py-1 bg-y2k-gunmetal text-white">
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.16em] px-3.5 py-1.5 bg-black text-white rounded-[var(--radius-cta)]">
                 {orderStatusLabel(order.orderStatus)}
               </span>
             </div>
 
             {/* Step Progress Bar */}
-            <div className="py-2">
+            <div className="py-3">
               <div className="grid grid-cols-4 gap-2 relative">
                 {steps.map((step, idx) => {
                   const currentIdx = getStepIndex(order.orderStatus);
@@ -215,17 +198,17 @@ export default function TrackOrderPage() {
                   return (
                     <div key={step.label} className="flex flex-col items-center text-center">
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center mb-1.5 text-xs transition-colors ${
+                        className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 text-xs transition-colors ${
                           isDone
-                            ? "bg-y2k-gunmetal text-white"
-                            : "bg-y2k-ice text-y2k-gunmetal/40 border border-y2k-gunmetal/15"
+                            ? "bg-black text-white"
+                            : "bg-[#f2f2f2] text-black/40 border border-black/10"
                         }`}
                       >
                         <Icon className="w-3.5 h-3.5" />
                       </div>
                       <span
-                        className={`text-[9px] font-bold uppercase tracking-wider ${
-                          isDone ? "text-y2k-gunmetal" : "text-y2k-gunmetal/40"
+                        className={`text-[9.5px] font-bold uppercase tracking-[0.14em] ${
+                          isDone ? "text-black" : "text-black/40"
                         }`}
                       >
                         {step.label}
@@ -238,44 +221,44 @@ export default function TrackOrderPage() {
 
             {/* Tracking ID Bar */}
             {order.trackingId && (
-              <div className="p-3 bg-y2k-ice/50 border border-y2k-gunmetal/15 flex items-center justify-between text-xs">
+              <div className="p-4 bg-[#f8f8f8] rounded-xl border border-black/10 flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-[9px] font-bold uppercase text-y2k-gunmetal/60 block">Airway Bill Tracking ID</span>
-                  <span className="font-mono font-bold text-y2k-gunmetal">{order.trackingId}</span>
+                  <span className="text-[9.5px] font-mono uppercase tracking-[0.14em] text-black/50 block">Tracking ID</span>
+                  <span className="font-mono font-bold text-black text-sm">{order.trackingId}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => order.trackingId && handleCopy(order.trackingId)}
-                  className="btn-bagify text-[8px] font-bold uppercase px-2.5 py-1.5 flex items-center gap-1 cursor-pointer"
+                  className="btn-bagify text-[8.5px] font-bold uppercase px-3 py-1.5 flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Copy className="w-2.5 h-2.5" />
+                  <Copy className="w-3 h-3" />
                   <span>{copiedTracking ? "Copied" : "Copy"}</span>
                 </button>
               </div>
             )}
 
             {/* Items */}
-            <div className="divide-y divide-y2k-gunmetal/5">
+            <div className="divide-y divide-black/5">
               {order.items?.map((it: TrackedOrderItem) => (
-                <div key={it.id} className="py-2.5 flex items-center justify-between text-xs gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative w-10 h-12 bg-gray-100 shrink-0 overflow-hidden border border-y2k-gunmetal/10">
+                <div key={it.id} className="py-3.5 flex items-center justify-between text-xs gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="relative w-12 h-14 bg-[#f2f2f2] rounded-lg shrink-0 overflow-hidden border border-black/10">
                       <Image
                         src={it.image || "/placeholder.jpg"}
                         alt={it.name}
                         fill
-                        className="object-cover"
-                        sizes="40px"
+                        className="object-contain p-1 mix-blend-multiply"
+                        sizes="48px"
                       />
                     </div>
                     <div className="min-w-0">
-                      <p className="font-bold uppercase truncate text-y2k-gunmetal text-xs">{it.name}</p>
-                      <p className="text-[9px] text-y2k-gunmetal/60 uppercase mt-0.5">
+                      <p className="font-bold uppercase truncate text-black text-xs">{it.name}</p>
+                      <p className="text-[10px] font-mono text-black/55 uppercase mt-0.5">
                         {it.quantity}x · {it.size} · {it.color}
                       </p>
                     </div>
                   </div>
-                  <span className="font-bold text-xs text-y2k-gunmetal shrink-0">
+                  <span className="font-bold text-xs text-black shrink-0">
                     ₹{(it.price * it.quantity).toLocaleString("en-IN")}
                   </span>
                 </div>
@@ -283,16 +266,15 @@ export default function TrackOrderPage() {
             </div>
 
             {/* Total */}
-            <div className="pt-3 border-t border-y2k-gunmetal/10 flex items-center justify-between text-xs">
-              <span className="font-bold text-y2k-gunmetal/70">Payment: {order.paymentMethod} ({order.paymentStatus})</span>
-              <span className="font-display text-sm font-bold text-y2k-gunmetal">
+            <div className="pt-4 border-t border-black/10 flex items-center justify-between text-xs">
+              <span className="font-semibold text-black/60">Payment: {order.paymentMethod} ({order.paymentStatus})</span>
+              <span className="font-sans text-base font-bold text-black">
                 Total: ₹{order.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </span>
             </div>
           </div>
         )}
-
       </div>
-    </div>
+    </EditorialPageShell>
   );
 }

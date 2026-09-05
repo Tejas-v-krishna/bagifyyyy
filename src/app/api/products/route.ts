@@ -25,10 +25,10 @@ export async function GET(request: Request) {
     // Only apply text search if not already filtering by ids
     if (q && q.length >= 2 && !idsParam) {
       whereClause.OR = [
-        { name: { contains: q, mode: 'insensitive' } as any },
-        { brand: { contains: q, mode: 'insensitive' } as any },
-        { category: { contains: q, mode: 'insensitive' } as any },
-        { description: { contains: q, mode: 'insensitive' } as any },
+        { name: { contains: q } },
+        { brand: { contains: q } },
+        { category: { contains: q } },
+        { description: { contains: q } },
       ];
     }
 
@@ -80,6 +80,7 @@ export async function GET(request: Request) {
     const formattedProducts = products.map((product) => {
       const colors = Array.from(new Set(product.variants.map((v) => v.color)));
       const sizes = Array.from(new Set(product.variants.map((v) => v.size)));
+      const hasStock = product.variants.some((variant) => variant.stock > 0);
 
       return {
         id: product.id,
@@ -89,7 +90,7 @@ export async function GET(request: Request) {
         description: product.description,
         category: product.category,
         isNew: product.isNew,
-        isSoldOut: product.isSoldOut,
+        isSoldOut: product.isSoldOut || product.variants.length === 0 || !hasStock,
         isBestSeller: product.isBestSeller,
         image: product.images[0]?.url || '/placeholder.jpg',
         images: product.images.map((img) => img.url),

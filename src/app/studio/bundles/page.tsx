@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Layers,
   Plus,
@@ -45,6 +46,8 @@ interface CatalogProduct {
   isSoldOut: boolean;
   images: { id: string; url: string }[];
 }
+
+const passthroughLoader = ({ src }: { src: string }) => src;
 
 export default function StudioBundlesPage() {
   const [bundles, setBundles] = useState<Bundle[]>([]);
@@ -93,7 +96,10 @@ export default function StudioBundlesPage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    async function loadData() {
+      await fetchData();
+    }
+    loadData();
   }, [fetchData]);
 
   // Toggle selection
@@ -203,8 +209,8 @@ export default function StudioBundlesPage() {
 
       setIsModalOpen(false);
       fetchData();
-    } catch (err: any) {
-      setErrorMsg(err.message || "Something went wrong.");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }
@@ -353,10 +359,12 @@ export default function StudioBundlesPage() {
                         className="bg-y2k-ice/30 border border-y2k-gunmetal/10 p-2 flex flex-col justify-between relative group/item"
                       >
                         <div className="aspect-[3/4] bg-y2k-ice relative overflow-hidden mb-2">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                          <Image
                             src={item.image}
                             alt={item.name}
+                            fill
+                            loader={passthroughLoader}
+                            unoptimized
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -635,8 +643,14 @@ export default function StudioBundlesPage() {
                       >
                         <div>
                           <div className="aspect-[3/4] bg-y2k-ice relative overflow-hidden mb-2">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={imgUrl} alt={prod.name} className="w-full h-full object-cover" />
+                            <Image
+                              src={imgUrl}
+                              alt={prod.name}
+                              fill
+                              loader={passthroughLoader}
+                              unoptimized
+                              className="w-full h-full object-cover"
+                            />
                             {isSelected && (
                               <div className="absolute top-1.5 right-1.5 bg-y2k-gunmetal text-white p-1 rounded-full shadow-md">
                                 <Check className="w-3 h-3 stroke-[3]" />

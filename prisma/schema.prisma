@@ -102,6 +102,7 @@ model LoyaltyAccount {
 
 model PointTransaction {
   id               String         @id @default(uuid())
+  orderId          String?        @unique
   loyaltyAccountId String
   loyaltyAccount   LoyaltyAccount @relation(fields: [loyaltyAccountId], references: [id], onDelete: Cascade)
   points           Int
@@ -128,6 +129,7 @@ model Address {
 model Order {
   id                String      @id @default(uuid())
   orderNumber       String      @unique
+  checkoutId        String?     @unique
   userId            String?
   user              User?       @relation(fields: [userId], references: [id])
   customerEmail     String
@@ -135,13 +137,14 @@ model Order {
   totalAmount       Float
   shippingAmount    Float       @default(0)
   discountAmount    Float       @default(0)
-  paymentStatus     String      @default("PENDING") // PENDING, PAID, FAILED
+  paymentStatus     String      @default("PENDING") // PENDING, PAID, FAILED, REFUND_PENDING, REFUNDED
   orderStatus       String      @default("PROCESSING") // AWAITING_PAYMENT, PROCESSING, SHIPPED, DELIVERED, CANCELLED
   paymentMethod     String      // RAZORPAY, COD
   razorpayOrderId   String?     @unique
   paymentId         String?
   signature         String?
   trackingId        String?
+  confirmationSentAt DateTime?
   shippingAddressId String
   shippingAddress   Address     @relation(fields: [shippingAddressId], references: [id])
   items             OrderItem[]

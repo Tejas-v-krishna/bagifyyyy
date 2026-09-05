@@ -6,6 +6,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
+import EditorialPageShell, { EditorialPanel } from "@/components/layout/EditorialPageShell";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
@@ -66,13 +67,13 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="bg-y2k-ice min-h-[calc(100vh-64px)] flex items-center justify-center px-4 py-20 text-y2k-gunmetal">
-      <div className="w-full max-w-sm">
+    <EditorialPageShell eyebrow="Account / Security" title="Set new password" description="Choose a new password with at least eight characters.">
+      <div className="mx-auto w-full max-w-sm">
         <Link href="/login" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 hover:text-black mb-8 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Login
         </Link>
 
-        <div className="bg-white border border-y2k-gunmetal/15 shadow-xl p-8">
+        <EditorialPanel>
           {success ? (
             <div className="flex flex-col items-center text-center gap-4 py-4">
               <CheckCircle2 className="w-10 h-10 text-green-600" />
@@ -127,9 +128,9 @@ function ResetPasswordContent() {
               </form>
             </>
           )}
-        </div>
+        </EditorialPanel>
       </div>
-    </div>
+    </EditorialPageShell>
   );
 }
 

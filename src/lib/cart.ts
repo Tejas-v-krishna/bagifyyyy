@@ -13,7 +13,7 @@ export const FREE_SHIPPING_THRESHOLD = 2000;
 
 export type PricedItem = {
   productId: string;
-  variantId?: string;
+  variantId: string | null;
   name: string;
   price: number;
   size: string;
@@ -86,6 +86,7 @@ export async function priceCart(options: {
 
   const pricedItems: PricedItem[] = [];
   let subtotal = 0;
+  const requestedByVariant = new Map<string, number>();
 
   for (const raw of items) {
     if (!raw || typeof raw !== 'object') {
@@ -112,13 +113,30 @@ export async function priceCart(options: {
       throw new CartError(`${product.name} is sold out.`, 409);
     }
 
-    const size = typeof item.size === 'string' && item.size ? item.size : (product.variants[0]?.size || 'OS');
-    const color = typeof item.color === 'string' && item.color ? item.color : (product.variants[0]?.color || 'Default');
+    const requestedSize = typeof item.size === 'string' ? item.size.trim() : '';
+    const requestedColor = typeof item.color === 'string' ? item.color.trim() : '';
+    // A multi-variant product must be addressed by the exact size/colour pair.
+    // Falling back to the first matching dimension can silently charge one
+    // variant while decrementing another. Keep the old no-option behaviour for
+    // legacy products that have exactly one variant row.
+    const variant =
+      product.variants.length === 1 && !requestedSize && !requestedColor
+        ? product.variants[0]
+        : product.variants.find(
+            (candidate) => candidate.size === requestedSize && candidate.color === requestedColor
+          );
 
-    // Resolve variant row: match exact size & color, or fallback to first available variant
-    const variant = product.variants.find((v) => v.size === size && v.color === color) || product.variants[0];
+    if (product.variants.length > 0 && !variant) {
+      throw new CartError(`${product.name} is not available in that size and color.`, 409);
+    }
+
+    const size = variant?.size || requestedSize || 'OS';
+    const color = variant?.color || requestedColor || 'Default';
     if (variant) {
-      if (variant.stock < quantity) {
+      const requestedTotal = (requestedByVariant.get(variant.id) ?? 0) + quantity;
+      requestedByVariant.set(variant.id, requestedTotal);
+
+      if (variant.stock < requestedTotal) {
         throw new CartError(
           variant.stock === 0
             ? `${product.name} (${variant.size} / ${variant.color}) is out of stock.`
@@ -140,9 +158,9 @@ export async function priceCart(options: {
       const reservedQty = otherReservations.reduce((sum, r) => sum + r.quantity, 0);
       const availableStock = Math.max(0, variant.stock - reservedQty);
 
-      if (availableStock < quantity) {
+      if (availableStock < requestedTotal) {
         throw new CartError(
-          `⏳ ${product.name} (${size} / ${color}) is currently held in another collector's checkout. If they do not complete payment within a few minutes, it will unlock automatically.`,
+          `${product.name} (${size} / ${color}) is currently held in another checkout. Try again in a few minutes.`,
           409
         );
       }
@@ -151,7 +169,7 @@ export async function priceCart(options: {
     subtotal += product.price * quantity;
     pricedItems.push({
       productId: product.id,
-      variantId: variant?.id,
+      variantId: variant?.id ?? null,
       name: product.name,
       price: product.price,
       size,

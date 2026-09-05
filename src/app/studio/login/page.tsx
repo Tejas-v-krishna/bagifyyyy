@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
 
 function LoginForm() {
@@ -42,7 +43,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-y2k-ice text-y2k-gunmetal flex flex-col items-center justify-center px-4 font-sans relative">
+    <div className="editorial-page w-full min-h-screen bg-y2k-ice text-y2k-gunmetal flex flex-col items-center justify-center px-4 font-sans relative">
       {/* Return to Public Store link */}
       <Link
         href={process.env.NEXT_PUBLIC_APP_URL || "/"}
@@ -52,10 +53,10 @@ function LoginForm() {
         <span>Return to Public Store</span>
       </Link>
 
-      <div className="w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-8 shadow-xl">
+      <div className="editorial-panel w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-8">
         {/* Brand Header */}
         <div className="text-center mb-8 pb-6 border-b border-y2k-gunmetal/15">
-          <img
+          <Image
             src="/bagifyyyy-wordmark-animated.gif"
             alt="Bagifyyyy Logo"
             width={845}
@@ -94,7 +95,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading || !password}
-            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 shadow-sm"
+             className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40"
           >
             <span>{loading ? "Authenticating…" : "Unlock Studio Operations"}</span>
             <ArrowRight className="w-3.5 h-3.5" />

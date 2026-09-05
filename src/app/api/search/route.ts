@@ -18,10 +18,10 @@ export async function GET(request: Request) {
       where: {
         isSoldOut: false,
         OR: [
-          { name: { contains: q, mode: 'insensitive' } as any },
-          { brand: { contains: q, mode: 'insensitive' } as any },
-          { category: { contains: q, mode: 'insensitive' } as any },
-          { description: { contains: q, mode: 'insensitive' } as any },
+          { name: { contains: q } },
+          { brand: { contains: q } },
+          { category: { contains: q } },
+          { description: { contains: q } },
         ],
       },
       include: { images: { take: 1 } },
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     }));
 
     return NextResponse.json({ results });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Search error:', error);
     return NextResponse.json({ results: [] });
   }

@@ -3,11 +3,15 @@
 :root {
   --mono-paper: #f5f5f2;
   --mono-white: #ffffff;
+  --mono-panel: #ebebeb;
+  --mono-panel-hover: #e4e4e4;
   --mono-ink: #0b0b0b;
   --mono-soft-ink: #5e5e5e;
   --mono-line: rgba(11, 11, 11, .18);
   --mono-soft-line: rgba(11, 11, 11, .1);
-  --mono-panel: #efefec;
+  --mono-radius-cta: .35rem;
+  --mono-radius-image: .75rem;
+  --mono-radius-image-lg: 1rem;
 }
 
 body.monochrome-site,
@@ -15,6 +19,87 @@ body.monochrome-site main,
 body.monochrome-site main > div {
   color: var(--mono-ink) !important;
   background-color: var(--mono-paper) !important;
+  font-family: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+
+/* Landing-page contract: paper canvas, ink typography, quiet rules, and no decorative shadows. */
+body.monochrome-site .bg-\[\#FAFAFA\],
+body.monochrome-site .bg-\[\#F8F5E9\],
+body.monochrome-site .bg-\[\#EFEFEF\],
+body.monochrome-site .bg-\[\#E8E8E8\],
+body.monochrome-site .bg-\[\#E9ECEF\] { background-color: var(--mono-panel) !important; }
+
+body.monochrome-site .bg-\[\#232D3B\],
+body.monochrome-site .bg-\[\#0C2340\],
+body.monochrome-site .bg-\[\#050505\] { background-color: var(--mono-ink) !important; }
+
+body.monochrome-site .text-\[\#232D3B\],
+body.monochrome-site .text-\[\#0C2340\],
+body.monochrome-site .text-\[\#2B84EA\],
+body.monochrome-site .text-\[\#1A6FD6\] { color: var(--mono-ink) !important; }
+body.monochrome-site .text-\[\#F8F5E9\] { color: var(--mono-white) !important; }
+
+body.monochrome-site .bg-\[\#232D3B\] .text-\[\#F8F5E9\],
+body.monochrome-site .bg-\[\#0C2340\] .text-\[\#F8F5E9\],
+body.monochrome-site .bg-\[\#232D3B\] [class*="text-\[\#F8F5E9\]"],
+body.monochrome-site .bg-\[\#0C2340\] [class*="text-\[\#F8F5E9\]"] { color: var(--mono-white) !important; }
+
+body.monochrome-site .bg-\[\#2B84EA\],
+body.monochrome-site .bg-\[\#1A6FD6\],
+body.monochrome-site .bg-emerald-600,
+body.monochrome-site .bg-green-700 { background-color: var(--mono-ink) !important; }
+
+body.monochrome-site [class*="rounded-md"] { border-radius: var(--mono-radius-cta) !important; }
+body.monochrome-site [class*="rounded-xl"] { border-radius: var(--mono-radius-image) !important; }
+body.monochrome-site [class*="rounded-2xl"] { border-radius: var(--mono-radius-image-lg) !important; }
+body.monochrome-site [class*="shadow-"] { box-shadow: none !important; }
+body.monochrome-site [role="dialog"][class*="shadow-"],
+body.monochrome-site [role="listbox"][class*="shadow-"] {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12) !important;
+}
+body.monochrome-site .editorial-glass-nav.is-top {
+  box-shadow: none !important;
+  background-color: var(--mono-paper) !important;
+  border-bottom-color: transparent !important;
+}
+body.monochrome-site .editorial-glass-nav.is-scrolled.is-light {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+}
+body.monochrome-site .editorial-glass-nav.is-scrolled.is-dark {
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.monochrome-site button:not([class*="rounded-full"]),
+body.monochrome-site input[type="button"]:not([class*="rounded-full"]),
+body.monochrome-site input[type="submit"]:not([class*="rounded-full"]),
+body.monochrome-site input[type="reset"]:not([class*="rounded-full"]),
+body.monochrome-site [role="button"]:not([class*="rounded-full"]),
+body.monochrome-site a.btn-bagify:not([class*="rounded-full"]),
+body.monochrome-site .btn-bagify:not([class*="rounded-full"]),
+body.monochrome-site .btn-bagify-dark:not([class*="rounded-full"]),
+body.monochrome-site .editorial-cta:not([class*="rounded-full"]),
+body.monochrome-site .editorial-cta-dark:not([class*="rounded-full"]) {
+  font-family: inherit;
+  border-radius: var(--mono-radius-cta, .35rem) !important;
+}
+
+body.monochrome-site input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
+body.monochrome-site textarea,
+body.monochrome-site select {
+  border-radius: 0 !important;
+  font-family: inherit;
+}
+
+body.monochrome-site .editorial-panel {
+  border-color: var(--mono-line) !important;
+  background: var(--mono-white) !important;
+  box-shadow: none !important;
+}
+
+body.monochrome-site .editorial-page-header h1,
+body.monochrome-site .display-heading,
+body.monochrome-site .font-display {
+  font-family: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
 }
 
 body.monochrome-site .text-y2k-gunmetal,
@@ -59,12 +144,14 @@ body.monochrome-site [class*="border-y2k-pale"],
 body.monochrome-site [class*="border-y2k-soft"] { border-color: var(--mono-line) !important; }
 
 body.monochrome-site .btn-bagify {
-  color: #fff !important;
-  background: var(--mono-ink) !important;
-  border-color: var(--mono-ink) !important;
+  color: #000 !important;
+  background: #fff !important;
+  border: 1px solid rgba(11, 11, 11, .16) !important;
   box-shadow: none !important;
 }
-body.monochrome-site .btn-bagify:hover { color: #000 !important; background: #fff !important; }
+body.monochrome-site .btn-bagify:hover { color: #fff !important; background: #000 !important; border-color: #000 !important; }
+body.monochrome-site .btn-bagify-dark { color: #fff !important; background: #000 !important; border: 1px solid #000 !important; }
+body.monochrome-site .btn-bagify-dark:hover { color: #fff !important; background: #222 !important; border-color: #222 !important; }
 
 body.monochrome-site input,
 body.monochrome-site textarea,
@@ -73,6 +160,26 @@ body.monochrome-site select {
   background: #fff !important;
   border-color: var(--mono-line) !important;
   box-shadow: none !important;
+}
+
+body.monochrome-site .archive-footer input {
+  color: #fff !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body.monochrome-site .search-dialog-panel {
+  background-color: var(--mono-paper) !important;
+  color: var(--mono-ink) !important;
+}
+
+body.monochrome-site input.search-dialog-input,
+body.monochrome-site [role="dialog"] input.search-dialog-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 body.monochrome-site .chrome-gradient,
@@ -125,3 +232,39 @@ body.monochrome-site [class*="shadow-"] { box-shadow: none !important; }
 
 /* Keep image content colorful; only UI surfaces are monochrome. */
 body.monochrome-site img { filter: none; }
+
+/* Payment and legacy overlay surfaces use the same landing-page contract. */
+body.monochrome-site .mono-payment [class*="bg-blue"],
+body.monochrome-site .mono-payment [class*="bg-emerald"],
+body.monochrome-site .mono-payment [class*="bg-purple"],
+body.monochrome-site .mono-payment [class*="bg-slate"],
+body.monochrome-site .mono-payment [class*="bg-gray"] { background-color: var(--mono-panel) !important; }
+
+body.monochrome-site .mono-payment [class*="text-blue"],
+body.monochrome-site .mono-payment [class*="text-emerald"],
+body.monochrome-site .mono-payment [class*="text-purple"],
+body.monochrome-site .mono-payment [class*="text-amber"],
+body.monochrome-site .mono-payment [class*="text-gray"] { color: var(--mono-ink) !important; }
+
+body.monochrome-site .mono-payment [class*="border-gray"],
+body.monochrome-site .mono-payment [class*="border-blue"],
+body.monochrome-site .mono-payment [class*="border-emerald"] { border-color: var(--mono-line) !important; }
+
+body.monochrome-site .mono-payment [class*="bg-emerald-100"],
+body.monochrome-site .mono-payment [class*="bg-blue-50"],
+body.monochrome-site .mono-payment [class*="bg-gray-50"] { background-color: var(--mono-panel) !important; }
+
+body.monochrome-site .mono-payment [class*="text-emerald-800"],
+body.monochrome-site .mono-payment [class*="text-gray-800"],
+body.monochrome-site .mono-payment [class*="text-gray-700"] { color: var(--mono-ink) !important; }
+
+body.monochrome-site .mono-payment [class*="bg-emerald-600"] { background-color: var(--mono-ink) !important; }
+body.monochrome-site .mono-payment [class*="bg-emerald-600"]:hover { background-color: var(--mono-white) !important; color: var(--mono-ink) !important; }
+
+/* Unified brand headline font priority: ITCAvantGardeStd */
+body.monochrome-site .font-microgramma,
+body.monochrome-site .font-microgramma *,
+body.monochrome-site [class*="font-microgramma"],
+body.monochrome-site [class*="font-microgramma"] * {
+  font-family: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+}

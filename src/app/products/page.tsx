@@ -7,10 +7,10 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = collectionMetadata({
   title: "All Drops",
   description:
-    "The full BAGIFYYYY catalogue — Y2K streetwear, archive fashion, and limited drops. Oversized tees, cyber cargos, heavy denim. No restocks, no replicas.",
+     "The full BAGIFYYYY catalogue: Y2K streetwear, vintage finds, oversized tees, cargos, and heavy denim.",
   path: "/products",
 });
 
 export default function ProductsPage() {
-  return <CategoryPageClient title="ALL DROPS" />;
+  return <CategoryPageClient prefix="Collection" title="All Drops" />;
 }

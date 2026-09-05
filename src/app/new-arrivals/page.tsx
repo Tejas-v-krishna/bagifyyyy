@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = collectionMetadata({
   title: "New Arrivals",
   description:
-    "The latest BAGIFYYYY drops — newest Y2K streetwear and archive pieces first. Limited quantity, no restocks, no replicas.",
+     "The latest BAGIFYYYY pieces: Y2K streetwear, vintage finds, and small-run releases.",
   path: "/new-arrivals",
 });
 
@@ -17,5 +17,5 @@ export const metadata: Metadata = collectionMetadata({
  * a real listing filtered to `isNew`, which is what the sitemap already claims.
  */
 export default function NewArrivalsPage() {
-  return <CategoryPageClient filter="new" title="NEW ARRIVALS" />;
+  return <CategoryPageClient filter="new" prefix="Collection" title="New In" />;
 }

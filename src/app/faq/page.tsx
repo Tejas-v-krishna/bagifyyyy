@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, Plus, Minus, HelpCircle } from "lucide-react";
+import { Search, Plus, Minus } from "lucide-react";
+import EditorialPageShell from "@/components/layout/EditorialPageShell";
 
 const FAQ_DATA = [
   {
@@ -26,12 +27,12 @@ const FAQ_DATA = [
     category: "Archive & Sizing",
     items: [
       {
-        q: "Are the pieces authentic vintage?",
-        a: "Yes. Every item in the BAGIFYYYY vault is authenticated, condition-graded, steam-sterilized, and inspected for heavyweight fabric integrity.",
+        q: "Are the vintage pieces authentic?",
+        a: "Yes. Vintage pieces are checked for age, labels, construction, hardware, and condition before they are listed.",
       },
       {
         q: "How does sizing work?",
-        a: "Our silhouettes feature signature boxy, slightly drop-shouldered fits. Use the Size Guide linked on each product page to review exact chest, shoulder, and length measurements.",
+        a: "Most tops have a relaxed, slightly dropped shoulder. Use the Size Guide on the product page and compare the measurements with a piece you already own.",
       },
     ],
   },
@@ -40,7 +41,7 @@ const FAQ_DATA = [
     items: [
       {
         q: "What is your return policy?",
-        a: "Because our garments are 1-of-1 vintage and deadstock archive pieces, all sales are strictly final. Please check sizing and garment photos carefully.",
+        a: "All sales are final because many pieces are one-off vintage or small-run items. Check the measurements and photos before ordering.",
       },
       {
         q: "What payment methods are supported?",
@@ -70,50 +71,33 @@ export default function FAQPage() {
   })).filter((c) => c.items.length > 0);
 
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
-          <Link href="/" className="hover:text-black">HOME</Link>
-          <span>/</span>
-          <span className="text-y2k-gunmetal">FAQ</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-6 pb-4 border-b border-y2k-gunmetal/15">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-            KNOWLEDGE BASE
-          </span>
-          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            FREQUENTLY ASKED QUESTIONS
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-1">
-            Answers regarding drops, fulfillment, sizing matrix, and archive sourcing.
-          </p>
-        </div>
-
+    <EditorialPageShell
+      eyebrow="Help / FAQ"
+      title="Questions, answered"
+      description="Shipping, sizing, payments, and returns in one place."
+    >
+      <div className="w-full">
         {/* Search */}
-        <div className="relative mb-6">
+        <div className="relative mb-8">
           <input
             type="text"
             placeholder="Search questions (e.g. tracking, sizing, returns)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white border border-y2k-gunmetal/10 px-3.5 py-2.5 pl-9 text-xs outline-none focus:border-y2k-gunmetal shadow-xs"
+            className="w-full bg-white border border-black/10 rounded-xl px-4 py-3.5 pl-11 text-xs text-black outline-none focus:border-black shadow-[0_2px_12px_rgba(0,0,0,0.02)] transition-colors"
           />
-          <Search className="w-3.5 h-3.5 text-y2k-gunmetal/50 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-black/40 absolute left-4 top-1/2 -translate-y-1/2" />
         </div>
 
         {/* FAQ Accordion Groups */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {filteredCategories.map((group) => (
-            <div key={group.category} className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-y2k-slate block">
+            <div key={group.category} className="space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/50 block">
                 {group.category}
               </span>
 
-              <div className="divide-y divide-y2k-gunmetal/10 border border-y2k-gunmetal/15 bg-white shadow-xs">
+              <div className="divide-y divide-black/5 rounded-2xl border border-black/10 bg-white shadow-[0_2px_14px_rgba(0,0,0,0.02)] overflow-hidden">
                 {group.items.map((item) => {
                   const isOpen = !!openMap[item.key];
                   return (
@@ -121,18 +105,20 @@ export default function FAQPage() {
                       <button
                         type="button"
                         onClick={() => toggle(item.key)}
-                        className="w-full text-left p-3.5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-y2k-gunmetal hover:bg-y2k-ice/30 transition-colors cursor-pointer"
+                        className="w-full text-left p-4 sm:p-5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-black hover:bg-black/[0.02] transition-colors cursor-pointer"
                       >
-                        <span>{item.q}</span>
-                        {isOpen ? (
-                          <Minus className="w-3.5 h-3.5 shrink-0 text-y2k-gunmetal" />
-                        ) : (
-                          <Plus className="w-3.5 h-3.5 shrink-0 text-y2k-gunmetal/60" />
-                        )}
+                        <span className="pr-4">{item.q}</span>
+                        <div className="w-6 h-6 rounded-full bg-[#f2f2f2] flex items-center justify-center shrink-0">
+                          {isOpen ? (
+                            <Minus className="w-3.5 h-3.5 text-black" />
+                          ) : (
+                            <Plus className="w-3.5 h-3.5 text-black/60" />
+                          )}
+                        </div>
                       </button>
 
                       {isOpen && (
-                        <div className="px-3.5 pb-3.5 text-xs text-y2k-gunmetal/75 leading-relaxed bg-y2k-ice/15">
+                        <div className="px-4 sm:px-5 pb-5 pt-1 text-xs text-black/70 leading-relaxed bg-[#fbfbfb] border-t border-black/5">
                           <p>{item.a}</p>
                         </div>
                       )}
@@ -144,24 +130,30 @@ export default function FAQPage() {
           ))}
 
           {filteredCategories.length === 0 && (
-            <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs text-y2k-gunmetal/60">
-              No answers matching "{search}". Contact our concierge team directly.
+            <div className="bg-white rounded-2xl border border-black/10 p-12 text-center text-xs text-black/55">
+              No answers for &quot;{search}&quot;. Send us a message if you still need help.
             </div>
           )}
         </div>
 
         {/* Support Help Card */}
-        <div className="mt-8 p-4 bg-white border border-y2k-gunmetal/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <span className="text-y2k-gunmetal/80">Still have questions regarding an archive piece?</span>
+        <div className="mt-10 p-5 sm:p-6 bg-white rounded-2xl border border-black/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs shadow-[0_2px_14px_rgba(0,0,0,0.02)]">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-black">
+              Still unsure about a piece?
+            </p>
+            <p className="text-xs text-black/55 mt-0.5">
+              We are available Monday through Saturday.
+            </p>
+          </div>
           <Link
             href="/contact"
-            className="btn-bagify px-4 py-2 text-[10px] font-bold uppercase tracking-wider shrink-0"
+            className="btn-bagify btn-bagify-dark px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] shrink-0"
           >
-            Contact Support →
+            Contact us
           </Link>
         </div>
-
       </div>
-    </div>
+    </EditorialPageShell>
   );
 }

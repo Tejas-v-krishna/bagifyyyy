@@ -11,16 +11,9 @@ export async function GET() {
       return NextResponse.json({ orders: [] });
     }
 
-    if (!user) {
-      return NextResponse.json({ orders: [] });
-    }
-
     const orders = await prisma.order.findMany({
       where: {
-        OR: [
-          { userId: user.id },
-          { customerEmail: user.email },
-        ],
+        userId: user.id,
         // A checkout that never got past the payment sheet is not something the
         // shopper committed to, so it is not listed as one of their orders.
         NOT: { orderStatus: AWAITING_PAYMENT },
@@ -33,7 +26,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ orders });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching user orders:', error);
     return NextResponse.json({ orders: [] });
   }

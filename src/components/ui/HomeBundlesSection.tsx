@@ -12,6 +12,7 @@ export type HomeBundleItem = {
   price: number;
   image: string;
   isSoldOut: boolean;
+  defaultVariant: { size: string; color: string } | null;
 };
 
 export type HomeBundle = {
@@ -59,8 +60,8 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
           price: p.price,
           image: p.image,
           quantity: 1,
-          size: "One Size",
-          color: "Default",
+          size: p.defaultVariant?.size || "OS",
+          color: p.defaultVariant?.color || "Default",
           bundleId: bundle.id,
           bundleName: bundle.name,
           bundleDiscount: bundle.discount,
@@ -75,7 +76,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
   return (
     <section
-      className="w-full bg-y2k-ice py-32 md:py-44 border-t border-y2k-gunmetal/[0.07]"
+      className="w-full bg-white py-24 md:py-32 border-t border-black/10"
       aria-labelledby="bundles-heading"
     >
       <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-8 lg:px-16">
@@ -83,26 +84,25 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
         {/* Section Header */}
         <div className="flex items-end justify-between mb-16 md:mb-20">
           <div>
-            <p className="section-label text-y2k-gunmetal/45 mb-3">CURATED SETS</p>
+            <p className="section-label text-y2k-gunmetal/45 mb-3">Fits that work together</p>
             <h2
               id="bundles-heading"
-              className="font-display text-4xl sm:text-5xl md:text-[56px] uppercase tracking-[-0.05em] leading-none text-y2k-gunmetal animate-fade-up"
+              className="font-microgramma uppercase text-2xl sm:text-3xl md:text-4xl tracking-tight leading-none text-y2k-gunmetal animate-fade-up"
             >
-              Complete Looks
+              The full fit
             </h2>
           </div>
           <Link
             href="/bundles"
-            className="text-[9.5px] uppercase tracking-[0.22em] text-y2k-gunmetal/45 hover:text-y2k-gunmetal transition-colors duration-300 pb-0.5 border-b border-y2k-gunmetal/15 hover:border-y2k-gunmetal/50 focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4"
+            className="text-[11px] font-medium tracking-[0.1em] text-y2k-gunmetal/45 hover:text-y2k-gunmetal transition-colors duration-300 pb-0.5 border-b border-y2k-gunmetal/15 hover:border-y2k-gunmetal/50 focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4"
           >
             View All
           </Link>
         </div>
 
-        {/* Bundle Cards — Full-bleed photo cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {/* Bundle cards keep every garment visible and all copy below imagery. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-14">
           {bundles.slice(0, 3).map((bundle, i) => {
-            const coverImage = bundle.products[0]?.image || "/placeholder.jpg";
             const isAdded = addedBundleId === bundle.id;
             const isAdding = addingBundleId === bundle.id;
             // The set price only applies to a complete set, so one sold-out
@@ -113,130 +113,102 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
             return (
               <article
                 key={bundle.id}
-                className={`relative overflow-hidden group animate-fade-up delay-${(i + 1) * 100}`}
+                className={`group animate-fade-up delay-${(i + 1) * 100}`}
                 aria-label={`${bundle.name} bundle — ${bundle.discount}% off`}
               >
-                {/* Dynamic Product Images Container */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden bg-y2k-gunmetal">
-                  {/* Image Grid Logic */}
-                  {(() => {
-                    const count = bundle.products.length;
-                    
-                    if (count === 1 || count === 0) {
-                      return (
-                        <div className="absolute inset-0">
-                          <Image src={coverImage} alt={bundle.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                        </div>
-                      );
-                    }
-                    if (count === 2) {
-                      return (
-                        <div className="absolute inset-0 flex flex-col gap-0.5 bg-black/20">
-                          <div className="relative w-full h-1/2 overflow-hidden">
-                            <Image src={bundle.products[0].image} alt={bundle.products[0].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                          </div>
-                          <div className="relative w-full h-1/2 overflow-hidden">
-                            <Image src={bundle.products[1].image} alt={bundle.products[1].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                          </div>
-                        </div>
-                      );
-                    }
-                    if (count === 3) {
-                      return (
-                        <div className="absolute inset-0 flex flex-col gap-0.5 bg-black/20">
-                          <div className="relative w-full h-1/3 overflow-hidden">
-                            <Image src={bundle.products[0].image} alt={bundle.products[0].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                          </div>
-                          <div className="relative w-full h-1/3 overflow-hidden">
-                            <Image src={bundle.products[1].image} alt={bundle.products[1].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                          </div>
-                          <div className="relative w-full h-1/3 overflow-hidden">
-                            <Image src={bundle.products[2].image} alt={bundle.products[2].name} fill sizes="33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                          </div>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 bg-black/20">
-                        {bundle.products.slice(0, 4).map((p) => (
-                          <div key={p.id} className="relative w-full h-full overflow-hidden">
-                            <Image src={p.image} alt={p.name} fill sizes="16vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })()}
+                <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#ededed] p-3 sm:rounded-2xl sm:p-4">
+                  <div
+                    className="grid h-full gap-2"
+                    style={{ gridTemplateColumns: `repeat(${Math.min(bundle.products.length || 1, 2)}, minmax(0, 1fr))` }}
+                  >
+                    {(bundle.products.length ? bundle.products : [{ id: "empty", name: bundle.name, image: "/placeholder.jpg", price: 0, isSoldOut: true }])
+                      .slice(0, 4)
+                      .map((product, productIndex) => {
+                        const imageClassName = `relative min-w-0 overflow-hidden rounded-lg bg-[#e4e7e9] ${bundle.products.length === 3 && productIndex === 2 ? "col-span-2" : ""}`;
+                        const image = (
+                          <Image
+                            src={product.image || "/placeholder.jpg"}
+                            alt={product.name}
+                            fill
+                            sizes="(max-width: 768px) 33vw, 16vw"
+                            className="object-contain object-center p-2 transition-transform duration-700 group-hover/product:scale-[1.035] sm:p-3"
+                          />
+                        );
 
-                  {/* Permanent subtle gradient at bottom for text legibility */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" aria-hidden="true" />
-
-                  {/* Discount badge — top right */}
-                  <div className="absolute top-4 right-4 glass-pill px-3 py-1.5" aria-label={`${bundle.discount}% discount`}>
-                    <span className="text-white text-[9px] uppercase tracking-[0.2em]">
-                      −{bundle.discount}%
-                    </span>
+                        return product.id === "empty" ? (
+                          <div key={product.id} className={imageClassName}>{image}</div>
+                        ) : (
+                          <Link
+                            key={product.id}
+                            href={`/product/${product.id}`}
+                            aria-label={`View ${product.name}`}
+                            className={`group/product ${imageClassName} focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2`}
+                          >
+                            {image}
+                            <span className="absolute inset-x-0 bottom-0 translate-y-full bg-black px-3 py-2 text-[8.5px] font-semibold tracking-[0.08em] text-white transition-transform duration-300 group-hover/product:translate-y-0 group-focus-visible/product:translate-y-0">
+                              View Piece
+                            </span>
+                          </Link>
+                        );
+                      })}
                   </div>
 
-                  {/* Bottom glass panel — name, price, CTA */}
-                  <div className="absolute bottom-0 left-0 right-0 glass-dark p-6 md:p-7 translate-y-0">
-                    {/* Bundle name */}
-                    <h3 className="font-display text-2xl md:text-3xl uppercase tracking-[-0.04em] leading-none text-white mb-1">
-                      {bundle.name}
-                    </h3>
+                  <span className="absolute right-5 top-5 bg-white/90 px-2.5 py-1 text-[8.5px] font-semibold tracking-[0.08em] text-black" aria-label={`${bundle.discount}% discount`}>
+                    −{bundle.discount}%
+                  </span>
+                </div>
 
-                    {/* Price row */}
-                    <div className="flex items-baseline gap-2.5 mt-3 mb-5">
-                      <span className="font-bold text-white text-lg tracking-tight">
-                        ₹{bundle.bundlePrice.toLocaleString("en-IN")}
-                      </span>
-                      <span className="font-bold text-white/35 text-xs line-through">
-                        ₹{bundle.originalTotal.toLocaleString("en-IN")}
-                      </span>
-                      <span className="font-bold text-white/55 text-[9.5px] uppercase tracking-[0.16em] ml-auto">
-                        Save ₹{bundle.savings.toLocaleString("en-IN")}
-                      </span>
+                <div className="pt-4">
+                  <div className="flex items-start justify-between gap-5">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-xs sm:text-sm font-microgramma font-bold uppercase leading-none tracking-tight text-black">
+                        {bundle.name}
+                      </h3>
+                      <p className="mt-2 text-[10px] tracking-[0.04em] text-black/45">
+                        {bundle.products.length} Piece Set
+                      </p>
                     </div>
 
-                    {/* CTA */}
-                    <button
-                      onClick={() => handleAddBundle(bundle)}
-                      disabled={isUnavailable || Boolean(addingBundleId)}
-                      aria-live="polite"
-                      aria-label={
-                        isUnavailable
-                          ? `${bundle.name} set is unavailable`
-                          : isAdding
-                            ? `Adding ${bundle.products.length} pieces from ${bundle.name} to bag`
-                          : isAdded
-                            ? `${bundle.products.length} pieces added to bag`
-                            : `Add ${bundle.name} set to bag for ₹${bundle.bundlePrice.toLocaleString("en-IN")}`
-                      }
-                      className={`w-full min-h-11 py-3.5 text-[9.5px] uppercase tracking-[0.22em] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 disabled:pointer-events-none cursor-pointer border flex items-center justify-center gap-2.5 ${
-                        isAdded
-                          ? "border-white bg-white text-y2k-gunmetal"
-                          : "border-white/25 text-white hover:bg-white hover:text-y2k-gunmetal disabled:opacity-35"
-                      }`}
-                    >
-                      {isUnavailable ? (
-                        "Set Unavailable"
-                      ) : isAdding ? (
-                        <>
-                          <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                          Securing look
-                        </>
-                      ) : isAdded ? (
-                        <>
-                          <Check className="h-3.5 w-3.5" strokeWidth={2.5} aria-hidden="true" />
-                          {bundle.products.length} pieces added
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag className="h-3.5 w-3.5" strokeWidth={1.7} aria-hidden="true" />
-                          Acquire look
-                        </>
-                      )}
-                    </button>
+                    <div className="shrink-0 text-right">
+                      <p className="text-xs font-medium leading-none text-black sm:text-sm">₹{Math.round(bundle.bundlePrice).toLocaleString("en-IN")}</p>
+                      <p className="mt-1 text-[9px] text-black/35 line-through">₹{Math.round(bundle.originalTotal).toLocaleString("en-IN")}</p>
+                    </div>
                   </div>
+
+                  <div className="mt-4 flex items-center justify-between border-t border-black/15 pt-3">
+                    <span className="text-[10px] font-medium tracking-[0.04em] text-black/50">
+                      Save ₹{Math.round(bundle.savings).toLocaleString("en-IN")}
+                    </span>
+                    <span className="text-[10px] tracking-[0.04em] text-black/35">−{bundle.discount}%</span>
+                  </div>
+
+                  <button
+                    onClick={() => handleAddBundle(bundle)}
+                    disabled={isUnavailable || Boolean(addingBundleId)}
+                    aria-live="polite"
+                    aria-label={
+                      isUnavailable
+                        ? `${bundle.name} set is unavailable`
+                        : isAdding
+                          ? `Adding ${bundle.products.length} pieces from ${bundle.name} to bag`
+                        : isAdded
+                          ? `${bundle.products.length} pieces added to bag`
+                          : `Add ${bundle.name} set to bag for ₹${bundle.bundlePrice.toLocaleString("en-IN")}`
+                    }
+                    className={`btn-bagify mt-4 min-h-12 w-full flex items-center justify-center gap-2 px-5 py-3 text-[10px] font-bold tracking-[0.12em] transition-all duration-200 cursor-pointer disabled:pointer-events-none disabled:opacity-30 ${
+                      isAdded ? "bg-emerald-600 !text-white !border-emerald-600" : "btn-bagify-dark"
+                    }`}
+                  >
+                    {isUnavailable ? (
+                      <span>Set unavailable</span>
+                    ) : isAdding ? (
+                      <><LoaderCircle className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" /><span>Adding set</span></>
+                    ) : isAdded ? (
+                      <><Check className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" /><span>{bundle.products.length} pieces added</span></>
+                    ) : (
+                      <><ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} aria-hidden="true" /><span>Add the set</span></>
+                    )}
+                  </button>
                 </div>
               </article>
             );

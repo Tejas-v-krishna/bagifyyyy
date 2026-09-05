@@ -21,8 +21,12 @@ for (const line of envContent.split('\n')) {
   }
 }
 
-const key_id = envVars['RAZORPAY_KEY_ID'] || 'rzp_test_TSATn0pke37PQs';
-const key_secret = envVars['RAZORPAY_KEY_SECRET'] || 'F76HGd94m7fFg0IGtRhRVA9O';
+const key_id = envVars['RAZORPAY_KEY_ID'];
+const key_secret = envVars['RAZORPAY_KEY_SECRET'];
+
+if (!key_id || !key_secret) {
+  throw new Error('Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env before running this script.');
+}
 
 console.log('Using Key ID:', key_id);
 console.log('Using Key Secret Length:', key_secret.length);

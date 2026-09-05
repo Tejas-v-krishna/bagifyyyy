@@ -19,7 +19,7 @@ export async function GET() {
       campaigns,
       recentSubscribers,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching marketing stats:', error);
     return NextResponse.json({ error: 'Failed to fetch campaigns' }, { status: 500 });
   }

@@ -156,7 +156,7 @@ export default function SmoothCursor() {
     >
       <div
         ref={iconRef}
-        className="relative h-[38px] w-9 -translate-x-[3px] -translate-y-[3px] origin-[3px_3px] drop-shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
+        className="relative h-8 w-[30px] -translate-x-[3px] -translate-y-[3px] origin-[3px_3px] drop-shadow-[0_3px_8px_rgba(0,0,0,0.3)]"
       >
         <Image
           src="/bagifyyyy-cursor.png"

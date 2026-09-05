@@ -16,6 +16,9 @@ import {
   AlertCircle, 
   RefreshCw
 } from "lucide-react";
+import Image from "next/image";
+
+type ProductImage = string | { id?: string; url?: string | null } | null;
 
 interface Product {
   id: string;
@@ -27,7 +30,25 @@ interface Product {
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
-  images: { id: string; url: string }[];
+  images: ProductImage[];
+}
+
+interface ProductSummary {
+  id: string;
+}
+
+function getProductImageUrl(image: ProductImage | undefined): string | null {
+  if (typeof image === "string") {
+    const url = image.trim();
+    return url || null;
+  }
+
+  if (image && typeof image.url === "string") {
+    const url = image.url.trim();
+    return url || null;
+  }
+
+  return null;
 }
 
 function ConfirmDeleteModal({
@@ -41,7 +62,7 @@ function ConfirmDeleteModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
-      <div className="bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full shadow-2xl text-y2k-gunmetal">
+      <div className="editorial-panel bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full text-y2k-gunmetal">
         <div className="flex items-center gap-3 mb-4">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
           <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">
@@ -49,7 +70,7 @@ function ConfirmDeleteModal({
           </h2>
         </div>
         <p className="text-y2k-gunmetal/70 text-xs mb-6 leading-relaxed">
-          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">"{productName}"</span>? This will permanently remove this item from your store catalog.
+          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">&quot;{productName}&quot;</span>? This will permanently remove this item from your store catalog.
         </p>
         <div className="flex gap-3">
           <button
@@ -82,13 +103,10 @@ export default function StudioProductsCatalogPage() {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch("/api/admin/products");
       const data = await res.json();
       if (Array.isArray(data)) {
-        const detailed = await Promise.all(
-          data.map((p: any) => fetch(`/api/products/${p.id}`).then((r) => r.json()))
-        );
-        setProducts(detailed.filter((p) => !p.error));
+        setProducts(data);
       }
     } catch (err) {
       console.error("Failed to load catalog products:", err);
@@ -98,7 +116,10 @@ export default function StudioProductsCatalogPage() {
   }, []);
 
   useEffect(() => {
-    fetchProducts();
+    async function loadProducts() {
+      await fetchProducts();
+    }
+    loadProducts();
   }, [fetchProducts]);
 
   const handleDelete = async (product: Product) => {
@@ -189,7 +210,7 @@ export default function StudioProductsCatalogPage() {
 
           <Link
             href="/studio/products/new"
-            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm cursor-pointer"
+            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Product</span>
@@ -290,20 +311,26 @@ export default function StudioProductsCatalogPage() {
           </div>
         ) : (
           <div className="divide-y divide-y2k-gunmetal/10">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="flex items-center gap-4 px-6 py-4 hover:bg-y2k-ice/30 transition-colors group"
-              >
+            {filteredProducts.map((product) => {
+              const imageUrl = getProductImageUrl(product.images?.[0]);
+
+              return (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-4 px-6 py-4 hover:bg-y2k-ice/30 transition-colors group"
+                >
                 {/* Thumbnail */}
                 <Link
                   href={`/studio/products/${product.id}`}
                   className="w-14 h-16 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
                 >
-                  {product.images?.[0] && (
-                    <img
-                      src={product.images[0].url || (product.images[0] as any)}
+                  {imageUrl && (
+                    <Image
+                      src={imageUrl}
                       alt={product.name}
+                      fill
+                      loader={({ src }) => src}
+                      unoptimized
                       className="w-full h-full object-cover"
                     />
                   )}
@@ -417,8 +444,9 @@ export default function StudioProductsCatalogPage() {
                     </span>
                   </button>
                 </div>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

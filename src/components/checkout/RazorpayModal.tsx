@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShieldCheck, QrCode, CreditCard, Landmark, Wallet, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { X, ShieldCheck, QrCode, CreditCard, Landmark, Wallet, CheckCircle2, Loader2 } from "lucide-react";
 
 interface RazorpayModalProps {
   isOpen: boolean;
@@ -67,25 +67,25 @@ export default function RazorpayModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs font-sans">
+      <div className="mono-payment fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs font-sans">
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 15 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 15 }}
-          className="relative w-full max-w-[680px] bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200"
+           className="relative w-full max-w-[680px] bg-white overflow-hidden border border-black/15"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header Bar */}
-          <div className="bg-[#0C2340] text-white p-5 flex items-center justify-between">
+          <div className="bg-black text-white p-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-white/10 flex items-center justify-center text-white font-bold text-xl border border-white/20">
+              <div className="w-10 h-10 rounded-[var(--radius-cta)] bg-white/10 flex items-center justify-center text-white font-bold text-xl border border-white/20">
                 ✦
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-base tracking-wide">BAGIFYYYY</h3>
-                  <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
-                    TEST MODE
+                  <span className="border border-white/25 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/70">
+                    SECURE CHECKOUT
                   </span>
                 </div>
                 <p className="text-xs text-gray-300">Order #{orderData.orderNumber}</p>
@@ -98,6 +98,7 @@ export default function RazorpayModal({
                 <p className="font-bold text-lg text-white">₹{orderData.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
               </div>
               <button
+                type="button"
                 onClick={onClose}
                 className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-300 hover:text-white transition-colors"
               >
@@ -107,9 +108,9 @@ export default function RazorpayModal({
           </div>
 
           {/* Subheader banner */}
-          <div className="bg-slate-100 px-5 py-2 flex items-center justify-between text-[11px] text-gray-600 border-b border-gray-200">
+          <div className="flex items-center justify-between border-b border-black/10 bg-[var(--surface-panel)] px-5 py-2 text-[11px] text-black/60">
             <div className="flex items-center gap-1.5 font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Razorpay Trusted Business Gateway
+              <ShieldCheck className="h-3.5 w-3.5 text-black" /> Razorpay Trusted Business Gateway
             </div>
             <div className="text-gray-500">
               {orderData.customer.email} • +91 {orderData.customer.phone}
@@ -120,16 +121,16 @@ export default function RazorpayModal({
           {stage === "form" && (
             <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] min-h-[360px]">
               {/* Payment Methods Sidebar */}
-              <div className="bg-gray-50 border-r border-gray-200 p-2 flex flex-col gap-1">
+              <div className="flex flex-col gap-1 border-r border-black/10 bg-[var(--surface-paper)] p-2">
                 <button
                   onClick={() => setSelectedMethod("upi")}
                   className={`flex items-center gap-3 w-full p-3 rounded-md text-left text-xs font-bold transition-all ${
                     selectedMethod === "upi"
-                      ? "bg-white text-[#0C2340] shadow-xs border border-gray-200"
+                      ? "border border-black/15 bg-white text-black"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
-                  <QrCode className="w-4 h-4 text-blue-600 shrink-0" />
+                  <QrCode className="w-4 h-4 text-black shrink-0" />
                   <span>UPI & QR</span>
                 </button>
 
@@ -137,11 +138,11 @@ export default function RazorpayModal({
                   onClick={() => setSelectedMethod("card")}
                   className={`flex items-center gap-3 w-full p-3 rounded-md text-left text-xs font-bold transition-all ${
                     selectedMethod === "card"
-                      ? "bg-white text-[#0C2340] shadow-xs border border-gray-200"
+                      ? "border border-black/15 bg-white text-black"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
-                  <CreditCard className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CreditCard className="w-4 h-4 text-black shrink-0" />
                   <span>Cards (Debit/Credit)</span>
                 </button>
 
@@ -149,11 +150,11 @@ export default function RazorpayModal({
                   onClick={() => setSelectedMethod("netbanking")}
                   className={`flex items-center gap-3 w-full p-3 rounded-md text-left text-xs font-bold transition-all ${
                     selectedMethod === "netbanking"
-                      ? "bg-white text-[#0C2340] shadow-xs border border-gray-200"
+                      ? "border border-black/15 bg-white text-black"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
-                  <Landmark className="w-4 h-4 text-amber-600 shrink-0" />
+                  <Landmark className="w-4 h-4 text-black shrink-0" />
                   <span>Netbanking</span>
                 </button>
 
@@ -161,11 +162,11 @@ export default function RazorpayModal({
                   onClick={() => setSelectedMethod("wallet")}
                   className={`flex items-center gap-3 w-full p-3 rounded-md text-left text-xs font-bold transition-all ${
                     selectedMethod === "wallet"
-                      ? "bg-white text-[#0C2340] shadow-xs border border-gray-200"
+                      ? "border border-black/15 bg-white text-black"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
-                  <Wallet className="w-4 h-4 text-purple-600 shrink-0" />
+                  <Wallet className="w-4 h-4 text-black shrink-0" />
                   <span>Wallets</span>
                 </button>
               </div>
@@ -184,7 +185,7 @@ export default function RazorpayModal({
                           key={app}
                           type="button"
                           onClick={() => setUpiId(`demo@${app.toLowerCase().replace(" ", "")}`)}
-                          className="border border-gray-200 hover:border-blue-500 hover:bg-blue-50/50 p-2.5 rounded-md text-center text-xs font-semibold text-gray-700 transition-all flex flex-col items-center gap-1"
+                          className="rounded-[var(--radius-cta)] border border-black/15 p-2.5 text-center text-xs font-semibold text-black transition-all hover:border-black hover:bg-[var(--surface-panel)] flex flex-col items-center gap-1"
                         >
                           <span className="text-sm">📱</span>
                           <span>{app}</span>
@@ -205,7 +206,7 @@ export default function RazorpayModal({
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
                         placeholder="e.g. 9876543210@upi or yourname@oksbi"
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-[#0C2340] focus:ring-1 focus:ring-[#0C2340] outline-none"
+                        className="field-line text-sm"
                       />
                     </div>
                   </div>
@@ -223,7 +224,7 @@ export default function RazorpayModal({
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
                         placeholder="4111 1111 1111 1111"
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-[#0C2340] focus:ring-1 focus:ring-[#0C2340] outline-none tracking-wider font-mono"
+                        className="field-line text-sm tracking-wider font-mono"
                       />
                     </div>
 
@@ -235,7 +236,7 @@ export default function RazorpayModal({
                           value={cardExpiry}
                           onChange={(e) => setCardExpiry(e.target.value)}
                           placeholder="12/28"
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-[#0C2340] outline-none font-mono"
+                          className="field-line text-sm font-mono"
                         />
                       </div>
                       <div>
@@ -246,7 +247,7 @@ export default function RazorpayModal({
                           value={cardCvv}
                           onChange={(e) => setCardCvv(e.target.value)}
                           placeholder="888"
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:border-[#0C2340] outline-none font-mono tracking-wider"
+                          className="field-line text-sm font-mono tracking-wider"
                         />
                       </div>
                     </div>
@@ -266,7 +267,7 @@ export default function RazorpayModal({
                           className={`p-2.5 text-xs font-semibold rounded-md border text-left transition-all ${
                             selectedBank === b
                               ? "border-blue-600 bg-blue-50/70 text-blue-900 font-bold"
-                              : "border-gray-200 hover:bg-gray-50 text-gray-700"
+                              : "border-black/15 hover:bg-[var(--surface-panel)] text-black/65"
                           }`}
                         >
                           🏦 {b}
@@ -285,7 +286,7 @@ export default function RazorpayModal({
                         <button
                           key={w}
                           type="button"
-                          className="p-3 text-xs font-semibold rounded-md border border-gray-200 hover:border-blue-500 hover:bg-blue-50 text-left text-gray-700"
+                          className="rounded-[var(--radius-cta)] border border-black/15 p-3 text-left text-xs font-semibold text-black hover:border-black hover:bg-[var(--surface-panel)]"
                         >
                           👛 {w}
                         </button>
@@ -300,7 +301,7 @@ export default function RazorpayModal({
                   <button
                     type="button"
                     onClick={handleStartPayment}
-                    className="bg-[#2B84EA] hover:bg-[#1A6FD6] text-white px-6 py-3 rounded-md font-bold text-sm shadow-md transition-all active:scale-[0.98] flex items-center gap-2"
+                    className="editorial-cta-dark gap-2 px-6 text-sm"
                   >
                     <span>Pay ₹{orderData.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                     <span>→</span>
@@ -313,16 +314,16 @@ export default function RazorpayModal({
           {/* Processing / Handshake stage */}
           {stage === "processing" && (
             <div className="p-12 flex flex-col items-center justify-center text-center min-h-[340px]">
-              <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-              <h4 className="font-bold text-base text-gray-800 mb-1">Contacting Bank Gateway…</h4>
-              <p className="text-xs text-gray-500">Please do not refresh or close this window.</p>
+                <Loader2 className="w-10 h-10 text-black animate-spin mb-4" />
+                <h4 className="font-bold text-base text-black mb-1">Contacting payment gateway…</h4>
+                <p className="text-xs text-black/55">Please do not refresh or close this window.</p>
             </div>
           )}
 
           {/* Simulated Bank OTP Stage */}
           {stage === "otp" && (
             <div className="p-8 flex flex-col items-center justify-center text-center min-h-[340px] max-w-md mx-auto">
-              <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-[var(--surface-panel)] text-black flex items-center justify-center mb-4">
                 <Landmark className="w-6 h-6" />
               </div>
               <h4 className="font-bold text-base text-gray-800 mb-1">Bank 2-Factor Authentication</h4>
@@ -337,7 +338,7 @@ export default function RazorpayModal({
                   maxLength={6}
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  className="w-full text-center text-2xl font-mono tracking-wider border border-gray-300 rounded-md py-3 focus:border-blue-600 outline-none"
+                  className="field-line w-full text-center text-2xl font-mono tracking-wider"
                 />
                 <span className="text-[10px] text-gray-400 mt-1 block">Default test OTP: <b>123456</b></span>
               </div>
@@ -346,14 +347,14 @@ export default function RazorpayModal({
                 <button
                   type="button"
                   onClick={() => setStage("form")}
-                  className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-md text-xs font-bold hover:bg-gray-50"
+                  className="flex-1 border border-black/15 text-black py-3 rounded-[var(--radius-cta)] text-xs font-bold hover:bg-[var(--surface-panel)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleAuthorizeOtp}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-md text-xs font-bold shadow-sm transition-all"
+                  className="editorial-cta-dark flex-1 py-3 text-xs"
                 >
                   Authorize Payment ✓
                 </button>
@@ -364,11 +365,11 @@ export default function RazorpayModal({
           {/* Success stage */}
           {stage === "success" && (
             <div className="p-12 flex flex-col items-center justify-center text-center min-h-[340px]">
-              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4 animate-bounce">
+                <div className="w-14 h-14 rounded-full bg-[var(--surface-panel)] text-black flex items-center justify-center mb-4">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h4 className="font-bold text-lg text-emerald-800 mb-1">Payment Authorized!</h4>
-              <p className="text-xs text-gray-500">Confirming your order with BAGIFYYYY…</p>
+                <h4 className="font-bold text-lg text-black mb-1">Payment authorized</h4>
+                <p className="text-xs text-black/55">Confirming your order with BAGIFYYYY…</p>
             </div>
           )}
 

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = collectionMetadata({
   title: "Accessories",
   description:
-    "BAGIFYYYY accessories — archive sourcing in progress. Belts, bags, and hardware to finish a Y2K fit. Drops announced as they land.",
+     "BAGIFYYYY accessories are on the way. Belts, bags, and hardware for finishing a Y2K fit.",
   path: "/accessories",
 });
 
@@ -15,9 +15,10 @@ export default function AccessoriesPage() {
   return (
     <CategoryPageClient
       category="accessories"
-      title="ACCESSORIES"
-      badge="COMING SOON • ARCHIVE SOURCING"
-      subtitle="Accessories archive drops are currently being sourced."
+      prefix="Collection"
+      title="Accessories"
+       badge="COMING SOON"
+       subtitle="Belts, bags, and hardware are being lined up now."
     />
   );
 }

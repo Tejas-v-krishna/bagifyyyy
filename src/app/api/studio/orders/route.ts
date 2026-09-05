@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isStudioAuthed } from '@/lib/requireStudioAuth';
+import { AWAITING_PAYMENT } from '@/lib/orderStatus';
 
 export async function GET(request: Request) {
   if (!(await isStudioAuthed())) {
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
     const skip = Math.max(0, parseInt(searchParams.get('skip') || '0', 10) || 0);
 
     const orders = await prisma.order.findMany({
+      where: { NOT: { orderStatus: AWAITING_PAYMENT } },
       take,
       skip,
       include: {

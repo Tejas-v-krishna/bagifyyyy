@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { sendOrderConfirmationEmail } from '@/lib/email';
 import { getAuthedUser } from '@/lib/userSession';
 import {
   priceCart,
@@ -10,6 +9,8 @@ import {
   COD_HANDLING_FEE,
   CartError,
 } from '@/lib/cart';
+import { getCheckoutId } from '@/lib/checkout';
+import { sendOrderConfirmationIfNeeded } from '@/lib/orderEmail';
 
 export async function POST(request: Request) {
   try {
@@ -20,16 +21,42 @@ export async function POST(request: Request) {
     // body only says which product/size/colour/quantity.
     const address = assertValidShippingAddress(shippingAddress);
     const contact = assertValidContact(customerEmail, customerPhone);
-    const cart = await priceCart({ items, shippingMethod, promoCode, includeCodFee: true });
+
+    // 1. Get logged in user if available (signed session)
+    const authedUser = await getAuthedUser();
+    const userId: string | null = authedUser?.id || null;
+    const checkoutId = getCheckoutId(request, body);
+    const sessionId = checkoutId;
+    const cart = await priceCart({
+      items,
+      shippingMethod,
+      promoCode,
+      includeCodFee: true,
+      sessionId,
+    });
     const totalAmount = cartTotal(cart);
 
     if (totalAmount <= 0) {
       return NextResponse.json({ error: 'Order total must be greater than zero.' }, { status: 400 });
     }
 
-    // 1. Get logged in user if available (signed session)
-    const authedUser = await getAuthedUser();
-    const userId: string | null = authedUser?.id || null;
+    const existingOrder = await prisma.order.findUnique({ where: { checkoutId } });
+    if (existingOrder) {
+      const ownerMatches = existingOrder.userId
+        ? existingOrder.userId === userId
+        : !userId && existingOrder.customerEmail === contact.email;
+      if (!ownerMatches || existingOrder.paymentMethod !== 'COD') {
+        return NextResponse.json({ error: 'This checkout reference is no longer valid.' }, { status: 409 });
+      }
+      return NextResponse.json({
+        success: true,
+        orderId: existingOrder.id,
+        orderNumber: existingOrder.orderNumber,
+        amount: existingOrder.totalAmount,
+        codFee: COD_HANDLING_FEE,
+        alreadyPlaced: true,
+      });
+    }
 
     // Generate order number with retry on collision
     let orderNumber = `BGF-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -41,29 +68,49 @@ export async function POST(request: Request) {
 
     // Atomic order creation + inventory check & decrement
     const order = await prisma.$transaction(async (tx) => {
-      // 1. Check and decrement stock first
+      // 1. Decrement stock with a conditional update. Reading stock and then
+      // writing a computed value allows two simultaneous COD checkouts to sell
+      // the same last unit.
+      const touchedProductIds = new Set<string>();
+      const now = new Date();
       for (const item of cart.items) {
-        const variant = await tx.variant.findFirst({
+        if (!item.variantId) continue;
+
+        // COD does not create a reservation of its own, so account for active
+        // Razorpay holds that belong to another checkout before taking stock.
+        const activeReservations = await tx.stockReservation.findMany({
           where: {
-            productId: item.productId,
-            size: item.size,
-            color: item.color,
+            variantId: item.variantId,
+            expiresAt: { gt: now },
+            sessionId: { not: sessionId },
           },
         });
-        if (variant) {
-          if (variant.stock < item.quantity) {
-            throw new CartError(`Insufficient stock for ${item.name} (${item.size}/${item.color})`, 409);
-          }
-          await tx.variant.update({
-            where: { id: variant.id },
-            data: { stock: variant.stock - item.quantity },
-          });
-          const remaining = await tx.variant.findMany({ where: { productId: item.productId } });
-          const totalRemaining = remaining.reduce((s, v) => s + (v.id === variant.id ? variant.stock - item.quantity : v.stock), 0);
-          if (totalRemaining <= 0) {
-            await tx.product.update({ where: { id: item.productId }, data: { isSoldOut: true } });
-          }
+        const heldByOtherCheckouts = activeReservations.reduce(
+          (sum, reservation) => sum + reservation.quantity,
+          0
+        );
+        const currentVariant = await tx.variant.findUnique({ where: { id: item.variantId } });
+        if (!currentVariant || heldByOtherCheckouts + item.quantity > currentVariant.stock) {
+          throw new CartError(`Insufficient stock for ${item.name} (${item.size}/${item.color})`, 409);
         }
+
+        const decrement = await tx.variant.updateMany({
+          where: { id: item.variantId, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } },
+        });
+        if (decrement.count !== 1) {
+          throw new CartError(`Insufficient stock for ${item.name} (${item.size}/${item.color})`, 409);
+        }
+        touchedProductIds.add(item.productId);
+      }
+
+      for (const productId of touchedProductIds) {
+        const remaining = await tx.variant.findMany({ where: { productId } });
+        const totalRemaining = remaining.reduce((sum, variant) => sum + variant.stock, 0);
+        await tx.product.update({
+          where: { id: productId },
+          data: { isSoldOut: totalRemaining <= 0 },
+        });
       }
 
       // 2. Save Address in DB
@@ -84,6 +131,7 @@ export async function POST(request: Request) {
       const createdOrder = await tx.order.create({
         data: {
           orderNumber,
+          checkoutId,
           userId,
           customerEmail: contact.email,
           customerPhone: contact.phone,
@@ -108,18 +156,16 @@ export async function POST(request: Request) {
         },
       });
 
+      // If this shopper moved from a held Razorpay checkout to COD, release
+      // that session's obsolete hold after COD has claimed the stock.
+      await tx.stockReservation.deleteMany({ where: { sessionId } });
+
       return createdOrder;
     });
 
-    // 5. Send Transactional Order Confirmation Email
+    // Send the receipt after the order transaction commits.
     try {
-      const fullOrder = await prisma.order.findUnique({
-        where: { id: order.id },
-        include: { items: true, shippingAddress: true },
-      });
-      if (fullOrder) {
-        await sendOrderConfirmationEmail(fullOrder);
-      }
+      await sendOrderConfirmationIfNeeded(order.id);
     } catch (emailErr) {
       console.warn('Order confirmation email warning:', emailErr);
     }

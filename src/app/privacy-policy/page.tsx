@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { Shield, Lock } from "lucide-react";
+import EditorialPageShell, { EditorialPanel } from "@/components/layout/EditorialPageShell";
 
 export const metadata = {
   title: "Privacy Policy | BAGIFYYYY",
@@ -8,31 +7,12 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
-          <Link href="/" className="hover:text-black">HOME</Link>
-          <span>/</span>
-          <span className="text-y2k-gunmetal">PRIVACY POLICY</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-6 pb-4 border-b border-y2k-gunmetal/15">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-            DATA PROTECTION &amp; PRIVACY
-          </span>
-          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            PRIVACY POLICY
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-1">
-            Last updated: August 2026 · How BAGIFYYYY protects, processes, and respects your personal data.
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-5 sm:p-8 shadow-xs divide-y divide-y2k-gunmetal/10 space-y-6 text-xs text-y2k-gunmetal/80 leading-relaxed">
+    <EditorialPageShell
+      eyebrow="Data protection / Privacy"
+      title="Privacy policy"
+      description="Last updated: August 2026. How BAGIFYYYY protects, processes, and respects personal data."
+    >
+        <EditorialPanel className="divide-y divide-y2k-gunmetal/10 space-y-6 text-xs leading-relaxed text-y2k-gunmetal/80">
           <div>
             <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
               1. DATA WE COLLECT
@@ -47,7 +27,7 @@ export default function PrivacyPolicyPage() {
               2. HOW WE USE YOUR INFORMATION
             </h2>
             <p>
-              Your data is utilized strictly to fulfill drop shipments, generate shipping airway bills, send tracking alerts, and manage VIP Chrome Club points balance.
+              We use your data to process orders, create shipping labels, send tracking updates, and manage your points.
             </p>
           </div>
 
@@ -56,7 +36,7 @@ export default function PrivacyPolicyPage() {
               3. NO DATA BROKERING OR SELLING
             </h2>
             <p>
-              We never sell, rent, or monetize your personal information to third-party data brokers. Data is only shared with verified logistics partners (couriers) and payment gateways (Razorpay) to execute order delivery.
+              We do not sell or rent your personal information. We share only what is needed with couriers, Razorpay, and other providers that help us complete your order.
             </p>
           </div>
 
@@ -68,9 +48,25 @@ export default function PrivacyPolicyPage() {
               All traffic and data transactions are secured using 256-bit SSL encryption. Payment card numbers are processed directly by PCI-DSS certified gateways and never touch our servers.
             </p>
           </div>
-        </div>
 
-      </div>
-    </div>
+          <div className="pt-6">
+            <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
+              5. COOKIES, SESSIONS &amp; THIRD PARTIES
+            </h2>
+            <p>
+              We use essential browser storage for your bag, wishlist, sign-in session, and checkout continuity. Google authentication, Razorpay payments, reCAPTCHA, courier services, and email providers may process the information required to provide those services under their own policies.
+            </p>
+          </div>
+
+          <div className="pt-6">
+            <h2 className="font-display font-medium text-base uppercase tracking-tight text-y2k-gunmetal mb-1.5">
+              6. YOUR CONTROLS &amp; RETENTION
+            </h2>
+            <p>
+              We keep account, order, support, and tax records for as long as needed to provide service, meet legal obligations, and resolve disputes. To request access, correction, deletion where legally available, or clarification about your data, contact support@bagifyyyy.com.
+            </p>
+          </div>
+        </EditorialPanel>
+    </EditorialPageShell>
   );
 }

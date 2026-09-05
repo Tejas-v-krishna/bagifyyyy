@@ -14,18 +14,31 @@ import {
   MapPin,
   Award,
   Heart,
-  ShieldCheck,
   Plus,
   Trash2,
   Copy,
+  ArrowLeft,
   ArrowRight,
   ShoppingBag,
-  Tag,
   ExternalLink
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { orderStatusLabel } from "@/lib/orderStatus";
+
+type AccountTab = "orders" | "wishlist" | "addresses" | "loyalty" | "settings";
+
+type LoyaltyTier = "CHROME" | "STEEL" | "GOLD";
+
+const loyaltyTiers: Record<LoyaltyTier, { minimum: number; next: number | null; nextName: string | null }> = {
+  CHROME: { minimum: 0, next: 500, nextName: "STEEL" },
+  STEEL: { minimum: 500, next: 2000, nextName: "GOLD" },
+  GOLD: { minimum: 2000, next: null, nextName: null },
+};
+
+function normalizeTier(value: unknown): LoyaltyTier {
+  return value === "STEEL" || value === "GOLD" ? value : "CHROME";
+}
 
 export default function AccountPage() {
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -38,7 +51,7 @@ export default function AccountPage() {
     (user?.email && ["admin@bagifyyyy.com", "admin@bagify.com"].includes(user.email.toLowerCase()))
   );
 
-  const [activeTab, setActiveTab] = useState<"orders" | "wishlist" | "addresses" | "loyalty" | "settings" | "admin">("orders");
+  const [activeTab, setActiveTab] = useState<AccountTab>("orders");
   const [loyaltyData, setLoyaltyData] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
@@ -163,79 +176,151 @@ export default function AccountPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="bg-y2k-ice min-h-[70vh] flex items-center justify-center px-4 py-16 text-y2k-gunmetal font-sans">
-        <div className="w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 text-center shadow-sm">
-          <User className="w-8 h-8 text-y2k-gunmetal/60 mx-auto mb-3" />
-          <h1 className="font-display font-medium text-xl uppercase tracking-tight mb-2 text-y2k-gunmetal">
-            ACCOUNT ACCESS
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mb-5">
-            Sign in to view orders and saved pieces.
-          </p>
-          <Link
-            href="/login"
-            className="btn-bagify w-full py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-          >
-            <span>SIGN IN</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+      <div className="editorial-page min-h-[calc(100svh-64px)] bg-[#f5f5f2] px-4 py-8 font-sans text-black sm:px-6 sm:py-12 lg:px-10">
+        <div className="mx-auto w-full max-w-[1180px]">
+          <div className="mb-10 flex items-center justify-between border-b border-black/10 pb-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              Back to shop
+            </Link>
+            <span className="hidden font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/35 sm:block">
+              BAGIFYYYY / MEMBER ACCESS
+            </span>
+          </div>
+
+          <div className="grid overflow-hidden rounded-xl border border-black/10 bg-white lg:grid-cols-[1.35fr_0.65fr]">
+            <section className="p-6 sm:p-10 lg:p-14">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-black/45">
+                Account / Sign in
+              </p>
+              <h1 className="max-w-[11ch] font-microgramma text-[clamp(2.4rem,6vw,5.5rem)] font-bold uppercase leading-[0.88] tracking-[-0.04em] text-black">
+                Sign in to your account
+              </h1>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-black/55">
+                Sign in to see saved pieces, orders, addresses, and points.
+              </p>
+
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Link
+                  href="/login?from=/account"
+                  className="btn-bagify btn-bagify-dark inline-flex min-h-11 items-center justify-center gap-2 px-6 text-[10px] font-bold uppercase tracking-[0.18em]"
+                >
+                  Sign in to continue
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </Link>
+                <Link
+                  href="/products"
+                  className="inline-flex min-h-11 items-center justify-center px-4 text-[10px] font-bold uppercase tracking-[0.18em] text-black/55 underline underline-offset-4 transition-colors hover:text-black"
+                >
+                  Keep shopping
+                </Link>
+              </div>
+            </section>
+
+            <aside className="relative flex min-h-[260px] flex-col justify-between overflow-hidden bg-black p-6 text-white sm:p-10">
+              <div className="pointer-events-none absolute inset-0 opacity-20" aria-hidden="true">
+                <div className="absolute inset-x-8 top-1/3 border-t border-white/40" />
+                <div className="absolute bottom-8 left-1/3 top-8 border-l border-white/40" />
+              </div>
+              <div className="relative">
+                <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-white/45">Chrome Club / 001</span>
+                <User className="mt-8 h-8 w-8 text-white/75" strokeWidth={1.4} aria-hidden="true" />
+              </div>
+              <p className="relative max-w-[18rem] text-[11px] uppercase leading-[1.55] tracking-[0.14em] text-white/60">
+                Your orders and saved pieces, all in one place.
+              </p>
+            </aside>
+          </div>
         </div>
       </div>
     );
   }
 
   const memberId = user?.id ? `BGF-${user.id.slice(0, 8).toUpperCase()}` : "BGF-MEMBER";
-  const points = loyaltyData?.points || 0;
-  const tier = loyaltyData?.tier || "CHROME";
-  const pointsToNext = Math.max(0, 500 - points);
-  const tierProgress = Math.min(100, Math.round((points / 500) * 100));
+  const points = Number(loyaltyData?.points) || 0;
+  const tier = normalizeTier(loyaltyData?.tier);
+  const tierInfo = loyaltyTiers[tier];
+  const pointsToNext = tierInfo.next === null ? 0 : Math.max(0, tierInfo.next - points);
+  const tierProgress = tierInfo.next === null
+    ? 100
+    : Math.min(100, Math.max(0, Math.round(((points - tierInfo.minimum) / (tierInfo.next - tierInfo.minimum)) * 100)));
 
   return (
-    <div className="bg-y2k-ice min-h-screen text-y2k-gunmetal py-6 sm:py-8 font-sans">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-
-        {/* ── Top Header Row ────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
-          <span>MEMBER PASSPORT</span>
-          <span className="font-mono text-y2k-gunmetal/60">{memberId}</span>
+    <div className="editorial-page min-h-screen bg-[#f5f5f2] px-4 py-8 font-sans text-black sm:px-6 sm:py-12 lg:px-10">
+      <div className="mx-auto w-full max-w-[1280px]">
+        {/* ── Account navigation ─────────────────────────────────────────── */}
+        <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            Back to shop
+          </Link>
+          <span className="hidden font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/35 sm:block">
+            {memberId} / CHROME CLUB
+          </span>
         </div>
 
-        {/* ── Identity & VIP Header Row ─────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 mb-5">
-          
+        {/* ── Page header ────────────────────────────────────────────────── */}
+        <header className="mb-10 flex flex-col justify-between gap-6 border-b border-black/10 pb-8 md:flex-row md:items-end">
+          <div>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-black/45">
+              Member account
+            </p>
+            <h1 className="font-microgramma text-[clamp(2.5rem,7vw,6.5rem)] font-bold uppercase leading-[0.86] tracking-[-0.05em] text-black">
+              Your account
+            </h1>
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-black/55">
+              Orders, saved pieces, addresses, and points in one place.
+            </p>
+          </div>
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/35 md:pb-1">
+            Signed in / {tier}
+          </span>
+        </header>
+
+        {/* ── Identity & loyalty ────────────────────────────────────────── */}
+        <div className="mb-10 grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_0.75fr]">
           {/* Member Profile */}
-          <div className="md:col-span-7 bg-white border border-y2k-gunmetal/15 p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+          <section className="flex flex-col justify-between rounded-xl border border-black/10 bg-white p-5 sm:p-7">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3.5 min-w-0">
                 {user?.avatar ? (
-                  <img
+                  <Image
                     src={user.avatar}
                     alt="Avatar"
-                    className="w-12 h-12 rounded-full object-cover border border-y2k-gunmetal/10 shrink-0"
+                    width={48}
+                    height={48}
+                    unoptimized
+                    className="h-12 w-12 shrink-0 rounded-full border border-black/10 object-cover"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center text-base font-bold shrink-0">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-base font-bold text-white">
                     {user?.name ? user.name[0].toUpperCase() : "U"}
                   </div>
                 )}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal truncate">
+                    <h2 className="truncate font-microgramma text-base font-bold uppercase tracking-tight text-black sm:text-lg">
                       {user?.name || "MEMBER"}
                     </h2>
                     {isAdmin && (
-                      <span className="text-[8px] font-black uppercase bg-y2k-gunmetal text-white px-1.5 py-0.5">
+                      <span className="bg-black px-1.5 py-0.5 text-[8px] font-black uppercase text-white">
                         ADMIN
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-y2k-gunmetal/60 truncate">{user?.email}</p>
+                  <p className="truncate text-[11px] text-black/50">{user?.email}</p>
                 </div>
               </div>
 
               <button
                 onClick={handleSignOut}
-                className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 hover:text-red-600 bg-y2k-ice border border-y2k-gunmetal/15 px-2.5 py-1.5 transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+                className="inline-flex shrink-0 items-center gap-1.5 border border-black/15 bg-[#f5f5f2] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-black/60 transition-colors hover:border-black hover:text-black"
               >
                 <LogOut className="w-3 h-3" />
                 <span>Sign Out</span>
@@ -243,123 +328,134 @@ export default function AccountPage() {
             </div>
 
             {isAdmin && (
-              <div className="mt-3 pt-2.5 border-t border-y2k-gunmetal/10 flex items-center justify-between text-xs">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70">Studio Portal</span>
+              <div className="mt-8 flex items-center justify-between border-t border-black/10 pt-4 text-xs">
+                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/50">Studio portal</span>
                 <Link
                   href="/studio"
-                  className="bg-y2k-gunmetal text-white hover:bg-black px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider transition-colors flex items-center gap-1"
+                  className="inline-flex items-center gap-1.5 bg-black px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-black/75"
                 >
                   <span>Open Studio</span>
                   <ExternalLink className="w-2.5 h-2.5" />
                 </Link>
               </div>
             )}
-          </div>
+          </section>
 
-          {/* VIP Pass */}
-          <div className="md:col-span-5 bg-y2k-gunmetal text-[#F8F5E9] p-4 sm:p-5 shadow-xs flex flex-col justify-between border border-y2k-gunmetal">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70">
-                  CHROME CLUB
+          {/* Loyalty status */}
+          <section className="relative flex flex-col justify-between overflow-hidden rounded-xl bg-black p-5 text-white sm:p-7">
+            <div className="pointer-events-none absolute inset-0 opacity-20" aria-hidden="true">
+              <div className="absolute inset-x-7 top-1/2 border-t border-white/30" />
+              <div className="absolute bottom-7 left-1/2 top-7 border-l border-white/30" />
+            </div>
+            <div className="relative">
+              <div className="mb-10 flex items-center justify-between">
+                <span className="text-[9px] font-black uppercase tracking-[0.22em] text-white/55">
+                  Chrome Club
                 </span>
-                <span className="text-[8px] font-black uppercase tracking-wider bg-white/15 px-2 py-0.5 text-white">
+                <span className="border border-white/25 px-2 py-1 text-[8px] font-black uppercase tracking-[0.16em] text-white">
                   {tier}
                 </span>
               </div>
 
-              <div className="flex items-baseline justify-between mb-1.5">
-                <p className="font-display text-2xl font-bold text-white tracking-tight leading-none">
-                  {points} <span className="text-xs font-sans font-normal text-white/60">PTS</span>
+              <div className="mb-5 flex items-end justify-between gap-4">
+                <p className="font-microgramma text-4xl font-bold leading-none tracking-[-0.04em] text-white sm:text-5xl">
+                  {points} <span className="font-sans text-[10px] font-normal tracking-[0.16em] text-white/50">POINTS</span>
                 </p>
-                <button
-                  onClick={() => setActiveTab("loyalty")}
-                  className="text-[9px] font-bold uppercase tracking-wider text-white/80 hover:text-white underline underline-offset-2 cursor-pointer"
-                >
-                  Perks →
-                </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("loyalty")}
+                className="cursor-pointer text-[9px] font-bold uppercase tracking-[0.16em] text-white/65 underline underline-offset-4 transition-colors hover:text-white"
+              >
+                View perks
+              </button>
               </div>
 
-              <div className="w-full bg-white/15 h-1 mb-1 overflow-hidden">
+              <div className="mb-2 h-1 w-full overflow-hidden bg-white/15">
                 <div
                   className="h-full bg-white transition-all duration-300"
                   style={{ width: `${tierProgress}%` }}
                 />
               </div>
 
-              <p className="text-[9px] text-white/60">
-                {pointsToNext > 0 ? `${pointsToNext} pts to Steel VIP` : "Max Tier Unlocked"}
+              <p className="text-[9px] uppercase tracking-[0.14em] text-white/50">
+                {pointsToNext > 0 ? `${pointsToNext} points to ${tierInfo.nextName}` : "Top tier"}
               </p>
             </div>
-          </div>
-
+            <p className="relative mt-10 border-t border-white/15 pt-4 font-mono text-[8px] uppercase tracking-[0.2em] text-white/35">
+               Rewards / Early access / New pieces
+            </p>
+          </section>
         </div>
 
-        {/* ── 4 Quick Metric Tiles ──────────────────────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
-          <button
-            onClick={() => setActiveTab("orders")}
-            className={`p-3 text-left border transition-all cursor-pointer ${
+        {/* ── Account metrics ────────────────────────────────────────────── */}
+        <div className="mb-10 grid grid-cols-2 border-y border-black/10 sm:grid-cols-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("orders")}
+            className={`border-r border-black/10 p-4 text-left transition-colors last:border-r-0 sm:p-5 ${
               activeTab === "orders"
-                ? "bg-white border-y2k-gunmetal shadow-xs"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white"
+                ? "bg-white"
+                : "bg-transparent hover:bg-white/60"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">ORDERS</span>
-              <Package className="w-3 h-3 text-y2k-gunmetal/60" />
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Orders</span>
+              <Package className="h-3.5 w-3.5 text-black/45" />
             </div>
-            <p className="font-display text-lg font-bold text-y2k-gunmetal">{orders.length}</p>
+            <p className="font-microgramma text-2xl font-bold leading-none text-black">{orders.length}</p>
           </button>
 
-          <button
-            onClick={() => setActiveTab("wishlist")}
-            className={`p-3 text-left border transition-all cursor-pointer ${
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("wishlist")}
+            className={`border-r border-black/10 p-4 text-left transition-colors last:border-r-0 sm:p-5 ${
               activeTab === "wishlist"
-                ? "bg-white border-y2k-gunmetal shadow-xs"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white"
+                ? "bg-white"
+                : "bg-transparent hover:bg-white/60"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">SAVED</span>
-              <Heart className="w-3 h-3 text-y2k-gunmetal/60" />
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Saved</span>
+              <Heart className="h-3.5 w-3.5 text-black/45" />
             </div>
-            <p className="font-display text-lg font-bold text-y2k-gunmetal">{wishlistIds.length}</p>
+            <p className="font-microgramma text-2xl font-bold leading-none text-black">{wishlistIds.length}</p>
           </button>
 
-          <button
-            onClick={() => setActiveTab("addresses")}
-            className={`p-3 text-left border transition-all cursor-pointer ${
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("addresses")}
+            className={`border-r border-black/10 p-4 text-left transition-colors last:border-r-0 sm:p-5 ${
               activeTab === "addresses"
-                ? "bg-white border-y2k-gunmetal shadow-xs"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white"
+                ? "bg-white"
+                : "bg-transparent hover:bg-white/60"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">ADDRESSES</span>
-              <MapPin className="w-3 h-3 text-y2k-gunmetal/60" />
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Addresses</span>
+              <MapPin className="h-3.5 w-3.5 text-black/45" />
             </div>
-            <p className="font-display text-lg font-bold text-y2k-gunmetal">{addresses.length}</p>
+            <p className="font-microgramma text-2xl font-bold leading-none text-black">{addresses.length}</p>
           </button>
 
-          <button
-            onClick={() => setActiveTab("loyalty")}
-            className={`p-3 text-left border transition-all cursor-pointer ${
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("loyalty")}
+            className={`p-4 text-left transition-colors sm:p-5 ${
               activeTab === "loyalty"
-                ? "bg-white border-y2k-gunmetal shadow-xs"
-                : "bg-white/60 border-y2k-gunmetal/15 hover:bg-white"
+                ? "bg-white"
+                : "bg-transparent hover:bg-white/60"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[8px] font-bold text-y2k-gunmetal/50 uppercase tracking-wider">POINTS</span>
-              <Award className="w-3 h-3 text-y2k-gunmetal/60" />
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Points</span>
+              <Award className="h-3.5 w-3.5 text-black/45" />
             </div>
-            <p className="font-display text-lg font-bold text-y2k-gunmetal">{points}</p>
+            <p className="font-microgramma text-2xl font-bold leading-none text-black">{points}</p>
           </button>
         </div>
 
-        {/* ── Minimalist Segmented Tabs ─────────────────────────────────── */}
-        <div className="flex items-center gap-1 mb-5 border-b border-y2k-gunmetal/15 pb-0 overflow-x-auto select-none no-scrollbar">
+        {/* ── Minimalist segmented tabs ─────────────────────────────────── */}
+        <div className="mb-6 flex items-center gap-1 overflow-x-auto border-b border-black/10 pb-0 select-none" role="tablist" aria-label="Account sections">
           {[
             { id: "orders", label: "Orders", count: orders.length },
             { id: "wishlist", label: "Saved", count: wishlistIds.length },
@@ -371,17 +467,22 @@ export default function AccountPage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap cursor-pointer ${
+                id={`account-tab-${tab.id}`}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`account-panel-${tab.id}`}
+                onClick={() => setActiveTab(tab.id as AccountTab)}
+                className={`flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-[10px] font-bold uppercase tracking-[0.16em] transition-colors sm:text-[11px] ${
                   isActive
-                    ? "border-y2k-gunmetal text-y2k-gunmetal bg-white/70"
-                    : "border-transparent text-y2k-gunmetal/50 hover:text-y2k-gunmetal"
+                    ? "border-black bg-white text-black"
+                    : "border-transparent text-black/40 hover:text-black"
                 }`}
               >
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span className={`text-[8px] px-1 py-0.2 font-mono ${
-                    isActive ? "bg-y2k-gunmetal text-white" : "bg-y2k-gunmetal/10 text-y2k-gunmetal/70"
+                    isActive ? "bg-black text-white" : "bg-black/10 text-black/60"
                   }`}>
                     {tab.count}
                   </span>
@@ -395,22 +496,22 @@ export default function AccountPage() {
         <div>
           {/* 1. ORDERS TAB */}
           {activeTab === "orders" && (
-            <div className="space-y-3">
+            <div id="account-panel-orders" role="tabpanel" aria-labelledby="account-tab-orders" className="space-y-3">
               {loadingOrders ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/50">
+                <div className="rounded-xl border border-black/10 bg-white p-8 text-center text-xs font-bold uppercase tracking-[0.16em] text-black/45">
                   Loading orders…
                 </div>
               ) : orders.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center shadow-xs">
-                  <ShoppingBag className="w-8 h-8 text-y2k-gunmetal/30 mx-auto mb-2" />
-                  <p className="font-display font-medium text-base uppercase tracking-tight mb-1 text-y2k-gunmetal">
+                <div className="rounded-xl border border-black/10 bg-white p-8 text-center">
+                  <ShoppingBag className="mx-auto mb-4 h-8 w-8 text-black/25" />
+                  <p className="mb-1 font-microgramma text-xs font-bold uppercase tracking-tight text-black sm:text-sm">
                     NO ORDERS YET
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 mt-2"
+                    className="btn-bagify btn-bagify-dark mt-4 inline-flex items-center gap-1.5 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.16em]"
                   >
-                    <span>BROWSE DROPS</span>
+                     <span>SHOP PIECES</span>
                     <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
@@ -419,14 +520,14 @@ export default function AccountPage() {
                   {orders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs"
+                      className="rounded-xl border border-black/10 bg-white p-4 sm:p-6"
                     >
                       {/* Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-y2k-gunmetal/10 pb-2.5 mb-2.5">
+                      <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-black/10 pb-3">
                         <div className="flex items-center gap-2">
-                          <span className="font-display text-sm font-bold tracking-tight">#{ord.orderNumber}</span>
-                          <span className="text-[10px] text-y2k-gunmetal/40">·</span>
-                          <span className="text-xs text-y2k-gunmetal/70">
+                          <span className="font-mono text-sm font-bold tracking-tight text-black">#{ord.orderNumber}</span>
+                          <span className="text-[10px] text-black/30">/</span>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-black/50">
                             {new Date(ord.createdAt).toLocaleDateString("en-IN", {
                               day: "numeric",
                               month: "short",
@@ -436,14 +537,14 @@ export default function AccountPage() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/15 bg-y2k-ice text-y2k-gunmetal">
+                          <span className="border border-black/15 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
                             {orderStatusLabel(ord.orderStatus)}
                           </span>
 
                           {ord.trackingId && (
                             <button
                               onClick={() => handleCopyTracking(ord.trackingId)}
-                              className="text-[8px] font-bold uppercase bg-y2k-ice border border-y2k-gunmetal/10 px-2 py-0.5 text-y2k-gunmetal flex items-center gap-1 hover:bg-white cursor-pointer"
+                              className="flex cursor-pointer items-center gap-1 border border-black/10 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-black transition-colors hover:bg-white"
                               title="Copy tracking"
                             >
                               <Truck className="w-2.5 h-2.5 text-y2k-gunmetal" />
@@ -455,11 +556,11 @@ export default function AccountPage() {
                       </div>
 
                       {/* Items */}
-                      <div className="divide-y divide-y2k-gunmetal/5 mb-2.5">
+                      <div className="mb-3 divide-y divide-black/5">
                         {ord.items?.map((it: any) => (
                           <div key={it.id} className="py-2 flex items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="relative w-9 h-11 bg-gray-100 shrink-0 overflow-hidden border border-y2k-gunmetal/10">
+                              <div className="relative h-12 w-10 shrink-0 overflow-hidden border border-black/10 bg-[#f2f2f0]">
                                 <Image
                                   src={it.image || "/placeholder.jpg"}
                                   alt={it.name}
@@ -469,13 +570,13 @@ export default function AccountPage() {
                                 />
                               </div>
                               <div className="min-w-0">
-                                <p className="text-xs font-bold uppercase truncate text-y2k-gunmetal">{it.name}</p>
-                                <p className="text-[9px] text-y2k-gunmetal/60 uppercase">
+                                <p className="truncate text-xs font-bold uppercase text-black">{it.name}</p>
+                                <p className="text-[9px] uppercase tracking-[0.08em] text-black/50">
                                   {it.quantity}x · {it.size} · {it.color}
                                 </p>
                               </div>
                             </div>
-                            <span className="text-xs font-bold text-y2k-gunmetal shrink-0">
+                            <span className="shrink-0 text-xs font-bold text-black">
                               ₹{(it.price * it.quantity).toLocaleString("en-IN")}
                             </span>
                           </div>
@@ -483,11 +584,11 @@ export default function AccountPage() {
                       </div>
 
                       {/* Total */}
-                      <div className="pt-2 border-t border-y2k-gunmetal/10 flex items-center justify-between text-xs">
-                        <span className="text-[10px] text-y2k-gunmetal/60 truncate">
+                      <div className="flex items-center justify-between gap-4 border-t border-black/10 pt-3 text-xs">
+                        <span className="truncate text-[10px] uppercase tracking-[0.08em] text-black/50">
                           {ord.shippingAddress?.fullName} ({ord.shippingAddress?.city})
                         </span>
-                        <span className="font-display text-sm font-bold text-y2k-gunmetal">
+                        <span className="font-mono text-sm font-bold text-black">
                           Total: ₹{ord.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -500,33 +601,33 @@ export default function AccountPage() {
 
           {/* 2. SAVED PIECES TAB */}
           {activeTab === "wishlist" && (
-            <div className="space-y-3">
+            <div id="account-panel-wishlist" role="tabpanel" aria-labelledby="account-tab-wishlist" className="space-y-3">
               {loadingWishlist ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/50">
+                <div className="rounded-xl border border-black/10 bg-white p-8 text-center text-xs font-bold uppercase tracking-[0.16em] text-black/45">
                   Loading saved…
                 </div>
               ) : wishlistProducts.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center shadow-xs">
-                  <Heart className="w-8 h-8 text-y2k-gunmetal/30 mx-auto mb-2" />
-                  <p className="font-display font-medium text-base uppercase tracking-tight mb-2 text-y2k-gunmetal">
+                <div className="rounded-xl border border-black/10 bg-white p-8 text-center">
+                  <Heart className="mx-auto mb-4 h-8 w-8 text-black/25" />
+                  <p className="mb-2 font-microgramma text-xs font-bold uppercase tracking-tight text-black sm:text-sm">
                     WISHLIST EMPTY
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify px-5 py-2 text-[10px] font-bold uppercase tracking-wider inline-block"
+                    className="btn-bagify btn-bagify-dark inline-block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.16em]"
                   >
-                    Browse Drops
+                     Shop Pieces
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                   {wishlistProducts.map((p) => (
                     <div
                       key={p.id}
-                      className="bg-white border border-y2k-gunmetal/15 p-2.5 flex flex-col justify-between group shadow-xs"
+                      className="group flex flex-col justify-between rounded-xl border border-black/10 bg-white p-2.5"
                     >
                       <Link href={`/product/${p.id}`} className="block">
-                        <div className="relative aspect-[3/4] bg-gray-100 mb-2 overflow-hidden">
+                        <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-lg bg-[#ededeb]">
                           <Image
                             src={p.images?.[0]?.url || p.images?.[0] || "/placeholder.jpg"}
                             alt={p.name}
@@ -535,11 +636,11 @@ export default function AccountPage() {
                             sizes="(max-width: 768px) 50vw, 25vw"
                           />
                         </div>
-                        <h4 className="font-bold text-xs uppercase truncate text-y2k-gunmetal">{p.name}</h4>
-                        <p className="font-bold text-xs text-y2k-gunmetal mt-0.5">₹{p.price.toLocaleString("en-IN")}</p>
+                        <h4 className="truncate text-xs font-bold uppercase text-black">{p.name}</h4>
+                        <p className="mt-1 text-xs font-bold text-black">₹{p.price.toLocaleString("en-IN")}</p>
                       </Link>
 
-                      <div className="mt-2 pt-2 border-t border-y2k-gunmetal/10 flex items-center gap-1.5">
+                      <div className="mt-3 flex items-center gap-1.5 border-t border-black/10 pt-3">
                         <button
                           onClick={() => {
                             addItem({
@@ -552,13 +653,13 @@ export default function AccountPage() {
                               color: p.colors?.[0] || "Default",
                             });
                           }}
-                          className="flex-1 btn-bagify text-[8px] font-bold uppercase tracking-wider py-1.5 cursor-pointer text-center"
+                          className="btn-bagify flex-1 cursor-pointer py-2 text-center text-[8px] font-bold uppercase tracking-[0.12em]"
                         >
                           Add to Bag
                         </button>
                         <button
                           onClick={() => toggleItem(p.id)}
-                          className="p-1.5 border border-y2k-gunmetal/10 hover:border-red-500 hover:text-red-500 transition-colors cursor-pointer text-y2k-gunmetal"
+                          className="cursor-pointer border border-black/10 p-2 text-black/55 transition-colors hover:border-black hover:text-black"
                           title="Remove"
                         >
                           <Trash2 className="w-3 h-3" />
@@ -573,17 +674,23 @@ export default function AccountPage() {
 
           {/* 3. SAVED ADDRESSES TAB */}
           {activeTab === "addresses" && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
-                  Destinations ({addresses.length})
-                </span>
+            <div id="account-panel-addresses" role="tabpanel" aria-labelledby="account-tab-addresses" className="space-y-4">
+              <div className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">
+                    Saved destinations
+                  </p>
+                  <span className="mt-1 block text-xs text-black/50">
+                    Destinations ({addresses.length})
+                  </span>
+                </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setShowAddressForm(!showAddressForm);
                     setAddressError("");
                   }}
-                  className="btn-bagify text-[9px] font-bold uppercase tracking-wider px-3 py-1.5 flex items-center gap-1 cursor-pointer"
+                  className="btn-bagify cursor-pointer px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em]"
                 >
                   <Plus className="w-3 h-3" />
                   <span>{showAddressForm ? "Cancel" : "Add Address"}</span>
@@ -598,23 +705,23 @@ export default function AccountPage() {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     onSubmit={handleAddAddress}
-                    className="bg-white border border-y2k-gunmetal p-4 sm:p-5 flex flex-col gap-3 shadow-xs overflow-hidden"
+                    className="rounded-xl border border-black bg-white p-4 sm:p-6 flex flex-col gap-3 overflow-hidden"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
+                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
                           Full Name *
                         </label>
                         <input
                           required
                           value={addressForm.fullName}
                           onChange={(e) => setAddressForm((p) => ({ ...p, fullName: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
                           placeholder="Alex Vance"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
+                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
                           Phone (+91) *
                         </label>
                         <input
@@ -622,28 +729,28 @@ export default function AccountPage() {
                           type="tel"
                           value={addressForm.phone}
                           onChange={(e) => setAddressForm((p) => ({ ...p, phone: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
                           placeholder="9876543210"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
+                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
                         Street Address *
                       </label>
                       <input
                         required
                         value={addressForm.street}
                         onChange={(e) => setAddressForm((p) => ({ ...p, street: e.target.value }))}
-                        className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
                         placeholder="Flat 402, Lotus Heights, MG Road"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
+                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
                           Pincode *
                         </label>
                         <input
@@ -651,38 +758,38 @@ export default function AccountPage() {
                           maxLength={6}
                           value={addressForm.pincode}
                           onChange={(e) => setAddressForm((p) => ({ ...p, pincode: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal font-mono bg-white"
+                          className="w-full border border-black/15 bg-white px-3 py-2 font-mono text-xs outline-none focus:border-black"
                           placeholder="400001"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
+                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
                           City *
                         </label>
                         <input
                           required
                           value={addressForm.city}
                           onChange={(e) => setAddressForm((p) => ({ ...p, city: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
                           placeholder="Mumbai"
                         />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold uppercase tracking-wider mb-1 block text-y2k-gunmetal/70">
+                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
                           State *
                         </label>
                         <input
                           required
                           value={addressForm.state}
                           onChange={(e) => setAddressForm((p) => ({ ...p, state: e.target.value }))}
-                          className="w-full border border-y2k-gunmetal/10 px-3 py-1.5 text-xs outline-none focus:border-y2k-gunmetal bg-white"
+                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
                           placeholder="Maharashtra"
                         />
                       </div>
                     </div>
 
                     {addressError && (
-                      <p className="text-xs font-bold text-red-600 bg-red-50 p-2 border border-red-200">
+                      <p className="border border-black/15 bg-[#f2f2f0] p-2 text-xs font-bold text-black" role="alert">
                         {addressError}
                       </p>
                     )}
@@ -691,14 +798,14 @@ export default function AccountPage() {
                       <button
                         type="button"
                         onClick={() => setShowAddressForm(false)}
-                        className="px-4 py-1.5 border border-y2k-gunmetal/15 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+                        className="cursor-pointer border border-black/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em]"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={savingAddress}
-                        className="btn-bagify px-5 py-1.5 text-[10px] font-bold uppercase tracking-wider disabled:opacity-50 cursor-pointer"
+                        className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
                       >
                         {savingAddress ? "Saving…" : "Save"}
                       </button>
@@ -709,13 +816,15 @@ export default function AccountPage() {
 
               {/* Grid */}
               {loadingAddresses ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-8 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/50">
+                <div className="rounded-xl border border-black/10 bg-white p-8 text-center text-xs font-bold uppercase tracking-[0.16em] text-black/45">
                   Loading addresses…
                 </div>
               ) : addresses.length === 0 ? (
-                <div className="bg-white border border-y2k-gunmetal/15 p-6 text-center shadow-xs">
-                  <p className="text-xs text-y2k-gunmetal/70 mb-3">No saved addresses.</p>
+                <div className="rounded-xl border border-black/10 bg-white p-8 text-center">
+                  <MapPin className="mx-auto mb-3 h-7 w-7 text-black/25" />
+                  <p className="mb-3 text-xs text-black/55">No saved addresses.</p>
                   <button
+                    type="button"
                     onClick={() => setShowAddressForm(true)}
                     className="btn-bagify px-4 py-2 text-[9px] font-bold uppercase tracking-wider inline-block cursor-pointer"
                   >
@@ -723,28 +832,29 @@ export default function AccountPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {addresses.map((addr: any, idx: number) => (
                     <div
                       key={addr.id}
-                      className="bg-white border border-y2k-gunmetal/15 p-4 flex flex-col justify-between shadow-xs"
+                      className="rounded-xl border border-black/10 bg-white p-5"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-[8px] font-bold uppercase tracking-wider bg-y2k-ice border border-y2k-gunmetal/15 px-1.5 py-0.5 text-y2k-gunmetal">
+                          <span className="border border-black/15 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
                             {idx === 0 ? "PRIMARY" : `SAVED #${idx + 1}`}
                           </span>
                           <button
+                            type="button"
                             onClick={() => handleDeleteAddress(addr.id)}
-                            className="text-[9px] font-bold uppercase tracking-wider text-red-600 hover:text-red-800 flex items-center gap-1 cursor-pointer"
+                            className="flex cursor-pointer items-center gap-1 text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 transition-colors hover:text-black"
                           >
                             <Trash2 className="w-3 h-3" /> Remove
                           </button>
                         </div>
-                        <p className="font-bold text-xs text-y2k-gunmetal">{addr.fullName}</p>
-                        <p className="text-[10px] text-y2k-gunmetal/70 font-mono mt-0.5">{addr.phone}</p>
-                        <p className="text-xs text-y2k-gunmetal/80 mt-1 leading-snug">
-                          {addr.street}, {addr.city}, {addr.state} — <b className="font-mono">{addr.pincode}</b>
+                        <p className="mt-5 text-xs font-bold text-black">{addr.fullName}</p>
+                        <p className="mt-1 font-mono text-[10px] text-black/50">{addr.phone}</p>
+                        <p className="mt-2 text-xs leading-snug text-black/65">
+                          {addr.street}, {addr.city}, {addr.state} / <b className="font-mono">{addr.pincode}</b>
                         </p>
                       </div>
                     </div>
@@ -756,95 +866,88 @@ export default function AccountPage() {
 
           {/* 4. VIP PERKS TAB */}
           {activeTab === "loyalty" && (
-            <div className="space-y-3">
-              <div className="bg-white border border-y2k-gunmetal/15 p-4 sm:p-5 shadow-xs">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-3">
-                  TIER PERKS
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                  <div className={`p-3 border ${tier === "CHROME" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
-                    <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">CHROME (0-499 PTS)</p>
-                    <p className="text-[10px] text-y2k-gunmetal/70 mt-1">✦ Early drop access</p>
-                    <p className="font-bold text-[10px] text-y2k-gunmetal/70">✦ Free shipping ₹2000+</p>
+            <div id="account-panel-loyalty" role="tabpanel" aria-labelledby="account-tab-loyalty" className="space-y-4">
+              <section className="rounded-xl border border-black/10 bg-white p-5 sm:p-7">
+                <div className="mb-6 flex flex-col gap-2 border-b border-black/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Chrome Club</p>
+                    <h2 className="mt-2 font-microgramma text-xl font-bold uppercase tracking-tight text-black">Member benefits</h2>
                   </div>
+                  <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-black/40">{points} points earned</span>
+                </div>
 
-                  <div className={`p-3 border ${tier === "STEEL" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
-                    <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">STEEL (500-1999 PTS)</p>
-                    <p className="text-[10px] text-y2k-gunmetal/70 mt-1">✦ Free express shipping</p>
-                    <p className="text-[10px] text-y2k-gunmetal/70">✦ 1.5x points multiplier</p>
+                <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
+                  <div className={`border p-4 ${tier === "CHROME" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Chrome / 0-499</p>
+                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Early drop access and free shipping over ₹2000.</p>
                   </div>
-
-                  <div className={`p-3 border ${tier === "GOLD" ? "bg-y2k-ice/70 border-y2k-gunmetal" : "bg-y2k-ice/30 border-y2k-gunmetal/15"}`}>
-                    <p className="font-bold text-[10px] uppercase text-y2k-gunmetal">PLATINUM (2000+ PTS)</p>
-                    <p className="text-[10px] text-y2k-gunmetal/70 mt-1">✦ 2x points multiplier</p>
-                    <p className="text-[10px] text-y2k-gunmetal/70">✦ Priority fulfillment</p>
+                  <div className={`border p-4 ${tier === "STEEL" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Steel / 500-1999</p>
+                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Free express shipping and a 1.5x points multiplier.</p>
+                  </div>
+                  <div className={`border p-4 ${tier === "GOLD" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Gold / 2000+</p>
+                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">2x points and priority fulfillment for every drop.</p>
                   </div>
                 </div>
-              </div>
+              </section>
 
-              {/* Point History */}
-              <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-2">
-                  ACTIVITY
-                </span>
+              <section className="rounded-xl border border-black/10 bg-white p-5 sm:p-7">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Points activity</p>
                 {loyaltyData?.history && loyaltyData.history.length > 0 ? (
-                  <div className="divide-y divide-y2k-gunmetal/10">
+                  <div className="divide-y divide-black/10">
                     {loyaltyData.history.map((h: any) => (
-                      <div key={h.id} className="py-2 flex items-center justify-between text-xs">
-                        <span className="font-bold text-y2k-gunmetal">{h.reason}</span>
-                        <span className="font-mono text-xs font-bold text-y2k-gunmetal">+{h.points} PTS</span>
+                      <div key={h.id} className="flex items-center justify-between gap-4 py-3 text-xs">
+                        <span className="font-bold text-black">{h.reason}</span>
+                        <span className="shrink-0 font-mono text-xs font-bold text-black">+{h.points} PTS</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="font-bold text-[11px] text-y2k-gunmetal/60 py-1">
-                    Earn 10 points per ₹100 spent.
-                  </p>
+                  <p className="text-xs leading-relaxed text-black/55">Earn 10 points per ₹100 spent on eligible orders.</p>
                 )}
-              </div>
+              </section>
             </div>
           )}
 
           {/* 5. SETTINGS TAB */}
           {activeTab === "settings" && (
-            <div className="bg-white border border-y2k-gunmetal/15 p-4 sm:p-5 shadow-xs space-y-3 text-xs">
-              <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block">
-                ACCOUNT SETTINGS
-              </span>
+            <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" className="space-y-4 rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
+              <div className="border-b border-black/10 pb-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Account settings</p>
+                <p className="mt-2 text-xs leading-relaxed text-black/55">Your member details and active sign-in method.</p>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <div className="p-2.5 bg-y2k-ice/40 border border-y2k-gunmetal/10">
-                  <span className="text-[9px] font-bold uppercase text-y2k-gunmetal/60 block">Name</span>
-                  <p className="font-bold text-xs text-y2k-gunmetal mt-0.5">{user?.name || "Not Set"}</p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="border border-black/10 bg-[#f5f5f2] p-4">
+                  <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Name</span>
+                  <p className="mt-2 text-xs font-bold text-black">{user?.name || "Not set"}</p>
                 </div>
-
-                <div className="p-2.5 bg-y2k-ice/40 border border-y2k-gunmetal/10">
-                  <span className="text-[9px] font-bold uppercase text-y2k-gunmetal/60 block">Email</span>
-                  <p className="font-bold text-xs text-y2k-gunmetal mt-0.5 truncate">{user?.email}</p>
+                <div className="border border-black/10 bg-[#f5f5f2] p-4">
+                  <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Email</span>
+                  <p className="mt-2 truncate text-xs font-bold text-black">{user?.email}</p>
                 </div>
               </div>
 
-              <div className="p-2.5 bg-y2k-ice/40 border border-y2k-gunmetal/10 flex items-center justify-between">
+              <div className="flex items-center justify-between gap-4 border border-black/10 bg-[#f5f5f2] p-4">
                 <div>
-                  <span className="text-[9px] font-bold uppercase text-y2k-gunmetal/60 block">Auth Method</span>
-                  <p className="font-bold text-xs text-y2k-gunmetal">{user?.googleId ? "Google OAuth" : "Email & Password"}</p>
+                  <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Sign-in method</span>
+                  <p className="mt-2 text-xs font-bold text-black">{user?.googleId ? "Google OAuth" : "Email & Password"}</p>
                 </div>
-                <span className="text-[8px] font-bold uppercase bg-y2k-gunmetal text-white px-2 py-0.5">
-                  VERIFIED
-                </span>
+                <span className="bg-black px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">Verified</span>
               </div>
 
-              <div className="pt-2 border-t border-y2k-gunmetal/10 flex items-center justify-between">
-                <span className="text-[10px] text-y2k-gunmetal/60">Active Session</span>
+              <div className="flex items-center justify-between border-t border-black/10 pt-4">
+                <span className="text-[10px] uppercase tracking-[0.12em] text-black/45">Active session</span>
                 <button
+                  type="button"
                   onClick={handleSignOut}
-                  className="text-[10px] font-bold uppercase text-red-600 hover:text-red-800 underline underline-offset-2 cursor-pointer"
+                  className="cursor-pointer text-[10px] font-bold uppercase tracking-[0.14em] text-black underline underline-offset-4 transition-opacity hover:opacity-55"
                 >
-                  Sign Out
+                  Sign out
                 </button>
               </div>
-            </div>
+            </section>
           )}
         </div>
 

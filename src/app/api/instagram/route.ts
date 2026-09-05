@@ -6,6 +6,29 @@ export const dynamic = "force-dynamic";
 
 const CONFIG_FILE = path.join(process.cwd(), "src", "data", "instagram_feed.json");
 
+type InstagramPost = {
+  id?: string;
+  mediaUrl?: string;
+  thumbnailUrl?: string;
+  url?: string;
+  mediaType?: string;
+  likeCount?: number;
+  commentsCount?: number;
+  caption?: string;
+  prunedCaption?: string;
+  permalink?: string;
+  link?: string;
+  sizes?: { large?: { mediaUrl?: string } };
+  media_url?: string;
+  media_type?: string;
+  thumbnail_url?: string;
+  like_count?: number;
+  comments_count?: number;
+  timestamp?: string;
+};
+
+type InstagramFeed = { posts?: InstagramPost[]; data?: InstagramPost[] };
+
 export async function GET() {
   // 1. Check if custom curated Instagram feed is set by Admin
   try {
@@ -29,7 +52,7 @@ export async function GET() {
     try {
       const res = await fetch(beholdUrl, { next: { revalidate: 1800 } });
       if (res.ok) {
-        const data = await res.json();
+        const data = await res.json() as InstagramPost[] | InstagramFeed;
         const rawPosts = Array.isArray(data) ? data : (data.posts || data.data || []);
         
         if (rawPosts.length > 0) {
@@ -40,7 +63,7 @@ export async function GET() {
               username: "bagifyyyy",
               name: "BAGIFYYYY",
             },
-            posts: rawPosts.map((item: any, idx: number) => ({
+            posts: rawPosts.map((item, idx) => ({
               id: item.id || `behold-${idx}`,
               url: item.mediaUrl || item.sizes?.large?.mediaUrl || item.thumbnailUrl || item.url,
               type: item.mediaType === "VIDEO" ? "video" : item.mediaType === "CAROUSEL_ALBUM" ? "carousel" : "image",
@@ -67,8 +90,16 @@ export async function GET() {
       const mediaRes = await fetch(mediaUrl, { next: { revalidate: 3600 } });
 
       if (profileRes.ok && mediaRes.ok) {
-        const profile = await profileRes.json();
-        const media = await mediaRes.json();
+            const profile = await profileRes.json() as {
+              username?: string;
+              name?: string;
+              profile_picture_url?: string;
+              followers_count?: number;
+              follows_count?: number;
+              media_count?: number;
+              biography?: string;
+            };
+            const media = await mediaRes.json() as { data?: InstagramPost[] };
 
         return NextResponse.json({
           success: true,
@@ -82,14 +113,14 @@ export async function GET() {
             postsCount: profile.media_count ?? 1256,
             biography: profile.biography || "",
           },
-          posts: (media.data || []).map((item: any) => ({
+          posts: (media.data || []).map((item) => ({
             id: item.id,
             url: item.media_type === "VIDEO" ? item.thumbnail_url || item.media_url : item.media_url,
             type: item.media_type === "VIDEO" ? "video" : item.media_type === "CAROUSEL_ALBUM" ? "carousel" : "image",
             likes: item.like_count ? item.like_count.toLocaleString() : "2.8K",
             comments: item.comments_count ? item.comments_count.toLocaleString() : "142",
             caption: item.caption || "",
-            timestamp: new Date(item.timestamp).toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+            timestamp: new Date(item.timestamp || "").toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
             link: item.permalink || "https://instagram.com/bagifyyyy",
           })),
         });

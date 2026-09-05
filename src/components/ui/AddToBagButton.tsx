@@ -32,9 +32,10 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
     e.stopPropagation();
 
     // If product requires size/color selection, go to product page instead of guessing
+    const hasUnknownOptions = !Array.isArray(product.sizes) || !Array.isArray(product.colors);
     const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 1;
     const hasColors = Array.isArray(product.colors) && product.colors.length > 1;
-    if (hasSizes || hasColors) {
+    if (hasUnknownOptions || hasSizes || hasColors) {
       router.push(`/product/${product.id}`);
       return;
     }
@@ -61,16 +62,12 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
       onClick={handleAddToBag}
       aria-label={`Add ${product.name} to bag`}
       title="Add to bag"
-      className={`group/bagbtn flex items-center justify-center transition-all duration-300 active:scale-90 cursor-pointer ${
-        added
-          ? "bg-y2k-gunmetal text-white"
-          : "bg-white/90 hover:bg-white text-y2k-gunmetal hover:text-black shadow-sm"
-      } ${className}`}
+      className={`group/bagbtn flex items-center justify-center border-0 bg-transparent text-black shadow-none outline-none transition-opacity duration-300 hover:opacity-55 active:scale-90 cursor-pointer ${className}`}
     >
       {added ? (
-        <Check className="w-3.5 h-3.5 text-white animate-in zoom-in-50 duration-200" strokeWidth={2.5} />
+        <Check className="h-4 w-4 animate-in zoom-in-50 text-black duration-200" strokeWidth={2.5} />
       ) : (
-        <ShoppingBag className="w-3.5 h-3.5 transition-transform duration-300 group-hover/bagbtn:scale-110" strokeWidth={1.75} />
+        <ShoppingBag className="h-4 w-4 text-black transition-transform duration-300 group-hover/bagbtn:scale-110" strokeWidth={1.8} />
       )}
     </button>
   );

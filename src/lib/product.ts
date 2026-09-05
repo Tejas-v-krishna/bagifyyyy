@@ -24,6 +24,14 @@ export type DisplayProduct = {
   images: string[];
   colors: string[];
   sizes: string[];
+  variants: ProductVariantForDisplay[];
+};
+
+export type ProductVariantForDisplay = {
+  id: string;
+  color: string;
+  size: string;
+  stock: number;
 };
 
 export type RelatedProduct = {
@@ -70,6 +78,12 @@ export async function getProductForDisplay(
   const colors = Array.from(new Set(product.variants.map((v) => v.color)));
   const sizes = Array.from(new Set(product.variants.map((v) => v.size)));
   const totalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
+  const variants = product.variants.map((variant) => ({
+    id: variant.id,
+    color: variant.color,
+    size: variant.size,
+    stock: variant.stock,
+  }));
 
   const [relatedProductsRaw, ratingGroup] = await Promise.all([
     prisma.product.findMany({
@@ -98,12 +112,13 @@ export async function getProductForDisplay(
     description: product.description,
     category: product.category,
     isNew: product.isNew,
-    isSoldOut: product.isSoldOut,
+    isSoldOut: product.isSoldOut || (variants.length > 0 && totalStock <= 0),
     isBestSeller: product.isBestSeller,
     image: product.images[0]?.url || '/placeholder.jpg',
     images: product.images.map((img) => img.url),
     colors,
     sizes,
+    variants,
     relatedProducts: relatedProductsRaw.map((rp) => ({
       id: rp.id,
       name: rp.name,

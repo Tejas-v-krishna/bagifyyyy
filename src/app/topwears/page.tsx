@@ -7,10 +7,17 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = collectionMetadata({
   title: "Topwear — Shirts & Tees",
   description:
-    "Oversized tees, heavyweight shirts, and archive topwear from BAGIFYYYY. Y2K streetwear silhouettes, limited quantity, no restocks.",
+     "Oversized tees, heavyweight shirts, and jackets from BAGIFYYYY. Y2K shapes in small runs.",
   path: "/topwears",
 });
 
 export default function TopwearsPage() {
-  return <CategoryPageClient category="topwears" title="SHIRTS & TEES" />;
+  return (
+    <CategoryPageClient
+      category="topwears"
+      prefix="Collection"
+      title="Topwears"
+       subtitle="Oversized tees, heavyweight shirts, and jackets in small runs."
+    />
+  );
 }

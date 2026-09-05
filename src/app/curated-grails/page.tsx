@@ -5,9 +5,9 @@ import { collectionMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = collectionMetadata({
-  title: "Curated Grails",
+   title: "Hard-to-find pieces",
   description:
-    "The grails — BAGIFYYYY's most-wanted archive and Y2K pieces, ranked. Single-run garments, no restocks, no replicas.",
+     "Hard-to-find vintage and Y2K pieces from BAGIFYYYY. Small quantities, no replicas, and no promise of a restock.",
   path: "/curated-grails",
 });
 
@@ -16,5 +16,5 @@ export const metadata: Metadata = collectionMetadata({
  * so the footer link and the sitemap entry both resolve to actual content.
  */
 export default function CuratedGrailsPage() {
-  return <CategoryPageClient filter="curated-grails" title="CURATED GRAILS" />;
+  return <CategoryPageClient filter="curated-grails" prefix="Collection" title="Hard-to-find pieces" />;
 }

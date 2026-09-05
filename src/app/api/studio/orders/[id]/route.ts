@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { isStudioAuthed } from '@/lib/requireStudioAuth';
 import { ORDER_STATUSES } from '@/lib/orderStatus';
 
-const VALID_PAYMENT_STATUSES = ['PENDING', 'PAID', 'FAILED', 'REFUNDED'] as const;
+const VALID_PAYMENT_STATUSES = ['PENDING', 'PAID', 'FAILED', 'REFUND_PENDING', 'REFUNDED'] as const;
 
 // PATCH /api/studio/orders/[id] — update order status, payment status, tracking, contact
 export async function PATCH(
@@ -25,6 +25,23 @@ export async function PATCH(
     }
     if (paymentStatus && !VALID_PAYMENT_STATUSES.includes(paymentStatus)) {
       return NextResponse.json({ error: 'Invalid payment status' }, { status: 400 });
+    }
+
+    const existing = await prisma.order.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    }
+    if (existing.paymentStatus === 'PAID' && paymentStatus && paymentStatus !== 'PAID') {
+      return NextResponse.json(
+        { error: 'Paid orders cannot be moved back to an unpaid state. Issue a refund instead.' },
+        { status: 400 }
+      );
+    }
+    if (paymentStatus === 'PAID' && existing.paymentStatus !== 'PAID') {
+      return NextResponse.json(
+        { error: 'Orders can only become PAID through verified payment finalization.' },
+        { status: 400 }
+      );
     }
 
     const updated = await prisma.order.update({

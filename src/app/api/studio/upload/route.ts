@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { requireStudioAuth } from '@/lib/requireStudioAuth';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const IMAGE_EXTENSIONS: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/avif": ".avif",
+};
 
 export async function POST(request: Request) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const formData = await request.formData();
     const files = formData.getAll("files") as File[];
@@ -22,6 +34,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No image files provided." }, { status: 400 });
     }
 
+    for (const file of filesToProcess) {
+      if (!(file instanceof File) || !IMAGE_EXTENSIONS[file.type]) {
+        return NextResponse.json({ error: "Only JPEG, PNG, WebP, and AVIF images are allowed." }, { status: 400 });
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json({ error: "Each image must be 10 MB or smaller." }, { status: 400 });
+      }
+    }
+
     // Ensure uploads directory exists
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadsDir, { recursive: true });
@@ -33,8 +54,8 @@ export async function POST(request: Request) {
       const buffer = Buffer.from(bytes);
 
       // Clean filename
-      const ext = path.extname(file.name) || ".jpg";
-      const cleanBaseName = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
+      const ext = IMAGE_EXTENSIONS[file.type];
+      const cleanBaseName = path.basename(file.name, path.extname(file.name)).replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
       const uniqueFilename = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanBaseName}${ext}`;
 
       const filePath = path.join(uploadsDir, uniqueFilename);
@@ -49,7 +70,7 @@ export async function POST(request: Request) {
       url: uploadedUrls[0],
       urls: uploadedUrls,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Image upload failed:", error);
     return NextResponse.json({ error: "Failed to upload image from device." }, { status: 500 });
   }

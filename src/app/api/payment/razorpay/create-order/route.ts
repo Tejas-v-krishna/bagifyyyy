@@ -11,6 +11,8 @@ import {
 } from '@/lib/cart';
 import { AWAITING_PAYMENT } from '@/lib/orderStatus';
 import { reserveCartStock } from '@/lib/stockReservation';
+import { getCheckoutId } from '@/lib/checkout';
+import { getRazorpayKeyId } from '@/lib/razorpay';
 
 export async function POST(request: Request) {
   try {
@@ -25,10 +27,64 @@ export async function POST(request: Request) {
     // body only says which product/size/colour/quantity.
     const address = assertValidShippingAddress(shippingAddress);
     const contact = assertValidContact(customerEmail, customerPhone);
-    const sessionId = userId || contact.email;
+    const checkoutId = getCheckoutId(request, body);
+    const sessionId = checkoutId;
     const cart = await priceCart({ items, shippingMethod, promoCode, sessionId });
     const totalAmount = cartTotal(cart);
     const amountInPaise = Math.round(totalAmount * 100);
+
+    const existingOrder = await prisma.order.findUnique({
+      where: { checkoutId },
+      include: { items: true },
+    });
+    if (existingOrder) {
+      const ownerMatches = existingOrder.userId
+        ? existingOrder.userId === userId
+        : !userId && existingOrder.customerEmail === contact.email;
+      if (!ownerMatches || existingOrder.paymentMethod !== 'RAZORPAY') {
+        return NextResponse.json({ error: 'This checkout reference is no longer valid.' }, { status: 409 });
+      }
+      if (existingOrder.paymentStatus === 'PAID') {
+        return NextResponse.json({
+          success: true,
+          alreadyPaid: true,
+          orderId: existingOrder.id,
+          orderNumber: existingOrder.orderNumber,
+          amount: existingOrder.totalAmount,
+          amountInPaise: Math.round(existingOrder.totalAmount * 100),
+          currency: 'INR',
+          keyId: getRazorpayKeyId(),
+        });
+      }
+      if (existingOrder.paymentStatus !== 'PENDING' || !existingOrder.razorpayOrderId) {
+        return NextResponse.json({ error: 'This checkout cannot be resumed.' }, { status: 409 });
+      }
+
+      const reservationCreated = await reserveCartStock({
+        sessionId: checkoutId,
+        orderId: existingOrder.id,
+        items: cart.items.map((item) => ({
+          variantId: item.variantId,
+          productId: item.productId,
+          quantity: item.quantity,
+        })),
+      });
+      if (!reservationCreated) {
+        return NextResponse.json({ error: 'The selected pieces are no longer available.' }, { status: 409 });
+      }
+
+      return NextResponse.json({
+        success: true,
+        orderId: existingOrder.id,
+        orderNumber: existingOrder.orderNumber,
+        razorpayOrderId: existingOrder.razorpayOrderId,
+        amount: existingOrder.totalAmount,
+        amountInPaise: Math.round(existingOrder.totalAmount * 100),
+        currency: 'INR',
+        keyId: getRazorpayKeyId(),
+        customer: { name: address.fullName, email: contact.email, phone: contact.phone },
+      });
+    }
 
     // Generate unique order number with collision retry
     let orderNumber = `BGF-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -39,7 +95,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Initialize Razorpay
-    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    const keyId = getRazorpayKeyId();
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
     if (!keyId || !keySecret) {
@@ -126,6 +182,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber,
+        checkoutId,
         userId,
         customerEmail: contact.email,
         customerPhone: contact.phone,
@@ -156,7 +213,7 @@ export async function POST(request: Request) {
     });
 
     // 6. Place a 7-minute temporary hold on these items for this checkout session
-    await reserveCartStock({
+    const reservationCreated = await reserveCartStock({
       sessionId,
       orderId: order.id,
       items: cart.items.map((i) => ({
@@ -165,6 +222,23 @@ export async function POST(request: Request) {
         quantity: i.quantity,
       })),
     });
+
+    // Do not return a payable provider order if the local hold could not be
+    // established. Remove the local rows as well, otherwise an abandoned
+    // checkout would appear in admin and the shopper could pay without the
+    // stock guarantee this flow promises.
+    if (!reservationCreated) {
+      await prisma.$transaction(async (tx) => {
+        await tx.order.delete({ where: { id: order.id } });
+        await tx.address.delete({ where: { id: savedAddress.id } });
+      }).catch((cleanupError) => {
+        console.error('Failed to clean up unreserved checkout:', cleanupError);
+      });
+      return NextResponse.json(
+        { error: 'This item could not be held for checkout. Please refresh your bag and try again.' },
+        { status: 409 }
+      );
+    }
 
     return NextResponse.json({
       success: true,

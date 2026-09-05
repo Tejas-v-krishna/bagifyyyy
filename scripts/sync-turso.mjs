@@ -96,6 +96,7 @@ async function main() {
     );`,
     `CREATE TABLE IF NOT EXISTS "PointTransaction" (
       "id" TEXT NOT NULL PRIMARY KEY,
+      "orderId" TEXT,
       "loyaltyAccountId" TEXT NOT NULL,
       "points" INTEGER NOT NULL,
       "reason" TEXT NOT NULL,
@@ -118,6 +119,7 @@ async function main() {
     `CREATE TABLE IF NOT EXISTS "Order" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "orderNumber" TEXT NOT NULL,
+      "checkoutId" TEXT,
       "userId" TEXT,
       "customerEmail" TEXT NOT NULL,
       "customerPhone" TEXT NOT NULL,
@@ -130,6 +132,8 @@ async function main() {
       "razorpayOrderId" TEXT,
       "paymentId" TEXT,
       "signature" TEXT,
+      "trackingId" TEXT,
+      "confirmationSentAt" DATETIME,
       "shippingAddressId" TEXT NOT NULL,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       "updatedAt" DATETIME NOT NULL,
@@ -160,18 +164,89 @@ async function main() {
       "sentCount" INTEGER NOT NULL DEFAULT 0,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );`,
+    `CREATE TABLE IF NOT EXISTS "SupportTicket" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "name" TEXT NOT NULL,
+      "email" TEXT NOT NULL,
+      "orderNumber" TEXT,
+      "message" TEXT NOT NULL,
+      "status" TEXT NOT NULL DEFAULT 'OPEN',
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );`,
+    `CREATE TABLE IF NOT EXISTS "PasswordResetToken" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "token" TEXT NOT NULL,
+      "email" TEXT NOT NULL,
+      "expiresAt" DATETIME NOT NULL,
+      "used" BOOLEAN NOT NULL DEFAULT false,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );`,
+    `CREATE TABLE IF NOT EXISTS "Review" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "productId" TEXT NOT NULL,
+      "userId" TEXT,
+      "authorName" TEXT NOT NULL,
+      "rating" INTEGER NOT NULL,
+      "body" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "Review_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    );`,
+    `CREATE TABLE IF NOT EXISTS "StockReservation" (
+      "id" TEXT NOT NULL PRIMARY KEY,
+      "variantId" TEXT NOT NULL,
+      "productId" TEXT NOT NULL,
+      "orderId" TEXT,
+      "sessionId" TEXT NOT NULL,
+      "quantity" INTEGER NOT NULL DEFAULT 1,
+      "expiresAt" DATETIME NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "User_googleId_key" ON "User"("googleId");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "Subscriber_email_key" ON "Subscriber"("email");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "LoyaltyAccount_email_key" ON "LoyaltyAccount"("email");`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS "PointTransaction_orderId_key" ON "PointTransaction"("orderId");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "Order_orderNumber_key" ON "Order"("orderNumber");`,
-    `CREATE UNIQUE INDEX IF NOT EXISTS "Order_razorpayOrderId_key" ON "Order"("razorpayOrderId");`
+    `CREATE UNIQUE INDEX IF NOT EXISTS "Order_checkoutId_key" ON "Order"("checkoutId");`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS "Order_razorpayOrderId_key" ON "Order"("razorpayOrderId");`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS "PasswordResetToken_token_key" ON "PasswordResetToken"("token");`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS "Review_productId_userId_key" ON "Review"("productId", "userId");`,
+    `CREATE INDEX IF NOT EXISTS "StockReservation_variantId_expiresAt_idx" ON "StockReservation"("variantId", "expiresAt");`,
+    `CREATE INDEX IF NOT EXISTS "StockReservation_productId_expiresAt_idx" ON "StockReservation"("productId", "expiresAt");`,
+    `CREATE INDEX IF NOT EXISTS "StockReservation_sessionId_idx" ON "StockReservation"("sessionId");`
   ];
 
   console.log('📦 Creating database tables in Turso...');
   for (const stmt of ddlStatements) {
-    await turso.execute(stmt);
+    try {
+      await turso.execute(stmt);
+    } catch (e) {
+      console.warn('DDL warning:', e.message);
+    }
   }
+
+  // Ensure optional columns exist on Order if table was created previously
+  try {
+    await turso.execute('ALTER TABLE "Order" ADD COLUMN "trackingId" TEXT;');
+  } catch {}
+
+  // Keep older Turso databases compatible with the current Prisma schema.
+  try {
+    await turso.execute('ALTER TABLE "Order" ADD COLUMN "checkoutId" TEXT;');
+  } catch {}
+  try {
+    await turso.execute('ALTER TABLE "Order" ADD COLUMN "confirmationSentAt" DATETIME;');
+  } catch {}
+  try {
+    await turso.execute('ALTER TABLE "PointTransaction" ADD COLUMN "orderId" TEXT;');
+  } catch {}
+  try {
+    await turso.execute('CREATE UNIQUE INDEX IF NOT EXISTS "Order_checkoutId_key" ON "Order"("checkoutId");');
+  } catch {}
+  try {
+    await turso.execute('CREATE UNIQUE INDEX IF NOT EXISTS "PointTransaction_orderId_key" ON "PointTransaction"("orderId");');
+  } catch {}
+
   console.log('✅ Tables and Indexes verified in Turso!');
 
   // 2. Migrate local data if dev.db exists

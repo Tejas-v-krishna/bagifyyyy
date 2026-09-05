@@ -1,24 +1,52 @@
 import Link from "next/link";
-import { XCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import EditorialPageShell, { EditorialPanel } from "@/components/layout/EditorialPageShell";
 
 export const dynamic = "force-dynamic";
 
 export default function CheckoutCancelPage() {
   return (
-    <div className="container mx-auto px-4 py-24 text-center max-w-lg animate-fade-in-up">
-      <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <XCircle className="w-10 h-10 text-white" />
-      </div>
-      <h1 className="font-display text-4xl uppercase tracking-tighter mb-4">Checkout Cancelled</h1>
-      <p className="text-muted-foreground mb-8">
-        Your payment was cancelled. Your cart items have been saved.
-      </p>
-      <Link 
-        href="/checkout" 
-        className="inline-block bg-foreground text-background px-8 py-4 font-bold uppercase tracking-wider hover:bg-accent hover:text-foreground transition-colors"
-      >
-        Return to Checkout
-      </Link>
-    </div>
+    <EditorialPageShell
+      eyebrow="CHECKOUT // PAYMENT STATUS"
+      title="PAYMENT CANCELLED"
+       description="Payment was not completed. Nothing was charged, and the items in your bag are still there."
+      backHref="/checkout"
+      backLabel="Back to checkout"
+    >
+      <EditorialPanel className="mx-auto max-w-lg text-center p-8 sm:p-12">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-black/15 bg-[#f5f5f2]">
+          <AlertCircle className="w-8 h-8 text-black" aria-hidden="true" />
+        </div>
+
+        <h2 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black mb-3">
+           Payment not completed
+        </h2>
+        <p className="text-xs sm:text-sm text-black/60 leading-relaxed mb-8 max-w-sm mx-auto">
+           Go back to checkout to try another payment method or review your order.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            href="/checkout"
+            className="flex-1 bg-black text-white px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors text-center cursor-pointer shadow-xs"
+          >
+            Return to Checkout →
+          </Link>
+          <Link
+            href="/"
+            className="flex-1 border border-black/15 bg-white text-black px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:border-black hover:bg-black/[0.02] transition-colors text-center cursor-pointer"
+          >
+            Return to Home
+          </Link>
+        </div>
+
+        <p className="text-[11px] text-black/40 mt-8">
+          Need help? Reach out at{" "}
+          <a href="mailto:support@bagifyyyy.com" className="underline font-medium text-black">
+            support@bagifyyyy.com
+          </a>
+        </p>
+      </EditorialPanel>
+    </EditorialPageShell>
   );
 }

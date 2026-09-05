@@ -22,13 +22,13 @@ export default function NewsletterForm() {
       
       if (res.ok) {
         setStatus("success");
-        setMessage("Welcome to the community!");
+        setMessage("You are on the list.");
         setEmail("");
       } else {
         setStatus("error");
         setMessage(data.error || "Something went wrong.");
       }
-    } catch (err) {
+    } catch {
       setStatus("error");
       setMessage("Failed to connect.");
     }
@@ -48,7 +48,7 @@ export default function NewsletterForm() {
         <button
           type="submit"
           disabled={status === "loading"}
-          className="btn-bagify rounded-none px-6 py-3 font-medium uppercase tracking-wide flex items-center gap-2 transition-colors group disabled:opacity-50"
+          className="btn-bagify px-6 py-3 font-medium uppercase tracking-wide flex items-center gap-2 transition-colors group disabled:opacity-50"
         >
           {status === "loading" ? "Joining..." : "Subscribe"}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

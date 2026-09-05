@@ -53,13 +53,13 @@ export default function SizeGuideModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 15 }}
             transition={{ type: "spring", damping: 26, stiffness: 280 }}
-            className="relative w-full max-w-md bg-white border border-y2k-gunmetal/10 p-6 shadow-2xl z-10 text-y2k-gunmetal font-sans"
+            className="editorial-panel relative z-10 w-full max-w-md bg-white border border-y2k-gunmetal/10 p-6 text-y2k-gunmetal font-sans"
           >
             <div className="flex items-center justify-between border-b border-y2k-gunmetal/10 pb-3 mb-4">
               <div className="flex items-center gap-2">
                 <Ruler className="w-4 h-4 text-y2k-gunmetal" />
                 <span className="font-display text-lg uppercase tracking-tight font-medium">
-                  ARCHIVE SIZE MATRIX
+                   SIZE GUIDE
                 </span>
               </div>
               <button
@@ -73,7 +73,7 @@ export default function SizeGuideModal({
             {/* Unit Switcher */}
             <div className="flex items-center justify-between mb-4 text-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate">
-                {isBottom ? "Pants & Cargo Fit (Boxy/Wide)" : "Boxy Oversized Vintage Fit"}
+                 {isBottom ? "Pants fit" : "Top fit"}
               </span>
               <div className="flex items-center border border-y2k-gunmetal/10 bg-y2k-ice p-0.5">
                 <button
@@ -139,7 +139,7 @@ export default function SizeGuideModal({
             </div>
 
             <p className="text-[10px] text-y2k-gunmetal/60 leading-relaxed">
-              * Silhouette is tailored with a slight drop-shoulder boxy drape. Order true to size for signature streetwear proportions.
+               * Measurements are taken by hand. Choose your usual size for a relaxed fit, then compare the numbers with a piece you already own.
             </p>
           </motion.div>
         </div>

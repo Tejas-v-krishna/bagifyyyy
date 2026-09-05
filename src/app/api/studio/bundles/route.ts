@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { requireStudioAuth } from '@/lib/requireStudioAuth';
 
 // GET /api/studio/bundles — List all bundles with attached products
 export async function GET() {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const bundles = await prisma.bundle.findMany({
       include: {
@@ -55,6 +59,9 @@ export async function GET() {
 
 // POST /api/studio/bundles — Create a new bundle
 export async function POST(request: Request) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const { name, description, discount, productIds } = body;

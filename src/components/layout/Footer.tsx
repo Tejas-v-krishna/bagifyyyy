@@ -1,14 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { getRecaptchaToken } from "@/lib/recaptcha";
 
-import { usePathname } from "next/navigation";
+const shopLinks = [
+  { href: "/topwears", label: "Topwears" },
+  { href: "/bottomwears", label: "Bottomwears" },
+  { href: "/accessories", label: "Accessories" },
+  { href: "/bundles", label: "Bundles" },
+];
+
+const detailLinks = [
+  { href: "/about", label: "About" },
+  { href: "/traceability", label: "Craft" },
+  { href: "/contact", label: "Contact" },
+  { href: "/shipping", label: "Delivery" },
+];
+
+const footerLinkClass =
+  "w-fit text-[12px] uppercase leading-[1.65] tracking-[-0.02em] text-white/55 transition-colors hover:text-white focus-visible:outline focus-visible:outline-1 focus-visible:outline-white focus-visible:outline-offset-2 sm:text-[13px]";
 
 export default function Footer() {
   const pathname = usePathname();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -17,8 +37,8 @@ export default function Footer() {
     return null;
   }
 
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!email) return;
 
     setStatus("loading");
@@ -26,16 +46,19 @@ export default function Footer() {
 
     try {
       const recaptchaToken = await getRecaptchaToken("subscribe");
-      const res = await fetch("/api/subscribe", {
+      const response = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, honeypot, recaptchaToken }),
+        body: JSON.stringify({ name, email, phone, honeypot, recaptchaToken }),
       });
-      const data = await res.json();
-      if (res.ok) {
+      const data = await response.json();
+
+      if (response.ok) {
         setStatus("success");
-        setMessage("Subscribed! Use code BAGIFY10 for 10% off.");
+        setMessage("You are in. Use code BAGIFY10 for 10% off.");
+        setName("");
         setEmail("");
+        setPhone("");
       } else {
         setStatus("error");
         setMessage(data.error || "Subscription failed.");
@@ -47,192 +70,155 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-y2k-ice text-y2k-gunmetal border-t border-y2k-gunmetal/[0.07] font-sans">
-      {/* ── Middle Row (Links & Newsletter) ─────────────────────────────────────────────────────── */}
-      <div className="w-full flex flex-col lg:flex-row px-8 lg:px-16 py-16 lg:py-24 gap-16 lg:gap-12 max-w-[1800px] mx-auto">
-        {/* Left Side: Link Columns */}
-        <div className="w-full lg:w-2/3 grid grid-cols-2 md:grid-cols-4 gap-10">
-          {/* Column 1: Help */}
-          <div className="flex flex-col">
-            <h4 className="section-label text-y2k-gunmetal mb-5">
-              HELP
-            </h4>
-            <nav className="flex flex-col gap-4">
-              <Link
-                href="/track"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                TRACK SHIPMENT
-              </Link>
-              <Link
-                href="/shipping"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                SHIPPING &amp; DELIVERIES
-              </Link>
-              <Link
-                href="/customer-service"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                CUSTOMER SERVICE
-              </Link>
-              <Link
-                href="/faq"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                FAQ
-              </Link>
-              <Link
-                href="/traceability"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                TRACEABILITY
-              </Link>
-            </nav>
-          </div>
-
-          {/* Column 2: Collections & Drops */}
-          <div className="flex flex-col">
-            <h4 className="section-label text-y2k-gunmetal mb-5">
-              COLLECTIONS
-            </h4>
-            <nav className="flex flex-col gap-4">
-              <Link
-                href="/new-arrivals"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                NEW ARRIVALS
-              </Link>
-              <Link
-                href="/curated-grails"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                CURATED GRAILS
-              </Link>
-              <Link
-                href="/products"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                ALL DROPS
-              </Link>
-              <Link
-                href="/topwears"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                SHIRTS &amp; TEES
-              </Link>
-              <Link
-                href="/bottomwears"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                PANTS &amp; CARGOS
-              </Link>
-              <Link
-                href="/about"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                ABOUT
-              </Link>
-            </nav>
-          </div>
-
-          {/* Column 3: Legal & Account */}
-          <div className="flex flex-col">
-            <h4 className="section-label text-y2k-gunmetal mb-5">
-              LEGAL &amp; ACCOUNT
-            </h4>
-            <nav className="flex flex-col gap-4">
-              <Link
-                href="/terms"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                TERMS &amp; CONDITIONS
-              </Link>
-              <Link
-                href="/privacy-policy"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                PRIVACY POLICY
-              </Link>
-              <Link
-                href="/account"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                MY ACCOUNT
-              </Link>
-              <Link
-                href="/wishlist"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                WISHLIST
-              </Link>
-            </nav>
-          </div>
-
-          {/* Column 4: Follow */}
-          <div className="flex flex-col">
-            <h4 className="section-label text-y2k-gunmetal mb-5">
-              FOLLOW US
-            </h4>
-            <nav className="flex flex-col gap-4">
-              <a
-                href="https://instagram.com/bagifyyyy"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[10.5px] text-y2k-gunmetal/55 hover:text-y2k-gunmetal transition-colors uppercase tracking-[0.14em]"
-              >
-                INSTAGRAM
-              </a>
-            </nav>
-          </div>
+    <footer className="archive-footer relative w-full overflow-hidden bg-[#070707] font-sans text-white" data-nav-theme="dark">
+      <div className="curated-grails-transition curated-grails-transition-in" aria-hidden="true" />
+      <div className="mx-auto w-full max-w-[1800px] px-4 pb-0 pt-9 sm:px-7 sm:pt-14 lg:px-[3.1vw] lg:pt-[3.4vw]">
+         <div className="flex items-start justify-between gap-6">
+           <h2 className="max-w-none text-[clamp(1.8rem,4.4vw,5.5rem)] font-display font-bold uppercase leading-[0.88] tracking-[-0.03em] text-white">
+             <span className="block lg:whitespace-nowrap">Hear About The Next One</span>
+             <span className="block pl-[clamp(2rem,16vw,14rem)] lg:whitespace-nowrap">Before It Goes Live</span>
+           </h2>
+           <span className="hidden shrink-0 pt-1 text-[9px] tracking-[0.04em] text-white/25 sm:block">
+             No daily noise
+          </span>
         </div>
 
-        {/* Right Side: Newsletter */}
-        <div className="w-full lg:w-1/3 flex flex-col lg:pl-16 lg:border-l lg:border-y2k-gunmetal/[0.07]">
-          <h4 className="section-label text-y2k-gunmetal mb-3">
-            NEWSLETTER + 10% OFF
-          </h4>
-          <p className="text-xs text-y2k-gunmetal/60 leading-loose mb-8 max-w-sm">
-            Subscribe for 10% off your first drop. No spam, only rare archive releases.
-          </p>
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-5">
-            <input type="text" name="website" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-            <input
-              type="email"
-              placeholder="YOUR EMAIL ADDRESS"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="input-line text-sm text-y2k-gunmetal w-full"
+        <div className="mt-14 grid grid-cols-2 gap-6 sm:mt-16 sm:gap-8 lg:mt-[3.2vw] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.68fr)_minmax(0,1.28fr)] lg:items-start lg:gap-x-[4.9vw]">
+          <div className="relative order-2 col-span-1 aspect-[0.65] overflow-hidden rounded-[4px] bg-[#e8e9eb] lg:order-1 lg:col-span-1 lg:aspect-[0.65]">
+            <Image
+              src="/assets/ai/prod_model_1_hoodie_1786659181183.jpg"
+              alt="BAGIFYYYY black archive hoodie"
+              fill
+              sizes="(max-width: 1023px) 50vw, 24vw"
+              className="object-cover object-[50%_24%] grayscale"
             />
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="btn-bagify text-white text-[10.5px] uppercase tracking-[0.18em] px-8 py-4 w-full disabled:opacity-50"
-            >
-              {status === "loading" ? "SUBMITTING…" : "GET 10% OFF"}
-            </button>
-            {message && (
+          </div>
+
+          <div className="order-1 col-span-2 flex min-h-full flex-col lg:order-2 lg:col-span-1 lg:px-0">
+            <p className="max-w-[26rem] text-[clamp(0.75rem,1vw,1rem)] font-medium leading-[1.15] tracking-[-0.02em] text-white">
+               No daily noise. Just a note when something new lands.
+            </p>
+
+            <form onSubmit={handleSubscribe} className="mt-8 flex flex-col sm:mt-10 lg:min-h-[clamp(15rem,27.5vw,29rem)]">
+              <input
+                type="text"
+                name="website"
+                value={honeypot}
+                onChange={(event) => setHoneypot(event.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                className="hidden"
+                aria-hidden="true"
+              />
+
+               <label className="block border-b border-white/50 pb-2.5">
+                 <span className="block text-[9px] tracking-[0.02em] text-white/55 sm:text-[10px]">Name</span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  autoComplete="name"
+                  className="mt-1 w-full bg-transparent text-xs text-white outline-none"
+                />
+              </label>
+
+               <label className="mt-8 block border-b border-white/50 pb-2.5 sm:mt-10">
+                 <span className="block text-[9px] tracking-[0.02em] text-white/55 sm:text-[10px]">Email</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoComplete="email"
+                  required
+                  className="mt-1 w-full bg-transparent text-xs text-white outline-none"
+                />
+              </label>
+
+               <label className="mt-8 block border-b border-white/50 pb-2.5 sm:mt-10">
+                 <span className="block text-[9px] tracking-[0.02em] text-white/55 sm:text-[10px]">Phone (optional)</span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  autoComplete="tel"
+                  className="mt-1 w-full bg-transparent text-xs text-white outline-none"
+                />
+              </label>
+
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="editorial-cta group mt-12 h-[1.875rem] w-full max-w-[8.5rem] !min-h-[1.875rem] !py-0 disabled:opacity-50 sm:mt-auto"
+              >
+                 {status === "loading" ? "Joining" : "Join the list"}
+                <ArrowRight className="editorial-cta-arrow" strokeWidth={1.8} aria-hidden="true" />
+              </button>
+
               <p
-                className={`text-[10px] uppercase tracking-wider mt-1 ${
-                  status === "success" ? "text-y2k-gunmetal" : "text-red-600"
+                aria-live="polite"
+                className={`mt-3 min-h-4 text-[8px] uppercase tracking-[0.04em] ${
+                  status === "error" ? "text-red-300" : "text-white/55"
                 }`}
               >
                 {message}
               </p>
-            )}
-          </form>
-        </div>
-      </div>
+            </form>
+          </div>
 
-      {/* ── Bottom Row (Copyright) ─────────────────────────────────────────────────────── */}
-      <div className="w-full flex justify-between items-center px-8 lg:px-16 py-7 border-t border-y2k-gunmetal/[0.07] max-w-[1800px] mx-auto">
-        <span className="text-[9.5px] uppercase tracking-[0.2em] text-y2k-gunmetal/45">
-          © 2026 BAGIFYYYY ARCHIVE. ALL RIGHTS RESERVED.
-        </span>
-        <span className="text-[9.5px] uppercase tracking-[0.2em] text-y2k-gunmetal/45">
-          EST. 2024
-        </span>
+          <div className="relative order-3 col-span-1 aspect-square overflow-hidden rounded-[4px] bg-[#e8e9eb] lg:col-span-1 lg:ml-auto lg:mt-[5.4vw] lg:aspect-square lg:w-full">
+            <Image
+              src="/assets/ai/prod_model_6_denimjacket_1786660137724.jpg"
+              alt="BAGIFYYYY black tee editorial"
+              fill
+              sizes="(max-width: 1023px) 50vw, 31vw"
+              className="object-cover object-[50%_18%] grayscale"
+            />
+          </div>
+        </div>
+
+        <div className="mt-24 grid grid-cols-2 gap-x-6 gap-y-14 text-white/90 sm:mt-28 sm:grid-cols-4 lg:mt-[6vw] lg:grid-cols-12">
+          <div className="col-span-1 flex flex-col lg:col-span-3">
+            <Link href="/products" className="mt-12 inline-flex w-fit items-center gap-1.5 text-[12px] font-medium text-white transition-opacity hover:opacity-55 sm:mt-16 sm:text-[13px]">
+               Shop all pieces
+              <ArrowRight className="h-3 w-3" strokeWidth={1.5} aria-hidden="true" />
+            </Link>
+          </div>
+
+          <nav className="col-span-1 flex flex-col lg:col-span-3" aria-label="Footer shop navigation">
+            <p className="mb-2 text-[11px] font-semibold tracking-[0.02em] text-white sm:text-[12px]">Shop</p>
+            {shopLinks.map((link) => (
+              <Link key={`${link.href}-${link.label}`} href={link.href} className={footerLinkClass}>{link.label}</Link>
+            ))}
+          </nav>
+
+          <nav className="col-span-1 flex flex-col lg:col-span-4" aria-label="Footer details navigation">
+             <p className="mb-2 text-[11px] font-semibold tracking-[0.02em] text-white sm:text-[12px]">Info</p>
+            {detailLinks.map((link) => (
+              <Link key={link.href} href={link.href} className={footerLinkClass}>{link.label}</Link>
+            ))}
+          </nav>
+
+          <nav className="col-span-1 flex flex-col lg:col-span-2" aria-label="Social links">
+            <p className="mb-2 text-[11px] font-semibold tracking-[0.02em] text-white sm:text-[12px]">Follow</p>
+            <a href="https://instagram.com/bagifyyyy" target="_blank" rel="noreferrer" className={footerLinkClass}>Instagram</a>
+             <a href="https://x.com/bagifyyyy" target="_blank" rel="noreferrer" className={footerLinkClass}>X</a>
+          </nav>
+        </div>
+
+        <div className="mt-24 grid grid-cols-2 gap-8 text-[11px] tracking-tight text-white/80 sm:mt-32 sm:grid-cols-4 sm:text-[12px] lg:mt-[6vw] lg:grid-cols-12">
+          <p className="col-span-2 sm:col-span-2 lg:col-span-6">© 2026 BAGIFYYYY. All rights reserved.</p>
+          <Link href="/privacy-policy" className="w-fit transition-opacity hover:opacity-50 lg:col-span-4">Privacy</Link>
+          <Link href="/terms" className="w-fit transition-opacity hover:opacity-50 lg:col-span-2">Terms</Link>
+        </div>
+
+        <Image
+          src="/footer-logo.gif"
+          alt="BAGIFYYYY"
+          width={1024}
+          height={265}
+          unoptimized
+          className="-mb-[0.055em] mt-12 block h-auto w-full object-contain sm:mt-16 lg:mt-[4vw]"
+        />
       </div>
     </footer>
   );

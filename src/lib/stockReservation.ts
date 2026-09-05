@@ -27,7 +27,7 @@ export async function reserveCartStock(params: {
   sessionId: string;
   orderId?: string;
   items: {
-    variantId?: string;
+    variantId: string | null;
     productId: string;
     quantity: number;
   }[];
@@ -36,33 +36,58 @@ export async function reserveCartStock(params: {
   const expiresAt = new Date(Date.now() + RESERVATION_HOLD_MS);
 
   try {
-    // 1. Clean up stale holds
-    await cleanupExpiredReservations();
+    // Reservation capacity and row creation must happen in one transaction.
+    // Otherwise two checkouts can both observe the same free stock and place
+    // holds that exceed the variant's inventory.
+    return await prisma.$transaction(async (tx) => {
+      const now = new Date();
 
-    // 2. Remove existing reservations for this session to refresh
-    await prisma.stockReservation.deleteMany({
-      where: { sessionId },
-    });
-
-    // 3. Create fresh reservations for each item
-    for (const item of items) {
-      const targetVariantId = item.variantId || item.productId;
-      if (!targetVariantId) continue;
-      await prisma.stockReservation.create({
-        data: {
-          variantId: targetVariantId,
-          productId: item.productId,
-          sessionId,
-          orderId: orderId || null,
-          quantity: item.quantity,
-          expiresAt,
-        },
+      await tx.stockReservation.deleteMany({
+        where: { expiresAt: { lte: now } },
       });
-    }
+      await tx.stockReservation.deleteMany({ where: { sessionId } });
 
-    return true;
+      for (const item of items) {
+        // Products without variants are valid legacy/catalogue items, but there
+        // is no variant row against which a temporary hold can be recorded.
+        if (!item.variantId) continue;
+
+        const variant = await tx.variant.findUnique({ where: { id: item.variantId } });
+        if (!variant || variant.productId !== item.productId) {
+          throw new Error(`Product ${item.productId} has no valid reservable variant.`);
+        }
+
+        const activeReservations = await tx.stockReservation.findMany({
+          where: {
+            variantId: item.variantId,
+            expiresAt: { gt: now },
+            sessionId: { not: sessionId },
+          },
+        });
+        const heldByOthers = activeReservations.reduce((sum, reservation) => sum + reservation.quantity, 0);
+        if (heldByOthers + item.quantity > variant.stock) {
+          throw new Error(`Insufficient available stock for ${item.productId}.`);
+        }
+
+        await tx.stockReservation.create({
+          data: {
+            variantId: item.variantId,
+            productId: item.productId,
+            sessionId,
+            orderId: orderId || null,
+            quantity: item.quantity,
+            expiresAt,
+          },
+        });
+      }
+
+      return true;
+    });
   } catch (err) {
     console.error('Failed to reserve stock:', err);
+    await prisma.stockReservation.deleteMany({
+      where: { sessionId, ...(orderId ? { orderId } : {}) },
+    }).catch(() => {});
     return false;
   }
 }

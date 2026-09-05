@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Ruler, ArrowRight, Check } from "lucide-react";
+import EditorialPageShell from "@/components/layout/EditorialPageShell";
 
 export default function SizeGuidePage() {
   const [activeTab, setActiveTab] = useState<"tops" | "bottoms" | "footwear">("tops");
@@ -32,44 +31,27 @@ export default function SizeGuidePage() {
   ];
 
   return (
-    <div className="bg-y2k-ice text-y2k-gunmetal min-h-screen py-8 sm:py-12 font-sans">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-y2k-slate mb-6">
-          <Link href="/" className="hover:text-black">HOME</Link>
-          <span>/</span>
-          <span className="text-y2k-gunmetal">SIZE MATRIX</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-6 pb-4 border-b border-y2k-gunmetal/15">
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-            FITTING &amp; PROPORTIONS
-          </span>
-          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            SIZE GUIDE
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-1">
-            Exact garment dimensions for our signature oversized boxy streetwear silhouettes.
-          </p>
-        </div>
-
+    <EditorialPageShell
+       eyebrow="Fitting / Measurements"
+      title="Size guide"
+       description="Measure a piece you already own and compare it with the numbers below."
+    >
+      <div className="w-full">
         {/* Tab & Unit Selector */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="flex border border-y2k-gunmetal/10 bg-white p-0.5">
-            {[
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex rounded-lg border border-black/10 bg-white p-1 shadow-sm">
+            {([
               { id: "tops", label: "SHIRTS & TEES" },
               { id: "bottoms", label: "PANTS & CARGOS" },
               { id: "footwear", label: "FOOTWEAR" },
-            ].map((tab) => (
+            ] as const).map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3 py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer ${
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3.5 py-1.5 text-[9.5px] sm:text-[10px] font-bold uppercase tracking-[0.16em] rounded-md transition-all cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-y2k-gunmetal text-white"
-                    : "text-y2k-gunmetal/70 hover:text-black"
+                    ? "bg-black text-white"
+                    : "text-black/60 hover:text-black hover:bg-black/5"
                 }`}
               >
                 {tab.label}
@@ -77,19 +59,19 @@ export default function SizeGuidePage() {
             ))}
           </div>
 
-          <div className="flex border border-y2k-gunmetal/10 bg-white p-0.5">
+          <div className="flex rounded-lg border border-black/10 bg-white p-1 shadow-sm">
             <button
               onClick={() => setUnit("cm")}
-              className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider cursor-pointer ${
-                unit === "cm" ? "bg-y2k-gunmetal text-white" : "text-y2k-gunmetal/60"
+              className={`px-3 py-1 text-[9.5px] font-bold uppercase tracking-[0.16em] rounded-md transition-all cursor-pointer ${
+                unit === "cm" ? "bg-black text-white" : "text-black/55 hover:text-black"
               }`}
             >
               CM
             </button>
             <button
               onClick={() => setUnit("in")}
-              className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider cursor-pointer ${
-                unit === "in" ? "bg-y2k-gunmetal text-white" : "text-y2k-gunmetal/60"
+              className={`px-3 py-1 text-[9.5px] font-bold uppercase tracking-[0.16em] rounded-md transition-all cursor-pointer ${
+                unit === "in" ? "bg-black text-white" : "text-black/55 hover:text-black"
               }`}
             >
               IN
@@ -97,95 +79,96 @@ export default function SizeGuidePage() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-white border border-y2k-gunmetal/15 overflow-hidden mb-6 shadow-xs">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-y2k-gunmetal text-white text-[9px] font-bold uppercase tracking-wider">
-                <th className="p-3">SIZE</th>
-                {activeTab === "tops" && (
-                  <>
-                    <th className="p-3">CHEST</th>
-                    <th className="p-3">LENGTH</th>
-                    <th className="p-3">SHOULDER</th>
-                  </>
-                )}
-                {activeTab === "bottoms" && (
-                  <>
-                    <th className="p-3">WAIST</th>
-                    <th className="p-3">LENGTH</th>
-                    <th className="p-3">THIGH</th>
-                  </>
-                )}
-                {activeTab === "footwear" && (
-                  <>
-                    <th className="p-3">EU</th>
-                    <th className="p-3">US</th>
-                    <th className="p-3">INSOLE (CM)</th>
-                  </>
-                )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-y2k-gunmetal/10 font-mono text-[11px]">
-              {activeTab === "tops" &&
-                topsData.map((row) => (
-                  <tr key={row.size} className="hover:bg-y2k-ice/30">
-                    <td className="p-3 font-bold font-sans">{row.size}</td>
-                    <td className="p-3">{convert(row.chest)}</td>
-                    <td className="p-3">{convert(row.length)}</td>
-                    <td className="p-3">{convert(row.shoulder)}</td>
-                  </tr>
-                ))}
+        {/* Measurement Table */}
+        <div className="mb-8 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_2px_14px_rgba(0,0,0,0.02)]">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-black text-white text-[9.5px] font-bold uppercase tracking-[0.18em]">
+                  <th className="p-4">SIZE</th>
+                  {activeTab === "tops" && (
+                    <>
+                      <th className="p-4">CHEST</th>
+                      <th className="p-4">LENGTH</th>
+                      <th className="p-4">SHOULDER</th>
+                    </>
+                  )}
+                  {activeTab === "bottoms" && (
+                    <>
+                      <th className="p-4">WAIST</th>
+                      <th className="p-4">LENGTH</th>
+                      <th className="p-4">THIGH</th>
+                    </>
+                  )}
+                  {activeTab === "footwear" && (
+                    <>
+                      <th className="p-4">EU</th>
+                      <th className="p-4">US</th>
+                      <th className="p-4">INSOLE (CM)</th>
+                    </>
+                  )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/5 font-mono text-xs">
+                {activeTab === "tops" &&
+                  topsData.map((row) => (
+                    <tr key={row.size} className="hover:bg-black/[0.02] transition-colors">
+                      <td className="p-4 font-bold font-sans text-black">{row.size}</td>
+                      <td className="p-4 text-black/75">{convert(row.chest)}</td>
+                      <td className="p-4 text-black/75">{convert(row.length)}</td>
+                      <td className="p-4 text-black/75">{convert(row.shoulder)}</td>
+                    </tr>
+                  ))}
 
-              {activeTab === "bottoms" &&
-                bottomsData.map((row) => (
-                  <tr key={row.size} className="hover:bg-y2k-ice/30">
-                    <td className="p-3 font-bold font-sans">{row.size}</td>
-                    <td className="p-3">{convert(row.waist)}</td>
-                    <td className="p-3">{convert(row.length)}</td>
-                    <td className="p-3">{convert(row.thigh)}</td>
-                  </tr>
-                ))}
+                {activeTab === "bottoms" &&
+                  bottomsData.map((row) => (
+                    <tr key={row.size} className="hover:bg-black/[0.02] transition-colors">
+                      <td className="p-4 font-bold font-sans text-black">{row.size}</td>
+                      <td className="p-4 text-black/75">{convert(row.waist)}</td>
+                      <td className="p-4 text-black/75">{convert(row.length)}</td>
+                      <td className="p-4 text-black/75">{convert(row.thigh)}</td>
+                    </tr>
+                  ))}
 
-              {activeTab === "footwear" &&
-                footwearData.map((row) => (
-                  <tr key={row.uk} className="hover:bg-y2k-ice/30">
-                    <td className="p-3 font-bold font-sans">{row.uk}</td>
-                    <td className="p-3">{row.eu}</td>
-                    <td className="p-3">{row.us}</td>
-                    <td className="p-3">{row.cm} cm</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Measuring Guide Notes */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 text-xs space-y-2 shadow-xs">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1">
-            HOW TO MEASURE
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-y2k-gunmetal/80">
-            <div>
-              <strong className="text-y2k-gunmetal block uppercase font-bold">Chest (Pit to Pit):</strong>
-              Measure straight across chest from armpit to armpit, doubled.
-            </div>
-            <div>
-              <strong className="text-y2k-gunmetal block uppercase font-bold">Length:</strong>
-              Measure from highest shoulder point down to bottom hem.
-            </div>
-            <div>
-              <strong className="text-y2k-gunmetal block uppercase font-bold">Waist:</strong>
-              Measure horizontally across the waistband, doubled.
-            </div>
-            <div>
-              <strong className="text-y2k-gunmetal block uppercase font-bold">Fit Note:</strong>
-              Silhouettes are cut with signature boxy drape. Order true to size.
-            </div>
+                {activeTab === "footwear" &&
+                  footwearData.map((row) => (
+                    <tr key={row.uk} className="hover:bg-black/[0.02] transition-colors">
+                      <td className="p-4 font-bold font-sans text-black">{row.uk}</td>
+                      <td className="p-4 text-black/75">{row.eu}</td>
+                      <td className="p-4 text-black/75">{row.us}</td>
+                      <td className="p-4 text-black/75">{row.cm} cm</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
+        {/* Measuring Guide Notes */}
+        <div className="rounded-2xl border border-black/10 bg-white p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.02)]">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/45 block mb-4">
+            HOW TO MEASURE
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-black/70">
+            <div>
+              <strong className="text-black block uppercase font-bold text-[11px] mb-1">Chest (Pit to Pit):</strong>
+              Measure straight across chest from armpit to armpit, doubled.
+            </div>
+            <div>
+              <strong className="text-black block uppercase font-bold text-[11px] mb-1">Length:</strong>
+              Measure from highest shoulder point down to bottom hem.
+            </div>
+            <div>
+              <strong className="text-black block uppercase font-bold text-[11px] mb-1">Waist:</strong>
+              Measure horizontally across the waistband, doubled.
+            </div>
+            <div>
+              <strong className="text-black block uppercase font-bold text-[11px] mb-1">Fit Note:</strong>
+               Most pieces have a relaxed fit. Compare these measurements with a garment you already like before choosing a size.
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </EditorialPageShell>
   );
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { requireStudioAuth } from '@/lib/requireStudioAuth';
 
 const CONFIG_FILE = path.join(process.cwd(), "src", "data", "instagram_feed.json");
 
@@ -18,7 +19,7 @@ function getFeedConfig() {
 }
 
 // Helper to save config
-function saveFeedConfig(data: any) {
+function saveFeedConfig(data: unknown) {
   const dir = path.dirname(CONFIG_FILE);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -27,6 +28,9 @@ function saveFeedConfig(data: any) {
 }
 
 export async function GET() {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   const config = getFeedConfig();
   if (config) {
     return NextResponse.json({ success: true, ...config });
@@ -82,6 +86,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const { posts, profile } = body;
@@ -98,7 +105,7 @@ export async function POST(request: Request) {
 
     saveFeedConfig(payload);
     return NextResponse.json({ success: true, data: payload });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error saving instagram feed:", error);
     return NextResponse.json({ error: "Failed to update feed" }, { status: 500 });
   }

@@ -4,20 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import {
   Search,
   ChevronDown,
-  Package,
-  Truck,
   CheckCircle2,
-  XCircle,
-  Clock,
   RefreshCw,
   Printer,
   ShieldCheck,
   Trash2,
   AlertTriangle,
-  CreditCard,
 } from "lucide-react";
 import ShippingLabelModal from "./ShippingLabelModal";
 import { AWAITING_PAYMENT, ORDER_STATUSES, orderStatusLabel } from "@/lib/orderStatus";
+import Image from "next/image";
 
 type OrderItem = {
   id: string;
@@ -57,6 +53,7 @@ type Order = {
 
 const PAYMENT_STATUSES = ["PENDING", "PAID", "FAILED", "REFUNDED"] as const;
 const FILTER_TABS = ["ALL", ...ORDER_STATUSES];
+const passthroughLoader = ({ src }: { src: string }) => src;
 
 export default function StudioOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -67,7 +64,6 @@ export default function StudioOrdersPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
-  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteConfirmOrder, setDeleteConfirmOrder] = useState<Order | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -126,12 +122,14 @@ export default function StudioOrdersPage() {
   }, []);
 
   useEffect(() => {
-    fetchOrders();
+    async function loadOrders() {
+      await fetchOrders();
+    }
+    loadOrders();
   }, [fetchOrders]);
 
   const handleSaveOrder = async (orderId: string) => {
     setSaving(orderId);
-    setSaveSuccess(null);
     try {
       const res = await fetch(`/api/studio/orders/${orderId}`, {
         method: "PATCH",
@@ -160,9 +158,7 @@ export default function StudioOrdersPage() {
               : o
           )
         );
-        setSaveSuccess(orderId);
         showToast(`Order #${data.order?.orderNumber || "updated"} saved successfully.`);
-        setTimeout(() => setSaveSuccess(null), 3000);
       }
     } catch (err) {
       console.error("Failed to update order:", err);
@@ -232,7 +228,7 @@ export default function StudioOrdersPage() {
   if (unauthorized) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center font-sans">
-        <div className="bg-white border border-y2k-gunmetal/15 p-8 max-w-md w-full text-center shadow-xl text-y2k-gunmetal">
+        <div className="editorial-panel bg-white border border-y2k-gunmetal/15 p-8 max-w-md w-full text-center text-y2k-gunmetal">
           <ShieldCheck className="w-10 h-10 text-y2k-gunmetal mx-auto mb-4" />
           <h2 className="font-display font-medium text-lg uppercase tracking-tight mb-2">
             Studio Authentication Required
@@ -255,7 +251,7 @@ export default function StudioOrdersPage() {
     <div className="space-y-6 font-sans">
       {/* ── Toast Notification ────────────────────────────────────────────── */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-y2k-gunmetal text-white px-5 py-3.5 shadow-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 border border-white/20 animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 bg-black text-white px-5 py-3.5 text-xs font-bold uppercase tracking-wider flex items-center gap-2 border border-white/20 animate-in fade-in slide-in-from-bottom-4 duration-200">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
@@ -371,9 +367,12 @@ export default function StudioOrdersPage() {
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <div className="w-10 h-12 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 overflow-hidden relative">
-                        <img
+                        <Image
                           src={order.items?.[0]?.image || "/placeholder.jpg"}
                           alt={order.items?.[0]?.name || "Item"}
+                          fill
+                          loader={passthroughLoader}
+                          unoptimized
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -526,9 +525,12 @@ export default function StudioOrdersPage() {
                                 >
                                   <div className="flex items-center gap-3">
                                     <div className="w-8 h-10 bg-y2k-ice border border-y2k-gunmetal/10 shrink-0 relative overflow-hidden">
-                                      <img
+                                      <Image
                                         src={item.image || "/placeholder.jpg"}
                                         alt={item.name}
+                                        fill
+                                        loader={passthroughLoader}
+                                        unoptimized
                                         className="w-full h-full object-cover"
                                       />
                                     </div>
@@ -648,7 +650,7 @@ export default function StudioOrdersPage() {
       {/* ── Delete Confirmation Modal ───────────────────────────────────────── */}
       {deleteConfirmOrder && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-y2k-gunmetal/20 max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150">
+          <div className="editorial-panel bg-white border border-y2k-gunmetal/20 max-w-md w-full p-6 space-y-4 animate-in zoom-in-95 duration-150">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0 text-red-600">
                 <AlertTriangle className="w-5 h-5" />

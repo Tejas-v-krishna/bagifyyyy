@@ -83,7 +83,7 @@ export default function ProductForm() {
       <button 
         type="submit" 
         disabled={loading}
-        className="btn-bagify py-4 rounded-none uppercase font-bold tracking-wider disabled:opacity-50"
+        className="btn-bagify py-4 uppercase font-bold tracking-wider disabled:opacity-50"
       >
         {loading ? "Creating..." : "Create Product"}
       </button>

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const HERO_SLIDES = [
   {
     id: 1,
-    image: "/hero-1-new.jpg",
+    image: "/hero-main.png",
     link: "/new-arrivals",
     alt: "New arrivals — unisex streetwear drop",
     title: "NEW ARRIVALS",
@@ -17,17 +17,17 @@ const HERO_SLIDES = [
     id: 2,
     image: "/hero-2-editorial.jpg",
     link: "/bottomwears",
-    alt: "Cargo and streetwear — tactical essentials",
+    alt: "Cargo trousers and streetwear",
     title: "CYBER CARGOS",
-    subtitle: "TACTICAL ESSENTIALS BUILT TO LAST",
+    subtitle: "CARGOS WITH ROOM TO MOVE",
   },
   {
     id: 3,
     image: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg",
     link: "/products",
-    alt: "Raw selvedge denim — archive collection",
+    alt: "Raw selvedge denim jacket",
     title: "VINTAGE DENIM",
-    subtitle: "RAW SELVEDGE ARCHIVE COLLECTION",
+    subtitle: "RAW DENIM, BROKEN IN",
   },
 ];
 
@@ -54,20 +54,15 @@ const variants = {
   }
 };
 
-const swipeConfidenceThreshold = 10000;
-const swipePower = (offset: number, velocity: number) => {
-  return Math.abs(offset) * velocity;
-};
-
 export default function HeroCarousel() {
   const [[page, direction], setPage] = useState([0, 0]);
   const shouldReduceMotion = useReducedMotion();
 
   const slideIndex = ((page % HERO_SLIDES.length) + HERO_SLIDES.length) % HERO_SLIDES.length;
 
-  const paginate = (newDirection: number) => {
+  const paginate = useCallback((newDirection: number) => {
     setPage([page + newDirection, newDirection]);
-  };
+  }, [page]);
 
   // Autoplay without pause-on-hover so it never gets stuck
   useEffect(() => {
@@ -76,7 +71,7 @@ export default function HeroCarousel() {
       paginate(1);
     }, SLIDE_DURATION);
     return () => clearInterval(timer);
-  }, [page, shouldReduceMotion]);
+  }, [paginate, shouldReduceMotion]);
 
   const slide = HERO_SLIDES[slideIndex];
 
@@ -98,18 +93,7 @@ export default function HeroCarousel() {
             x: { type: "spring", stiffness: 300, damping: 30 },
             opacity: { duration: 0.2 }
           }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={1}
-          onDragEnd={(e, { offset, velocity }) => {
-            const swipe = swipePower(offset.x, velocity.x);
-            if (swipe < -swipeConfidenceThreshold) {
-              paginate(1);
-            } else if (swipe > swipeConfidenceThreshold) {
-              paginate(-1);
-            }
-          }}
-          className="absolute inset-0 cursor-grab active:cursor-grabbing"
+           className="absolute inset-0"
           aria-hidden="true"
         >
           <div

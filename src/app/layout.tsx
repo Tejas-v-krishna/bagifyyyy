@@ -17,11 +17,19 @@ const urbanist = Urbanist({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.in"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", type: "image/x-icon" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   title: {
-    default: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear & Archive Fashion",
+     default: "BAGIFYYYY (Bagify) | Y2K Streetwear & Vintage Finds",
     template: "%s | BAGIFYYYY",
   },
-  description: "Shop BAGIFYYYY (Bagify) for premium Y2K streetwear, archive fashion, and exclusive limited-edition drops. High-quality oversized tees, cyber cargos, and heavy denim. No restocks, no replicas.",
+   description: "BAGIFYYYY makes small-run Y2K streetwear and finds one-off vintage pieces in India. Shop oversized tees, cargos, denim, and more.",
   keywords: [
     "BAGIFYYYY",
     "Bagify",
@@ -50,14 +58,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://bagifyyyy.in",
-    title: "BAGIFYYYY (Bagify) | Y2K Archive & Premium Streetwear",
-    description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. No restocks, no replicas. Wear history.",
+     title: "BAGIFYYYY (Bagify) | Y2K Streetwear & Vintage Finds",
+     description: "Small-run Y2K streetwear and one-off vintage pieces from BAGIFYYYY.",
     siteName: "BAGIFYYYY",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BAGIFYYYY (Bagify) | Premium Y2K Streetwear",
-    description: "Discover BAGIFYYYY (Bagify). Y2K-era streetwear drop culture. Wear history.",
+     title: "BAGIFYYYY (Bagify) | Y2K Streetwear",
+     description: "Small-run Y2K streetwear from BAGIFYYYY.",
   },
   robots: {
     index: true,
@@ -78,7 +86,6 @@ export const metadata: Metadata = {
 };
 
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Preloader from "@/components/layout/Preloader";
 import AuthModal from "@/components/auth/AuthModal";
@@ -88,6 +95,7 @@ import GlobalAnimator from "@/components/ui/GlobalAnimator";
 import PageTransitionLoader from "@/components/ui/PageTransitionLoader";
 import PageTransitionProvider from "@/components/ui/PageTransitionProvider";
 import SmoothCursor from "@/components/ui/SmoothCursor";
+import InteractionGuard from "@/components/ui/InteractionGuard";
 
 import GoogleAuthProvider from "@/components/auth/GoogleAuthProvider";
 import JsonLd from "@/components/seo/JsonLd";
@@ -113,6 +121,7 @@ export default function RootLayout({
         className="monochrome-site min-h-screen flex flex-col bg-y2k-ice text-y2k-gunmetal font-sans"
         suppressHydrationWarning
       >
+        <InteractionGuard />
         <SmoothCursor />
         <GoogleAuthProvider>
           <LenisProvider>
@@ -125,7 +134,6 @@ export default function RootLayout({
             <main className="flex-1 flex flex-col">
               <PageTransitionProvider>{children}</PageTransitionProvider>
             </main>
-            <Footer />
             <CartDrawer />
           </LenisProvider>
         </GoogleAuthProvider>

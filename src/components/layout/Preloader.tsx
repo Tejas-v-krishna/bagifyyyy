@@ -1,25 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
+import Image from "next/image";
 
 import { usePathname } from "next/navigation";
+
+const subscribeToClient = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 export default function Preloader() {
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
-  const isDashboard = pathname?.startsWith("/studio") || pathname?.startsWith("/admin");
+  const isDashboard =
+    pathname?.startsWith("/studio") ||
+    pathname?.startsWith("/admin") ||
+    pathname === "/login" ||
+    pathname === "/account";
+  const isClient = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
+  const prefersReducedMotion = isClient && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
     // Studio/admin or reduced motion never delays downstream animations
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     if (isDashboard || prefersReducedMotion) {
-      setIsLoading(false);
       setPreloaderFinished(true);
       return;
     }
@@ -31,9 +37,9 @@ export default function Preloader() {
     }, 3200);
 
     return () => clearTimeout(timer);
-  }, [isDashboard, setPreloaderFinished]);
+  }, [isDashboard, prefersReducedMotion, setPreloaderFinished]);
 
-  if (isDashboard) {
+  if (isDashboard || prefersReducedMotion) {
     return null;
   }
 
@@ -54,12 +60,13 @@ export default function Preloader() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
-            <img
+            <Image
               src="/bagifyyyy-wordmark-animated.gif"
               alt="Bagifyyyy Logo"
               width={845}
               height={219}
               fetchPriority="high"
+              unoptimized
               className="h-full w-full object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
             />
           </motion.div>

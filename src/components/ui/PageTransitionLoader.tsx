@@ -8,18 +8,27 @@ export default function PageTransitionLoader() {
   const pathname = usePathname();
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isNavigatingRef = useRef(false);
 
   // Complete and reset loader when route actually changes
   useEffect(() => {
-    if (isNavigating) {
+    if (!isNavigatingRef.current) return;
+
+    let doneTimer: ReturnType<typeof setTimeout> | null = null;
+    const completeTimer = setTimeout(() => {
       setProgress(100);
-      const doneTimer = setTimeout(() => {
+      doneTimer = setTimeout(() => {
+        isNavigatingRef.current = false;
         setIsNavigating(false);
         setProgress(0);
       }, 350);
-      return () => clearTimeout(doneTimer);
-    }
+    }, 0);
+
+    return () => {
+      clearTimeout(completeTimer);
+      if (doneTimer) clearTimeout(doneTimer);
+    };
   }, [pathname]);
 
   // Intercept all internal Link / button clicks to trigger instantaneous smooth progress loading
@@ -48,6 +57,7 @@ export default function PageTransitionLoader() {
         const currentUrl = window.location.pathname;
         if (href === currentUrl) return;
 
+        isNavigatingRef.current = true;
         setIsNavigating(true);
         setProgress(25);
 

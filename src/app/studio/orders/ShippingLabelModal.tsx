@@ -201,7 +201,7 @@ export default function ShippingLabelModal({
         {/* Scrollable Preview Area */}
         <div className="p-6 overflow-y-auto flex-1 flex flex-col items-center bg-[#0a0a0a]">
           <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-4 text-center font-mono">
-            ✦ HIGH-CONTRAST THERMAL / 4x6" / A6 SHIPPING BAG STICKER
+            ✦ HIGH-CONTRAST THERMAL / 4x6&quot; / A6 SHIPPING BAG STICKER
           </p>
 
           {/* ========================================================================= */}
@@ -378,7 +378,7 @@ export default function ShippingLabelModal({
         {/* Modal Footer Controls */}
         <div className="px-6 py-4 bg-[#181818] border-t border-white/10 flex items-center justify-between shrink-0">
           <p className="text-[10px] text-gray-400">
-            ✓ 100% Black &amp; White. Optimized for thermal printers (4x6", A6) and laser/inkjet A4.
+            ✓ 100% Black &amp; White. Optimized for thermal printers (4x6&quot;, A6) and laser/inkjet A4.
           </p>
           <div className="flex items-center gap-3">
             <button

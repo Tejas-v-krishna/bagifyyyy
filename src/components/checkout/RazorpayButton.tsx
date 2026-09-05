@@ -4,8 +4,47 @@ import React, { useState } from "react";
 import { Loader2 } from "lucide-react";
 
 declare global {
+  interface RazorpayOptions {
+    key?: string;
+    amount: number;
+    currency: string;
+    name: string;
+    description: string;
+    image?: string;
+    order_id: string;
+    prefill: { name: string; email: string; contact: string };
+    notes: Record<string, string>;
+    theme: { color: string };
+    modal: { ondismiss: () => void };
+    handler: (response: RazorpayPaymentResponse) => void;
+  }
+
+  interface RazorpayPaymentResponse {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }
+
+  interface RazorpayError {
+    code?: string;
+    description?: string;
+    reason?: string;
+    source?: string;
+    step?: string;
+    metadata?: Record<string, string>;
+  }
+
+  interface RazorpayPaymentFailedResponse {
+    error: RazorpayError;
+  }
+
+  interface RazorpayInstance {
+    on: (event: "payment.failed", handler: (response: RazorpayPaymentFailedResponse) => void) => void;
+    open: () => void;
+  }
+
   interface Window {
-    Razorpay: any;
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
   }
 }
 
@@ -31,7 +70,7 @@ interface RazorpayButtonProps {
     razorpay_order_id: string;
     razorpay_signature: string;
   }) => void;
-  onFailure?: (error: any) => void;
+  onFailure?: (error: unknown) => void;
   onDismiss?: () => void;
   createOrderEndpoint?: string;
   verifyEndpoint?: string;
@@ -59,7 +98,7 @@ export default function RazorpayButton({
   receipt,
   name = "BAGIFYYYY",
   description = "Secure Checkout",
-  image = "/favicon.ico",
+  image = "/android-chrome-192x192.png",
   customer,
   notes,
   themeColor = "#232D3B",
@@ -163,9 +202,9 @@ export default function RazorpayButton({
             if (onSuccess) {
               onSuccess(response);
             }
-          } catch (err: any) {
+          } catch (err) {
             console.error("Verification error:", err);
-            setErrorMessage(err.message || "Payment verification failed");
+            setErrorMessage(err instanceof Error ? err.message : "Payment verification failed");
             if (onFailure) onFailure(err);
           } finally {
             setLoading(false);
@@ -175,7 +214,7 @@ export default function RazorpayButton({
 
       const rzp = new window.Razorpay(options);
 
-      rzp.on("payment.failed", function (response: any) {
+      rzp.on("payment.failed", function (response: RazorpayPaymentFailedResponse) {
         console.error("Razorpay payment failed:", response.error);
         const errorDesc = response.error?.description || "Payment failed";
         setErrorMessage(errorDesc);
@@ -184,9 +223,9 @@ export default function RazorpayButton({
       });
 
       rzp.open();
-    } catch (err: any) {
+    } catch (err) {
       console.error("Razorpay initiation error:", err);
-      setErrorMessage(err.message || "An unexpected error occurred during checkout");
+      setErrorMessage(err instanceof Error ? err.message : "An unexpected error occurred during checkout");
       setLoading(false);
       if (onFailure) onFailure(err);
     }

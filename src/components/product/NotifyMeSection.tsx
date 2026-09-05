@@ -27,7 +27,7 @@ export default function NotifyMeSection({ productId }: NotifyMeSectionProps) {
       } else {
         setStatus("error");
       }
-    } catch (error) {
+    } catch {
       setStatus("error");
     }
   };
@@ -36,7 +36,7 @@ export default function NotifyMeSection({ productId }: NotifyMeSectionProps) {
     return (
       <div className="w-full border border-black p-4 text-center mb-4 bg-gray-50">
         <p className="text-[10px] font-bold uppercase tracking-wider text-black">
-          You'll be notified when this item is restocked!
+           We&apos;ll email you if this piece comes back.
         </p>
       </div>
     );
@@ -47,7 +47,7 @@ export default function NotifyMeSection({ productId }: NotifyMeSectionProps) {
       <input 
         type="email" 
         required
-        placeholder="ENTER YOUR EMAIL"
+         placeholder="YOUR EMAIL"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className="w-full border border-black px-4 py-3 text-xs font-bold uppercase tracking-wider bg-white text-black outline-none placeholder-gray-400"
@@ -58,7 +58,7 @@ export default function NotifyMeSection({ productId }: NotifyMeSectionProps) {
         className="w-full border border-black text-black bg-white hover:bg-black hover:text-white transition-colors flex items-center justify-center px-4 py-3 disabled:opacity-50"
       >
         <span className="text-xs font-bold uppercase tracking-wider">
-          {status === "loading" ? "SUBMITTING..." : "NOTIFY ME WHEN BACK IN STOCK"}
+           {status === "loading" ? "SENDING..." : "EMAIL ME IF IT RETURNS"}
         </span>
       </button>
       {status === "error" && (
