@@ -8,6 +8,13 @@ const PUBLIC_STUDIO_PATHS = new Set([
   '/api/studio/auth',
 ]);
 
+/** Login API must answer on the public host too — otherwise the secret-path
+    login form has nothing to talk to. It only mints sessions for the right
+    password and reveals no UI. */
+const PUBLIC_STUDIO_API_PATHS = new Set([
+  '/api/studio/auth',
+]);
+
 /** General public auth/subscription endpoints that shoppers use on main store */
 const PUBLIC_STORE_PATHS = new Set([
   '/api/auth/login',
@@ -52,17 +59,63 @@ function isAdminPath(pathname: string): boolean {
   );
 }
 
+/**
+ * Unguessable admin entry path, e.g. ADMIN_PATH_PREFIX="studio-k7q2…" maps
+ * `/studio-k7q2…/login` → `/studio/login`. Lets the owner reach the portal
+ * from the public domain while `/admin` and `/studio` stay cloaked (404)
+ * for everyone else. No DNS or subdomain needed. Empty/unset = disabled.
+ */
+function getAdminPathPrefix(): string | null {
+  const raw = process.env.ADMIN_PATH_PREFIX?.trim().replace(/^\/+|\/+$/g, '');
+  return raw ? raw : null;
+}
+
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const host = getRequestHost(request);
   const isTargetingAdminHost = isAdminHost(host);
   const isLocalDevHost = isLocalDevelopmentHost(host);
+
+  // Verify once per request; reused by the cloaking exemption and Layer 3.
+  let authed: boolean | null = null;
+  const hasValidAdminSession = async (): Promise<boolean> => {
+    if (authed === null) {
+      authed = await verifyAdminSessionToken(
+        request.cookies.get(ADMIN_SESSION_COOKIE)?.value
+      );
+    }
+    return authed;
+  };
+
+  // ── LAYER 1.5: SECRET ADMIN PATH ─────────────────────────────────────────
+  const adminPrefix = getAdminPathPrefix();
+  if (adminPrefix && (path === `/${adminPrefix}` || path.startsWith(`/${adminPrefix}/`))) {
+    const suffix = path.slice(adminPrefix.length + 1); // '' | '/login' | '/orders' …
+    const studioPath = `/studio${suffix}`;
+    // Strangers get the login screen at most — never the portal shell.
+    if (!PUBLIC_STUDIO_PATHS.has(studioPath) && !(await hasValidAdminSession())) {
+      const loginUrl = new URL(`/${adminPrefix}/login`, request.url);
+      loginUrl.searchParams.set('from', studioPath);
+      return NextResponse.redirect(loginUrl);
+    }
+    const studioUrl = new URL(studioPath, request.url);
+    request.nextUrl.searchParams.forEach((value, key) => {
+      studioUrl.searchParams.set(key, value);
+    });
+    return NextResponse.rewrite(studioUrl);
+  }
+
   const targetingAdminRoute = isAdminPath(path);
 
   // ── LAYER 2: HOST ISOLATION & CLOAKING ─────────────────────────────────────
   // If an admin/studio path is accessed from the public storefront domain (e.g. bagifyyyy.com),
   // return 404 Not Found so the admin portal is completely invisible to visitors and crawlers.
+  // Exception: the signed-in owner (valid session cookie) may use /studio on the main
+  // domain — this is what makes the secret-path login land somewhere usable.
   if (!isTargetingAdminHost && !isLocalDevHost && targetingAdminRoute) {
+    if (PUBLIC_STUDIO_API_PATHS.has(path) || (await hasValidAdminSession())) {
+      return NextResponse.next();
+    }
     if (path.startsWith('/api/')) {
       return NextResponse.json({ error: 'Not Found' }, { status: 404 });
     }
@@ -94,9 +147,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isStudioAuthenticated = await verifyAdminSessionToken(
-    request.cookies.get(ADMIN_SESSION_COOKIE)?.value
-  );
+  const isStudioAuthenticated = await hasValidAdminSession();
 
   if (isStudioAuthenticated) {
     return NextResponse.next();
