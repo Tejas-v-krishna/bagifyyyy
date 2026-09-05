@@ -259,7 +259,10 @@ export async function POST(request: Request) {
     if (error instanceof CartError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Error creating order:', error);
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
+    // Unexpected failure (provider network blip, transient DB error, …).
+    // The ref lets a shopper report line up with the server log line.
+    const ref = `ord-${Date.now().toString(36)}`;
+    console.error(`[order ${ref}] Error creating order:`, error);
+    return NextResponse.json({ error: 'Failed to create order', ref }, { status: 500 });
   }
 }

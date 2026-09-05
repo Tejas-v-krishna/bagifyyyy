@@ -381,7 +381,9 @@ function CheckoutContent() {
 
       const orderData = await res.json();
       if (!res.ok) {
-        throw new Error(orderData.error || 'Failed to initialize payment');
+        throw new Error(
+          orderData.ref ? `${orderData.error || 'Failed to initialize payment'} (ref ${orderData.ref})` : (orderData.error || 'Failed to initialize payment')
+        );
       }
 
       const razorpayKey = orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
