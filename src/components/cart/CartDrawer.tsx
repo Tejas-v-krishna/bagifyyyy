@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Minus, Plus, ShoppingBag, Tag, CheckCircle2, ArrowRight, Truck } from "lucide-react";
+import { X, Minus, Plus, Tag, CheckCircle2, Truck, ChevronRight } from "lucide-react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -112,32 +112,44 @@ export default function CartDrawer() {
             {/* Cart Items */}
             <div data-lenis-prevent="true" className="flex-1 overflow-y-auto px-6 sm:px-8 py-6">
               {items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-black/40 px-4 text-center">
-                  <div className="w-16 h-16 rounded-full bg-white border border-black/10 flex items-center justify-center mb-6">
-                    <ShoppingBag className="w-7 h-7 text-black" strokeWidth={1.5} />
-                  </div>
-                  <p className="font-microgramma text-xs sm:text-sm font-bold uppercase tracking-tight text-black mb-2">
-                    YOUR BAG IS EMPTY
+                <div className="flex flex-col py-2">
+                  <p className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black text-center">
+                    Your cart is empty.
                   </p>
-                  <p className="text-xs text-black/55 leading-relaxed max-w-[240px] mb-8">
-                     Nothing here yet. One-off pieces do not stay around forever.
+                  <p className="text-xs text-black/55 leading-relaxed mt-1.5 mb-6 text-center">
+                    Find trending collection, products right below!
                   </p>
-                  <div className="flex flex-col gap-3 w-full max-w-[240px]">
-                    <Link
-                      href="/products"
-                      onClick={closeCart}
-                      className="btn-bagify btn-bagify-dark py-3.5 text-[10px] uppercase tracking-[0.2em] inline-flex items-center justify-center gap-2"
-                    >
-                       <span>Shop new pieces</span>
-                      <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={closeCart}
-                      className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/50 hover:text-black transition-colors cursor-pointer py-2"
-                    >
-                       Keep browsing
-                    </button>
+                  <div className="flex flex-col gap-3">
+                    {[
+                      { href: "/bottomwears", label: "Bottoms", image: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", alt: "Shop bottoms" },
+                      { href: "/topwears", label: "Tops", image: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", alt: "Shop tops" },
+                      { href: "/accessories", label: "Accessories", image: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", alt: "Shop accessories" },
+                    ].map((cat) => (
+                      <Link
+                        key={cat.href}
+                        href={cat.href}
+                        onClick={closeCart}
+                        className="group relative block aspect-[16/8] overflow-hidden rounded-xl bg-[#e7e7e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+                      >
+                        <Image
+                          src={cat.image}
+                          alt={cat.alt}
+                          fill
+                          draggable={false}
+                          sizes="(max-width: 768px) 100vw, 448px"
+                          className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                        />
+                        <span className="absolute inset-0 bg-gradient-to-r from-white/55 via-white/10 to-transparent pointer-events-none" aria-hidden="true" />
+                        <span className="absolute inset-y-0 left-5 flex items-center font-microgramma text-xl font-bold uppercase tracking-tight text-[#0a0a0a]">
+                          {cat.label}
+                        </span>
+                        <span className="absolute inset-y-0 right-4 flex items-center">
+                          <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+                            <ChevronRight className="w-5 h-5 text-black" strokeWidth={2} aria-hidden="true" />
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
                   </div>
                 </div>
               ) : (
