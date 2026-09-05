@@ -211,14 +211,16 @@ export default function Footer() {
           <Link href="/terms" className="w-fit transition-opacity hover:opacity-50 lg:col-span-2">Terms</Link>
         </div>
 
-        <Image
-          src="/footer-logo.gif"
-          alt="BAGIFYYYY"
-          width={1024}
-          height={265}
-          unoptimized
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-label="BAGIFYYYY"
           className="-mb-[0.055em] mt-12 block h-auto w-full object-contain sm:mt-16 lg:mt-[4vw]"
-        />
+        >
+          <source src="/footer-logo.mp4" type="video/mp4" />
+        </video>
       </div>
     </footer>
   );
