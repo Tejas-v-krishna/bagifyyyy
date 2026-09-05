@@ -747,8 +747,8 @@ html.lenis body {
   top: 0;
   -webkit-backdrop-filter: blur(9px) saturate(0.75);
   backdrop-filter: blur(9px) saturate(0.75);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.08) 14%, rgba(0, 0, 0, 0.42) 38%, #000 70%);
-  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.08) 14%, rgba(0, 0, 0, 0.42) 38%, #000 70%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.08) 14%, rgba(0, 0, 0, 0.42) 38%, #000 62%, transparent 96%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.08) 14%, rgba(0, 0, 0, 0.42) 38%, #000 62%, transparent 96%);
 }
 
 .manifesto-showcase-dissolve::after {
@@ -756,8 +756,8 @@ html.lenis body {
   background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.025) 32%, rgba(255, 255, 255, 0.16) 68%, rgba(255, 255, 255, 0.72) 94%, #ffffff 100%);
   -webkit-backdrop-filter: blur(28px) saturate(0.52);
   backdrop-filter: blur(28px) saturate(0.52);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 15%, rgba(0, 0, 0, 0.38) 46%, #000 82%);
-  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 15%, rgba(0, 0, 0, 0.38) 46%, #000 82%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 15%, rgba(0, 0, 0, 0.38) 46%, #000 72%, transparent 97%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 15%, rgba(0, 0, 0, 0.38) 46%, #000 72%, transparent 97%);
 }
 
 /* 3. Curated Grails continuous transitions: in and out seamless blends */
