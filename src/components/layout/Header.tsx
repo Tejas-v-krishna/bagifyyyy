@@ -217,24 +217,18 @@ export default function Header() {
         {/* Brand wordmark / Logo (Centered, desktop only — mobile bar has its own) */}
         <Link
           href="/"
-          className="group/logo hover:opacity-75 hidden lg:flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
+          className="hover:opacity-75 hidden lg:flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
         >
           <span className="sr-only">BAGIFYYYY Home</span>
-          <span className="relative inline-block overflow-hidden transition-transform duration-300 group-hover/logo:scale-[1.03]">
-            <Image
-              src="/bagifyyyy-wordmark-animated.gif"
-              alt="BAGIFYYYY Logo"
-              width={1024}
-              height={265}
-              fetchPriority="high"
-              unoptimized
-              className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
-            />
-            <span
-              className="pointer-events-none absolute inset-0 -translate-x-[110%] bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover/logo:translate-x-[110%]"
-              aria-hidden="true"
-            />
-          </span>
+          <Image
+            src="/bagifyyyy-wordmark-animated.gif"
+            alt="BAGIFYYYY Logo"
+            width={1024}
+            height={265}
+            fetchPriority="high"
+            unoptimized
+            className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
+          />
         </Link>
 
         {/* Desktop nav — right side: labels morph into glass icons on hover */}
@@ -309,22 +303,16 @@ export default function Header() {
             <span>Menu</span>
           </button>
 
-          <Link href="/" className="group/logo hover:opacity-75 transition-opacity">
+          <Link href="/" className="hover:opacity-75 transition-opacity">
             <span className="sr-only">BAGIFYYYY Home</span>
-            <span className="relative inline-block overflow-hidden transition-transform duration-300 group-hover/logo:scale-[1.03]">
-              <Image
-                src="/bagifyyyy-wordmark-animated.gif"
-                alt="BAGIFYYYY Logo"
-                width={1024}
-                height={265}
-                unoptimized
-                className={`h-auto w-[120px] object-contain transition-all duration-300 ${logoFilter}`}
-              />
-              <span
-                className="pointer-events-none absolute inset-0 -translate-x-[110%] bg-gradient-to-r from-transparent via-white/60 to-transparent transition-transform duration-700 ease-out group-hover/logo:translate-x-[110%]"
-                aria-hidden="true"
-              />
-            </span>
+            <Image
+              src="/bagifyyyy-wordmark-animated.gif"
+              alt="BAGIFYYYY Logo"
+              width={1024}
+              height={265}
+              unoptimized
+              className={`h-auto w-[120px] object-contain transition-all duration-300 ${logoFilter}`}
+            />
           </Link>
 
           <div className="flex items-center gap-2">
