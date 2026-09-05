@@ -120,7 +120,16 @@ export default function InstagramFeed() {
                On<br />Instagram
             </h2>
           </div>
-
+          <a
+            href={profileLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Follow ${handle} on Instagram`}
+            className="h-10 inline-flex shrink-0 items-center gap-2 rounded-[0.35rem] bg-[#111111] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+          >
+            <InstagramIcon className="h-3.5 w-3.5" />
+            <span>Follow {handle}</span>
+          </a>
         </div>
 
         <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-12 md:grid-rows-2" role="list" aria-label="Instagram posts">

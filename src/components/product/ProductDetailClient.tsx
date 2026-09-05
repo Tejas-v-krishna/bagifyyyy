@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import Button from "@/components/ui/Button";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import NotifyMeSection from "@/components/product/NotifyMeSection";
 import ReviewSection from "@/components/product/ReviewSection";
@@ -302,7 +303,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         type="button"
                         onClick={() => handleSizeChange(s)}
                         disabled={hasVariants && !product.variants.some((variant) => variant.size === s && variant.stock > 0)}
-                        className={`text-[10.5px] uppercase tracking-wider px-4 py-2 border transition-all cursor-pointer font-semibold disabled:cursor-not-allowed disabled:opacity-25
+                        className={`text-[10.5px] uppercase tracking-wider px-4 py-2 min-h-[44px] border transition-all cursor-pointer font-semibold disabled:cursor-not-allowed disabled:opacity-25
                           ${selectedSize === s
                             ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
                             : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
@@ -328,7 +329,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         type="button"
                         onClick={() => handleColorChange(color)}
                         disabled={hasVariants && !product.variants.some((variant) => variant.color === color && variant.stock > 0)}
-                        className={`text-[10.5px] uppercase tracking-wider px-4 py-2 border transition-all cursor-pointer font-semibold disabled:cursor-not-allowed disabled:opacity-25
+                        className={`text-[10.5px] uppercase tracking-wider px-4 py-2 min-h-[44px] border transition-all cursor-pointer font-semibold disabled:cursor-not-allowed disabled:opacity-25
                           ${selectedColor === color
                             ? "border-y2k-gunmetal bg-y2k-gunmetal text-white"
                             : "border-y2k-gunmetal/20 text-y2k-gunmetal hover:border-y2k-gunmetal bg-white"
@@ -352,15 +353,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 <NotifyMeSection productId={product.id} />
               ) : (
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
+                  <Button
                     onClick={handleAddToCart}
                     disabled={!canAddSelectedVariant}
-                    className="btn-bagify flex-1 py-4 px-5 text-[10.5px] uppercase tracking-[0.18em] flex items-center justify-between cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex-1 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em]"
                   >
                     <span>{addedAnimation ? "✓ ADDED TO BAG" : "ADD TO BAG"}</span>
-                    <span className="text-[11px]">→</span>
-                  </button>
+                    <span className="text-[11px]" aria-hidden="true">→</span>
+                  </Button>
                   <button
                     type="button"
                     onClick={() => toggleItem(id)}
@@ -417,14 +417,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               ₹{product.price.toLocaleString("en-IN")}
             </p>
           </div>
-           <button
-             type="button"
+           <Button
              onClick={handleAddToCart}
              disabled={!canAddSelectedVariant}
-             className="btn-bagify px-6 py-3.5 text-[10px] uppercase tracking-[0.18em] shrink-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
-          >
+             className="shrink-0 px-6 py-3.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+           >
             {addedAnimation ? "✓ ADDED" : "ADD TO BAG"}
-          </button>
+          </Button>
         </div>,
         document.body
       )}

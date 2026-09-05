@@ -219,7 +219,7 @@ export default function Footer() {
           aria-label="BAGIFYYYY"
           className="-mb-[0.055em] mt-12 block h-auto w-full object-contain sm:mt-16 lg:mt-[4vw]"
         >
-          <source src="/footer-logo.mp4" type="video/mp4" />
+          <source src="/footer-logo-v2.mp4" type="video/mp4" />
         </video>
       </div>
     </footer>

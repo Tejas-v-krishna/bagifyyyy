@@ -204,7 +204,7 @@ export default function CartDrawer() {
                                       Math.max(1, item.quantity - 1)
                                     )
                                   }
-                                  className="p-1 hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="p-1 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
                                   <Minus className="w-3 h-3" aria-hidden="true" />
                                 </button>
@@ -218,7 +218,7 @@ export default function CartDrawer() {
                                   onClick={() =>
                                     updateQuantity(key, item.quantity + 1)
                                   }
-                                  className="p-1 hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="p-1 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                 >
                                   <Plus className="w-3 h-3" aria-hidden="true" />
                                 </button>

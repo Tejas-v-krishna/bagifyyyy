@@ -3,7 +3,7 @@ import type { Prisma } from '@prisma/client';
 const STEEL_TIER_MINIMUM = 500;
 const GOLD_TIER_MINIMUM = 2000;
 
-function tierForPoints(points: number): string {
+export function tierForPoints(points: number): string {
   if (points >= GOLD_TIER_MINIMUM) return 'GOLD';
   if (points >= STEEL_TIER_MINIMUM) return 'STEEL';
   return 'CHROME';

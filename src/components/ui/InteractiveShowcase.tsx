@@ -32,6 +32,7 @@ export default function InteractiveShowcase({
    ariaLabel = "New pieces",
   mirroredLayout = false,
   tone = "light",
+  showTabs = true,
 }: {
   products: ShowcaseProduct[];
   topPicks?: ShowcaseProduct[];
@@ -41,13 +42,15 @@ export default function InteractiveShowcase({
   ariaLabel?: string;
   mirroredLayout?: boolean;
   tone?: "light" | "dark";
+  showTabs?: boolean;
 }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"new" | "top">("new");
 
   // Build a rich infinite list: if catalogue has < 8 products, repeat to guarantee smooth infinite carousel
+  const effectiveTab = showTabs ? activeTab : "new";
   const baseList = useMemo(() => {
-    const list = activeTab === "new"
+    const list = effectiveTab === "new"
       ? (products.length > 0 ? products : [])
       : (topPicks && topPicks.length > 0 ? topPicks : [...products].reverse());
 
@@ -63,7 +66,7 @@ export default function InteractiveShowcase({
       ...item,
       uniqueKey: `${item.id}-${idx}`,
     }));
-  }, [products, topPicks, activeTab]);
+  }, [products, topPicks, effectiveTab]);
 
   const total = baseList.length;
   const [activeIndex, setActiveIndex] = useState(0);
@@ -149,6 +152,7 @@ export default function InteractiveShowcase({
           </h2>
         </div>
 
+        {showTabs && (
         <div className="flex items-center gap-2" role="tablist" aria-label="Showcase edits">
           <button
             type="button"
@@ -158,7 +162,7 @@ export default function InteractiveShowcase({
               setActiveTab("new");
               setActiveIndex(0);
             }}
-            className={`h-9 px-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "new" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
+            className={`h-9 px-4 rounded-[0.35rem] text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "new" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
           >
             New In
           </button>
@@ -170,19 +174,27 @@ export default function InteractiveShowcase({
               setActiveTab("top");
               setActiveIndex(0);
             }}
-            className={`h-9 px-4 rounded-full text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "top" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
+            className={`h-9 px-4 rounded-[0.35rem] text-[11px] font-semibold uppercase tracking-[0.12em] transition-colors cursor-pointer ${activeTab === "top" ? (tone === "dark" ? "bg-white text-black" : "bg-black text-white") : (tone === "dark" ? "border border-white/25 text-white/70 hover:text-white" : "border border-black/10 text-black/60 hover:text-black")}`}
           >
             Curated Grails
           </button>
         </div>
+        )}
 
-        {/* Carousel Arrow Controls */}
+        {/* View-all CTA + Carousel Arrow Controls */}
         <div className="flex items-center gap-2">
+          <Link
+            href={viewAllHref}
+            className={`h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${tone === "dark" ? "bg-white text-black hover:bg-white/85 focus-visible:outline-white" : "bg-[#111111] text-white hover:bg-black/80 focus-visible:outline-black"}`}
+          >
+            <span>See all pieces</span>
+            <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+          </Link>
           <button
             type="button"
             onClick={goPrev}
             aria-label="Previous product"
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
             <ChevronLeft className="w-4 h-4" strokeWidth={2} />
           </button>
@@ -190,7 +202,7 @@ export default function InteractiveShowcase({
             type="button"
             onClick={goNext}
             aria-label="Next product"
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
             <ChevronRight className="w-4 h-4" strokeWidth={2} />
           </button>
@@ -376,8 +388,8 @@ export default function InteractiveShowcase({
         </motion.div>
       </div>
 
-      {/* ── BOTTOM FOOTER: PROGRESS STEP DOTS & VIEW ALL LINK ── */}
-      <div className="w-full flex items-center justify-between mt-6 sm:mt-10 px-2 sm:px-4 md:px-6 z-30">
+      {/* ── BOTTOM FOOTER: PROGRESS STEP DOTS ── */}
+      <div className="w-full flex items-center mt-6 sm:mt-10 px-2 sm:px-4 md:px-6 z-30">
         {/* Step dots for all products */}
         <div className="flex items-center gap-1.5 overflow-x-auto max-w-[60%] py-1">
           {products.slice(0, Math.min(12, products.length)).map((_, i) => (
@@ -386,7 +398,7 @@ export default function InteractiveShowcase({
               type="button"
               onClick={() => goTo(i)}
               aria-label={`Go to product ${i + 1}`}
-              className={`h-1.5 transition-all duration-300 rounded-full cursor-pointer ${
+              className={`h-1.5 transition-all duration-300 rounded-[0.35rem] cursor-pointer ${
                   (activeIndex % Math.min(12, products.length)) === i
                     ? `w-6 ${tone === "dark" ? "bg-white" : "bg-[#111111]"}`
                     : `w-1.5 ${tone === "dark" ? "bg-white/20 hover:bg-white/40" : "bg-black/20 hover:bg-black/40"}`
@@ -394,15 +406,6 @@ export default function InteractiveShowcase({
             />
           ))}
         </div>
-
-        {/* View All → Link (Bottom-Right corner) */}
-        <Link
-          href={viewAllHref}
-          className={`font-sans font-semibold text-[11px] sm:text-[12px] tracking-[0.1em] transition-colors inline-flex items-center gap-1.5 group ${tone === "dark" ? "text-white/70 hover:text-white" : "text-black/70 hover:text-black"}`}
-        >
-           <span>See all pieces</span>
-          <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
       </div>
     </div>
   );

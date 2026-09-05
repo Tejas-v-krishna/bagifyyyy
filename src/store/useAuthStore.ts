@@ -7,6 +7,7 @@ export interface UserProfile {
   name?: string | null;
   avatar?: string | null;
   googleId?: string | null;
+  hasPassword?: boolean;
   isAdmin?: boolean;
 }
 

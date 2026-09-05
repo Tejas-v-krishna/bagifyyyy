@@ -20,7 +20,7 @@ export default function WishlistButton({ productId, className = "" }: Props) {
         e.stopPropagation();
         toggleItem(productId);
       }}
-      className={`absolute top-4 right-4 z-20 rounded-full border border-black/10 bg-white/90 p-2 transition-all cursor-pointer hover:bg-white ${
+      className={`absolute top-4 right-4 z-20 rounded-[0.35rem] border border-black/10 bg-white/90 p-2 transition-all cursor-pointer hover:bg-white ${
         wishlisted ? "text-black" : "text-black/45 hover:text-black"
       } ${className}`}
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}

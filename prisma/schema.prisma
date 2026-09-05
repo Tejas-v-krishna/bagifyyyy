@@ -17,6 +17,9 @@ model User {
   googleId  String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  // Hides older orders from the member's own history view only.
+  // Studio, fulfillment, and revenue are unaffected.
+  orderHistoryClearedAt DateTime?
 
   orders    Order[]
   addresses Address[]

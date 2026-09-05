@@ -107,10 +107,28 @@ export default async function Home() {
         </h1>
 
         <div className="flex min-h-0 w-full flex-1 flex-col">
-          <div className="relative z-10 shrink-0 px-3 sm:px-6 md:px-8 pt-1 sm:pt-2 pb-2 sm:pb-3.5 flex justify-center">
-            <p className="w-full whitespace-nowrap text-center font-microgramma uppercase text-[clamp(1.9rem,8.6vw,11.5rem)] font-bold leading-[1.02] tracking-tight text-[#050505] select-none">
-              Wear History
-            </p>
+          <div className="relative z-10 shrink-0 pt-1 sm:pt-2 pb-2 sm:pb-3.5">
+            {/* textLength + spacing-only adjust = first glyph flush left,
+                last glyph flush right, at every viewport width, no distortion */}
+            <svg
+              viewBox="0 0 1000 128"
+              preserveAspectRatio="xMidYMid meet"
+              className="block h-auto w-full select-none"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <text
+                x="0"
+                y="100"
+                textLength="1000"
+                lengthAdjust="spacing"
+                className="font-microgramma font-bold uppercase"
+                fontSize="124"
+                fill="#050505"
+              >
+                Wear History
+              </text>
+            </svg>
           </div>
 
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">

@@ -1,79 +1,11 @@
 @import "tailwindcss";
 
+/* Single brand face. "Microgramma"/"EurostileExtended" families were declared
+   but never referenced — every token resolves to ITCAvantGardeStd. */
 @font-face {
   font-family: "ITCAvantGardeStd";
   src: url("/fonts/ITCAvantGardeStd-Md.ttf") format("truetype");
   font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/MicrogrammaD-ExtendedBold.otf") format("opentype"),
-       url("/fonts/EurostileExtended-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/MicrogrammaD-ExtendedBold.otf") format("opentype"),
-       url("/fonts/EurostileExtended-Bold.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/MicrogrammaD-ExtendedBold.otf") format("opentype"),
-       url("/fonts/EurostileExtended-Bold.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/MicrogrammaD-ExtendedMedium.otf") format("opentype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/MicrogrammaD-ExtendedMedium.otf") format("opentype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/Microgram-Regular.ttf") format("truetype"),
-       url("/fonts/EurostileExtended-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "EurostileExtended";
-  src: url("/fonts/EurostileExtended-Bold.ttf") format("truetype"),
-       url("/fonts/MicrogrammaD-ExtendedBold.otf") format("opentype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "EurostileExtended";
-  src: url("/fonts/EurostileExtended-Regular.ttf") format("truetype"),
-       url("/fonts/Microgram-Regular.ttf") format("truetype");
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -484,6 +416,32 @@
                 color 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  /* ── Shared visible keyboard focus ──────────────────────────────
+     Border-darkening alone is not a perceivable focus indicator, so every
+     interactive element gets a real ring. Existing `focus-visible:*`
+     utilities win where present (higher specificity). */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid #0b0b0b;
+    outline-offset: 2px;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #0b0b0b;
+    outline-offset: 1px;
+    border-color: #0b0b0b;
+  }
+  [data-nav-theme="dark"] button:focus-visible,
+  [data-nav-theme="dark"] a:focus-visible,
+  [data-nav-theme="dark"] input:focus-visible,
+  [data-nav-theme="dark"] textarea:focus-visible,
+  [data-nav-theme="dark"] select:focus-visible {
+    outline-color: #ffffff;
+    border-color: #ffffff;
+  }
+
   /* Interactive controls and buttons match the editorial CTA subtle cylinder corner radius (0.35rem) */
   button:not([class*="rounded-full"]),
   input[type="button"]:not([class*="rounded-full"]),
@@ -718,11 +676,11 @@ html.lenis body {
 .hero-transition-marquee {
   position: absolute;
   z-index: 2;
-  bottom: clamp(1.6rem, 4.5vh, 3rem);
+  bottom: 0;
   left: 0;
   width: 100%;
   overflow: hidden;
-  padding-block: 0.5rem;
+  padding-block: 0.5rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
 }
 

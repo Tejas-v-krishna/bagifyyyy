@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/useCartStore";
 import FilterPopover from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
 import EditorialPageShell from "@/components/layout/EditorialPageShell";
+import Button from "@/components/ui/Button";
 
 const BUNDLE_SORT_OPTIONS: DropdownOption[] = [
   { value: "Newest", label: "Newest", shortLabel: "Newest" },
@@ -309,7 +310,8 @@ export default function BundlesPage() {
                       <span className="text-[10px] tracking-[0.04em] text-black/35">−{bundle.discount}%</span>
                     </div>
 
-                    <button
+                    <Button
+                      variant="dark"
                       onClick={() => handleAddBundle(bundle)}
                       disabled={isUnavailable || Boolean(addingId)}
                       aria-live="polite"
@@ -322,9 +324,7 @@ export default function BundlesPage() {
                             ? `${bundle.products.length} pieces added to bag`
                             : `Add ${bundle.name} set to bag for ₹${displayBundlePrice.toLocaleString("en-IN")}`
                       }
-                      className={`btn-bagify mt-4 min-h-12 w-full flex items-center justify-center gap-2 px-5 py-3 text-[10px] font-bold tracking-[0.12em] transition-all duration-200 cursor-pointer disabled:pointer-events-none disabled:opacity-30 ${
-                        isAdded ? "bg-emerald-600 !text-white !border-emerald-600" : "btn-bagify-dark"
-                      }`}
+                      className="mt-4 w-full px-5 py-3 text-[10px] font-bold tracking-[0.12em]"
                     >
                       {isUnavailable ? (
                         <span>Set unavailable</span>
@@ -335,7 +335,7 @@ export default function BundlesPage() {
                       ) : (
                         <><ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} aria-hidden="true" /><span>Add the set</span></>
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </article>
               );

@@ -27,6 +27,7 @@ export async function GET() {
         name: true,
         avatar: true,
         googleId: true,
+        password: true,
         createdAt: true,
       },
     });
@@ -36,10 +37,12 @@ export async function GET() {
     }
 
     const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+    const { password: _password, ...profile } = user;
 
     return NextResponse.json({
       user: {
-        ...user,
+        ...profile,
+        hasPassword: Boolean(_password),
         isAdmin,
       },
     });

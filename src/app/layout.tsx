@@ -1,19 +1,10 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Urbanist } from "next/font/google";
 import "./globals.css";
 import "./monochrome.css";
 
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const urbanist = Urbanist({
-  variable: "--font-urbanist",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
+// NOTE: next/font Google faces (Instrument_Sans/Urbanist) were removed —
+// their CSS variables were never consumed; every token resolves to the
+// self-hosted ITCAvantGardeStd face.
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bagifyyyy.in"),
@@ -109,7 +100,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSans.variable} ${urbanist.variable} antialiased`}
+      className="antialiased"
       suppressHydrationWarning
     >
       <head>

@@ -165,7 +165,7 @@ export default function SearchOverlay({
           onClick={open}
           aria-label="Search products"
           aria-expanded={isOpen}
-          className="bg-[#EFEFEF] hover:bg-neutral-200 text-black rounded-md h-9 px-3 flex items-center gap-2 text-[11px] font-semibold tracking-wide transition-colors cursor-pointer"
+          className="bg-[#EFEFEF] hover:bg-neutral-200 text-black rounded-[0.35rem] h-9 px-3 flex items-center gap-2 text-[11px] font-semibold tracking-wide transition-colors cursor-pointer"
         >
           <Search className="w-3.5 h-3.5 text-black" strokeWidth={2} />
           <span className="hidden xl:inline">Search</span>
@@ -261,7 +261,7 @@ export default function SearchOverlay({
                           type="button"
                           onClick={close}
                           aria-label="Close search"
-                          className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-black/70 hover:text-black px-3.5 py-2 rounded-full border border-black/15 hover:border-black hover:bg-black hover:text-white transition-all cursor-pointer"
+                          className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-black/70 hover:text-black px-3.5 py-2 rounded-[0.35rem] border border-black/15 hover:border-black hover:bg-black hover:text-white transition-all cursor-pointer"
                         >
                           <span className="hidden sm:inline text-[11px]">Close</span>
                           <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform duration-200" />
@@ -374,7 +374,7 @@ export default function SearchOverlay({
                                     setQuery(tag);
                                     inputRef.current?.focus();
                                   }}
-                                  className="px-3.5 py-1.5 rounded-full bg-white border border-black/15 text-[11px] font-semibold text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
+                                  className="px-3.5 py-1.5 rounded-[0.35rem] bg-white border border-black/15 text-[11px] font-semibold text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
                                 >
                                   {tag}
                                 </button>
@@ -405,7 +405,7 @@ export default function SearchOverlay({
                                       setQuery(tag);
                                       inputRef.current?.focus();
                                     }}
-                                    className="px-4 py-2 rounded-full bg-white border border-black/12 text-xs font-semibold text-black hover:bg-black hover:text-white hover:border-black transition-all cursor-pointer shadow-xs"
+                                    className="px-4 py-2 rounded-[0.35rem] bg-white border border-black/12 text-xs font-semibold text-black hover:bg-black hover:text-white hover:border-black transition-all cursor-pointer shadow-xs"
                                   >
                                     {tag}
                                   </button>

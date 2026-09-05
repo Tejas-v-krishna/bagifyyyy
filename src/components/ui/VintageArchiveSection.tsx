@@ -36,6 +36,7 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
           ariaLabel="Hard-to-find pieces"
           mirroredLayout
           tone="dark"
+          showTabs={false}
         />
       </div>
 

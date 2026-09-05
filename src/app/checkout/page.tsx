@@ -9,6 +9,7 @@ import { Loader2, ArrowRight, ArrowLeft, User, ShieldCheck, Truck, CreditCard, B
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import Button from "@/components/ui/Button";
 
 type RazorpayPaymentResponse = {
   razorpay_payment_id: string;
@@ -969,11 +970,11 @@ function CheckoutContent() {
                       <p className="text-xs text-black/70">
                         Total Payable: <b className="font-sans font-medium text-base text-black">₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</b>
                       </p>
-                      <button
-                        type="button"
+                      <Button
+                        variant="dark"
                         onClick={handleProceedToPayment}
                         disabled={loading || paymentState === 'initiating' || paymentState === 'verifying'}
-                        className="w-full sm:w-auto bg-black text-white px-10 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-colors"
+                        className="w-full px-10 py-4 text-xs font-semibold uppercase tracking-[0.14em] shadow-xs sm:w-auto"
                       >
                         {(loading || paymentState === 'initiating' || paymentState === 'verifying') && (
                           <Loader2 className="w-4 h-4 animate-spin text-white" />
@@ -985,7 +986,7 @@ function CheckoutContent() {
                           : paymentMethod === 'cod'
                           ? 'Place COD Order →'
                           : 'Pay with Razorpay →'}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}

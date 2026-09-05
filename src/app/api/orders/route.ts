@@ -17,6 +17,8 @@ export async function GET() {
         // A checkout that never got past the payment sheet is not something the
         // shopper committed to, so it is not listed as one of their orders.
         NOT: { orderStatus: AWAITING_PAYMENT },
+        // Members can clear their own history view; studio keeps everything.
+        ...(user.orderHistoryClearedAt ? { createdAt: { gt: user.orderHistoryClearedAt } } : {}),
       },
       include: {
         items: true,

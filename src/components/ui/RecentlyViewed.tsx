@@ -168,7 +168,7 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
             onClick={() => scrollByAmount(-340)}
             disabled={!canScrollLeft}
             aria-label="Scroll recently viewed left"
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/10 flex items-center justify-center text-black/70 hover:bg-black hover:text-white transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black/70 disabled:cursor-not-allowed cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-[0.35rem] border border-black/10 flex items-center justify-center text-black/70 hover:bg-black hover:text-white transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black/70 disabled:cursor-not-allowed cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -177,7 +177,7 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
             onClick={() => scrollByAmount(340)}
             disabled={!canScrollRight}
             aria-label="Scroll recently viewed right"
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/10 flex items-center justify-center text-black/70 hover:bg-black hover:text-white transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black/70 disabled:cursor-not-allowed cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-[0.35rem] border border-black/10 flex items-center justify-center text-black/70 hover:bg-black hover:text-white transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black/70 disabled:cursor-not-allowed cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" />
           </button>

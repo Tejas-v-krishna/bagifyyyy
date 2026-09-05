@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Check, LoaderCircle, ShoppingBag } from "lucide-react";
+import { ArrowRight, Check, LoaderCircle, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import Button from "@/components/ui/Button";
 
 export type HomeBundleItem = {
   id: string;
@@ -94,9 +95,10 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
           </div>
           <Link
             href="/bundles"
-            className="text-[11px] font-medium tracking-[0.1em] text-y2k-gunmetal/45 hover:text-y2k-gunmetal transition-colors duration-300 pb-0.5 border-b border-y2k-gunmetal/15 hover:border-y2k-gunmetal/50 focus-visible:outline focus-visible:outline-1 focus-visible:outline-y2k-gunmetal focus-visible:outline-offset-4"
+            className="h-10 inline-flex items-center gap-2 rounded-[0.35rem] bg-[#111111] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
           >
-            View All
+            <span>View All</span>
+            <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
           </Link>
         </div>
 
@@ -182,7 +184,8 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                     <span className="text-[10px] tracking-[0.04em] text-black/35">−{bundle.discount}%</span>
                   </div>
 
-                  <button
+                  <Button
+                    variant="dark"
                     onClick={() => handleAddBundle(bundle)}
                     disabled={isUnavailable || Boolean(addingBundleId)}
                     aria-live="polite"
@@ -195,9 +198,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                           ? `${bundle.products.length} pieces added to bag`
                           : `Add ${bundle.name} set to bag for ₹${bundle.bundlePrice.toLocaleString("en-IN")}`
                     }
-                    className={`btn-bagify mt-4 min-h-12 w-full flex items-center justify-center gap-2 px-5 py-3 text-[10px] font-bold tracking-[0.12em] transition-all duration-200 cursor-pointer disabled:pointer-events-none disabled:opacity-30 ${
-                      isAdded ? "bg-emerald-600 !text-white !border-emerald-600" : "btn-bagify-dark"
-                    }`}
+                    className="mt-4 w-full px-5 py-3 text-[10px] font-bold tracking-[0.12em]"
                   >
                     {isUnavailable ? (
                       <span>Set unavailable</span>
@@ -206,9 +207,9 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                     ) : isAdded ? (
                       <><Check className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" /><span>{bundle.products.length} pieces added</span></>
                     ) : (
-                      <><ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} aria-hidden="true" /><span>Add the set</span></>
-                    )}
-                  </button>
+                        <><ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} aria-hidden="true" /><span>Add the set</span></>
+                      )}
+                    </Button>
                 </div>
               </article>
             );

@@ -62,7 +62,7 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
       onClick={handleAddToBag}
       aria-label={`Add ${product.name} to bag`}
       title="Add to bag"
-      className={`group/bagbtn flex items-center justify-center border-0 bg-transparent text-black shadow-none outline-none transition-opacity duration-300 hover:opacity-55 active:scale-90 cursor-pointer ${className}`}
+      className={`group/bagbtn flex items-center justify-center min-h-11 min-w-11 border-0 bg-transparent text-black shadow-none outline-none transition-opacity duration-300 hover:opacity-55 active:scale-90 cursor-pointer focus-visible:outline-black focus-visible:outline-2 focus-visible:outline-offset-2 ${className}`}
     >
       {added ? (
         <Check className="h-4 w-4 animate-in zoom-in-50 text-black duration-200" strokeWidth={2.5} />

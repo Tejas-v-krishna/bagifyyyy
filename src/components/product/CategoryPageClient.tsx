@@ -372,9 +372,9 @@ export default function CategoryPageClient({
                 ariaLabel="Sort products"
               />
 
-              {/* View Toggle */}
+              {/* View Toggle — segmented control in the site's CTA language */}
               <div
-                className="hidden sm:flex items-center overflow-hidden rounded-[var(--radius-cta)] border border-black/15"
+                className="hidden sm:flex items-center gap-1 rounded-[0.35rem] border border-black/15 bg-white p-1"
                 role="group"
                 aria-label="View mode"
               >
@@ -383,26 +383,26 @@ export default function CategoryPageClient({
                   onClick={() => setViewMode("grid")}
                   aria-pressed={viewMode === "grid"}
                   aria-label="Grid view"
-                  className={`p-1.5 transition-colors cursor-pointer ${
+                  className={`h-10 w-10 inline-flex items-center justify-center rounded-[0.35rem] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 ${
                     viewMode === "grid"
                       ? "bg-black text-white"
-                      : "bg-transparent text-black/50 hover:bg-black/5"
+                      : "bg-transparent text-black/50 hover:bg-black/5 hover:text-black"
                   }`}
                 >
-                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <LayoutGrid className="w-4 h-4" aria-hidden="true" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
                   aria-pressed={viewMode === "list"}
                   aria-label="List view"
-                  className={`p-1.5 transition-colors cursor-pointer ${
+                  className={`h-10 w-10 inline-flex items-center justify-center rounded-[0.35rem] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 ${
                     viewMode === "list"
                       ? "bg-black text-white"
-                      : "bg-transparent text-black/50 hover:bg-black/5"
+                      : "bg-transparent text-black/50 hover:bg-black/5 hover:text-black"
                   }`}
                 >
-                  <List className="w-3.5 h-3.5" />
+                  <List className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
             </div>

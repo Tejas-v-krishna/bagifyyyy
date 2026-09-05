@@ -30,7 +30,8 @@ async function main() {
       "avatar" TEXT,
       "googleId" TEXT,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      "updatedAt" DATETIME NOT NULL
+      "updatedAt" DATETIME NOT NULL,
+      "orderHistoryClearedAt" DATETIME
     );`,
     `CREATE TABLE IF NOT EXISTS "Product" (
       "id" TEXT NOT NULL PRIMARY KEY,
@@ -224,6 +225,10 @@ async function main() {
       console.warn('DDL warning:', e.message);
     }
   }
+
+  try {
+    await turso.execute('ALTER TABLE "User" ADD COLUMN "orderHistoryClearedAt" DATETIME;');
+  } catch {}
 
   // Ensure optional columns exist on Order if table was created previously
   try {

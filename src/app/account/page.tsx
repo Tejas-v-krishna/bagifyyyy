@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -9,10 +9,8 @@ import { useCartStore } from "@/store/useCartStore";
 import {
   LogOut,
   User,
-  Package,
   Truck,
   MapPin,
-  Award,
   Heart,
   Plus,
   Trash2,
@@ -41,7 +39,7 @@ function normalizeTier(value: unknown): LoyaltyTier {
 }
 
 export default function AccountPage() {
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, logout, setUser } = useAuthStore();
   const { items: wishlistIds, toggleItem } = useWishlistStore();
   const { addItem } = useCartStore();
   const router = useRouter();
@@ -72,7 +70,30 @@ export default function AccountPage() {
   });
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressError, setAddressError] = useState("");
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [copiedTrackingId, setCopiedTrackingId] = useState<string | null>(null);
+
+  // Profile / email / password editing
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [profileAvatar, setProfileAvatar] = useState<string | null>(null);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMsg, setProfileMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailPassword, setEmailPassword] = useState("");
+  const [savingEmail, setSavingEmail] = useState(false);
+  const [emailMsg, setEmailMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarMsg, setAvatarMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [clearingHistory, setClearingHistory] = useState(false);
+  const [clearMsg, setClearMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [sendingResetLink, setSendingResetLink] = useState(false);
+  const [resetLinkMsg, setResetLinkMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -132,30 +153,57 @@ export default function AccountPage() {
     setTimeout(() => setCopiedTrackingId(null), 2000);
   };
 
+  const startEditAddress = (addr: any) => {
+    setAddressForm({
+      fullName: addr.fullName || "",
+      phone: addr.phone || "",
+      street: addr.street || "",
+      city: addr.city || "",
+      state: addr.state || "Maharashtra",
+      pincode: addr.pincode || "",
+    });
+    setEditingAddressId(addr.id);
+    setAddressError("");
+    setShowAddressForm(true);
+  };
+
+  const cancelAddressForm = () => {
+    setShowAddressForm(false);
+    setEditingAddressId(null);
+    setAddressError("");
+    setAddressForm({
+      fullName: "",
+      phone: "",
+      street: "",
+      city: "",
+      state: "Maharashtra",
+      pincode: "",
+    });
+  };
+
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddressError("");
     setSavingAddress(true);
     try {
-      const res = await fetch("/api/account/addresses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(addressForm),
-      });
+      const isEdit = Boolean(editingAddressId);
+      const res = await fetch(
+        isEdit ? `/api/account/addresses/${editingAddressId}` : "/api/account/addresses",
+        {
+          method: isEdit ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(addressForm),
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         setAddressError(data.error || "Failed to save address.");
+      } else if (isEdit) {
+        setAddresses((prev) => prev.map((a) => (a.id === editingAddressId ? data.address : a)));
+        cancelAddressForm();
       } else {
         setAddresses((prev) => [data.address, ...prev]);
-        setShowAddressForm(false);
-        setAddressForm({
-          fullName: "",
-          phone: "",
-          street: "",
-          city: "",
-          state: "Maharashtra",
-          pincode: "",
-        });
+        cancelAddressForm();
       }
     } catch {
       setAddressError("Error saving address.");
@@ -164,13 +212,170 @@ export default function AccountPage() {
     }
   };
 
+  const handleAvatarFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setAvatarMsg(null);
+    setUploadingAvatar(true);
+    try {
+      const form = new FormData();
+      form.append("avatar", file);
+      const res = await fetch("/api/account/avatar", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) {
+        setAvatarMsg({ type: "error", text: data.error || "Failed to upload avatar." });
+      } else {
+        setUser(data.user);
+        setProfileAvatar(null);
+        setAvatarMsg({ type: "success", text: "Profile picture updated." });
+      }
+    } catch {
+      setAvatarMsg({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleClearHistory = async () => {
+    if (!confirm("Clear your order history view? Your orders stay safe with us — they just won't show here.")) return;
+    setClearMsg(null);
+    setClearingHistory(true);
+    try {
+      const res = await fetch("/api/account/orders/clear", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setClearMsg({ type: "error", text: data.error || "Failed to clear history." });
+      } else {
+        setOrders([]);
+        setClearMsg({ type: "success", text: "Order history cleared from your view." });
+      }
+    } catch {
+      setClearMsg({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setClearingHistory(false);
+    }
+  };
+
+  const handleSendResetLink = async () => {
+    if (!user?.email) return;
+    setResetLinkMsg(null);
+    setSendingResetLink(true);
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setResetLinkMsg({ type: "error", text: data.error || "Failed to send reset link." });
+      } else {
+        setResetLinkMsg({ type: "success", text: `Reset link sent to ${user.email}. Check your Gmail.` });
+      }
+    } catch {
+      setResetLinkMsg({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setSendingResetLink(false);
+    }
+  };
+
   const handleDeleteAddress = async (id: string) => {
     if (!confirm("Delete address?")) return;
     try {
       const res = await fetch(`/api/account/addresses/${id}`, { method: "DELETE" });
-      if (res.ok) setAddresses((prev) => prev.filter((a) => a.id !== id));
+      if (res.ok) {
+        setAddresses((prev) => prev.filter((a) => a.id !== id));
+        if (editingAddressId === id) cancelAddressForm();
+      }
     } catch (err) {
       console.error("Delete error:", err);
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileMsg(null);
+    setSavingProfile(true);
+    try {
+      const res = await fetch("/api/account/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: profileName ?? user?.name ?? "",
+          avatar: profileAvatar ?? user?.avatar ?? "",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setProfileMsg({ type: "error", text: data.error || "Failed to update profile." });
+      } else {
+        setUser(data.user);
+        setProfileName(null);
+        setProfileAvatar(null);
+        setProfileMsg({ type: "success", text: "Profile updated." });
+      }
+    } catch {
+      setProfileMsg({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailMsg(null);
+    setSavingEmail(true);
+    try {
+      const res = await fetch("/api/account/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newEmail, currentPassword: emailPassword || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setEmailMsg({ type: "error", text: data.error || "Failed to change email." });
+      } else {
+        setUser(data.user);
+        setNewEmail("");
+        setEmailPassword("");
+        setEmailMsg({ type: "success", text: "Email updated. Points moved with it." });
+      }
+    } catch {
+      setEmailMsg({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setSavingEmail(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMsg(null);
+    if (newPassword !== confirmPassword) {
+      setPasswordMsg({ type: "error", text: "New passwords do not match." });
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      const res = await fetch("/api/account/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: currentPassword || undefined, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPasswordMsg({ type: "error", text: data.error || "Failed to update password." });
+      } else {
+        setUser({ ...(user as NonNullable<typeof user>), hasPassword: true });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setPasswordMsg({ type: "success", text: "Password updated." });
+      }
+    } catch {
+      setPasswordMsg({ type: "error", text: "Something went wrong. Please try again." });
+    } finally {
+      setSavingPassword(false);
     }
   };
 
@@ -387,73 +592,6 @@ export default function AccountPage() {
           </section>
         </div>
 
-        {/* ── Account metrics ────────────────────────────────────────────── */}
-        <div className="mb-10 grid grid-cols-2 border-y border-black/10 sm:grid-cols-4">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("orders")}
-            className={`border-r border-black/10 p-4 text-left transition-colors last:border-r-0 sm:p-5 ${
-              activeTab === "orders"
-                ? "bg-white"
-                : "bg-transparent hover:bg-white/60"
-            }`}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Orders</span>
-              <Package className="h-3.5 w-3.5 text-black/45" />
-            </div>
-            <p className="font-microgramma text-2xl font-bold leading-none text-black">{orders.length}</p>
-          </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("wishlist")}
-            className={`border-r border-black/10 p-4 text-left transition-colors last:border-r-0 sm:p-5 ${
-              activeTab === "wishlist"
-                ? "bg-white"
-                : "bg-transparent hover:bg-white/60"
-            }`}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Saved</span>
-              <Heart className="h-3.5 w-3.5 text-black/45" />
-            </div>
-            <p className="font-microgramma text-2xl font-bold leading-none text-black">{wishlistIds.length}</p>
-          </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("addresses")}
-            className={`border-r border-black/10 p-4 text-left transition-colors last:border-r-0 sm:p-5 ${
-              activeTab === "addresses"
-                ? "bg-white"
-                : "bg-transparent hover:bg-white/60"
-            }`}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Addresses</span>
-              <MapPin className="h-3.5 w-3.5 text-black/45" />
-            </div>
-            <p className="font-microgramma text-2xl font-bold leading-none text-black">{addresses.length}</p>
-          </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("loyalty")}
-            className={`p-4 text-left transition-colors sm:p-5 ${
-              activeTab === "loyalty"
-                ? "bg-white"
-                : "bg-transparent hover:bg-white/60"
-            }`}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/45">Points</span>
-              <Award className="h-3.5 w-3.5 text-black/45" />
-            </div>
-            <p className="font-microgramma text-2xl font-bold leading-none text-black">{points}</p>
-          </button>
-        </div>
-
         {/* ── Minimalist segmented tabs ─────────────────────────────────── */}
         <div className="mb-6 flex items-center gap-1 overflow-x-auto border-b border-black/10 pb-0 select-none" role="tablist" aria-label="Account sections">
           {[
@@ -517,6 +655,23 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between gap-3">
+                    {clearMsg ? (
+                      <p role={clearMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${clearMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                        {clearMsg.text}
+                      </p>
+                    ) : (
+                      <span className="text-[10px] uppercase tracking-[0.12em] text-black/40">{orders.length} {orders.length === 1 ? "order" : "orders"}</span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleClearHistory}
+                      disabled={clearingHistory || orders.length === 0}
+                      className="shrink-0 cursor-pointer border border-black/15 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-black/60 transition-colors hover:border-black hover:text-black disabled:opacity-40"
+                    >
+                      {clearingHistory ? "Clearing…" : "Clear History"}
+                    </button>
+                  </div>
                   {orders.map((ord) => (
                     <div
                       key={ord.id}
@@ -687,8 +842,12 @@ export default function AccountPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setShowAddressForm(!showAddressForm);
-                    setAddressError("");
+                    if (showAddressForm) cancelAddressForm();
+                    else {
+                      setEditingAddressId(null);
+                      setAddressError("");
+                      setShowAddressForm(true);
+                    }
                   }}
                   className="btn-bagify cursor-pointer px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em]"
                 >
@@ -797,7 +956,7 @@ export default function AccountPage() {
                     <div className="flex justify-end gap-2 pt-1">
                       <button
                         type="button"
-                        onClick={() => setShowAddressForm(false)}
+                        onClick={cancelAddressForm}
                         className="cursor-pointer border border-black/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em]"
                       >
                         Cancel
@@ -807,7 +966,7 @@ export default function AccountPage() {
                         disabled={savingAddress}
                         className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
                       >
-                        {savingAddress ? "Saving…" : "Save"}
+                        {savingAddress ? "Saving…" : editingAddressId ? "Save Changes" : "Save"}
                       </button>
                     </div>
                   </motion.form>
@@ -843,13 +1002,22 @@ export default function AccountPage() {
                           <span className="border border-black/15 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
                             {idx === 0 ? "PRIMARY" : `SAVED #${idx + 1}`}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteAddress(addr.id)}
-                            className="flex cursor-pointer items-center gap-1 text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 transition-colors hover:text-black"
-                          >
-                            <Trash2 className="w-3 h-3" /> Remove
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => startEditAddress(addr)}
+                              className="cursor-pointer text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 underline underline-offset-4 transition-colors hover:text-black"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              className="flex cursor-pointer items-center gap-1 text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 transition-colors hover:text-black"
+                            >
+                              <Trash2 className="w-3 h-3" /> Remove
+                            </button>
+                          </div>
                         </div>
                         <p className="mt-5 text-xs font-bold text-black">{addr.fullName}</p>
                         <p className="mt-1 font-mono text-[10px] text-black/50">{addr.phone}</p>
@@ -912,42 +1080,274 @@ export default function AccountPage() {
 
           {/* 5. SETTINGS TAB */}
           {activeTab === "settings" && (
-            <section id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" className="space-y-4 rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
-              <div className="border-b border-black/10 pb-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Account settings</p>
-                <p className="mt-2 text-xs leading-relaxed text-black/55">Your member details and active sign-in method.</p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="border border-black/10 bg-[#f5f5f2] p-4">
-                  <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Name</span>
-                  <p className="mt-2 text-xs font-bold text-black">{user?.name || "Not set"}</p>
+            <div id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" className="space-y-4">
+              {/* Profile */}
+              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
+                <div className="mb-4 border-b border-black/10 pb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Profile</p>
+                  <p className="mt-2 text-xs leading-relaxed text-black/55">Name and avatar shown across the store.</p>
                 </div>
-                <div className="border border-black/10 bg-[#f5f5f2] p-4">
-                  <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Email</span>
-                  <p className="mt-2 truncate text-xs font-bold text-black">{user?.email}</p>
-                </div>
-              </div>
+                <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
+                  <div className="flex items-center gap-4">
+                    {(profileAvatar ?? user?.avatar) ? (
+                      <Image
+                        src={profileAvatar ?? user?.avatar ?? "/placeholder.jpg"}
+                        alt="Avatar preview"
+                        width={56}
+                        height={56}
+                        unoptimized
+                        className="h-14 w-14 shrink-0 rounded-full border border-black/10 object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-black text-lg font-bold text-white">
+                        {(profileName ?? user?.name ?? "U")[0]?.toUpperCase() || "U"}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        Avatar image URL
+                      </label>
+                      <input
+                        type="url"
+                        value={profileAvatar ?? user?.avatar ?? ""}
+                        onChange={(e) => { setProfileAvatar(e.target.value); setProfileMsg(null); }}
+                        placeholder="https://…"
+                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      />
+                    </div>
+                    {(profileAvatar ?? user?.avatar) ? (
+                      <button
+                        type="button"
+                        onClick={() => { setProfileAvatar(""); setProfileMsg(null); }}
+                        className="shrink-0 cursor-pointer text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 underline underline-offset-4 transition-colors hover:text-black"
+                      >
+                        Remove
+                      </button>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input
+                      ref={avatarInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                      className="hidden"
+                      aria-label="Upload profile picture from gallery"
+                      onChange={handleAvatarFile}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => avatarInputRef.current?.click()}
+                      disabled={uploadingAvatar}
+                      className="cursor-pointer border border-black/15 bg-[#f5f5f2] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-black transition-colors hover:border-black disabled:opacity-50"
+                    >
+                      {uploadingAvatar ? "Uploading…" : "Upload From Gallery"}
+                    </button>
+                    <span className="text-[9px] uppercase tracking-[0.12em] text-black/40">JPG · PNG · WebP · Max 2MB</span>
+                  </div>
+                  {avatarMsg && (
+                    <p role={avatarMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${avatarMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                      {avatarMsg.text}
+                    </p>
+                  )}
+                  <div>
+                    <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                      Display name
+                    </label>
+                    <input
+                      value={profileName ?? user?.name ?? ""}
+                      onChange={(e) => { setProfileName(e.target.value); setProfileMsg(null); }}
+                      maxLength={60}
+                      placeholder="Your name"
+                      className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                    />
+                  </div>
+                  {profileMsg && (
+                    <p role={profileMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${profileMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                      {profileMsg.text}
+                    </p>
+                  )}
+                  <div className="flex justify-end pt-1">
+                    <button
+                      type="submit"
+                      disabled={savingProfile}
+                      className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                    >
+                      {savingProfile ? "Saving…" : "Save Profile"}
+                    </button>
+                  </div>
+                </form>
+              </section>
 
-              <div className="flex items-center justify-between gap-4 border border-black/10 bg-[#f5f5f2] p-4">
-                <div>
-                  <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Sign-in method</span>
-                  <p className="mt-2 text-xs font-bold text-black">{user?.googleId ? "Google OAuth" : "Email & Password"}</p>
+              {/* Email */}
+              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
+                <div className="mb-4 border-b border-black/10 pb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Email address</p>
+                  <p className="mt-2 text-xs leading-relaxed text-black/55">
+                    Currently <b>{user?.email}</b>. Loyalty points move with it.
+                  </p>
                 </div>
-                <span className="bg-black px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">Verified</span>
-              </div>
+                <form onSubmit={handleChangeEmail} className="flex flex-col gap-3">
+                  <div>
+                    <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                      New email *
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      value={newEmail}
+                      onChange={(e) => { setNewEmail(e.target.value); setEmailMsg(null); }}
+                      placeholder="you@example.com"
+                      className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                    />
+                  </div>
+                  {user?.hasPassword ? (
+                    <div>
+                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        Current password *
+                      </label>
+                      <input
+                        required
+                        type="password"
+                        value={emailPassword}
+                        onChange={(e) => { setEmailPassword(e.target.value); setEmailMsg(null); }}
+                        placeholder="••••••••"
+                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      />
+                    </div>
+                  ) : null}
+                  {emailMsg && (
+                    <p role={emailMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${emailMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                      {emailMsg.text}
+                    </p>
+                  )}
+                  <div className="flex justify-end pt-1">
+                    <button
+                      type="submit"
+                      disabled={savingEmail}
+                      className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                    >
+                      {savingEmail ? "Saving…" : "Change Email"}
+                    </button>
+                  </div>
+                </form>
+              </section>
 
-              <div className="flex items-center justify-between border-t border-black/10 pt-4">
-                <span className="text-[10px] uppercase tracking-[0.12em] text-black/45">Active session</span>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="cursor-pointer text-[10px] font-bold uppercase tracking-[0.14em] text-black underline underline-offset-4 transition-opacity hover:opacity-55"
-                >
-                  Sign out
-                </button>
-              </div>
-            </section>
+              {/* Password */}
+              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
+                <div className="mb-4 border-b border-black/10 pb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Password</p>
+                  <p className="mt-2 text-xs leading-relaxed text-black/55">
+                    {user?.hasPassword
+                      ? "Change the password used with email sign-in."
+                      : "No password set (Google sign-in). Set one to enable email sign-in."}
+                  </p>
+                </div>
+                <form onSubmit={handleChangePassword} className="flex flex-col gap-3">
+                  {user?.hasPassword ? (
+                    <div>
+                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        Current password *
+                      </label>
+                      <input
+                        required
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => { setCurrentPassword(e.target.value); setPasswordMsg(null); }}
+                        placeholder="••••••••"
+                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      />
+                    </div>
+                  ) : null}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        New password (8+ chars) *
+                      </label>
+                      <input
+                        required
+                        type="password"
+                        minLength={8}
+                        value={newPassword}
+                        onChange={(e) => { setNewPassword(e.target.value); setPasswordMsg(null); }}
+                        placeholder="••••••••"
+                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        Confirm new password *
+                      </label>
+                      <input
+                        required
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => { setConfirmPassword(e.target.value); setPasswordMsg(null); }}
+                        placeholder="••••••••"
+                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      />
+                    </div>
+                  </div>
+                  {passwordMsg && (
+                    <p role={passwordMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${passwordMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                      {passwordMsg.text}
+                    </p>
+                  )}
+                  <div className="flex justify-end pt-1">
+                    <button
+                      type="submit"
+                      disabled={savingPassword}
+                      className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                    >
+                      {savingPassword ? "Saving…" : user?.hasPassword ? "Change Password" : "Set Password"}
+                    </button>
+                  </div>
+                </form>
+                <div className="mt-4 border-t border-black/10 pt-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-[11px] leading-relaxed text-black/55">
+                      Prefer email? We&apos;ll send a reset link to your Gmail — it opens a page to set a new password.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleSendResetLink}
+                      disabled={sendingResetLink}
+                      className="shrink-0 cursor-pointer border border-black/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-black transition-colors hover:border-black disabled:opacity-50"
+                    >
+                      {sendingResetLink ? "Sending…" : "Email Reset Link"}
+                    </button>
+                  </div>
+                  {resetLinkMsg && (
+                    <p role={resetLinkMsg.type === "error" ? "alert" : "status"} className={`mt-3 text-[11px] font-bold uppercase tracking-[0.1em] ${resetLinkMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                      {resetLinkMsg.text}
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              {/* Session */}
+              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Sign-in method</span>
+                    <p className="mt-2 text-xs font-bold text-black">
+                      {user?.googleId ? "Google OAuth" : "Email & Password"}
+                      {user?.googleId && user?.hasPassword ? " + Password" : ""}
+                    </p>
+                  </div>
+                  <span className="bg-black px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">Verified</span>
+                </div>
+                <div className="mt-4 flex items-center justify-between border-t border-black/10 pt-4">
+                  <span className="text-[10px] uppercase tracking-[0.12em] text-black/45">Active session</span>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="cursor-pointer text-[10px] font-bold uppercase tracking-[0.14em] text-black underline underline-offset-4 transition-opacity hover:opacity-55"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </section>
+            </div>
           )}
         </div>
 
