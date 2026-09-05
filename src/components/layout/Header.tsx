@@ -88,11 +88,13 @@ export default function Header() {
 
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
+  // Studio/admin stay chromeless. /account keeps the navbar so first-time
+  // members always have full navigation (shop, search, bag) — the inline
+  // "Back to shop" link alone wasn't discoverable enough.
   if (
     pathname?.startsWith("/studio") ||
     pathname?.startsWith("/admin") ||
-    pathname === "/login" ||
-    pathname === "/account"
+    pathname === "/login"
   ) {
     return null;
   }
@@ -144,10 +146,10 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Brand wordmark / Logo (Centered) */}
+        {/* Brand wordmark / Logo (Centered, desktop only — mobile bar has its own) */}
         <Link
           href="/"
-          className="hover:opacity-75 flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
+          className="hover:opacity-75 hidden lg:flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
         >
           <span className="sr-only">BAGIFYYYY Home</span>
           <Image
