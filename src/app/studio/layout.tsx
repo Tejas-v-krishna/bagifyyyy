@@ -18,8 +18,8 @@ import type { LucideIcon } from "lucide-react";
 
 const navItems = [
   { href: "/studio", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/studio/products", label: "Products & Catalog", icon: Package },
-  { href: "/studio/products/new", label: "Add Product", icon: Plus },
+  { href: "/studio/products", label: "Products & Catalog", icon: Package, parentOfNew: true },
+  { href: "/studio/products/new", label: "Add Product", icon: Plus, exact: true },
   { href: "/studio/bundles", label: "Bundles", icon: Layers },
   { href: "/studio/orders", label: "Orders", icon: ShoppingBag },
   { href: "/studio/instagram", label: "Instagram Feed", icon: Camera },
@@ -31,19 +31,28 @@ function NavItem({
   label,
   icon: Icon,
   exact,
+  parentOfNew,
 }: {
   href: string;
   label: string;
   icon: LucideIcon;
   exact?: boolean;
+  parentOfNew?: boolean;
 }) {
   const pathname = usePathname();
-  const isActive = exact ? pathname === href : pathname.startsWith(href);
+  // The "new" form lives under /products but gets its own pill, so the
+  // parent stays lit only for the list and edit screens — never two blacks.
+  const isActive = exact
+    ? pathname === href
+    : parentOfNew
+      ? pathname === href || (pathname.startsWith(`${href}/`) && !pathname.startsWith(`${href}/new`))
+      : pathname.startsWith(href);
 
   return (
     <Link
       href={href}
-      className={`flex items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-wider transition-all rounded-[0.35rem] ${
+      aria-current={isActive ? "page" : undefined}
+      className={`flex shrink-0 items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-wider transition-all rounded-[0.35rem] ${
         isActive
           ? "text-white bg-black shadow-xs"
           : "text-black/60 hover:text-black hover:bg-black/5"

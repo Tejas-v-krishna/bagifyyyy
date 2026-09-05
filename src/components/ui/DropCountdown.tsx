@@ -80,7 +80,7 @@ export default function DropCountdown() {
   const seconds = totalSeconds % 60;
 
   return (
-    <section className="w-full bg-white px-4 pt-4 pb-2 sm:px-6" aria-label="Next drop countdown">
+    <section className="relative z-10 w-full bg-white px-4 pt-24 pb-8 sm:px-6 sm:pt-28" aria-label="Next drop countdown">
       <div className="mx-auto flex w-full max-w-[1700px] flex-col items-center gap-4">
         <h2 className="font-microgramma uppercase text-[clamp(1.4rem,3vw,2.6rem)] font-bold leading-none tracking-tight text-black">
           {drop.label || "Next Drop"}
