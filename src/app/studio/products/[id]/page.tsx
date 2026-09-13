@@ -541,7 +541,7 @@ export default function StudioEditProduct() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Truck className="font-bold w-4 h-4 text-y2k-gunmetal shrink-0" />
-                  <span>Free Express Shipping Over ₹2000</span>
+                  <span>Standard India Post Shipping (₹80)</span>
                 </div>
               </div>
             </div>
@@ -996,7 +996,7 @@ export default function StudioEditProduct() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Truck className="font-bold w-3.5 h-3.5 text-y2k-gunmetal" />
-                    <span>Complimentary Shipping Over ₹2000</span>
+                    <span>Standard India Post Shipping (₹80)</span>
                   </div>
                 </div>
               </div>

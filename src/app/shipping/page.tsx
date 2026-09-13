@@ -27,14 +27,9 @@ export default function ShippingPage() {
             </thead>
             <tbody className="divide-y divide-black/5 font-mono text-xs">
               <tr className="hover:bg-black/[0.02] transition-colors">
-                <td className="p-4 sm:p-4.5 font-bold font-sans text-black">Standard Speed (India Post &amp; Bluedart)</td>
+                <td className="p-4 sm:p-4.5 font-bold font-sans text-black">Standard India Post Speed Delivery</td>
                 <td className="p-4 sm:p-4.5 text-black/70">4–6 Business Days</td>
-                <td className="p-4 sm:p-4.5 text-right font-bold uppercase text-black">FREE OVER ₹2,000 · ₹49 BELOW</td>
-              </tr>
-              <tr className="hover:bg-black/[0.02] bg-[#fbfbfb] transition-colors">
-                <td className="p-4 sm:p-4.5 font-bold font-sans text-black">Express Metro Air Dispatch</td>
-                <td className="p-4 sm:p-4.5 text-black/70">2–3 Business Days</td>
-                <td className="p-4 sm:p-4.5 text-right font-bold text-black">₹99</td>
+                <td className="p-4 sm:p-4.5 text-right font-bold uppercase text-black">₹80 FLAT RATE</td>
               </tr>
             </tbody>
           </table>

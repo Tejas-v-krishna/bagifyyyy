@@ -1047,11 +1047,11 @@ export default function AccountPage() {
                 <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
                   <div className={`border p-4 ${tier === "CHROME" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Chrome / 0-499</p>
-                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Early drop access and free shipping over ₹2000.</p>
+                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Early drop access and exclusive member privileges.</p>
                   </div>
                   <div className={`border p-4 ${tier === "STEEL" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Steel / 500-1999</p>
-                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Free express shipping and a 1.5x points multiplier.</p>
+                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Priority order dispatch and a 1.5x points multiplier.</p>
                   </div>
                   <div className={`border p-4 ${tier === "GOLD" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
                     <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Gold / 2000+</p>

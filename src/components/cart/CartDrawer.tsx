@@ -395,35 +395,12 @@ export default function CartDrawer() {
             {/* Footer */}
             {items.length > 0 && (
               <div className="border-t border-black/10 px-6 sm:px-8 py-6 bg-white space-y-4 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-                {/* Free Shipping Progress */}
-                <div
-                  className="space-y-2"
-                  role="status"
-                  aria-live="polite"
-                  aria-label={
-                    goodsTotal >= 2000
-                       ? "Free shipping is on us"
-                      : `Add ₹{(2000 - goodsTotal).toLocaleString("en-IN")} more for free shipping`
-                  }
-                >
-                  <div className="flex items-center justify-center gap-2 text-center">
-                    <Truck
-                      className={`w-3.5 h-3.5 transition-colors ${goodsTotal >= 2000 ? "text-emerald-700" : "text-black/50"}`}
-                      strokeWidth={1.75}
-                      aria-hidden
-                    />
-                    <p className={`text-[10px] uppercase tracking-[0.16em] font-bold transition-colors ${goodsTotal >= 2000 ? "text-emerald-700" : "text-black/70"}`}>
-                      {goodsTotal >= 2000
-                         ? "Free shipping is on us"
-                        : `₹${(2000 - goodsTotal).toLocaleString("en-IN")} away from free shipping`}
-                    </p>
-                  </div>
-                  <div className="bg-black/10 h-1.5 w-full overflow-hidden rounded-full">
-                    <div
-                      className={`h-full transition-all duration-700 ease-out rounded-full ${goodsTotal >= 2000 ? "bg-emerald-600" : "bg-black"}`}
-                      style={{ width: `${Math.min((goodsTotal / 2000) * 100, 100)}%` }}
-                    />
-                  </div>
+                {/* Standard Shipping Notice */}
+                <div className="flex items-center justify-center gap-2 text-center py-1">
+                  <Truck className="w-3.5 h-3.5 text-black/60" strokeWidth={1.75} aria-hidden />
+                  <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-black/70">
+                    Standard India Post Shipping · ₹80
+                  </p>
                 </div>
 
                 {/* Promo Code Row */}

@@ -6,9 +6,9 @@ export const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
 
 export const MAX_QUANTITY_PER_ITEM = 10;
 export const MAX_ITEMS_PER_ORDER = 50;
-export const EXPRESS_SHIPPING_FEE = 99;
-export const STANDARD_SHIPPING_FEE = 49;
-export const FREE_SHIPPING_THRESHOLD = 2000;
+export const STANDARD_SHIPPING_FEE = 80;
+export const EXPRESS_SHIPPING_FEE = 80;
+export const FREE_SHIPPING_THRESHOLD = Infinity;
 
 export type PricedItem = {
   productId: string;
@@ -204,14 +204,8 @@ export async function priceCart(options: {
   const promoAmount = Math.round(discountableSubtotal * promoDiscount * 100) / 100;
   const discountAmount = Math.round((bundleDiscount + promoAmount) * 100) / 100;
 
-  // Free-shipping eligibility is judged on what the shopper actually pays for
-  // goods, not on the pre-discount subtotal.
-  const shippingFee =
-    shippingMethod === 'express'
-      ? EXPRESS_SHIPPING_FEE
-      : discountableSubtotal >= FREE_SHIPPING_THRESHOLD
-        ? 0
-        : STANDARD_SHIPPING_FEE;
+  // Standard India Post shipping: flat ₹80 with no free shipping threshold.
+  const shippingFee = STANDARD_SHIPPING_FEE;
 
   return {
     items: pricedItems,

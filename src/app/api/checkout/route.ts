@@ -52,7 +52,7 @@ export async function POST(request: Request) {
           shipping_rate_data: {
             type: 'fixed_amount',
             fixed_amount: { amount: Math.round(cart.shippingFee * 100), currency: 'inr' },
-            display_name: cart.shippingFee === 0 ? 'Free Shipping' : 'Standard Shipping',
+            display_name: 'Standard India Post Shipping',
             delivery_estimate: {
               minimum: { unit: 'business_day', value: 3 },
               maximum: { unit: 'business_day', value: 5 },

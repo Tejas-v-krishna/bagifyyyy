@@ -177,7 +177,7 @@ export function generateDropAnnouncementEmailHtml(options: DropCampaignOptions):
       <tr>
         <td style="background-color: #f8fafc; padding: 12px 16px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; text-align: center;">
           <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #0C2340;">
-            🚚 FREE EXPRESS SHIPPING OVER ₹299 &nbsp;|&nbsp; ⚡ NO RESTOCKS
+            🚚 STANDARD INDIA POST SHIPPING &nbsp;|&nbsp; ⚡ NO RESTOCKS
           </span>
         </td>
       </tr>

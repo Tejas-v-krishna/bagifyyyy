@@ -204,8 +204,8 @@ function CheckoutContent() {
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
 
-  // Shipping options (online payment only)
-  const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard');
+  // Shipping options (Standard India Post only)
+  const [shippingMethod] = useState<'standard'>('standard');
 
   // Auto-apply promo from cart URL param (back-compat) or store
   useEffect(() => {
@@ -259,15 +259,15 @@ function CheckoutContent() {
   }, []);
 
   // Mirrors priceCart() in src/lib/cart.ts exactly: set discounts come off
-  // first, then the promo code applies to what's left, and free shipping is
-  // judged on that same post-discount figure. The server re-derives all of it.
+  // first, then the promo code applies to what's left.
+  // Shipping is a flat ₹80 (Standard India Post). The server re-derives all of it.
   const subtotal = cartSubtotal();
   const setDiscount = bundleDiscount();
   // Studio MRP rows. Display only — they never change what is charged.
   const mrpTotalValue = mrpTotal();
   const mrpDiscountValue = mrpDiscount();
   const total = cartTotal();
-  const shipping = shippingMethod === 'express' ? 99 : (total >= 2000 ? 0 : 49);
+  const shipping = 80;
   const discountAmount = promoAmount();
   const finalTotal = total - discountAmount + shipping;
 
@@ -823,43 +823,18 @@ function CheckoutContent() {
 
                 {activeStep === 2 ? (
                   <div className="flex flex-col gap-4">
-                    <label className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${shippingMethod === 'standard' ? 'border-black bg-black/[0.02] shadow-xs' : 'border-black/10 hover:border-black/30'}`}>
+                    <div className="flex items-center justify-between p-4 border rounded-xl border-black bg-black/[0.02] shadow-xs">
                       <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="shipping"
-                          checked={shippingMethod === 'standard'}
-                          onChange={() => setShippingMethod('standard')}
-                          className="accent-black"
-                        />
+                        <Truck className="w-4 h-4 text-black" />
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-[0.12em] flex items-center gap-2 text-black">
-                            <Truck className="w-4 h-4" /> India Post Standard Speed Delivery
+                            Standard India Post Shipping
                           </p>
                           <p className="text-[11px] text-black/60 mt-0.5">Estimated 4-6 business days</p>
                         </div>
                       </div>
-                      <span className="text-xs font-semibold uppercase text-black">{total >= 2000 ? 'FREE' : '₹49'}</span>
-                    </label>
-
-                    <label className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all ${shippingMethod === 'express' ? 'border-black bg-black/[0.02] shadow-xs' : 'border-black/10 hover:border-black/30'}`}>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="shipping"
-                          checked={shippingMethod === 'express'}
-                          onChange={() => setShippingMethod('express')}
-                          className="accent-black"
-                        />
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] flex items-center gap-2 text-black">
-                            <Truck className="w-4 h-4 text-amber-700" /> India Post Air Express (Priority)
-                          </p>
-                          <p className="text-[11px] text-black/60 mt-0.5">Estimated 2-3 business days</p>
-                        </div>
-                      </div>
-                      <span className="text-xs font-semibold uppercase text-black">₹99</span>
-                    </label>
+                      <span className="text-xs font-semibold uppercase text-black">₹80</span>
+                    </div>
 
                     <div className="flex justify-end mt-4">
                       <button
@@ -874,7 +849,7 @@ function CheckoutContent() {
                 ) : (
                   <div className="text-xs text-black/80 font-semibold">
                     <p className="uppercase">
-                      {shippingMethod === 'express' ? 'India Post Air Express (₹99)' : 'India Post Standard Delivery (Free / ₹49)'}
+                      Standard India Post Shipping (₹80)
                     </p>
                   </div>
                 )}
@@ -1047,8 +1022,8 @@ function CheckoutContent() {
                 </div>
               )}
               <div className="flex justify-between items-center text-black/65">
-                <span>Shipping ({shippingMethod === 'express' ? 'Express' : 'Standard'}):</span>
-                <span className="font-semibold text-black">{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
+                <span>Shipping (Standard India Post):</span>
+                <span className="font-semibold text-black">₹{shipping.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-black/65">
                 <span>Tax:</span>
