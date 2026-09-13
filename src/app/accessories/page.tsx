@@ -1,24 +1,27 @@
 import type { Metadata } from "next";
 import CategoryPageClient from "@/components/product/CategoryPageClient";
 import { collectionMetadata } from "@/lib/seo";
+import { queryProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = collectionMetadata({
   title: "Accessories",
   description:
-     "BAGIFYYYY accessories are on the way. Belts, bags, and hardware for finishing a Y2K fit.",
+    "BAGIFYYYY accessories are on the way. Belts, bags, and hardware for finishing a Y2K fit.",
   path: "/accessories",
 });
 
-export default function AccessoriesPage() {
+export default async function AccessoriesPage() {
+  const products = await queryProducts({ category: "accessories" });
   return (
     <CategoryPageClient
       category="accessories"
+      initialProducts={products}
       prefix="Collection"
       title="Accessories"
-       badge="COMING SOON"
-       subtitle="Belts, bags, and hardware are being lined up now."
+      badge="COMING SOON"
+      subtitle="Belts, bags, and hardware are being lined up now."
     />
   );
 }

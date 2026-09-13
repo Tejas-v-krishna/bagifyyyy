@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import CategoryPageClient from "@/components/product/CategoryPageClient";
 import { collectionMetadata } from "@/lib/seo";
+import { queryProducts } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = collectionMetadata({
   title: "New Arrivals",
   description:
-     "The latest BAGIFYYYY pieces: Y2K streetwear, vintage finds, and small-run releases.",
+    "The latest BAGIFYYYY pieces: Y2K streetwear, vintage finds, and small-run releases.",
   path: "/new-arrivals",
 });
 
@@ -16,6 +17,14 @@ export const metadata: Metadata = collectionMetadata({
  * dropped you on the homepage and told Google the URL was a redirect. It is now
  * a real listing filtered to `isNew`, which is what the sitemap already claims.
  */
-export default function NewArrivalsPage() {
-  return <CategoryPageClient filter="new" prefix="Collection" title="New In" />;
+export default async function NewArrivalsPage() {
+  const products = await queryProducts({ filter: "new" });
+  return (
+    <CategoryPageClient
+      filter="new"
+      initialProducts={products}
+      prefix="Collection"
+      title="New In"
+    />
+  );
 }

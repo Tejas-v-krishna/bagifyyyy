@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Turbopack otherwise walks up to C:\Users\tejas (package-lock.json outside
+  // the repo), which both spams warnings and slows file resolution.
+  turbopack: {
+    root: __dirname,
+  },
   images: {
+    qualities: [75, 100],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.unsplash.com" },

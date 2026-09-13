@@ -14,6 +14,8 @@ const getServerSnapshot = () => false;
 export default function Preloader() {
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
+  // Repeat-in-session visits tear the cover down instantly (no exit slide).
+  const [exitInstantly, setExitInstantly] = useState(false);
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
   const isDashboard =
     pathname?.startsWith("/studio") ||
@@ -30,11 +32,36 @@ export default function Preloader() {
       return;
     }
 
-    // Keep the animated wordmark visible long enough for the motion to register.
+    // Brand moment plays once per browser session; repeat visits land instantly.
+    let seenBefore = false;
+    try {
+      seenBefore = sessionStorage.getItem("bagify_preloader_seen") === "true";
+    } catch {
+      seenBefore = false;
+    }
+
+    if (seenBefore) {
+      // Deferred by a tick so the teardown is an async state update, and the
+      // SSR cover vanishes without playing the exit slide.
+      const teardown = window.setTimeout(() => {
+        setExitInstantly(true);
+        setIsLoading(false);
+        setPreloaderFinished(true);
+      }, 0);
+      return () => window.clearTimeout(teardown);
+    }
+
+    try {
+      sessionStorage.setItem("bagify_preloader_seen", "true");
+    } catch {
+      // Private browsing et al. — just play the animation.
+    }
+
+    // Quick brand flash: long enough to register, short enough not to gate the shop.
     const timer = setTimeout(() => {
       setIsLoading(false);
       setPreloaderFinished(true);
-    }, 3200);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [isDashboard, prefersReducedMotion, setPreloaderFinished]);
@@ -48,16 +75,18 @@ export default function Preloader() {
       {isLoading && (
         <motion.div
           initial={{ y: 0 }}
-          exit={{ 
+          exit={{
             y: "100%",
-            transition: { duration: 0.75, ease: [0.76, 0, 0.24, 1] }
+            transition: exitInstantly
+              ? { duration: 0 }
+              : { duration: 0.55, ease: [0.76, 0, 0.24, 1] }
           }}
           className="fixed inset-0 z-[9999] bg-y2k-ice flex items-center justify-center pointer-events-none origin-bottom"
         >
           <motion.div
             initial={{ filter: "blur(20px)", opacity: 0, scale: 0.9 }}
             animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
             <Image

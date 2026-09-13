@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -78,17 +78,19 @@ function CatalogueRailCard({ product }: { product: Product }) {
 
 export default function CategoryPageClient({
   category,
+  initialProducts,
   filter,
   title,
   subtitle,
 }: {
   category?: string;
+  /** Server-rendered first paint; skips the initial /api/products round trip. */
+  initialProducts?: Product[];
   filter?: string;
-  /** Kept for call-site compatibility; micro-kickers are no longer rendered. */
-  prefix?: string;
   title: string;
   subtitle?: string;
   /** Kept for call-site compatibility; micro-kickers are no longer rendered. */
+  prefix?: string;
   badge?: string;
 }) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -116,11 +118,23 @@ export default function CategoryPageClient({
   const [reloadToken, setReloadToken] = useState(0);
 
   const queryKey = `${category ?? ""}|${filter ?? ""}|${query}|${reloadToken}`;
+
+  // Server-rendered first paint: seed the initial catalogue synchronously so
+  // the grid paints with the HTML (no skeleton flash, no /api round trip).
+  // Later key changes (search, reload) fall through to the normal fetch.
+  const seededKey =
+    initialProducts && !query ? `${category ?? ""}|${filter ?? ""}||0` : null;
+  const seededProducts = seededKey ? initialProducts : null;
   const [result, setResult] = useState<{
     key: string;
     products: Product[];
     failed: boolean;
-  } | null>(null);
+  } | null>(
+    seededProducts
+      ? { key: seededKey as string, products: seededProducts, failed: false }
+      : null
+  );
+  const seededKeyRef = useRef<string | null>(seededKey);
 
   const isCurrent = result?.key === queryKey;
   const loading = !isCurrent;
@@ -128,6 +142,9 @@ export default function CategoryPageClient({
   const products = isCurrent ? result.products : NO_PRODUCTS;
 
   useEffect(() => {
+    // Initial data already seeded from the server for this exact key.
+    if (seededKeyRef.current === queryKey) return;
+
     let url = "/api/products";
     const params = new URLSearchParams();
     if (category) params.append("category", category);

@@ -9,45 +9,53 @@ import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
 import VintageArchiveSection from "@/components/ui/VintageArchiveSection";
 import DropCountdown from "@/components/ui/DropCountdown";
 import Footer from "@/components/layout/Footer";
-export const dynamic = 'force-dynamic';
+// Cached HTML keeps first loads instant in production; sections refresh at
+// most 30s behind it. Stock truth is enforced at cart/checkout anyway.
+export const revalidate = 30;
+
+const productInclude = { images: true, variants: true } as const;
 
 export default async function Home() {
-  // Fetch New Arrivals (isNew = true, fallback to latest)
-  let newArrivals = await prisma.product.findMany({
-    where: { isNew: true },
-    orderBy: { createdAt: 'desc' },
-    include: { images: true, variants: true }
-  });
-
-  if (newArrivals.length < 4) {
-    newArrivals = await prisma.product.findMany({
-      take: 20,
-      orderBy: { createdAt: 'desc' },
-      include: { images: true, variants: true }
-    });
-  }
-
-  // Fetch Curated Grails (Rare high-provenance archive pieces)
-  const curatedGrails = await prisma.product.findMany({
-    take: 20,
-    orderBy: { price: 'desc' },
-    include: { images: true, variants: true }
-  });
-
-  // Fetch Active Bundles (if any)
-  const rawBundles = await prisma.bundle.findMany({
-    include: {
-      products: {
+  // All catalogue reads run in one parallel batch — including the fallback
+  // lists, fetched optimistically so no query ever waits on another. Each
+  // read degrades to an empty list instead of hanging the render on a slow
+  // remote DB.
+  const [newFlagged, latestAll, priceTop, rawBundles, bestSellers] = await Promise.all([
+    prisma.product
+      .findMany({ where: { isNew: true }, orderBy: { createdAt: 'desc' }, include: productInclude })
+      .catch(() => []),
+    prisma.product
+      .findMany({ take: 20, orderBy: { createdAt: 'desc' }, include: productInclude })
+      .catch(() => []),
+    prisma.product
+      .findMany({ take: 20, orderBy: { price: 'desc' }, include: productInclude })
+      .catch(() => []),
+    prisma.bundle
+      .findMany({
         include: {
-          product: {
-            include: { images: { take: 1 }, variants: true },
+          products: {
+            include: {
+              product: {
+                include: { images: { take: 1 }, variants: true },
+              },
+            },
           },
         },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 6,
-  });
+        orderBy: { createdAt: 'desc' },
+        take: 6,
+      })
+      .catch(() => []),
+    prisma.product
+      .findMany({ where: { isBestSeller: true }, take: 20, orderBy: { price: 'desc' }, include: productInclude })
+      .catch(() => []),
+  ]);
+
+  // New Arrivals: isNew flag with a latest-pieces fallback for thin catalogues.
+  const newArrivals = newFlagged.length >= 4 ? newFlagged : latestAll;
+
+  // Curated grails are a distinct premium edit rather than another arrivals repeat.
+  const curatedGrails = priceTop;
+  const vintageArchive = bestSellers.length >= 4 ? bestSellers : priceTop;
 
   const formattedBundles = rawBundles.map((b) => {
     const items = b.products.map((bp) => ({
@@ -81,22 +89,6 @@ export default async function Home() {
       savings,
     };
   });
-
-  // Curated grails are a distinct premium edit rather than another arrivals repeat.
-  let vintageArchive = await prisma.product.findMany({
-    where: { isBestSeller: true },
-    take: 20,
-    orderBy: { price: 'desc' },
-    include: { images: true, variants: true },
-  });
-
-  if (vintageArchive.length < 4) {
-    vintageArchive = await prisma.product.findMany({
-      take: 20,
-      orderBy: { price: 'desc' },
-      include: { images: true, variants: true },
-    });
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
