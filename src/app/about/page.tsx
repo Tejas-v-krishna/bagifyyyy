@@ -7,7 +7,7 @@ export default function AboutPage() {
       {/* 1. Hero Section */}
       <section className="relative w-full h-[85vh] sm:h-[90vh] flex items-end justify-start overflow-hidden bg-black">
         <Image
-          src="/hero-main.png"
+          src="/hero-main.webp"
           alt="About BAGIFYYYY Archive"
           fill
           sizes="100vw"

@@ -108,14 +108,11 @@ export default function EditorialManifesto() {
         {/* ── Central Model Cutout Image ── */}
         <div className="absolute inset-0 overflow-hidden flex items-center justify-center z-10">
           <Image
-            src="/editorial-manifesto.png"
+            src="/editorial-manifesto.webp"
             alt="BAGIFYYYY editorial manifesto FW26"
             fill
             sizes="(max-width: 1440px) 100vw, 1440px"
             className="object-contain object-center select-none"
-            priority={true}
-            quality={100}
-            unoptimized
           />
         </div>
 

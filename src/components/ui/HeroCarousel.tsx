@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 const HERO_SLIDES = [
   {
     id: 1,
-    image: "/hero-main.png",
+    image: "/hero-main.webp",
     link: "/new-arrivals",
     alt: "New arrivals — unisex streetwear drop",
     title: "NEW ARRIVALS",

@@ -138,7 +138,7 @@ export default async function Home() {
 
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">
             <Image
-               src="/hero-main.png"
+               src="/hero-main.webp"
                alt="BAGIFYYYY FW26 campaign"
               fill
               priority

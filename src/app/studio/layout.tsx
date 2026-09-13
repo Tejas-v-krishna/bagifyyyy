@@ -24,6 +24,7 @@ const navItems = [
   { href: "/studio/orders", label: "Orders", icon: ShoppingBag },
   { href: "/studio/instagram", label: "Instagram Feed", icon: Camera },
   { href: "/studio/marketing", label: "Email Marketing", icon: Mail },
+  { href: "/studio/setup-2fa", label: "Security & 2FA", icon: ShieldCheck },
 ];
 
 function NavItem({

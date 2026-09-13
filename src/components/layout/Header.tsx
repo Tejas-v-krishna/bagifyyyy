@@ -221,12 +221,10 @@ export default function Header() {
         >
           <span className="sr-only">BAGIFYYYY Home</span>
           <Image
-            src="/bagifyyyy-wordmark-animated.gif"
+            src="/bagifyyyy-wordmark.webp"
             alt="BAGIFYYYY Logo"
-            width={1024}
-            height={265}
-            fetchPriority="high"
-            unoptimized
+            width={640}
+            height={166}
             className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
           />
         </Link>
@@ -306,11 +304,10 @@ export default function Header() {
           <Link href="/" className="hover:opacity-75 transition-opacity">
             <span className="sr-only">BAGIFYYYY Home</span>
             <Image
-              src="/bagifyyyy-wordmark-animated.gif"
+              src="/bagifyyyy-wordmark.webp"
               alt="BAGIFYYYY Logo"
-              width={1024}
-              height={265}
-              unoptimized
+              width={640}
+              height={166}
               className={`h-auto w-[120px] object-contain transition-all duration-300 ${logoFilter}`}
             />
           </Link>
@@ -354,11 +351,10 @@ export default function Header() {
                 >
                   <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-black/[0.08] shrink-0">
                     <Image
-                      src="/bagifyyyy-wordmark-animated.gif"
+                      src="/bagifyyyy-wordmark.webp"
                       alt="BAGIFYYYY Logo"
-                      width={845}
-                      height={219}
-                      unoptimized
+                      width={640}
+                      height={166}
                       className="h-auto w-[110px] sm:w-[120px] object-contain"
                     />
                     <button

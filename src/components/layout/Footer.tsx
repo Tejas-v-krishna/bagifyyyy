@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -33,6 +33,29 @@ export default function Footer() {
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+
+  // The wordmark video is the heaviest asset on the page; keep it off the
+  // critical path and only start loading once the footer nears the viewport.
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      el.play().catch(() => {});
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          el.play().catch(() => {});
+          io.disconnect();
+        }
+      },
+      { rootMargin: "400px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
     return null;
@@ -211,7 +234,8 @@ export default function Footer() {
         </div>
 
         <video
-          autoPlay
+          ref={videoRef}
+          preload="none"
           loop
           muted
           playsInline

@@ -66,13 +66,10 @@ export default function GlassFractalGrid() {
             >
               <div className="relative w-full h-full">
                 <Image
-                  src="/editorial-manifesto.png"
+                  src="/editorial-manifesto.webp"
                   alt="optical refracted layer"
                   fill
                   className="object-contain object-center opacity-95 select-none"
-                  quality={100}
-                  priority={true}
-                  unoptimized
                 />
               </div>
             </div>

@@ -90,12 +90,11 @@ export default function Preloader() {
             className="relative w-64 h-16 md:w-80 md:h-20"
           >
             <Image
-              src="/bagifyyyy-wordmark-animated.gif"
+              src="/bagifyyyy-wordmark.webp"
               alt="Bagifyyyy Logo"
-              width={845}
-              height={219}
+              width={640}
+              height={166}
               fetchPriority="high"
-              unoptimized
               className="h-full w-full object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
             />
           </motion.div>

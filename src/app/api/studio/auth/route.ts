@@ -6,19 +6,18 @@ import {
   isAdminSessionConfigured,
   secretsMatch,
 } from '@/lib/adminSession';
+import { verifyTOTP } from '@/lib/totp';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => null);
     const password = body && typeof body === 'object' ? (body as { password?: unknown }).password : null;
+    const code = body && typeof body === 'object' ? (body as { code?: unknown }).code : null;
 
     if (typeof password !== 'string' || !password) {
       return NextResponse.json({ error: 'Invalid admin password' }, { status: 401 });
     }
 
-    // The password used to be accepted from a hardcoded list — 'BagifyAdmin#2026'
-    // and 'bagifyadmin' were valid in every deployment regardless of what
-    // ADMIN_PASSWORD was set to, and both were sitting in the repository.
     const expectedPassword = process.env.ADMIN_PASSWORD;
     if (!expectedPassword) {
       console.error('Studio login attempted but ADMIN_PASSWORD is not set.');
@@ -37,6 +36,24 @@ export async function POST(request: Request) {
 
     if (!(await secretsMatch(password, expectedPassword))) {
       return NextResponse.json({ error: 'Invalid admin password' }, { status: 401 });
+    }
+
+    // ── TWO-FACTOR AUTHENTICATION (TOTP) ────────────────────────────────────
+    const totpSecret = process.env.ADMIN_TOTP_SECRET?.trim();
+    if (totpSecret) {
+      // If code was not supplied, request Step 2 (2FA code)
+      if (!code || typeof code !== 'string') {
+        return NextResponse.json({ requires2FA: true });
+      }
+
+      // Verify the 6-digit code from Google Authenticator
+      const isCodeValid = verifyTOTP(code, totpSecret);
+      if (!isCodeValid) {
+        return NextResponse.json(
+          { error: 'Invalid 6-digit authenticator code. Please check Google Authenticator.' },
+          { status: 401 }
+        );
+      }
     }
 
     const token = await createAdminSessionToken();
