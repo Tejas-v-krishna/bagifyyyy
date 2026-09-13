@@ -79,9 +79,6 @@ export default function Footer() {
              <span className="block lg:whitespace-nowrap">Hear About The Next One</span>
              <span className="block pl-[clamp(2rem,16vw,14rem)] lg:whitespace-nowrap">Before It Goes Live</span>
            </h2>
-           <span className="hidden shrink-0 pt-1 text-[9px] tracking-[0.04em] text-white/25 sm:block">
-             No daily noise
-          </span>
         </div>
 
         <div className="mt-14 grid grid-cols-2 gap-6 sm:mt-16 sm:gap-8 lg:mt-[3.2vw] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.68fr)_minmax(0,1.28fr)] lg:items-start lg:gap-x-[4.9vw]">
@@ -97,7 +94,7 @@ export default function Footer() {
 
           <div className="order-1 col-span-2 flex min-h-full flex-col lg:order-2 lg:col-span-1 lg:px-0">
             <p className="max-w-[26rem] text-[clamp(0.75rem,1vw,1rem)] font-medium leading-[1.15] tracking-[-0.02em] text-white">
-               No daily noise. Just a note when something new lands.
+               Just a note when something new lands.
             </p>
 
             <form onSubmit={handleSubscribe} className="mt-8 flex flex-col sm:mt-10 lg:min-h-[clamp(15rem,27.5vw,29rem)]">
