@@ -6,6 +6,7 @@ export type VintageArchiveItem = {
   price: number;
   image: string;
   isSoldOut: boolean;
+  reserved?: boolean;
   sizes?: string[];
   colors?: string[];
 };
@@ -18,6 +19,7 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
     name: item.name,
     price: item.price,
     isSoldOut: item.isSoldOut,
+    reserved: item.reserved,
     images: [{ url: item.image || "/placeholder.jpg" }],
     sizes: item.sizes,
     colors: item.colors,

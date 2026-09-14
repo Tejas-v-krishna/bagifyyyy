@@ -17,6 +17,8 @@ export interface Product {
   isNew?: boolean;
   isSoldOut?: boolean;
   isBestSeller?: boolean;
+  /** Another shopper currently holds this piece in their bag. */
+  reserved?: boolean;
   colors?: string[];
   sizes?: string[];
   description?: string;
@@ -79,6 +81,15 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="absolute top-3 left-3 z-20">
             <span className="text-[8px] font-semibold tracking-[0.12em] bg-black text-white px-2 py-0.5 rounded-[var(--radius-cta)]">
               New
+            </span>
+          </div>
+        )}
+
+        {/* On-hold signal: first-to-bag holds the piece */}
+        {product.reserved && !product.isSoldOut && (
+          <div className="absolute top-3 right-3 z-20">
+            <span className="text-[8px] font-semibold tracking-[0.12em] bg-amber-400 text-black px-2 py-0.5 rounded-[var(--radius-cta)]">
+              On Hold
             </span>
           </div>
         )}

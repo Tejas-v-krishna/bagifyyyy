@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { attachReservedFlags, availableProductWhere } from "@/lib/products";
 import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import EditorialManifesto from "@/components/home/EditorialManifesto";
 import InstagramFeed from "@/components/ui/InstagramFeed";
@@ -22,13 +23,13 @@ export default async function Home() {
   // remote DB.
   const [newFlagged, latestAll, priceTop, rawBundles, bestSellers] = await Promise.all([
     prisma.product
-      .findMany({ where: { isNew: true }, orderBy: { createdAt: 'desc' }, include: productInclude })
+      .findMany({ where: { isNew: true, ...availableProductWhere }, orderBy: { createdAt: 'desc' }, include: productInclude })
       .catch(() => []),
     prisma.product
-      .findMany({ take: 20, orderBy: { createdAt: 'desc' }, include: productInclude })
+      .findMany({ where: availableProductWhere, take: 20, orderBy: { createdAt: 'desc' }, include: productInclude })
       .catch(() => []),
     prisma.product
-      .findMany({ take: 20, orderBy: { price: 'desc' }, include: productInclude })
+      .findMany({ where: availableProductWhere, take: 20, orderBy: { price: 'desc' }, include: productInclude })
       .catch(() => []),
     prisma.bundle
       .findMany({
@@ -46,7 +47,7 @@ export default async function Home() {
       })
       .catch(() => []),
     prisma.product
-      .findMany({ where: { isBestSeller: true }, take: 20, orderBy: { price: 'desc' }, include: productInclude })
+      .findMany({ where: { isBestSeller: true, ...availableProductWhere }, take: 20, orderBy: { price: 'desc' }, include: productInclude })
       .catch(() => []),
   ]);
 
@@ -56,6 +57,14 @@ export default async function Home() {
   // Curated grails are a distinct premium edit rather than another arrivals repeat.
   const curatedGrails = priceTop;
   const vintageArchive = bestSellers.length >= 4 ? bestSellers : priceTop;
+
+  // Flag pieces another shopper is currently holding, so the showcases can
+  // show the "on hold" signal.
+  const [newArrivalsFlagged, curatedGrailsFlagged, vintageArchiveFlagged] = await Promise.all([
+    attachReservedFlags(newArrivals),
+    attachReservedFlags(curatedGrails),
+    attachReservedFlags(vintageArchive),
+  ]);
 
   const formattedBundles = rawBundles.map((b) => {
     const items = b.products.map((bp) => ({
@@ -191,24 +200,26 @@ export default async function Home() {
       {/* 2. New Arrivals & Curated Grails Showcase Section */}
       <section id="showcase" className="w-full bg-white px-3 pt-24 pb-16 sm:px-6 sm:py-24 md:py-32 lg:px-10 scroll-mt-20 overflow-hidden">
         <InteractiveShowcase
-          products={newArrivals.map((p) => ({
+          products={newArrivalsFlagged.map((p) => ({
             id: p.id,
             name: p.name,
             price: p.price,
             isSoldOut: p.isSoldOut,
             isNew: p.isNew,
+            reserved: p.reserved,
             category: p.category,
             brand: p.brand,
             images: p.images,
             sizes: Array.from(new Set(p.variants.map((v) => v.size))),
             colors: Array.from(new Set(p.variants.map((v) => v.color))),
           }))}
-          topPicks={curatedGrails.map((p) => ({
+          topPicks={curatedGrailsFlagged.map((p) => ({
             id: p.id,
             name: p.name,
             price: p.price,
             isSoldOut: p.isSoldOut,
             isNew: p.isNew,
+            reserved: p.reserved,
             category: p.category,
             brand: p.brand,
             images: p.images,
@@ -278,12 +289,13 @@ export default async function Home() {
 
        {/* 3. Hard-to-find pieces */}
       <VintageArchiveSection
-        items={vintageArchive.map((product) => ({
+        items={vintageArchiveFlagged.map((product) => ({
           id: product.id,
           name: product.name,
           price: product.price,
           image: product.images[0]?.url || "/placeholder.jpg",
           isSoldOut: product.isSoldOut,
+          reserved: product.reserved,
           sizes: Array.from(new Set(product.variants.map((v) => v.size))),
           colors: Array.from(new Set(product.variants.map((v) => v.color))),
         }))}

@@ -15,6 +15,7 @@ import { categoryHref, categoryLabel } from "@/lib/categories";
 import { Clock, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ProductForDisplay } from "@/lib/product";
+import { getHoldSessionId } from "@/lib/cartHolds";
 
 /**
  * Clean editorial product detail page.
@@ -41,6 +42,9 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const [addedAnimation, setAddedAnimation] = useState(false);
   const [selectionError, setSelectionError] = useState("");
   const [isReservedInCheckout, setIsReservedInCheckout] = useState(false);
+  const [heldByYou, setHeldByYou] = useState(false);
+  const [reservationExpiresAt, setReservationExpiresAt] = useState<string | null>(null);
+  const [nowTick, setNowTick] = useState(() => Date.now());
 
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -62,18 +66,29 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize && variant.color === selectedColor
   );
+  // A hold by another shopper means the piece is effectively taken until the
+  // hold expires (the poll above refreshes the state).
+  const reservedByOthers = isReservedInCheckout && !heldByYou;
   const canAddSelectedVariant =
-    !hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0);
+    (!hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0)) && !reservedByOthers;
+  const holdMinutesLeft = reservationExpiresAt
+    ? Math.max(1, Math.ceil((new Date(reservationExpiresAt).getTime() - nowTick) / 60000))
+    : null;
 
   useEffect(() => {
     let cancelled = false;
 
     const checkStockReservation = async () => {
       try {
-        const response = await fetch(`/api/stock-status?productId=${product.id}`);
+        const sessionId = getHoldSessionId();
+        const response = await fetch(`/api/stock-status?productId=${product.id}`, {
+          headers: sessionId ? { 'x-hold-session': sessionId } : undefined,
+        });
         if (response.ok && !cancelled) {
           const data = await response.json();
           setIsReservedInCheckout(Boolean(data.isReserved));
+          setHeldByYou(Boolean(data.heldByYou));
+          setReservationExpiresAt(typeof data.expiresAt === 'string' ? data.expiresAt : null);
         }
       } catch {
         // Reservation status is informational; a failed poll must not block buying.
@@ -87,6 +102,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
       window.clearInterval(interval);
     };
   }, [product.id]);
+
+  // Live countdown while a hold is active, so the signal stays honest.
+  useEffect(() => {
+    if (!isReservedInCheckout || !reservationExpiresAt) return;
+    const ticker = window.setInterval(() => setNowTick(Date.now()), 1000);
+    return () => window.clearInterval(ticker);
+  }, [isReservedInCheckout, reservationExpiresAt]);
 
   const handleAddToCart = () => {
     if (!canAddSelectedVariant) {
@@ -152,10 +174,17 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             </h1>
 
             {isReservedInCheckout && !product.isSoldOut && (
-              <div className="mb-6 flex items-center gap-2 border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-amber-900">
-                <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>In checkout · another collector is completing payment</span>
-              </div>
+              heldByYou ? (
+                <div className="mb-6 flex items-center gap-2 border border-y2k-gunmetal/15 bg-y2k-gunmetal/[0.04] px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal">
+                  <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>In your bag — reserved for you{holdMinutesLeft ? ` ~${holdMinutesLeft}m left` : ""}</span>
+                </div>
+              ) : (
+                <div className="mb-6 flex items-center gap-2 border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-amber-900">
+                  <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>On hold — another collector has this in their bag{holdMinutesLeft ? ` (~${holdMinutesLeft}m left)` : ""}</span>
+                </div>
+              )
             )}
 
             {/* DETAILS & FIT */}
@@ -358,7 +387,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     disabled={!canAddSelectedVariant}
                     className="flex-1 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em]"
                   >
-                    <span>{addedAnimation ? "✓ ADDED TO BAG" : "ADD TO BAG"}</span>
+                    <span>{reservedByOthers ? "ON HOLD — CHECK BACK SOON" : addedAnimation ? "✓ ADDED TO BAG" : "ADD TO BAG"}</span>
                     <span className="text-[11px]" aria-hidden="true">→</span>
                   </Button>
                   <button

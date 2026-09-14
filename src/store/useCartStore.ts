@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { computeBundleSavings } from '@/lib/bundlePricing';
+import { syncCartHolds } from '@/lib/cartHolds';
+import { showToast } from '@/lib/toast';
 
 export type CartItem = {
   id: string;
@@ -75,6 +77,42 @@ export const getItemKey = (item: {
   return `${item.id}-${item.size || 'OS'}-${item.color || 'default'}${bundlePart}`;
 };
 
+/**
+ * Push the current bag to the server so its pieces are held for this shopper.
+ * First-to-bag wins: a line another session already holds is removed from the
+ * bag and surfaced with a notice instead of failing silently at checkout.
+ */
+export async function syncCartHoldsAndApply(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  const { items } = useCartStore.getState();
+  const results = await syncCartHolds(
+    items.map((item) => ({
+      id: item.id,
+      size: item.size,
+      color: item.color,
+      quantity: item.quantity,
+    }))
+  );
+
+  const blockedIds = new Set(
+    results.filter((result) => result.status === 'blocked').map((result) => result.productId)
+  );
+  if (blockedIds.size === 0) return;
+
+  const current = useCartStore.getState();
+  const lost = current.items.filter((item) => blockedIds.has(item.id));
+  if (lost.length === 0) return;
+
+  useCartStore.setState({
+    items: current.items.filter((item) => !blockedIds.has(item.id)),
+  });
+  showToast(
+    lost.length === 1
+      ? `${lost[0].name} was just claimed by another collector`
+      : 'Some pieces in your bag were just claimed by other collectors'
+  );
+}
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -85,7 +123,7 @@ export const useCartStore = create<CartStore>()(
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
-      addItem: (item) =>
+      addItem: (item) => {
         set((state) => {
           const MAX_QTY = 10;
           const MAX_ITEMS = 50;
@@ -108,23 +146,31 @@ export const useCartStore = create<CartStore>()(
             return { items: updatedItems, isOpen: true };
           }
           return { items: [...state.items, fullItem], isOpen: true };
-        }),
+        });
+        void syncCartHoldsAndApply();
+      },
       // Both of these match on the full line key only. They used to also accept
       // a bare product id, which meant removing one size silently removed every
       // size of that product.
-      removeItem: (cartItemId) =>
+      removeItem: (cartItemId) => {
         set((state) => ({
           items: state.items.filter((i) => getItemKey(i) !== cartItemId),
-        })),
+        }));
+        void syncCartHoldsAndApply();
+      },
       updateQuantity: (cartItemId, quantity) => {
         const q = Math.max(1, Math.min(10, Math.round(quantity) || 1));
-        return set((state) => ({
+        set((state) => ({
           items: state.items.map((i) =>
             getItemKey(i) === cartItemId ? { ...i, quantity: q } : i
           ),
         }));
+        void syncCartHoldsAndApply();
       },
-      clearCart: () => set({ items: [], promoCode: null, promoDiscount: 0 }),
+      clearCart: () => {
+        set({ items: [], promoCode: null, promoDiscount: 0 });
+        void syncCartHoldsAndApply();
+      },
       applyPromo: (code: string) => {
         const upper = code.trim().toUpperCase();
         const discount = VALID_PROMOS[upper];

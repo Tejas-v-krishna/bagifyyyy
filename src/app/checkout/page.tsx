@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/ui/Button";
+import { getHoldSessionId } from "@/lib/cartHolds";
 
 type RazorpayPaymentResponse = {
   razorpay_payment_id: string;
@@ -376,6 +377,7 @@ function CheckoutContent() {
           customerPhone: formData.phone,
           promoCode: appliedPromo?.code || null,
           checkoutId: getCheckoutIdFor('razorpay'),
+          reservationSessionId: getHoldSessionId(),
         }),
       });
 

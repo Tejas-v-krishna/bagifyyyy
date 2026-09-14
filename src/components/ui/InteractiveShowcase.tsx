@@ -16,6 +16,8 @@ export type ShowcaseProduct = {
   price: number;
   isSoldOut: boolean;
   isNew?: boolean;
+  /** Another shopper currently holds this piece in their bag. */
+  reserved?: boolean;
   category?: string;
   brand?: string | null;
   images: { url: string }[];
@@ -373,6 +375,13 @@ export default function InteractiveShowcase({
                         priority={isCenter}
                       />
                     </div>
+
+                    {/* On-hold signal: first-to-bag holds the piece */}
+                    {product.reserved && !product.isSoldOut && (
+                      <span className="absolute left-3 top-3 z-20 rounded-[var(--radius-cta)] bg-amber-400 px-2 py-0.5 text-[8px] font-semibold tracking-[0.12em] text-black">
+                        On Hold
+                      </span>
+                    )}
 
                     {/* Quick Add to Bag on Center Active Card */}
                     {isCenter && (

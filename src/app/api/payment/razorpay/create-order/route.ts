@@ -11,13 +11,13 @@ import {
 } from '@/lib/cart';
 import { AWAITING_PAYMENT } from '@/lib/orderStatus';
 import { reserveCartStock } from '@/lib/stockReservation';
-import { getCheckoutId } from '@/lib/checkout';
+import { getCheckoutId, isValidCheckoutId } from '@/lib/checkout';
 import { getRazorpayKeyId } from '@/lib/razorpay';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { items, shippingAddress, customerEmail, customerPhone, promoCode } = body;
+    const { items, shippingAddress, customerEmail, customerPhone, promoCode, reservationSessionId } = body;
 
     // 1. Get logged in user if available (signed)
     const authedUser = await getAuthedUser();
@@ -28,7 +28,9 @@ export async function POST(request: Request) {
     const address = assertValidShippingAddress(shippingAddress);
     const contact = assertValidContact(customerEmail, customerPhone);
     const checkoutId = getCheckoutId(request, body);
-    const sessionId = checkoutId;
+    // Holds are keyed to the shopper's browser session, so their own bag holds
+    // are never treated as someone else's and checkout extends the same hold.
+    const sessionId = isValidCheckoutId(reservationSessionId) ? reservationSessionId : checkoutId;
     const cart = await priceCart({ items, promoCode, sessionId });
     const totalAmount = cartTotal(cart);
     const amountInPaise = Math.round(totalAmount * 100);

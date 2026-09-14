@@ -84,6 +84,7 @@ import BugReportModal from "@/components/ui/BugReportModal";
 import GsapScrollAnimations from "@/components/ui/GsapScrollAnimations";
 import LenisProvider from "@/components/ui/LenisProvider";
 import GlobalAnimator from "@/components/ui/GlobalAnimator";
+import CartHoldSync from "@/components/ui/CartHoldSync";
 import PageTransitionLoader from "@/components/ui/PageTransitionLoader";
 import PageTransitionProvider from "@/components/ui/PageTransitionProvider";
 import SmoothCursor from "@/components/ui/SmoothCursor";
@@ -129,6 +130,7 @@ export default function RootLayout({
               <PageTransitionProvider>{children}</PageTransitionProvider>
             </main>
             <CartDrawer />
+            <CartHoldSync />
           </LenisProvider>
         </GoogleAuthProvider>
       </body>
