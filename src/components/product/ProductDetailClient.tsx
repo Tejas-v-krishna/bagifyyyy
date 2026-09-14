@@ -66,11 +66,11 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize && variant.color === selectedColor
   );
-  // A hold by another shopper means the piece is effectively taken until the
-  // hold expires (the poll above refreshes the state).
-  const reservedByOthers = isReservedInCheckout && !heldByYou;
+  // Any active hold (yours or another shopper's) means the piece is
+  // effectively taken until expiry — grey out the CTA.
+  const isHeld = isReservedInCheckout && !product.isSoldOut;
   const canAddSelectedVariant =
-    (!hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0)) && !reservedByOthers;
+    (!hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0)) && !isHeld;
   const holdMinutesLeft = reservationExpiresAt
     ? Math.max(1, Math.ceil((new Date(reservationExpiresAt).getTime() - nowTick) / 60000))
     : null;
@@ -175,14 +175,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
             {isReservedInCheckout && !product.isSoldOut && (
               heldByYou ? (
-                <div className="mb-6 flex items-center gap-2 border border-y2k-gunmetal/15 bg-y2k-gunmetal/[0.04] px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-y2k-gunmetal">
-                  <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>In your bag — reserved for you{holdMinutesLeft ? ` ~${holdMinutesLeft}m left` : ""}</span>
+                <div className="mb-6 flex items-center gap-3 border-2 border-black bg-black px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] animate-pulse">
+                  <Clock className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
+                  <span>In your bag — Reserved for you{holdMinutesLeft ? ` · ${holdMinutesLeft}m left` : ""}</span>
                 </div>
               ) : (
-                <div className="mb-6 flex items-center gap-2 border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-amber-900">
-                  <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  <span>On hold — another collector has this in their bag{holdMinutesLeft ? ` (~${holdMinutesLeft}m left)` : ""}</span>
+                <div className="mb-6 flex items-center gap-3 border-2 border-amber-500 bg-amber-400 px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.12em] text-black shadow-[0_4px_12px_rgba(245,158,11,0.25)]">
+                  <Clock className="h-4 w-4 shrink-0 text-black" aria-hidden="true" />
+                  <span>On hold — Another collector has this · {holdMinutesLeft ? `${holdMinutesLeft}m left` : "Almost gone"}</span>
                 </div>
               )
             )}
@@ -380,6 +380,27 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               {/* ADD TO BAG button */}
               {product.isSoldOut ? (
                 <NotifyMeSection productId={product.id} />
+              ) : isHeld ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled
+                    className="flex-1 cursor-not-allowed border border-black/10 bg-[#e8e8e8] px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/40"
+                  >
+                    <span>{heldByYou ? "RESERVED — IN YOUR BAG" : "ON HOLD — CHECK BACK SOON"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleItem(id)}
+                    aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                    className="w-12 h-12 border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
+                      strokeWidth={1.5}
+                    />
+                  </button>
+                </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Button
@@ -387,7 +408,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     disabled={!canAddSelectedVariant}
                     className="flex-1 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em]"
                   >
-                    <span>{reservedByOthers ? "ON HOLD — CHECK BACK SOON" : addedAnimation ? "✓ ADDED TO BAG" : "ADD TO BAG"}</span>
+                    <span>{addedAnimation ? "✓ ADDED TO BAG" : "ADD TO BAG"}</span>
                     <span className="text-[11px]" aria-hidden="true">→</span>
                   </Button>
                   <button
@@ -439,13 +460,23 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               ₹{product.price.toLocaleString("en-IN")}
             </p>
           </div>
-           <Button
-             onClick={handleAddToCart}
-             disabled={!canAddSelectedVariant}
-             className="shrink-0 px-6 py-3.5 text-[10px] font-bold uppercase tracking-[0.18em]"
-           >
-            {addedAnimation ? "✓ ADDED" : "ADD TO BAG"}
-          </Button>
+           {isHeld ? (
+             <button
+               type="button"
+               disabled
+               className="shrink-0 cursor-not-allowed border border-black/10 bg-[#e8e8e8] px-6 py-3.5 text-[10px] font-bold uppercase tracking-[0.14em] text-black/40"
+             >
+               {heldByYou ? "RESERVED" : "ON HOLD"}
+             </button>
+           ) : (
+             <Button
+               onClick={handleAddToCart}
+               disabled={!canAddSelectedVariant}
+               className="shrink-0 px-6 py-3.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+             >
+               {addedAnimation ? "✓ ADDED" : "ADD TO BAG"}
+             </Button>
+           )}
         </div>,
         document.body
       )}
