@@ -47,6 +47,13 @@ export default function Footer() {
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
+          // Force the fetch, then play: play() alone does not always kick off
+          // loading when preload="none" is set.
+          try {
+            el.load();
+          } catch {
+            // Ignore: some browsers throw on load() while already loading.
+          }
           el.play().catch(() => {});
           io.disconnect();
         }
@@ -235,7 +242,7 @@ export default function Footer() {
 
         <video
           ref={videoRef}
-          preload="none"
+          preload="metadata"
           loop
           muted
           playsInline
