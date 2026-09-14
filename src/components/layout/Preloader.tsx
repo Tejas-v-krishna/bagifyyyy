@@ -11,11 +11,12 @@ const subscribeToClient = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
 
+/** How long the brand cover holds before revealing the store. */
+const PRELOADER_HOLD_MS = 3200;
+
 export default function Preloader() {
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
-  // Repeat-in-session visits tear the cover down instantly (no exit slide).
-  const [exitInstantly, setExitInstantly] = useState(false);
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
   const isDashboard =
     pathname?.startsWith("/studio") ||
@@ -32,36 +33,13 @@ export default function Preloader() {
       return;
     }
 
-    // Brand moment plays once per browser session; repeat visits land instantly.
-    let seenBefore = false;
-    try {
-      seenBefore = sessionStorage.getItem("bagify_preloader_seen") === "true";
-    } catch {
-      seenBefore = false;
-    }
-
-    if (seenBefore) {
-      // Deferred by a tick so the teardown is an async state update, and the
-      // SSR cover vanishes without playing the exit slide.
-      const teardown = window.setTimeout(() => {
-        setExitInstantly(true);
-        setIsLoading(false);
-        setPreloaderFinished(true);
-      }, 0);
-      return () => window.clearTimeout(teardown);
-    }
-
-    try {
-      sessionStorage.setItem("bagify_preloader_seen", "true");
-    } catch {
-      // Private browsing et al. — just play the animation.
-    }
-
-    // Quick brand flash: long enough to register, short enough not to gate the shop.
+    // Full brand intro on every fresh load: the animated wordmark needs the
+    // hold time to read. Client-side route changes never re-run this, so
+    // navigation stays instant.
     const timer = setTimeout(() => {
       setIsLoading(false);
       setPreloaderFinished(true);
-    }, 1000);
+    }, PRELOADER_HOLD_MS);
 
     return () => clearTimeout(timer);
   }, [isDashboard, prefersReducedMotion, setPreloaderFinished]);
@@ -77,24 +55,25 @@ export default function Preloader() {
           initial={{ y: 0 }}
           exit={{
             y: "100%",
-            transition: exitInstantly
-              ? { duration: 0 }
-              : { duration: 0.55, ease: [0.76, 0, 0.24, 1] }
+            transition: { duration: 0.55, ease: [0.76, 0, 0.24, 1] }
           }}
           className="fixed inset-0 z-[9999] bg-y2k-ice flex items-center justify-center pointer-events-none origin-bottom"
         >
           <motion.div
-            initial={{ filter: "blur(20px)", opacity: 0, scale: 0.9 }}
+            initial={{ filter: "blur(20px)", opacity: 0, scale: 0.94 }}
             animate={{ filter: "blur(0px)", opacity: 1, scale: 1 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-            className="relative w-64 h-16 md:w-80 md:h-20"
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="relative w-72 h-[4.7rem] md:w-96 md:h-[6.25rem]"
           >
+            {/* Animated wordmark: a 3.5s, 428KB loop cut from the original GIF
+                (was 4.2MB). unoptimized keeps the animation intact. */}
             <Image
-              src="/bagifyyyy-wordmark.webp"
+              src="/bagifyyyy-wordmark-live.gif"
               alt="Bagifyyyy Logo"
-              width={640}
-              height={166}
+              width={384}
+              height={100}
               fetchPriority="high"
+              unoptimized
               className="h-full w-full object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
             />
           </motion.div>
