@@ -57,7 +57,7 @@ export default function Preloader() {
             y: "100%",
             transition: { duration: 0.55, ease: [0.76, 0, 0.24, 1] }
           }}
-          className="fixed inset-0 z-[9999] bg-y2k-ice flex items-center justify-center pointer-events-none origin-bottom"
+          className="fixed inset-0 z-[9999] bg-[#ebf1f6] flex items-center justify-center pointer-events-none origin-bottom"
         >
           <motion.div
             initial={{ filter: "blur(20px)", opacity: 0, scale: 0.94 }}
