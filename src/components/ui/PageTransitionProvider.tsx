@@ -23,24 +23,22 @@ export default function PageTransitionProvider({
 
     if (isStudioRoute || !containerRef.current) return;
 
-    // Trigger deterministic GSAP Blur Fade-In on the container element on storefront route changes
+    // Trigger deterministic GSAP Fade-In on the container element on storefront
+    // route changes. Kept to a fast opacity/y lift: the heavy blur+scale intro
+    // added ~650ms of perceived latency to every navigation.
     gsap.killTweensOf(containerRef.current);
     gsap.fromTo(
       containerRef.current,
       {
         opacity: 0,
-        filter: "blur(24px)",
-        y: 28,
-        scale: 0.985,
+        y: 12,
       },
       {
         opacity: 1,
-        filter: "blur(0px)",
         y: 0,
-        scale: 1,
-        duration: 0.65,
+        duration: 0.26,
         ease: "power2.out",
-        clearProps: "filter,transform,willChange",
+        clearProps: "transform,willChange",
       }
     );
   }, [pathname, isStudioRoute]);

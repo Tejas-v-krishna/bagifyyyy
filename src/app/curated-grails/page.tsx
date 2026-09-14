@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import CategoryPageClient from "@/components/product/CategoryPageClient";
+import CategoryPageSkeleton from "@/components/product/CategoryPageSkeleton";
 import { collectionMetadata } from "@/lib/seo";
 import { queryProducts } from "@/lib/products";
 
-export const dynamic = "force-dynamic";
+// Static shell + 30s ISR: cached HTML instead of a fresh remote DB query.
+export const revalidate = 30;
 
 export const metadata: Metadata = collectionMetadata({
   title: "Hard-to-find pieces",
@@ -19,11 +22,13 @@ export const metadata: Metadata = collectionMetadata({
 export default async function CuratedGrailsPage() {
   const products = await queryProducts({ filter: "curated-grails" });
   return (
-    <CategoryPageClient
-      filter="curated-grails"
-      initialProducts={products}
-      prefix="Collection"
-      title="Hard-to-find pieces"
-    />
+    <Suspense fallback={<CategoryPageSkeleton title="Hard-to-find pieces" />}>
+      <CategoryPageClient
+        filter="curated-grails"
+        initialProducts={products}
+        prefix="Collection"
+        title="Hard-to-find pieces"
+      />
+    </Suspense>
   );
 }

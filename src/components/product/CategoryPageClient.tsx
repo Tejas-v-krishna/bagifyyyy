@@ -122,8 +122,10 @@ export default function CategoryPageClient({
   // Server-rendered first paint: seed the initial catalogue synchronously so
   // the grid paints with the HTML (no skeleton flash, no /api round trip).
   // Later key changes (search, reload) fall through to the normal fetch.
-  const seededKey =
-    initialProducts && !query ? `${category ?? ""}|${filter ?? ""}||0` : null;
+  // An empty seed (build-time DB hiccup) is treated as "no seed" so the
+  // client fetch can recover instead of showing a permanently empty grid.
+  const hasSeed = Boolean(initialProducts && initialProducts.length > 0 && !query);
+  const seededKey = hasSeed ? `${category ?? ""}|${filter ?? ""}||0` : null;
   const seededProducts = seededKey ? initialProducts : null;
   const [result, setResult] = useState<{
     key: string;

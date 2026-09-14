@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import CategoryPageClient from "@/components/product/CategoryPageClient";
+import CategoryPageSkeleton from "@/components/product/CategoryPageSkeleton";
 import { collectionMetadata } from "@/lib/seo";
 import { queryProducts } from "@/lib/products";
 
-export const dynamic = "force-dynamic";
+// Static shell + 30s ISR: navbar clicks land on cached HTML instantly instead
+// of waiting on a fresh remote DB query every time.
+export const revalidate = 30;
 
 export const metadata: Metadata = collectionMetadata({
   title: "New Arrivals",
@@ -20,11 +24,13 @@ export const metadata: Metadata = collectionMetadata({
 export default async function NewArrivalsPage() {
   const products = await queryProducts({ filter: "new" });
   return (
-    <CategoryPageClient
-      filter="new"
-      initialProducts={products}
-      prefix="Collection"
-      title="New In"
-    />
+    <Suspense fallback={<CategoryPageSkeleton title="New In" />}>
+      <CategoryPageClient
+        filter="new"
+        initialProducts={products}
+        prefix="Collection"
+        title="New In"
+      />
+    </Suspense>
   );
 }

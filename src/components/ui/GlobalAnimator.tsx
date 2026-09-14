@@ -24,10 +24,10 @@ export default function GlobalAnimator() {
             const el = entry.target as HTMLElement;
 
             animate(el, {
-              y: ["20px", "0px"],
+              y: ["14px", "0px"],
               opacity: [0, 1],
-              filter: ["blur(12px)", "blur(0px)"],
-              duration: 650,
+              filter: ["blur(6px)", "blur(0px)"],
+              duration: 380,
               ease: "outQuart",
               loop: false,
               complete: () => {
@@ -53,8 +53,8 @@ export default function GlobalAnimator() {
       if (el.dataset.animated === "true") return;
       el.dataset.animated = "true";
       el.style.opacity = "0";
-      el.style.filter = "blur(12px)";
-      el.style.transform = "translateY(20px)";
+      el.style.filter = "blur(6px)";
+      el.style.transform = "translateY(14px)";
       observer.observe(el);
     });
 
