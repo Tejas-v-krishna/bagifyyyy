@@ -75,11 +75,10 @@ function asPositiveIntQuantity(value: unknown): number {
  */
 export async function priceCart(options: {
   items: unknown;
-  shippingMethod?: unknown;
   promoCode?: unknown;
   sessionId?: string;
 }): Promise<PricedCart> {
-  const { items, shippingMethod, promoCode, sessionId } = options;
+  const { items, promoCode, sessionId } = options;
 
   if (!Array.isArray(items) || items.length === 0) {
     throw new CartError('Cart is empty');
@@ -204,7 +203,7 @@ export async function priceCart(options: {
   const promoAmount = Math.round(discountableSubtotal * promoDiscount * 100) / 100;
   const discountAmount = Math.round((bundleDiscount + promoAmount) * 100) / 100;
 
-  // Standard India Post shipping: flat ₹80 with no free shipping threshold.
+  // Flat ₹80 delivery cost, folded into the total (no separate shipping line).
   const shippingFee = STANDARD_SHIPPING_FEE;
 
   return {

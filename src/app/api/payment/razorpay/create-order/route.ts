@@ -17,7 +17,7 @@ import { getRazorpayKeyId } from '@/lib/razorpay';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { items, shippingAddress, customerEmail, customerPhone, shippingMethod, promoCode } = body;
+    const { items, shippingAddress, customerEmail, customerPhone, promoCode } = body;
 
     // 1. Get logged in user if available (signed)
     const authedUser = await getAuthedUser();
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const contact = assertValidContact(customerEmail, customerPhone);
     const checkoutId = getCheckoutId(request, body);
     const sessionId = checkoutId;
-    const cart = await priceCart({ items, shippingMethod, promoCode, sessionId });
+    const cart = await priceCart({ items, promoCode, sessionId });
     const totalAmount = cartTotal(cart);
     const amountInPaise = Math.round(totalAmount * 100);
 

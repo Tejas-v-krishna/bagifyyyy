@@ -5,11 +5,11 @@ import { priceCart, cartTotal, CartError } from '@/lib/cart';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { items, promoCode, shippingMethod } = body;
+    const { items, promoCode } = body;
 
     // Prices, names and images are resolved from the database — never taken from
     // the request body, which previously let any cart be bought for ₹1.
-    const cart = await priceCart({ items, promoCode, shippingMethod });
+    const cart = await priceCart({ items, promoCode });
 
     // Check if we are using the mock key
     if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === 'sk_test_mock') {

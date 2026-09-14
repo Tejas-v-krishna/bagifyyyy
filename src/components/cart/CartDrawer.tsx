@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Minus, Plus, Tag, CheckCircle2, Truck, ChevronRight, ChevronLeft } from "lucide-react";
+import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -395,14 +395,6 @@ export default function CartDrawer() {
             {/* Footer */}
             {items.length > 0 && (
               <div className="border-t border-black/10 px-6 sm:px-8 py-6 bg-white space-y-4 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-                {/* Standard Shipping Notice */}
-                <div className="flex items-center justify-center gap-2 text-center py-1">
-                  <Truck className="w-3.5 h-3.5 text-black/60" strokeWidth={1.75} aria-hidden />
-                  <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-black/70">
-                    Standard India Post Shipping · ₹80
-                  </p>
-                </div>
-
                 {/* Promo Code Row */}
                 {appliedPromo ? (
                   <div className="flex items-center justify-between bg-[#f8f8f8] border border-black/10 rounded-xl px-4 py-2.5">

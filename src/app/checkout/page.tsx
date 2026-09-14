@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useCartStore, getItemKey, VALID_PROMOS } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Loader2, ArrowRight, ArrowLeft, User, Truck, CreditCard, Tag, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, User, CreditCard, Tag, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -136,7 +136,7 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const promoFromCart = searchParams.get("promo");
   const [checkoutMode, setCheckoutMode] = useState<'select' | 'guest' | 'account'>(isAuthenticated ? 'account' : 'select');
-  const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
+  const [activeStep, setActiveStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [paymentState, setPaymentState] = useState<'idle' | 'initiating' | 'verifying' | 'failed'>('idle');
@@ -204,9 +204,6 @@ function CheckoutContent() {
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
 
-  // Shipping options (Standard India Post only)
-  const [shippingMethod] = useState<'standard'>('standard');
-
   // Auto-apply promo from cart URL param (back-compat) or store
   useEffect(() => {
     if (promoFromCart) {
@@ -260,7 +257,8 @@ function CheckoutContent() {
 
   // Mirrors priceCart() in src/lib/cart.ts exactly: set discounts come off
   // first, then the promo code applies to what's left.
-  // Shipping is a flat ₹80 (Standard India Post). The server re-derives all of it.
+  // The flat ₹80 delivery cost rides inside the total instead of being shown
+  // as a separate shipping line. The server re-derives all of it.
   const subtotal = cartSubtotal();
   const setDiscount = bundleDiscount();
   // Studio MRP rows. Display only — they never change what is charged.
@@ -376,7 +374,6 @@ function CheckoutContent() {
           shippingAddress: formData,
           customerEmail: formData.email,
           customerPhone: formData.phone,
-          shippingMethod,
           promoCode: appliedPromo?.code || null,
           checkoutId: getCheckoutIdFor('razorpay'),
         }),
@@ -795,7 +792,7 @@ function CheckoutContent() {
                         type="submit"
                         className="bg-black text-white px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors cursor-pointer shadow-xs"
                       >
-                        CONTINUE TO SHIPPING ›
+                        CONTINUE TO PAYMENT ›
                       </button>
                     </div>
                   </form>
@@ -807,62 +804,14 @@ function CheckoutContent() {
                 )}
               </div>
 
-              {/* Step 2: Shipping Method */}
-              <div className="bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-black/10">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold">02</span>
-                    <h2 className="font-sans font-medium text-lg sm:text-xl uppercase tracking-tight text-black">Shipping Method</h2>
-                  </div>
-                  {activeStep > 2 && (
-                    <button type="button" onClick={() => setActiveStep(2)} className="text-xs font-semibold text-black/50 hover:text-black hover:underline cursor-pointer">
-                      Edit
-                    </button>
-                  )}
-                </div>
-
-                {activeStep === 2 ? (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between p-4 border rounded-xl border-black bg-black/[0.02] shadow-xs">
-                      <div className="flex items-center gap-3">
-                        <Truck className="w-4 h-4 text-black" />
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] flex items-center gap-2 text-black">
-                            Standard India Post Shipping
-                          </p>
-                          <p className="text-[11px] text-black/60 mt-0.5">Estimated 4-6 business days</p>
-                        </div>
-                      </div>
-                      <span className="text-xs font-semibold uppercase text-black">₹80</span>
-                    </div>
-
-                    <div className="flex justify-end mt-4">
-                      <button
-                        type="button"
-                        onClick={() => setActiveStep(3)}
-                        className="bg-black text-white px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors cursor-pointer shadow-xs"
-                      >
-                        CONTINUE TO PAYMENT ›
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-xs text-black/80 font-semibold">
-                    <p className="uppercase">
-                      Standard India Post Shipping (₹80)
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 3: Payment Method */}
+              {/* Step 2: Payment Method */}
               <div className="bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-black/10">
-                  <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold">03</span>
+                  <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold">02</span>
                   <h2 className="font-sans font-medium text-lg sm:text-xl uppercase tracking-tight text-black">Payment Method</h2>
                 </div>
 
-                {activeStep === 3 && (
+                {activeStep === 2 && (
                   <div className="flex flex-col gap-4">
                     {/* Online payment only */}
                     <div className="flex items-start justify-between p-4 border border-black bg-black/[0.02] rounded-xl shadow-xs">
@@ -1021,10 +970,6 @@ function CheckoutContent() {
                   <span>−₹{discountAmount.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center text-black/65">
-                <span>Shipping (Standard India Post):</span>
-                <span className="font-semibold text-black">₹{shipping.toFixed(2)}</span>
-              </div>
               <div className="flex justify-between items-center text-black/65">
                 <span>Tax:</span>
                 <span className="font-semibold text-black">Included</span>

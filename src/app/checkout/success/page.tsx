@@ -385,18 +385,6 @@ function SuccessContent() {
                 <span>−₹{money(order.discountAmount)}</span>
               </div>
             )}
-            <div className="flex justify-between items-center text-xs text-black/65">
-              <span>Shipping</span>
-              <span
-                className={
-                  order.shippingAmount === 0
-                    ? "font-semibold uppercase tracking-wider text-emerald-700"
-                    : "font-semibold text-black"
-                }
-              >
-                {order.shippingAmount === 0 ? "Free" : `₹${money(order.shippingAmount)}`}
-              </span>
-            </div>
             <div className="border-t border-black/10 pt-4 mt-1 flex justify-between items-center">
               <div>
                 <span className="font-bold text-xs uppercase tracking-wider text-black block">
