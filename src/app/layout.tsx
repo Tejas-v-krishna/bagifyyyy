@@ -93,6 +93,8 @@ import InteractionGuard from "@/components/ui/InteractionGuard";
 import GoogleAuthProvider from "@/components/auth/GoogleAuthProvider";
 import JsonLd from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function RootLayout({
   children,
@@ -131,6 +133,8 @@ export default function RootLayout({
             </main>
             <CartDrawer />
             <CartHoldSync />
+            <Analytics />
+            <SpeedInsights />
           </LenisProvider>
         </GoogleAuthProvider>
       </body>

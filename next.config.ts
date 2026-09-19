@@ -1,6 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Heavy CJS deps stay in the runtime layer instead of being bundled
+  // into every one of the 100+ server functions.
+  serverExternalPackages: [
+    "stripe",
+    "razorpay",
+    "nodemailer",
+    "resend",
+    "google-auth-library",
+    "better-sqlite3",
+    "@prisma/client",
+    "@prisma/adapter-libsql",
+    "@libsql/client",
+  ],
+  // Barrel imports (lucide-react = hundreds of icons) resolve to only
+  // the icons actually used, shrinking both server and client bundles.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "framer-motion", "@gsap/react", "gsap", "animejs"],
+  },
   // Turbopack otherwise walks up to C:\Users\tejas (package-lock.json outside
   // the repo), which both spams warnings and slows file resolution.
   turbopack: {
@@ -11,7 +29,7 @@ const nextConfig: NextConfig = {
     // Serve modern formats and cache optimized variants for a month; uploaded
     // files get unique names so content never changes behind a URL.
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 2592000,
+    minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.unsplash.com" },
