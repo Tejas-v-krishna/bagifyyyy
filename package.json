@@ -17,7 +17,6 @@
     "@prisma/adapter-libsql": "^5.22.0",
     "@prisma/client": "^5.22.0",
     "@react-oauth/google": "^0.13.5",
-    "@stripe/stripe-js": "^9.13.0",
     "@types/bcryptjs": "^2.4.6",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
@@ -36,7 +35,6 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "resend": "^6.20.0",
-    "stripe": "^22.5.0",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   // Heavy CJS deps stay in the runtime layer instead of being bundled
   // into every one of the 100+ server functions.
   serverExternalPackages: [
-    "stripe",
     "razorpay",
     "nodemailer",
     "resend",

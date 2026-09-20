@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, Check } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
@@ -23,6 +23,15 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
   const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
+  const addedTimerRef = useRef<number | null>(null);
+
+  // Cancel the "added ✓" reset if the card unmounts (grid re-render, route
+  // change) so it never setStates after teardown.
+  useEffect(() => {
+    return () => {
+      if (addedTimerRef.current) window.clearTimeout(addedTimerRef.current);
+    };
+  }, []);
 
   if (product.isSoldOut) {
     return null;
@@ -53,7 +62,9 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
     });
 
     setAdded(true);
-    setTimeout(() => {
+    if (addedTimerRef.current) window.clearTimeout(addedTimerRef.current);
+    addedTimerRef.current = window.setTimeout(() => {
+      addedTimerRef.current = null;
       setAdded(false);
     }, 1200);
   };
