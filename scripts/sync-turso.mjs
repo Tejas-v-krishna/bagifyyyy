@@ -251,6 +251,20 @@ async function main() {
   try {
     await turso.execute('CREATE UNIQUE INDEX IF NOT EXISTS "PointTransaction_orderId_key" ON "PointTransaction"("orderId");');
   } catch {}
+  // Lookup-path indexes added with the audit remediation — additive and
+  // idempotent, so re-running this script on an existing DB is safe.
+  try {
+    await turso.execute('CREATE INDEX IF NOT EXISTS "Order_userId_idx" ON "Order"("userId");');
+  } catch {}
+  try {
+    await turso.execute('CREATE INDEX IF NOT EXISTS "Order_customerEmail_idx" ON "Order"("customerEmail");');
+  } catch {}
+  try {
+    await turso.execute('CREATE INDEX IF NOT EXISTS "SupportTicket_email_idx" ON "SupportTicket"("email");');
+  } catch {}
+  try {
+    await turso.execute('CREATE INDEX IF NOT EXISTS "PasswordResetToken_email_idx" ON "PasswordResetToken"("email");');
+  } catch {}
 
   console.log('✅ Tables and Indexes verified in Turso!');
 
