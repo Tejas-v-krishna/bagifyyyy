@@ -22,6 +22,7 @@ export async function recoverCapturedPayment(input: {
       paymentStatus: 'REFUND_PENDING',
       paymentId: input.paymentId,
       signature: input.signature,
+      refundAmountInPaise: Math.round(input.amountInPaise),
       orderStatus: 'CANCELLED',
     },
   });

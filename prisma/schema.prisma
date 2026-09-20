@@ -46,6 +46,7 @@ model Product {
   stockNotifications  StockNotification[]
   bundleItems         BundleProduct[]
   reviews             Review[]
+  stockReservations   StockReservation[]
 }
 
 model Image {
@@ -62,6 +63,8 @@ model Variant {
   stock     Int     @default(0)
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  stockReservations StockReservation[]
 }
 
 model Subscriber {
@@ -149,11 +152,16 @@ model Order {
   razorpayOrderId   String?     @unique
   paymentId         String?
   signature         String?
+  // Paise the recovery flow intends to refund, recorded at claim time so a
+  // retry refunds the exact captured amount (which can differ from the order
+  // total in the amount-mismatch path).
+  refundAmountInPaise Int?
   trackingId        String?
   confirmationSentAt DateTime?
   shippingAddressId String
   shippingAddress   Address     @relation(fields: [shippingAddressId], references: [id])
   items             OrderItem[]
+  stockReservations StockReservation[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
   // Lookup paths: per-account order history and support-side email search.
@@ -248,8 +256,11 @@ model Review {
 model StockReservation {
   id        String   @id @default(uuid())
   variantId String
+  variant   Variant  @relation(fields: [variantId], references: [id], onDelete: Cascade)
   productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   orderId   String?
+  order     Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   sessionId String
   quantity  Int      @default(1)
   expiresAt DateTime

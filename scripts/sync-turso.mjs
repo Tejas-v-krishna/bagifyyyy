@@ -200,7 +200,10 @@ async function main() {
       "sessionId" TEXT NOT NULL,
       "quantity" INTEGER NOT NULL DEFAULT 1,
       "expiresAt" DATETIME NOT NULL,
-      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT "StockReservation_variantId_fkey" FOREIGN KEY ("variantId") REFERENCES "Variant" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT "StockReservation_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT "StockReservation_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order" ("id") ON DELETE CASCADE ON UPDATE CASCADE
     );`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "User_googleId_key" ON "User"("googleId");`,
@@ -242,6 +245,50 @@ async function main() {
   try {
     await turso.execute('ALTER TABLE "Order" ADD COLUMN "confirmationSentAt" DATETIME;');
   } catch {}
+  try {
+    await turso.execute('ALTER TABLE "Order" ADD COLUMN "refundAmountInPaise" INTEGER;');
+  } catch {}
+  // Databases created before the FK work need StockReservation rebuilt once
+  // (holds are ephemeral, so a plain copy is safe).
+  try {
+    const ddl = await turso.execute(
+      "SELECT sql FROM sqlite_master WHERE type='table' AND name='StockReservation'"
+    );
+    const sql = String(ddl.rows[0]?.sql || '');
+    if (sql && !sql.includes('StockReservation_variantId_fkey')) {
+      await turso.execute('DROP TABLE IF EXISTS "new_StockReservation";');
+      await turso.execute(`CREATE TABLE "new_StockReservation" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "variantId" TEXT NOT NULL,
+        "productId" TEXT NOT NULL,
+        "orderId" TEXT,
+        "sessionId" TEXT NOT NULL,
+        "quantity" INTEGER NOT NULL DEFAULT 1,
+        "expiresAt" DATETIME NOT NULL,
+        "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "StockReservation_variantId_fkey" FOREIGN KEY ("variantId") REFERENCES "Variant" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT "StockReservation_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT "StockReservation_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+      );`);
+      await turso.execute(
+        'INSERT INTO "new_StockReservation" SELECT * FROM "StockReservation";'
+      );
+      await turso.execute('DROP TABLE "StockReservation";');
+      await turso.execute('ALTER TABLE "new_StockReservation" RENAME TO "StockReservation";');
+      await turso.execute(
+        'CREATE INDEX IF NOT EXISTS "StockReservation_variantId_expiresAt_idx" ON "StockReservation"("variantId", "expiresAt");'
+      );
+      await turso.execute(
+        'CREATE INDEX IF NOT EXISTS "StockReservation_productId_expiresAt_idx" ON "StockReservation"("productId", "expiresAt");'
+      );
+      await turso.execute(
+        'CREATE INDEX IF NOT EXISTS "StockReservation_sessionId_idx" ON "StockReservation"("sessionId");'
+      );
+      console.log('🔗 Rebuilt StockReservation with foreign keys.');
+    }
+  } catch (e) {
+    console.warn('StockReservation FK rebuild skipped:', e.message);
+  }
   try {
     await turso.execute('ALTER TABLE "PointTransaction" ADD COLUMN "orderId" TEXT;');
   } catch {}

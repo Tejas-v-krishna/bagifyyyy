@@ -3,7 +3,7 @@ import Razorpay from 'razorpay';
 import { prisma } from '@/lib/prisma';
 import { completeRazorpayOrder, PaymentFinalizationError } from '@/lib/completeRazorpayOrder';
 import { recoverCapturedPayment } from '@/lib/paymentRecovery';
-import { sendOrderConfirmationIfNeeded } from '@/lib/orderEmail';
+import { sendOrderConfirmationIfNeeded, alertManualRefundRequired } from '@/lib/orderEmail';
 import { getRazorpayKeyId, validateRazorpayConfig, verifyRazorpaySignature, refundRazorpayPayment } from '@/lib/razorpay';
 
 function statusFromStatus(status: string | undefined, fallback: number): number {
@@ -110,6 +110,14 @@ export async function POST(request: Request) {
     console.error(
       `Payment amount mismatch on order ${order.orderNumber}: captured ${payment.amount}, expected ${expectedPaise}. Recovery: ${recovery}`
     );
+    if (recovery !== 'REFUNDED') {
+      await alertManualRefundRequired({
+        paymentId: razorpay_payment_id,
+        orderNumber: order.orderNumber,
+        amountInPaise: Number(payment.amount) || expectedPaise,
+        reason: 'Captured amount did not match the order total and the automatic refund failed.',
+      });
+    }
     return NextResponse.json(
       {
         error:
@@ -149,6 +157,14 @@ export async function POST(request: Request) {
           amountInPaise: expectedPaise,
           receipt: order.orderNumber,
         }).catch(() => 'REFUND_PENDING' as const);
+        if (recovery !== 'REFUNDED') {
+          await alertManualRefundRequired({
+            paymentId: razorpay_payment_id,
+            orderNumber: order.orderNumber,
+            amountInPaise: expectedPaise,
+            reason: 'Insufficient stock to finalize the order; automatic refund failed.',
+          });
+        }
         return NextResponse.json(
           {
             error:
@@ -173,6 +189,14 @@ export async function POST(request: Request) {
       console.error(
         `Order ${order.orderNumber} could not finalize a captured payment (${error.message}). Recovery: ${recovery}`
       );
+      if (recovery !== 'REFUNDED') {
+        await alertManualRefundRequired({
+          paymentId: razorpay_payment_id,
+          orderNumber: order.orderNumber,
+          amountInPaise: expectedPaise,
+          reason: `Finalization failed (${error.message}) and the automatic refund failed.`,
+        });
+      }
       return NextResponse.json(
         {
           error:
@@ -204,6 +228,12 @@ export async function POST(request: Request) {
     });
     if (!refunded) {
       console.error(`MANUAL REFUND REQUIRED for payment ${razorpay_payment_id} (order ${order.orderNumber}).`);
+      await alertManualRefundRequired({
+        paymentId: razorpay_payment_id,
+        orderNumber: order.orderNumber,
+        amountInPaise: expectedPaise,
+        reason: 'Verification crashed after capture and the automatic refund failed.',
+      });
     }
     return NextResponse.json(
       {
