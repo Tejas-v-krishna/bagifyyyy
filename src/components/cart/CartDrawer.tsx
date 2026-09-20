@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import { acquireScrollLock, releaseScrollLock } from "@/lib/scrollLock";
 
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -163,23 +164,12 @@ export default function CartDrawer() {
   const [promoError, setPromoError] = useState("");
   const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
 
-  // Body scroll lock — stops background scroll including Lenis smooth scrolling
+  // Body scroll lock — ref-counted via scrollLock so overlapping overlays
+  // (e.g. cart + search) don't stomp each other's lock/restore.
   useEffect(() => {
-    if (isOpen) {
-      const prevOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      document.documentElement.classList.add("lenis-stopped");
-      window.__lenis?.stop();
-      return () => {
-        document.body.style.overflow = prevOverflow;
-        document.documentElement.classList.remove("lenis-stopped");
-        window.__lenis?.start();
-      };
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.classList.remove("lenis-stopped");
-      window.__lenis?.start();
-    }
+    if (!isOpen) return;
+    acquireScrollLock();
+    return () => releaseScrollLock();
   }, [isOpen]);
 
   const handleApplyPromo = () => {

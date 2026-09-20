@@ -13,6 +13,7 @@ import {
   createUserSessionToken,
 } from '@/lib/userSession';
 import { createHash } from 'crypto';
+import { rateLimit, clientIp } from '@/lib/rateLimit';
 
 // Legacy SHA256 for migration — checked only to upgrade old hashes
 function legacyHash(password: string): string {
@@ -24,6 +25,14 @@ const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@bagifyyyy.com').toLowerCa
 
 // POST /api/auth/login
 export async function POST(request: Request) {
+  // Throttle credential guessing: per IP + per email buckets.
+  const ipLimit = rateLimit(`login:ip:${clientIp(request)}`, 20, 10 * 60 * 1000);
+  if (!ipLimit.ok) {
+    return NextResponse.json(
+      { error: 'Too many login attempts. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(ipLimit.retryAfterSeconds) } }
+    );
+  }
   try {
     const { email, password } = await request.json();
 
@@ -32,6 +41,13 @@ export async function POST(request: Request) {
     }
 
     const cleanEmail = email.trim().toLowerCase();
+    const emailLimit = rateLimit(`login:email:${cleanEmail}`, 8, 10 * 60 * 1000);
+    if (!emailLimit.ok) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Please try again later.' },
+        { status: 429, headers: { 'Retry-After': String(emailLimit.retryAfterSeconds) } }
+      );
+    }
     const isAdminAttempt = cleanEmail === ADMIN_EMAIL;
 
     // ── Dedicated Admin Login Path ──────────────────────────────────────────

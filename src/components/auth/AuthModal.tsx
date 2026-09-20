@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, ArrowRight, Zap, ShieldCheck, Check } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { acquireScrollLock, releaseScrollLock } from "@/lib/scrollLock";
 
 export default function AuthModal() {
   const { isAuthModalOpen, openAuthModal, closeAuthModal, isAuthenticated } = useAuthStore();
@@ -68,29 +69,42 @@ export default function AuthModal() {
   }, [closeAuthModal]);
 
   const [copied, setCopied] = useState(false);
+  const copyTimerRef = useRef<number | null>(null);
+
+  // Cancel any pending "Copied!" reset when the modal unmounts.
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   const handleCopyCode = async () => {
     try {
       await navigator.clipboard.writeText("BAGIFY10");
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
+      // Clear on unmount so a dismissed modal never setStates after teardown.
+      if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = window.setTimeout(() => {
+        copyTimerRef.current = null;
+        setCopied(false);
+      }, 1600);
     } catch {
       setCopied(false);
     }
   };
 
-  // Centered overlay behavior: Escape closes, background scroll locks.
+  // Centered overlay behavior: Escape closes, background scroll locks
+  // (ref-counted via scrollLock so overlapping overlays don't interfere).
   useEffect(() => {
     if (!isAuthModalOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleDismiss();
     };
     window.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    acquireScrollLock();
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
+      releaseScrollLock();
     };
   }, [isAuthModalOpen, closeAuthModal, handleDismiss]);
 

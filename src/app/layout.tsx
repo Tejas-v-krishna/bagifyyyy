@@ -77,6 +77,7 @@ export const metadata: Metadata = {
 };
 
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Preloader from "@/components/layout/Preloader";
 import AuthModal from "@/components/auth/AuthModal";
@@ -105,7 +106,6 @@ export default function RootLayout({
     <html
       lang="en"
       className="antialiased"
-      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>
@@ -131,6 +131,7 @@ export default function RootLayout({
             <main className="flex-1 flex flex-col">
               <PageTransitionProvider>{children}</PageTransitionProvider>
             </main>
+            <Footer />
             <CartDrawer />
             <CartHoldSync />
             <Analytics />

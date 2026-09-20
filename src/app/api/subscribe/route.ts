@@ -4,7 +4,11 @@ import { sendWelcomeNewsletterEmail } from '@/lib/email';
 
 async function verifyRecaptcha(token?: string): Promise<boolean> {
   const secret = process.env.RECAPTCHA_SECRET_KEY;
-  if (!secret || !token) return true; // skip if not configured
+  // Not configured at all: nothing to verify against (deployer's choice).
+  if (!secret) return true;
+  // Configured but the client supplied no token: fail closed — previously a
+  // missing token skipped verification entirely, so bots passed freely.
+  if (!token) return false;
   try {
     const res = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
       method: 'POST',

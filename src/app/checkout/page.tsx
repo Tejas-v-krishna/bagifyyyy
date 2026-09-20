@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/ui/Button";
-import { getHoldSessionId } from "@/lib/cartHolds";
+// Hold identity is a server-minted cookie now — the client no longer picks it.
 
 type RazorpayPaymentResponse = {
   razorpay_payment_id: string;
@@ -377,7 +377,6 @@ function CheckoutContent() {
           customerPhone: formData.phone,
           promoCode: appliedPromo?.code || null,
           checkoutId: getCheckoutIdFor('razorpay'),
-          reservationSessionId: getHoldSessionId(),
         }),
       });
 
@@ -459,6 +458,23 @@ function CheckoutContent() {
   };
 
   if (items.length === 0) {
+    // A successful payment clears the bag before the success-page navigation
+    // completes — keep a processing screen up instead of flashing
+    // "Your Bag is Empty" and unmounting the payment overlays mid-transition.
+    if (paymentCompletedRef.current || paymentState === 'verifying') {
+      return (
+        <div
+          className="min-h-[75vh] bg-[#f5f5f2] flex flex-col items-center justify-center pt-20 px-4 text-black font-sans"
+          role="status"
+          aria-live="polite"
+        >
+          <Loader2 className="w-8 h-8 animate-spin text-black mb-4" aria-hidden="true" />
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/60">
+            Finalizing your order…
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="min-h-[75vh] bg-[#f5f5f2] flex flex-col items-center justify-center pt-20 px-4 text-black font-sans">
         <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-black/45 mb-2">

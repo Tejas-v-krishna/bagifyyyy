@@ -1,21 +1,24 @@
 import { NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
 import { syncCartReservations } from '@/lib/stockReservation';
+import { holdSessionCookieOptions, readHoldSession, HOLD_SESSION_COOKIE } from '@/lib/checkout';
 
 export const dynamic = 'force-dynamic';
-
-const SESSION_PATTERN = /^[A-Za-z0-9_-]{16,100}$/;
 
 /**
  * Sync this shopper's temporary holds to match their bag.
  * First to bag wins: a piece already held by another session comes back
  * `blocked`, and the client drops it with a notice.
+ *
+ * The hold identity lives in a server-minted HttpOnly cookie. The legacy
+ * `x-hold-session` header is deliberately NOT adopted: letting the caller
+ * pick the session id would let anyone who learns a shopper's id wipe that
+ * shopper's holds. Shoppers mid-session at deploy time simply re-hold on
+ * their next sync (holds expire within minutes anyway).
  */
 export async function POST(request: Request) {
   try {
-    const sessionId = request.headers.get('x-hold-session') || '';
-    if (!SESSION_PATTERN.test(sessionId)) {
-      return NextResponse.json({ error: 'Missing hold session' }, { status: 400 });
-    }
+    const sessionId = readHoldSession(request) || randomUUID();
 
     const body = await request.json();
     const rawItems = Array.isArray(body?.items) ? body.items : [];
@@ -32,7 +35,9 @@ export async function POST(request: Request) {
 
     const { results, expiresAt } = await syncCartReservations({ sessionId, items });
 
-    return NextResponse.json({ success: true, results, expiresAt });
+    const response = NextResponse.json({ success: true, results, expiresAt });
+    response.cookies.set(HOLD_SESSION_COOKIE, sessionId, holdSessionCookieOptions());
+    return response;
   } catch (error) {
     console.error('Cart hold sync failed:', error);
     return NextResponse.json({ error: 'Could not hold stock' }, { status: 500 });

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
+import { acquireScrollLock, releaseScrollLock } from "@/lib/scrollLock";
 
 type SearchResult = {
   id: string;
@@ -100,19 +101,12 @@ export default function SearchOverlay({
     triggerRef.current?.focus();
   }, []);
 
-  // Body scroll lock — stops background scroll including Lenis smooth scrolling
+  // Body scroll lock — ref-counted via scrollLock so overlapping overlays
+  // don't stomp each other's lock/restore.
   useEffect(() => {
-    if (isOpen) {
-      const prevOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      document.documentElement.classList.add("lenis-stopped");
-      (window as unknown as { __lenis?: { stop: () => void } }).__lenis?.stop();
-      return () => {
-        document.body.style.overflow = prevOverflow;
-        document.documentElement.classList.remove("lenis-stopped");
-        (window as unknown as { __lenis?: { start: () => void } }).__lenis?.start();
-      };
-    }
+    if (!isOpen) return;
+    acquireScrollLock();
+    return () => releaseScrollLock();
   }, [isOpen]);
 
   // Global keyboard shortcut — Ctrl/Cmd+K

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Bug } from "lucide-react";
+import { acquireScrollLock, releaseScrollLock } from "@/lib/scrollLock";
 
 export const OPEN_BUG_REPORT_EVENT = "bagifyyyy:open-bug-report";
 
@@ -48,6 +49,14 @@ export default function BugReportModal() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen, close]);
+
+  // Lock background scroll while the report dialog is open (ref-counted so
+  // it composes with the cart/search/auth overlays).
+  useEffect(() => {
+    if (!isOpen) return;
+    acquireScrollLock();
+    return () => releaseScrollLock();
+  }, [isOpen]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

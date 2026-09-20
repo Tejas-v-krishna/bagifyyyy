@@ -11,13 +11,13 @@ import {
 } from '@/lib/cart';
 import { AWAITING_PAYMENT } from '@/lib/orderStatus';
 import { reserveCartStock } from '@/lib/stockReservation';
-import { getCheckoutId, isValidCheckoutId } from '@/lib/checkout';
+import { getCheckoutId, readHoldSession } from '@/lib/checkout';
 import { getRazorpayKeyId } from '@/lib/razorpay';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { items, shippingAddress, customerEmail, customerPhone, promoCode, reservationSessionId } = body;
+    const { items, shippingAddress, customerEmail, customerPhone, promoCode } = body;
 
     // 1. Get logged in user if available (signed)
     const authedUser = await getAuthedUser();
@@ -28,9 +28,10 @@ export async function POST(request: Request) {
     const address = assertValidShippingAddress(shippingAddress);
     const contact = assertValidContact(customerEmail, customerPhone);
     const checkoutId = getCheckoutId(request, body);
-    // Holds are keyed to the shopper's browser session, so their own bag holds
-    // are never treated as someone else's and checkout extends the same hold.
-    const sessionId = isValidCheckoutId(reservationSessionId) ? reservationSessionId : checkoutId;
+    // The hold identity is the server-minted cookie (see api/cart-hold), never
+    // a request-body field — a caller-supplied session id would let a shopper
+    // impersonate (and wipe) another shopper's stock holds.
+    const sessionId = readHoldSession(request) || checkoutId;
     const cart = await priceCart({ items, promoCode, sessionId });
     const totalAmount = cartTotal(cart);
     const amountInPaise = Math.round(totalAmount * 100);
@@ -62,8 +63,17 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'This checkout cannot be resumed.' }, { status: 409 });
       }
 
+      // Clear this order's own prior holds before re-reserving. They belong
+      // exclusively to this checkout, and if the shopper's hold-session id
+      // changed between attempts (e.g. cleared site data) the old rows would
+      // otherwise be counted as "held by others" and falsely 409 the resume.
+      await prisma.stockReservation.deleteMany({
+        where: { orderId: existingOrder.id },
+      });
+
+
       const reservationCreated = await reserveCartStock({
-        sessionId: checkoutId,
+        sessionId,
         orderId: existingOrder.id,
         items: cart.items.map((item) => ({
           variantId: item.variantId,

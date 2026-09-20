@@ -15,7 +15,7 @@ import { categoryHref, categoryLabel } from "@/lib/categories";
 import { Clock, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ProductForDisplay } from "@/lib/product";
-import { getHoldSessionId } from "@/lib/cartHolds";
+// Hold identity is a server-minted cookie — the client no longer picks it.
 
 /**
  * Clean editorial product detail page.
@@ -80,10 +80,8 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
     const checkStockReservation = async () => {
       try {
-        const sessionId = getHoldSessionId();
-        const response = await fetch(`/api/stock-status?productId=${product.id}`, {
-          headers: sessionId ? { 'x-hold-session': sessionId } : undefined,
-        });
+        // Hold identity rides in the server-minted HttpOnly cookie.
+        const response = await fetch(`/api/stock-status?productId=${product.id}`);
         if (response.ok && !cancelled) {
           const data = await response.json();
           setIsReservedInCheckout(Boolean(data.isReserved));

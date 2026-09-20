@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useRef, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
@@ -18,6 +18,15 @@ function ResetPasswordContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cancel the pending redirect if the component unmounts (e.g. user navigates
+  // away during the success countdown) so it never fires against a dead page.
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current) clearTimeout(redirectTimerRef.current);
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +57,7 @@ function ResetPasswordContent() {
         setError(data.error || "Failed to reset password.");
       } else {
         setSuccess(true);
-        setTimeout(() => router.push("/login"), 2500);
+        redirectTimerRef.current = setTimeout(() => router.push("/login"), 2500);
       }
     } catch {
       setError("Something went wrong. Please try again.");

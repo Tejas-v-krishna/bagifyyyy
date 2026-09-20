@@ -156,6 +156,10 @@ model Order {
   items             OrderItem[]
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+  // Lookup paths: per-account order history and support-side email search.
+  @@index([userId])
+  @@index([customerEmail])
+
 }
 
 model OrderItem {
@@ -212,6 +216,8 @@ model SupportTicket {
   message     String
   status      String   @default("OPEN") // OPEN, CLOSED
   createdAt   DateTime @default(now())
+
+  @@index([email])
 }
 
 model PasswordResetToken {
@@ -221,6 +227,9 @@ model PasswordResetToken {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  // Reset-token invalidation scans by email on every forgot-password call.
+  @@index([email])
 }
 
 model Review {

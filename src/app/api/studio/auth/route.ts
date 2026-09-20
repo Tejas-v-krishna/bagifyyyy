@@ -7,8 +7,18 @@ import {
   secretsMatch,
 } from '@/lib/adminSession';
 import { verifyTOTP } from '@/lib/totp';
+import { rateLimit, clientIp } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
+  // Studio login is the admin perimeter — throttle hard (10 attempts / 10 min
+  // per IP) to blunt password and TOTP brute force.
+  const ipLimit = rateLimit(`studio:ip:${clientIp(request)}`, 10, 10 * 60 * 1000);
+  if (!ipLimit.ok) {
+    return NextResponse.json(
+      { error: 'Too many attempts. Please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(ipLimit.retryAfterSeconds) } }
+    );
+  }
   try {
     const body = await request.json().catch(() => null);
     const password = body && typeof body === 'object' ? (body as { password?: unknown }).password : null;

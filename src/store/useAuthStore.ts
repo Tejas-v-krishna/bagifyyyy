@@ -46,11 +46,12 @@ export const useAuthStore = create<AuthState>()(
           const res = await fetch('/api/auth/me');
           if (res.ok) {
             const data = await res.json();
-            if (data.user) {
-              set({ user: data.user, isAuthenticated: true });
-            } else {
-              set({ user: null, isAuthenticated: false });
-            }
+            set({ user: data.user ?? null, isAuthenticated: Boolean(data.user) });
+          } else {
+            // The session cookie is gone/invalid (401) — or /me failed outright.
+            // Clear the persisted "logged in" state so the UI doesn't keep
+            // showing a phantom account after logout or session expiry.
+            set({ user: null, isAuthenticated: false });
           }
         } catch (e) {
           console.error('Check session error:', e);

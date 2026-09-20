@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { completeRazorpayOrder, PaymentFinalizationError } from '@/lib/completeRazorpayOrder';
 import { recoverCapturedPayment } from '@/lib/paymentRecovery';
 import { sendOrderConfirmationIfNeeded } from '@/lib/orderEmail';
-import { getRazorpayKeyId, validateRazorpayConfig, verifyRazorpaySignature } from '@/lib/razorpay';
+import { getRazorpayKeyId, validateRazorpayConfig, verifyRazorpaySignature, refundRazorpayPayment } from '@/lib/razorpay';
 
 function statusFromStatus(status: string | undefined, fallback: number): number {
   if (status === 'AWAITING_PAYMENT' || status === 'PENDING') return 409;
@@ -160,9 +160,58 @@ export async function POST(request: Request) {
           { status: 409 }
         );
       }
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      // Non-shortfall finalization failure on a payment we already confirmed
+      // is CAPTURED — the customer paid but the order can never complete. Move
+      // it to a refund-tracked state instead of leaving the money stranded.
+      const recovery = await recoverCapturedPayment({
+        orderId: order.id,
+        paymentId: razorpay_payment_id,
+        signature: razorpay_signature,
+        amountInPaise: expectedPaise,
+        receipt: order.orderNumber,
+      }).catch(() => 'REFUND_PENDING' as const);
+      console.error(
+        `Order ${order.orderNumber} could not finalize a captured payment (${error.message}). Recovery: ${recovery}`
+      );
+      return NextResponse.json(
+        {
+          error:
+            recovery === 'REFUNDED'
+              ? 'This order could not be completed after payment. The captured amount has been refunded.'
+              : 'This order could not be completed after payment. Support has been notified to review it.',
+        },
+        { status: error.status }
+      );
     }
     console.error('Razorpay verify error:', error);
-    return NextResponse.json({ error: 'Failed to verify payment' }, { status: 500 });
+    // Last-resort: a captured payment whose finalization crashed outright
+    // (e.g. DB outage). Only refund if the order is still unpaid — a
+    // concurrent webhook may have completed it perfectly well in the
+    // meantime, and refunding a fulfilled order would be a double payout.
+    const latest = await prisma.order
+      .findUnique({ where: { id: order.id }, select: { paymentStatus: true } })
+      .catch(() => null);
+    if (!latest || latest.paymentStatus === 'PAID' || latest.paymentStatus === 'REFUNDED' || latest.paymentStatus === 'REFUND_PENDING') {
+      return NextResponse.json(
+        { error: 'Payment processing failed. Support has been notified to review this payment.' },
+        { status: 500 }
+      );
+    }
+    const refunded = await refundRazorpayPayment({
+      paymentId: razorpay_payment_id,
+      amount: expectedPaise,
+      receipt: order.orderNumber,
+    });
+    if (!refunded) {
+      console.error(`MANUAL REFUND REQUIRED for payment ${razorpay_payment_id} (order ${order.orderNumber}).`);
+    }
+    return NextResponse.json(
+      {
+        error: refunded
+          ? 'Payment processing failed. The captured amount has been refunded.'
+          : 'Payment processing failed. Support has been notified to review this payment.',
+      },
+      { status: 500 }
+    );
   }
 }

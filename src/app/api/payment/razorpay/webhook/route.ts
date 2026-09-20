@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { completeRazorpayOrder, PaymentFinalizationError } from '@/lib/completeRazorpayOrder';
 import { sendOrderConfirmationIfNeeded } from '@/lib/orderEmail';
-import { verifyRazorpayWebhookSignature } from '@/lib/razorpay';
+import { verifyRazorpayWebhookSignature, refundRazorpayPayment } from '@/lib/razorpay';
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
@@ -20,6 +20,8 @@ export async function POST(request: Request) {
           id?: string;
           order_id?: string;
           status?: string;
+          amount?: number;
+          notes?: { orderNumber?: string };
         };
       };
     };
@@ -45,7 +47,22 @@ export async function POST(request: Request) {
     where: { razorpayOrderId },
   });
   if (!order) {
-    return NextResponse.json({ success: true, ignored: true });
+    // Money was captured but we have no order row. The create-order cleanup
+    // deletes the Order when the local stock hold fails but cannot cancel the
+    // provider-side Razorpay order, so a payment made in that window used to
+    // be silently ignored — cash taken, nothing recorded. Refund it instead.
+    console.error(
+      `Captured payment ${paymentId} (${entity?.amount} paise) has no matching order for ${razorpayOrderId}; attempting automatic refund.`
+    );
+    const refunded = await refundRazorpayPayment({
+      paymentId,
+      amount: typeof entity?.amount === 'number' ? entity.amount : 0,
+      receipt: entity?.notes?.orderNumber || razorpayOrderId,
+    });
+    if (!refunded) {
+      console.error(`MANUAL REFUND REQUIRED for payment ${paymentId} (${razorpayOrderId}).`);
+    }
+    return NextResponse.json({ success: true, refundedUnknownPayment: refunded });
   }
   if (order.paymentStatus === 'PAID') {
     await sendOrderConfirmationIfNeeded(order.id).catch(() => {});

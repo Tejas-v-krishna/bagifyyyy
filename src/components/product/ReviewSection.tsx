@@ -70,11 +70,18 @@ export default function ReviewSection({ productId }: { productId: string }) {
   const [formSuccess, setFormSuccess] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/products/${productId}/reviews`)
+    const controller = new AbortController();
+    setLoading(true);
+    fetch(`/api/products/${productId}/reviews`, { signal: controller.signal })
       .then((r) => r.json())
       .then((d) => setReviews(d.reviews ?? []))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [productId]);
 
   useEffect(() => {

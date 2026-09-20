@@ -2,8 +2,15 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import { sendEmail } from '@/lib/email';
+import { rateLimit, clientIp } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
+  // Throttle reset-email spam (per IP + per email) without revealing whether
+  // the address exists — the response stays uniform either way.
+  const ipLimit = rateLimit(`forgot:ip:${clientIp(request)}`, 10, 60 * 60 * 1000);
+  if (!ipLimit.ok) {
+    return NextResponse.json({ success: true });
+  }
   try {
     const { email } = await request.json();
 
@@ -15,6 +22,12 @@ export async function POST(request: Request) {
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
     if (!user) {
       // Return success to prevent email enumeration
+      return NextResponse.json({ success: true });
+    }
+
+    const emailLimit = rateLimit(`forgot:email:${email.toLowerCase()}`, 3, 60 * 60 * 1000);
+    if (!emailLimit.ok) {
+      // Silent success — don't tell the requester the account hit its cap.
       return NextResponse.json({ success: true });
     }
 
