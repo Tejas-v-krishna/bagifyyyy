@@ -44,6 +44,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.vercel-storage.com" },
       { protocol: "https", hostname: "**.supabase.co" },
       { protocol: "https", hostname: "**.amazonaws.com" },
+      { protocol: "https", hostname: "cdn.sanity.io" },
     ],
   },
   async headers() {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { attachReservedFlags, availableProductWhere } from "@/lib/products";
+import { getHeroContent, getTickerContent, getManifestoContent, sanityImageUrl } from "@/lib/sanity";
 import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
 import EditorialManifesto from "@/components/home/EditorialManifesto";
 import InstagramFeed from "@/components/ui/InstagramFeed";
@@ -58,11 +59,15 @@ export default async function Home() {
   const vintageArchive = bestSellers.length >= 4 ? bestSellers : priceTop;
 
   // Flag pieces another shopper is currently holding, so the showcases can
-  // show the "on hold" signal.
-  const [newArrivalsFlagged, curatedGrailsFlagged, vintageArchiveFlagged] = await Promise.all([
+  // show the "on hold" signal. Editorial content (hero/manifesto/ticker)
+  // comes from Sanity when configured, hardcoded copy otherwise.
+  const [newArrivalsFlagged, curatedGrailsFlagged, vintageArchiveFlagged, sanityHero, sanityTicker, sanityManifesto] = await Promise.all([
     attachReservedFlags(newArrivals),
     attachReservedFlags(curatedGrails),
     attachReservedFlags(vintageArchive),
+    getHeroContent(),
+    getTickerContent(),
+    getManifestoContent(),
   ]);
 
   const formattedBundles = rawBundles.map((b) => {
@@ -146,8 +151,8 @@ export default async function Home() {
 
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">
             <Image
-               src="/hero-main.webp"
-               alt="BAGIFYYYY FW26 campaign"
+              src={sanityImageUrl(sanityHero?.image, 2000) ?? "/hero-main.webp"}
+              alt={sanityHero?.alt || "BAGIFYYYY FW26 campaign"}
               fill
               priority
               sizes="100vw"
@@ -159,10 +164,10 @@ export default async function Home() {
             {/* Clearly visible Shop Now CTA positioned just above the marquee with a generous gap */}
             <div className="absolute inset-x-4 bottom-[clamp(5.5rem,11.5vh,7.5rem)] z-30 flex justify-center">
               <Link
-                href="/new-arrivals"
+                href={sanityHero?.ctaHref || "/new-arrivals"}
                 className="editorial-cta group"
               >
-                Shop now
+                {sanityHero?.ctaLabel || "Shop now"}
                 <ArrowRight className="editorial-cta-arrow" strokeWidth={1.8} aria-hidden="true" />
               </Link>
             </div>
@@ -173,14 +178,17 @@ export default async function Home() {
                 <div className="marquee-track flex w-max whitespace-nowrap">
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="flex shrink-0 items-center gap-7 px-4 text-[11px] md:text-sm" aria-hidden={i !== 0}>
-                       <span>FW26 small-run pieces</span>
-                      <Asterisk strokeWidth={2.2} className="h-4 w-4 shrink-0 text-white/50" />
-                       <span>10% off your first order</span>
-                      <Asterisk strokeWidth={2.2} className="h-4 w-4 shrink-0 text-white/50" />
-                       <span>New pieces are live</span>
-                      <Asterisk strokeWidth={2.2} className="h-4 w-4 shrink-0 text-white/50" />
-                       <span>Made to be worn hard</span>
-                      <Asterisk strokeWidth={2.2} className="h-4 w-4 shrink-0 text-white/50" />
+                      {(sanityTicker?.phrases?.length ? sanityTicker.phrases : [
+                        "FW26 small-run pieces",
+                        "10% off your first order",
+                        "New pieces are live",
+                        "Made to be worn hard",
+                      ]).map((phrase) => (
+                        <span key={phrase} className="flex shrink-0 items-center gap-7">
+                          <span>{phrase}</span>
+                          <Asterisk strokeWidth={2.2} className="h-4 w-4 shrink-0 text-white/50" />
+                        </span>
+                      ))}
                     </div>
                   ))}
                 </div>
@@ -191,7 +199,20 @@ export default async function Home() {
       </section>
 
       {/* 1.5. Editorial Dark Manifesto with Live Style Switcher */}
-      <EditorialManifesto />
+      <EditorialManifesto
+        imageSrc={sanityImageUrl(sanityManifesto?.image, 1600) ?? "/editorial-manifesto.webp"}
+        imageAlt={sanityManifesto?.alt || "BAGIFYYYY editorial manifesto FW26"}
+        headingLine1={sanityManifesto?.headingLine1 || "Clothes For"}
+        headingLine2={sanityManifesto?.headingLine2 || "The Offbeat"}
+        intro={
+          sanityManifesto?.intro ||
+          "BAGIFYYYY pulls from early-2000s streetwear, club nights, and the clothes that looked better after a hundred wears."
+        }
+        statementA={sanityManifesto?.statementA || "Wear It, Don't Chase It"}
+        statementB={sanityManifesto?.statementB || "Weight Over Hype"}
+        closingA={sanityManifesto?.closingA || "Wear History"}
+        closingB={sanityManifesto?.closingB || "Make It Yours"}
+      />
 
       {/* 1.6. Next-drop countdown (studio-set; hidden until scheduled) */}
       <DropCountdown />

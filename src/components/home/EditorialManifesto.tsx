@@ -93,7 +93,29 @@ const PINS_DATA: GarmentPin[] = [
   },
 ];
 
-export default function EditorialManifesto() {
+export type ManifestoProps = {
+  imageSrc?: string;
+  imageAlt?: string;
+  headingLine1?: string;
+  headingLine2?: string;
+  intro?: string;
+  statementA?: string;
+  statementB?: string;
+  closingA?: string;
+  closingB?: string;
+};
+
+export default function EditorialManifesto({
+  imageSrc = "/editorial-manifesto.webp",
+  imageAlt = "BAGIFYYYY editorial manifesto FW26",
+  headingLine1 = "Clothes For",
+  headingLine2 = "The Offbeat",
+  intro = "BAGIFYYYY pulls from early-2000s streetwear, club nights, and the clothes that looked better after a hundred wears.",
+  statementA = "Wear It, Don't Chase It",
+  statementB = "Weight Over Hype",
+  closingA = "Wear History",
+  closingB = "Make It Yours",
+}: ManifestoProps) {
   const [hoveredPin, setHoveredPin] = useState<string | null>(null);
 
   return (
@@ -108,8 +130,8 @@ export default function EditorialManifesto() {
         {/* ── Central Model Cutout Image ── */}
         <div className="absolute inset-0 overflow-hidden flex items-center justify-center z-10">
           <Image
-            src="/editorial-manifesto.webp"
-            alt="BAGIFYYYY editorial manifesto FW26"
+            src={imageSrc}
+            alt={imageAlt}
             fill
             sizes="(max-width: 1440px) 100vw, 1440px"
             className="object-contain object-center select-none"
@@ -128,23 +150,25 @@ export default function EditorialManifesto() {
             id="manifesto-heading"
             className="uppercase font-bold leading-[0.96] tracking-[-0.03em] text-[clamp(1.1rem,3vw,3rem)] text-white"
           >
-            Clothes For<br />The Offbeat
+            {headingLine1}
+            <br />
+            {headingLine2}
           </h2>
         </div>
 
         <div className="absolute top-[8%] right-[4%] max-w-[260px] sm:max-w-[300px] text-right z-25 pointer-events-none">
           <p className="font-mono text-[8px] sm:text-[9px] tracking-[0.05em] leading-[1.65] text-white/60">
-            BAGIFYYYY pulls from early-2000s streetwear, club nights, and the clothes that looked better after a hundred wears.
+            {intro}
           </p>
         </div>
 
         {/* ── HERO STATEMENT: ARCHIVE OVER TREND // ENDURANCE OVER HYPE ── */}
         <div className="absolute top-[29%] left-[3.2%] right-[3.2%] flex flex-col gap-1 sm:gap-2 z-25 pointer-events-none">
           <p className="uppercase font-bold leading-none tracking-[-0.03em] text-[clamp(1.1rem,3.2vw,3.2rem)] text-white">
-            Wear It, Don&apos;t Chase It
+            {statementA}
           </p>
           <p className="uppercase font-bold leading-none tracking-[-0.03em] text-[clamp(1.1rem,3.2vw,3.2rem)] text-white text-right">
-            Weight Over Hype
+            {statementB}
           </p>
         </div>
 
@@ -293,10 +317,10 @@ export default function EditorialManifesto() {
         <div className="absolute bottom-[6.5%] sm:bottom-[7.5%] left-[3%] right-[3%] z-[60] pointer-events-none">
           <p className="uppercase font-bold leading-[0.88] tracking-[-0.04em] text-[clamp(1.8rem,7vw,6.5rem)] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
             <span className="block text-left">
-              Wear History
+              {closingA}
             </span>
             <span className="block text-right sm:text-left">
-              Make It Yours
+              {closingB}
             </span>
           </p>
         </div>
