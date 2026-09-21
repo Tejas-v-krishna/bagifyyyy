@@ -4,7 +4,7 @@ export const RESERVATION_HOLD_MINUTES = 7;
 export const RESERVATION_HOLD_MS = RESERVATION_HOLD_MINUTES * 60 * 1000;
 
 /** How long a piece stays held for whoever put it in their bag. */
-export const CART_HOLD_MINUTES = 15;
+export const CART_HOLD_MINUTES = 5;
 
 export type CartHoldStatus = 'held' | 'blocked' | 'unavailable';
 
