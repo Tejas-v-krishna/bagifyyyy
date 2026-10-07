@@ -124,9 +124,6 @@ export default function EditorialManifesto({
         className="relative w-full max-w-[1440px] mx-auto min-h-[660px] sm:min-h-[760px] md:aspect-[1/1.06] overflow-hidden bg-[#151518]"
         aria-labelledby="manifesto-heading"
       >
-        {/* Soft top gradient blend */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#151518] via-[#151518]/40 to-transparent z-20" />
-
         {/* ── Central Model Cutout Image ── */}
         <div className="manifesto-image-blend absolute inset-0 overflow-hidden flex items-center justify-center z-10">
           <Image
