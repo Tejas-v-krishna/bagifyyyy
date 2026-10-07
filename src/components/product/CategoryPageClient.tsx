@@ -4,12 +4,13 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import ProductCard, { Product } from "@/components/product/ProductCard";
+import type { Product } from "@/components/product/ProductCard";
 import AddToBagButton from "@/components/ui/AddToBagButton";
-import { LayoutGrid, List, ArrowLeft } from "lucide-react";
+import { LayoutGrid, List, ArrowLeft, ArrowRight } from "lucide-react";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
+import { categoryLabel } from "@/lib/categories";
 
 const NO_PRODUCTS: Product[] = [];
 
@@ -19,30 +20,52 @@ const SORT_OPTIONS: DropdownOption[] = [
   { value: "Price: High to Low", label: "Price: High → Low", shortLabel: "Price: High → Low" },
 ];
 
-function CatalogueRailCard({ product }: { product: Product }) {
+function EditorialGridCard({ product, index }: { product: Product; index: number }) {
+  const status = product.isSoldOut
+    ? "Sold out"
+    : product.reserved
+      ? "On hold — almost gone"
+      : "Available now";
+
   return (
-    <article className="group w-[min(58vw,18rem)] shrink-0 sm:w-[min(34vw,20rem)]" role="listitem">
-      <Link href={`/product/${product.id}`} className="block">
-        <div className="media-card relative aspect-[4/5] w-full overflow-hidden">
+    <article className="group" role="listitem" data-animate="scroll-reveal">
+      <Link href={`/product/${product.id}`} className="block" aria-label={product.name}>
+        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[15px] bg-[#e9e9ec] transition-shadow duration-500 group-hover:shadow-[0_28px_60px_-28px_rgba(0,0,0,0.4)]">
           {product.image ? (
             <Image
               src={product.image}
               alt={product.name}
               fill
               draggable={false}
-              sizes="(max-width: 639px) 58vw, 320px"
-              className="object-contain p-4 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+              sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw"
+              className={`object-contain p-5 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05] ${
+                product.isSoldOut ? "opacity-50 saturate-0" : "opacity-100"
+              }`}
             />
           ) : (
-            <div className="absolute inset-0 bg-[var(--surface-panel)]" />
+            <div className="absolute inset-0 bg-[#e9e9ec]" />
           )}
-          {product.isSoldOut && (
-            <span className="absolute left-3 top-3 bg-black px-2 py-1 text-[9px] font-semibold tracking-[0.12em] text-white">
-              Sold Out
+
+          {product.isNew && !product.isSoldOut && (
+            <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">
+              New
             </span>
           )}
-          {!product.isSoldOut && (
-            <div className="absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+          {product.isSoldOut ? (
+            <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">
+              Sold Out
+            </span>
+          ) : product.reserved ? (
+            <span className="absolute left-3 top-3 rounded-full bg-amber-400 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
+              On Hold
+            </span>
+          ) : null}
+
+          {!product.isSoldOut && !product.reserved && (
+            <div
+              className="absolute bottom-3 right-3 opacity-100 transition-all duration-300 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100"
+              onClick={(e) => e.preventDefault()}
+            >
               <AddToBagButton
                 product={{
                   id: product.id,
@@ -53,22 +76,28 @@ function CatalogueRailCard({ product }: { product: Product }) {
                   sizes: product.sizes,
                   colors: product.colors,
                 }}
-                className="h-9 w-9 rounded-full border border-black/10 bg-white/90 p-0"
+                className="h-10 w-10 rounded-full border border-black/10 bg-white/95 p-0 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur"
               />
             </div>
           )}
         </div>
       </Link>
-      <div className="flex items-start justify-between gap-3 border-b border-black/10 py-3">
-        <Link href={`/product/${product.id}`} className="min-w-0">
-          <h3 className="truncate text-[12px] font-medium leading-tight tracking-[-0.025em] text-black sm:text-[13px]" title={product.name}>
-            {product.name}
-          </h3>
-          <p className="mt-1 text-[10px] tracking-[0.08em] text-black/50">
-            {product.isSoldOut ? "Sold out" : "Available now"}
+
+      <div className="flex items-start gap-3 px-1 pt-4">
+        <span className="pt-[2px] font-mono text-[10px] font-bold tracking-[0.1em] text-black/30" aria-hidden="true">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <div className="min-w-0 flex-1">
+          <Link href={`/product/${product.id}`} className="block min-w-0">
+            <h3 className="truncate text-[13px] font-semibold leading-tight tracking-tight text-black transition-opacity group-hover:opacity-60" title={product.name}>
+              {product.name}
+            </h3>
+          </Link>
+          <p className="mt-1.5 truncate text-[9.5px] font-medium uppercase tracking-[0.14em] text-black/45">
+            {categoryLabel(product.category)} · {status}
           </p>
-        </Link>
-        <span className="shrink-0 text-[12px] font-medium tracking-[-0.025em] text-black sm:text-[13px]">
+        </div>
+        <span className="shrink-0 pt-[1px] text-[13px] font-semibold tracking-tight text-black">
           ₹{product.price.toLocaleString("en-IN")}
         </span>
       </div>
@@ -313,10 +342,22 @@ export default function CategoryPageClient({
           </Link>
         </div>
 
-        {/* Monumental Editorial Header matching Wishlist page */}
-        <header className="editorial-page-header mb-8 border-b border-black/10 pb-6 sm:mb-12 sm:pb-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-2xl">
+        {/* Monumental Editorial Header */}
+        <header className="editorial-page-header mb-0 pb-8 sm:pb-10">
+          {/* Folio strip — archive index language */}
+          <div className="mb-6 flex items-center justify-between gap-4 border-b border-black/10 pb-3">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">
+              {query ? (
+                <>Search — {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? "result" : "results"}</>
+              ) : (
+                <>Index — {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? "piece" : "pieces"}</>
+              )}
+            </p>
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">
+              {query ? "Results" : filter ? "Archive Select" : "FW26 · Small Run"}
+            </p>
+          </div>
+          <div className="max-w-2xl">
               <h1 className="max-w-[16ch] font-microgramma text-[clamp(2rem,5.5vw,5.2rem)] font-bold uppercase leading-[0.88] tracking-tight text-[#050505]">
                 {cleanTitle}
               </h1>
@@ -338,9 +379,16 @@ export default function CategoryPageClient({
                 </p>
               )}
             </div>
+        </header>
 
+        {/* Sticky toolbar — tools stay in reach while scrolling the rail */}
+        <div className="sticky top-[56px] lg:top-[60px] z-30 -mx-4 border-y border-black/10 bg-[#f5f5f2]/90 px-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+          <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 py-2.5">
+            <p className="hidden font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-black/45 sm:block" aria-live="polite">
+              {loading ? "Loading…" : `Showing ${displayedProducts.length} of ${filteredAndSortedProducts.length}`}
+            </p>
             {/* Right: Actions bar (Filter button + View toggle + Sort) */}
-            <div className="flex items-center gap-5 sm:gap-7 self-start md:self-end flex-wrap pb-0.5 shrink-0">
+            <div className="flex items-center gap-3 sm:gap-4">
               {/* Filter Popover Dropdown */}
               <FilterPopover
                 isOpen={isFilterOpen}
@@ -384,7 +432,7 @@ export default function CategoryPageClient({
                   onClick={() => setViewMode("grid")}
                   aria-pressed={viewMode === "grid"}
                   aria-label="Grid view"
-                  className={`h-10 w-10 inline-flex items-center justify-center rounded-[0.35rem] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 ${
+                  className={`h-9 w-9 inline-flex items-center justify-center rounded-[0.35rem] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 ${
                     viewMode === "grid"
                       ? "bg-black text-white"
                       : "bg-transparent text-black/50 hover:bg-black/5 hover:text-black"
@@ -397,7 +445,7 @@ export default function CategoryPageClient({
                   onClick={() => setViewMode("list")}
                   aria-pressed={viewMode === "list"}
                   aria-label="List view"
-                  className={`h-10 w-10 inline-flex items-center justify-center rounded-[0.35rem] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 ${
+                  className={`h-9 w-9 inline-flex items-center justify-center rounded-[0.35rem] transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2 ${
                     viewMode === "list"
                       ? "bg-black text-white"
                       : "bg-transparent text-black/50 hover:bg-black/5 hover:text-black"
@@ -408,17 +456,17 @@ export default function CategoryPageClient({
               </div>
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Main Content */}
         <div className="w-full pb-32">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-6">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="flex flex-col">
-                  <div className="media-card aspect-[4/5] w-full mb-3" />
-                  <div className="h-2.5 bg-[#EFEFEF] rounded w-3/4 mb-2" />
-                  <div className="h-2.5 bg-[#EFEFEF] rounded w-1/3" />
+                  <div className="aspect-[4/5] w-full animate-pulse rounded-[15px] bg-black/[0.06]" />
+                  <div className="mt-4 h-2.5 w-2/3 animate-pulse rounded bg-black/[0.08]" />
+                  <div className="mt-2 h-2.5 w-1/3 animate-pulse rounded bg-black/[0.05]" />
                 </div>
               ))}
             </div>
@@ -462,17 +510,15 @@ export default function CategoryPageClient({
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6"
+                    ? "grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-6"
                     : "grid grid-cols-1 gap-8 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:gap-14 xl:gap-16"
                 }
                 role="list"
                 aria-label={`${filteredAndSortedProducts.length} products`}
               >
                 {viewMode === "grid" ? (
-                  displayedProducts.map((product) => (
-                    <div key={product.id} role="listitem">
-                      <ProductCard product={product} />
-                    </div>
+                  displayedProducts.map((product, i) => (
+                    <EditorialGridCard key={product.id} product={product} index={i} />
                   ))
                 ) : (
                   <>
@@ -487,11 +533,57 @@ export default function CategoryPageClient({
                         Size Guide <span aria-hidden="true">→</span>
                       </Link>
                     </div>
-                    <div className="min-w-0 overflow-hidden border-t border-black/10 pt-5">
-                      <div className="catalogue-rail flex gap-5 overflow-x-auto pb-5 sm:gap-6" role="list" aria-label={`${filteredAndSortedProducts.length} products in catalogue rail`}>
-                        {displayedProducts.map((product) => (
-                          <CatalogueRailCard key={product.id} product={product} />
-                        ))}
+                    <div className="min-w-0 overflow-hidden border-t border-black/10">
+                      <div className="flex min-w-0 flex-col" role="list" aria-label={`${filteredAndSortedProducts.length} products in catalogue list`}>
+                        {displayedProducts.map((product, i) => {
+                          const status = product.isSoldOut
+                            ? "Sold out"
+                            : product.reserved
+                              ? "On hold"
+                              : "Available now";
+                          return (
+                            <Link
+                              key={product.id}
+                              role="listitem"
+                              href={`/product/${product.id}`}
+                              className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-b border-black/10 py-4 transition-colors hover:bg-black/[0.02] sm:grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] sm:gap-6 sm:px-2"
+                            >
+                              <span className="hidden font-mono text-[10px] font-bold tracking-[0.1em] text-black/30 sm:block" aria-hidden="true">
+                                {String(i + 1).padStart(2, "0")}
+                              </span>
+                              <span className="relative block h-20 w-16 shrink-0 overflow-hidden rounded-[12px] bg-[#e9e9ec] sm:h-24 sm:w-[4.75rem]">
+                                {product.image ? (
+                                  <Image
+                                    src={product.image}
+                                    alt=""
+                                    fill
+                                    draggable={false}
+                                    sizes="80px"
+                                    className={`object-contain p-1.5 transition-transform duration-500 group-hover:scale-[1.05] ${
+                                      product.isSoldOut ? "opacity-50 saturate-0" : "opacity-100"
+                                    }`}
+                                  />
+                                ) : null}
+                              </span>
+                              <span className="min-w-0">
+                                <span className="block truncate text-[13px] font-semibold tracking-tight text-black sm:text-sm">
+                                  {product.name}
+                                </span>
+                                <span className="mt-1 flex flex-wrap items-center gap-x-2 text-[9.5px] font-medium uppercase tracking-[0.14em] text-black/45">
+                                  <span className="truncate">{categoryLabel(product.category)}</span>
+                                  <span aria-hidden="true" className="text-black/25">·</span>
+                                  <span className={product.reserved && !product.isSoldOut ? "font-bold text-amber-600" : undefined}>
+                                    {status}
+                                  </span>
+                                </span>
+                              </span>
+                              <span className="shrink-0 text-[13px] font-semibold tracking-tight text-black sm:text-sm">
+                                ₹{product.price.toLocaleString("en-IN")}
+                              </span>
+                              <ArrowRight className="hidden h-4 w-4 -translate-x-1 text-black opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 sm:block" aria-hidden="true" />
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
                   </>
