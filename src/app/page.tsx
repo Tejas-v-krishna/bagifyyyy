@@ -10,6 +10,7 @@ import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
 import VintageArchiveSection from "@/components/ui/VintageArchiveSection";
 import DropCountdown from "@/components/ui/DropCountdown";
+import Footer from "@/components/layout/Footer";
 // Cached HTML keeps first loads instant in production; sections refresh at
 // most 30s behind it. Stock truth is enforced at cart/checkout anyway.
 export const revalidate = 30;
@@ -298,7 +299,9 @@ export default async function Home() {
 
       {/* 4. Editorial Instagram Lookbook Feed */}
       <InstagramFeed />
-      {/* The footer renders globally via RootLayout (newsletter + legal links belong on every page). */}
+
+      {/* Footer lives only on the landing page — all other pages end clean. */}
+      <Footer />
     </div>
   );
 }
