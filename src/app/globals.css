@@ -782,16 +782,16 @@ html.lenis body {
     #676767 68%,
     #414141 78%,
     #232323 87%,
-    #0e0e0e 95%,
-    #000 100%
+    #1b1b1f 94%,
+    #151518 100%
   );
 }
 
 .curated-grails-transition-out {
   background: linear-gradient(
     to bottom,
-    #000 0%,
-    #0e0e0e 5%,
+    #151518 0%,
+    #1b1b1f 6%,
     #232323 13%,
     #414141 22%,
     #676767 32%,

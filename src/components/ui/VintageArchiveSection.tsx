@@ -24,10 +24,10 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
   }));
 
   return (
-    <section className="curated-grails-dark w-full bg-black text-white" data-nav-theme="dark">
+    <section className="curated-grails-dark w-full bg-[#151518] text-white" data-nav-theme="dark">
       <div className="curated-grails-transition curated-grails-transition-in" aria-hidden="true" />
 
-      <div className="relative bg-black px-3 py-20 text-white sm:px-6 sm:py-24 md:py-32 lg:px-10">
+      <div className="relative bg-[#151518] px-3 py-20 text-white sm:px-6 sm:py-24 md:py-32 lg:px-10">
         <div className="mx-auto w-full max-w-[1700px]">
           <div className="mb-6 flex items-end justify-between px-2 sm:px-4 md:px-6">
             <div className="flex flex-col gap-1">
@@ -40,7 +40,7 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
             </div>
             <Link
               href="/curated-grails"
-              className="h-9 sm:h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-white text-black hover:bg-white/85"
+              className="h-9 sm:h-10 inline-flex items-center gap-2 rounded-[15px] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-white text-black hover:bg-white/85"
             >
               <span>See all pieces</span>
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
