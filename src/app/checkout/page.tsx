@@ -461,7 +461,7 @@ function CheckoutContent() {
     // A successful payment clears the bag before the success-page navigation
     // completes — keep a processing screen up instead of flashing
     // "Your Bag is Empty" and unmounting the payment overlays mid-transition.
-    if (paymentCompletedRef.current || paymentState === 'verifying') {
+    if (paymentState === 'verifying') {
       return (
         <div
           className="min-h-[75vh] bg-[#f5f5f2] flex flex-col items-center justify-center pt-20 px-4 text-black font-sans"

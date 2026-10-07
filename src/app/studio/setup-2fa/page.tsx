@@ -17,11 +17,7 @@ export default function Setup2FAPage() {
   const [testResult, setTestResult] = useState<"idle" | "testing" | "success" | "failure">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    fetchSetup();
-  }, []);
-
-  const fetchSetup = async () => {
+  async function fetchSetup() {
     setLoading(true);
     try {
       const res = await fetch("/api/studio/2fa/setup");
@@ -36,7 +32,11 @@ export default function Setup2FAPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchSetup();
+  }, []);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);

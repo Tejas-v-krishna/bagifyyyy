@@ -1,5 +1,5 @@
 import { createClient } from "@sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url";
 
 /**
  * Sanity — content-only layer.
@@ -29,7 +29,7 @@ const client = createClient({
   perspective: "published",
 });
 
-const builder = imageUrlBuilder({ projectId: projectId ?? "placeholder", dataset });
+const builder = createImageUrlBuilder({ projectId: projectId ?? "placeholder", dataset });
 
 export type SanityImage = {
   _type: "image";

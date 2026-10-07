@@ -87,6 +87,7 @@ import LenisProvider from "@/components/ui/LenisProvider";
 import GlobalAnimator from "@/components/ui/GlobalAnimator";
 import CartHoldSync from "@/components/ui/CartHoldSync";
 import PageTransitionLoader from "@/components/ui/PageTransitionLoader";
+import SvgPathTransitionProvider from "@/components/ui/SvgPathTransition";
 import PageTransitionProvider from "@/components/ui/PageTransitionProvider";
 import SmoothCursor from "@/components/ui/SmoothCursor";
 import InteractionGuard from "@/components/ui/InteractionGuard";
@@ -122,6 +123,7 @@ export default function RootLayout({
         <GoogleAuthProvider>
           <LenisProvider>
             <PageTransitionLoader />
+            <SvgPathTransitionProvider>
             <GlobalAnimator />
             <GsapScrollAnimations />
             <Preloader />
@@ -134,6 +136,7 @@ export default function RootLayout({
             <Footer />
             <CartDrawer />
             <CartHoldSync />
+            </SvgPathTransitionProvider>
             <Analytics />
             <SpeedInsights />
           </LenisProvider>

@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import nodemailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 import { 
   generateDropAnnouncementEmailHtml, 
   generateOrderConfirmationEmailHtml, 
@@ -27,7 +27,7 @@ const smtpPort = parseInt(process.env.SMTP_PORT || '465');
 const smtpUser = process.env.SMTP_USER || process.env.GMAIL_USER;
 const smtpPass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD;
 
-let smtpTransporter: nodemailer.Transporter | null = null;
+let smtpTransporter: Transporter | null = null;
 if (smtpUser && smtpPass) {
   smtpTransporter = nodemailer.createTransport({
     host: smtpHost,

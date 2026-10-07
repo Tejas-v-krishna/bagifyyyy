@@ -358,9 +358,9 @@ export default function InteractiveShowcase({
                   }}
                   onDragStart={(e) => e.preventDefault()}
                 >
-                  {/* Card Body with Clean Rounded Soft Grey Surface (Matching Reference) */}
+                  {/* Card Body with Clean White Surface (matches section) */}
                   <div
-                    className={`relative ${cardWidth} ${cardHeight} rounded-xl sm:rounded-2xl bg-[#ebebeb] hover:bg-[#e4e4e4] transition-colors duration-300 overflow-hidden flex items-center justify-center p-4 sm:p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.03)] select-none`}
+                    className={`relative ${cardWidth} ${cardHeight} rounded-xl sm:rounded-2xl bg-white hover:bg-[#f5f5f2] border border-black/10 transition-colors duration-300 overflow-hidden flex items-center justify-center p-4 sm:p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.03)] select-none`}
                     style={{ userSelect: "none", WebkitUserSelect: "none" }}
                   >
                     {/* Centered Product Cutout Image (Protected from Selection / Ghost Drag) */}

@@ -33,10 +33,6 @@ interface Product {
   images: ProductImage[];
 }
 
-interface ProductSummary {
-  id: string;
-}
-
 function getProductImageUrl(image: ProductImage | undefined): string | null {
   if (typeof image === "string") {
     const url = image.trim();

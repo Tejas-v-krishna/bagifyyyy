@@ -4,7 +4,7 @@ import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { attachReservedFlags, availableProductWhere } from "@/lib/products";
 import { getHeroContent, getTickerContent, getManifestoContent, sanityImageUrl } from "@/lib/sanity";
-import InteractiveShowcase from "@/components/ui/InteractiveShowcase";
+import ProductFlexCarousel from "@/components/ui/ProductFlexCarousel";
 import EditorialManifesto from "@/components/home/EditorialManifesto";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
@@ -54,16 +54,13 @@ export default async function Home() {
   // New Arrivals: isNew flag with a latest-pieces fallback for thin catalogues.
   const newArrivals = newFlagged.length >= 4 ? newFlagged : latestAll;
 
-  // Curated grails are a distinct premium edit rather than another arrivals repeat.
-  const curatedGrails = priceTop;
   const vintageArchive = bestSellers.length >= 4 ? bestSellers : priceTop;
 
   // Flag pieces another shopper is currently holding, so the showcases can
   // show the "on hold" signal. Editorial content (hero/manifesto/ticker)
   // comes from Sanity when configured, hardcoded copy otherwise.
-  const [newArrivalsFlagged, curatedGrailsFlagged, vintageArchiveFlagged, sanityHero, sanityTicker, sanityManifesto] = await Promise.all([
+  const [newArrivalsFlagged, vintageArchiveFlagged, sanityHero, sanityTicker, sanityManifesto] = await Promise.all([
     attachReservedFlags(newArrivals),
-    attachReservedFlags(curatedGrails),
     attachReservedFlags(vintageArchive),
     getHeroContent(),
     getTickerContent(),
@@ -113,40 +110,16 @@ export default async function Home() {
         </h1>
 
         <div className="flex min-h-0 w-full flex-1 flex-col">
-          <div className="relative z-10 shrink-0 px-4 sm:px-6 lg:px-10 pt-1 sm:pt-2 pb-2 sm:pb-3.5">
-            {/* Two justified words with a fixed gap: a single textLength would
-                stretch the inter-word space. Widths split 4:7 so tracking
-                stays even across both words, with no glyph distortion. */}
-            <svg
-              viewBox="0 0 1000 128"
-              preserveAspectRatio="xMidYMid meet"
-              className="block h-auto w-full select-none"
+          <div className="relative z-10 shrink-0 px-4 sm:px-6 lg:px-10 pt-0 sm:pt-1 pb-1 sm:pb-1.5">
+            {/* Natural dense lockup: pinned left/right via space-between, no glyph stretching. */}
+            <h2
               aria-hidden="true"
-              focusable="false"
+              className="font-microgramma font-bold uppercase leading-[0.9] tracking-[-0.05em] text-[#050505] w-full select-none flex items-baseline justify-between whitespace-nowrap text-[clamp(1.6rem,8.8vw,11.5rem)]"
             >
-              <text
-                x="30"
-                y="100"
-                textLength="364"
-                lengthAdjust="spacing"
-                className="font-microgramma font-bold uppercase"
-                fontSize="124"
-                fill="#050505"
-              >
-                Wear
-              </text>
-              <text
-                x="434"
-                y="100"
-                textLength="536"
-                lengthAdjust="spacing"
-                className="font-microgramma font-bold uppercase"
-                fontSize="124"
-                fill="#050505"
-              >
-                History
-              </text>
-            </svg>
+              <span>One-off</span>
+              <span>Vintage</span>
+              <span>Pieces</span>
+            </h2>
           </div>
 
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">
@@ -217,36 +190,35 @@ export default async function Home() {
       {/* 1.6. Next-drop countdown (studio-set; hidden until scheduled) */}
       <DropCountdown />
 
-      {/* 2. New Arrivals & Curated Grails Showcase Section */}
+      {/* 2. New In — liquid-glass product carousel */}
       <section id="showcase" className="w-full bg-white px-3 pt-24 pb-16 sm:px-6 sm:py-24 md:py-32 lg:px-10 scroll-mt-20 overflow-hidden">
-        <InteractiveShowcase
-          products={newArrivalsFlagged.map((p) => ({
-            id: p.id,
-            name: p.name,
-            price: p.price,
-            isSoldOut: p.isSoldOut,
-            isNew: p.isNew,
-            reserved: p.reserved,
-            category: p.category,
-            brand: p.brand,
-            images: p.images,
-            sizes: Array.from(new Set(p.variants.map((v) => v.size))),
-            colors: Array.from(new Set(p.variants.map((v) => v.color))),
-          }))}
-          topPicks={curatedGrailsFlagged.map((p) => ({
-            id: p.id,
-            name: p.name,
-            price: p.price,
-            isSoldOut: p.isSoldOut,
-            isNew: p.isNew,
-            reserved: p.reserved,
-            category: p.category,
-            brand: p.brand,
-            images: p.images,
-            sizes: Array.from(new Set(p.variants.map((v) => v.size))),
-            colors: Array.from(new Set(p.variants.map((v) => v.color))),
-          }))}
-        />
+        <div className="mx-auto w-full max-w-[1700px]">
+          <div className="mb-6 flex items-end justify-between px-2 sm:px-4 md:px-6">
+            <div className="flex flex-col gap-1">
+              <span className="font-sans text-[11px] sm:text-[12px] tracking-[0.14em] font-medium text-black/50">
+                JUST IN
+              </span>
+              <h2 className="font-display uppercase text-[20px] sm:text-[26px] md:text-[32px] font-bold tracking-[-0.03em] leading-none text-[#111111]">
+                New In
+              </h2>
+            </div>
+            <Link
+              href="/new-arrivals"
+              className="h-9 sm:h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-[#111111] text-white hover:bg-black/80"
+            >
+              <span>See all pieces</span>
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
+          </div>
+          <ProductFlexCarousel
+            products={newArrivalsFlagged.map((p) => ({
+              id: p.id,
+              name: p.name,
+              price: p.price,
+              image: p.images[0]?.url || '/placeholder.jpg',
+            }))}
+          />
+        </div>
       </section>
 
       {/* 3. Asymmetric editorial category index */}
