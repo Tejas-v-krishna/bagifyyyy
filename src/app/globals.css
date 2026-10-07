@@ -706,6 +706,14 @@ html.lenis body {
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
 }
 
+/* Manifesto photo top-edge melt: the source image carries a black backdrop
+   above the subject (invisible on the old black section, a hard box on
+   graphite). Fading the top 18% into transparency melts it into the bg. */
+.manifesto-image-blend {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 18%);
+}
+
 /* 2. Manifesto to Showcase dissolve: smooth deep blend from dark manifesto to white canvas */
 .manifesto-showcase-dissolve {
   --showcase-dissolve-height: clamp(14rem, 22vw, 21rem);

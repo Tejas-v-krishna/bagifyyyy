@@ -128,7 +128,7 @@ export default function EditorialManifesto({
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#151518] via-[#151518]/40 to-transparent z-20" />
 
         {/* ── Central Model Cutout Image ── */}
-        <div className="absolute inset-0 overflow-hidden flex items-center justify-center z-10">
+        <div className="manifesto-image-blend absolute inset-0 overflow-hidden flex items-center justify-center z-10">
           <Image
             src={imageSrc}
             alt={imageAlt}
