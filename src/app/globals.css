@@ -720,9 +720,9 @@ html.lenis body {
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    rgba(7, 7, 7, 0.2) 10%,
-    rgba(10, 10, 10, 0.58) 20%,
-    #151515 31%,
+    rgba(21, 21, 24, 0.2) 10%,
+    rgba(21, 21, 24, 0.58) 20%,
+    #1a1a1e 31%,
     #343434 42%,
     #626262 53%,
     #969696 64%,

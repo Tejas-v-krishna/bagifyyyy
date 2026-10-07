@@ -119,9 +119,9 @@ export default function EditorialManifesto({
   const [hoveredPin, setHoveredPin] = useState<string | null>(null);
 
   return (
-    <div className="relative w-full bg-black select-none" data-nav-theme="dark">
+    <div className="relative w-full bg-[#151518] select-none" data-nav-theme="dark">
       <section
-        className="relative w-full max-w-[1440px] mx-auto min-h-[660px] sm:min-h-[760px] md:aspect-[1/1.06] overflow-hidden bg-black"
+        className="relative w-full max-w-[1440px] mx-auto min-h-[660px] sm:min-h-[760px] md:aspect-[1/1.06] overflow-hidden bg-[#151518]"
         aria-labelledby="manifesto-heading"
       >
         {/* Soft top gradient blend */}
@@ -278,7 +278,7 @@ export default function EditorialManifesto({
                   />
 
                   {/* Clean Spec Box Container */}
-                  <div className="relative bg-[#0c0c0c]/95 border border-white/15 rounded-[0.4rem] p-3 sm:p-3.5 shadow-[0_16px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl text-left">
+                  <div className="relative bg-[#1e1e22]/95 border border-white/15 rounded-[0.4rem] p-3 sm:p-3.5 shadow-[0_16px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl text-left">
                     {/* Header: Title + Minimal Spec Badge */}
                     <div className="flex items-center justify-between gap-2">
                       <h3
