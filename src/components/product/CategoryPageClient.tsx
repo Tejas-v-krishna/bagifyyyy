@@ -10,7 +10,6 @@ import { LayoutGrid, List, ArrowLeft, ArrowRight } from "lucide-react";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
-import { categoryLabel } from "@/lib/categories";
 
 const NO_PRODUCTS: Product[] = [];
 
@@ -20,13 +19,7 @@ const SORT_OPTIONS: DropdownOption[] = [
   { value: "Price: High to Low", label: "Price: High → Low", shortLabel: "Price: High → Low" },
 ];
 
-function EditorialGridCard({ product, index }: { product: Product; index: number }) {
-  const status = product.isSoldOut
-    ? "Sold out"
-    : product.reserved
-      ? "On hold — almost gone"
-      : "Available now";
-
+function EditorialGridCard({ product }: { product: Product }) {
   return (
     <article className="group" role="listitem" data-animate="scroll-reveal">
       <Link href={`/product/${product.id}`} className="block" aria-label={product.name}>
@@ -83,21 +76,13 @@ function EditorialGridCard({ product, index }: { product: Product; index: number
         </div>
       </Link>
 
-      <div className="flex items-start gap-3 px-1 pt-4">
-        <span className="pt-[2px] font-mono text-[10px] font-bold tracking-[0.1em] text-black/30" aria-hidden="true">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <div className="min-w-0 flex-1">
-          <Link href={`/product/${product.id}`} className="block min-w-0">
-            <h3 className="truncate text-[13px] font-semibold leading-tight tracking-tight text-black transition-opacity group-hover:opacity-60" title={product.name}>
-              {product.name}
-            </h3>
-          </Link>
-          <p className="mt-1.5 truncate text-[9.5px] font-medium uppercase tracking-[0.14em] text-black/45">
-            {categoryLabel(product.category)} · {status}
-          </p>
-        </div>
-        <span className="shrink-0 pt-[1px] text-[13px] font-semibold tracking-tight text-black">
+      <div className="flex items-baseline gap-3 px-1 pt-4">
+        <Link href={`/product/${product.id}`} className="block min-w-0 flex-1">
+          <h3 className="truncate text-[13px] font-semibold leading-tight tracking-tight text-black transition-opacity group-hover:opacity-60" title={product.name}>
+            {product.name}
+          </h3>
+        </Link>
+        <span className="shrink-0 text-[13px] font-semibold tracking-tight text-black">
           ₹{product.price.toLocaleString("en-IN")}
         </span>
       </div>
@@ -110,7 +95,6 @@ export default function CategoryPageClient({
   initialProducts,
   filter,
   title,
-  subtitle,
 }: {
   category?: string;
   /** Server-rendered first paint; skips the initial /api/products round trip. */
@@ -344,28 +328,11 @@ export default function CategoryPageClient({
 
         {/* Monumental Editorial Header */}
         <header className="editorial-page-header mb-0 pb-8 sm:pb-10">
-          {/* Folio strip — archive index language */}
-          <div className="mb-6 flex items-center justify-between gap-4 border-b border-black/10 pb-3">
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">
-              {query ? (
-                <>Search — {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? "result" : "results"}</>
-              ) : (
-                <>Index — {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? "piece" : "pieces"}</>
-              )}
-            </p>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">
-              {query ? "Results" : filter ? "Archive Select" : "FW26 · Small Run"}
-            </p>
-          </div>
           <div className="max-w-2xl">
               <h1 className="max-w-[16ch] font-microgramma text-[clamp(2rem,5.5vw,5.2rem)] font-bold uppercase leading-[0.88] tracking-tight text-[#050505]">
                 {cleanTitle}
               </h1>
-              {subtitle ? (
-                <p className="mt-5 max-w-xl text-xs leading-relaxed text-black/60 sm:text-sm">
-                  {subtitle}
-                </p>
-              ) : query ? (
+              {query && (
                 <p className="mt-5 max-w-xl text-xs leading-relaxed text-black/60 sm:text-sm">
                   {loading
                      ? "Searching the catalogue…"
@@ -373,20 +340,13 @@ export default function CategoryPageClient({
                         filteredAndSortedProducts.length === 1 ? "piece" : "pieces"
                       } matching “${query}”`}
                 </p>
-              ) : (
-                <p className="mt-5 max-w-xl text-xs leading-relaxed text-black/60 sm:text-sm">
-                   Browse the current run. Stock changes as pieces move, and some will not return.
-                </p>
               )}
             </div>
         </header>
 
         {/* Sticky toolbar — tools stay in reach while scrolling the rail */}
         <div className="sticky top-[56px] lg:top-[60px] z-30 -mx-4 border-y border-black/10 bg-[#f5f5f2]/90 px-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
-          <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 py-2.5">
-            <p className="hidden font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-black/45 sm:block" aria-live="polite">
-              {loading ? "Loading…" : `Showing ${displayedProducts.length} of ${filteredAndSortedProducts.length}`}
-            </p>
+          <div className="mx-auto flex w-full max-w-[1440px] items-center justify-end gap-3 py-2.5">
             {/* Right: Actions bar (Filter button + View toggle + Sort) */}
             <div className="flex items-center gap-3 sm:gap-4">
               {/* Filter Popover Dropdown */}
@@ -517,8 +477,8 @@ export default function CategoryPageClient({
                 aria-label={`${filteredAndSortedProducts.length} products`}
               >
                 {viewMode === "grid" ? (
-                  displayedProducts.map((product, i) => (
-                    <EditorialGridCard key={product.id} product={product} index={i} />
+                  displayedProducts.map((product) => (
+                    <EditorialGridCard key={product.id} product={product} />
                   ))
                 ) : (
                   <>
@@ -535,22 +495,14 @@ export default function CategoryPageClient({
                     </div>
                     <div className="min-w-0 overflow-hidden border-t border-black/10">
                       <div className="flex min-w-0 flex-col" role="list" aria-label={`${filteredAndSortedProducts.length} products in catalogue list`}>
-                        {displayedProducts.map((product, i) => {
-                          const status = product.isSoldOut
-                            ? "Sold out"
-                            : product.reserved
-                              ? "On hold"
-                              : "Available now";
+                        {displayedProducts.map((product) => {
                           return (
                             <Link
                               key={product.id}
                               role="listitem"
                               href={`/product/${product.id}`}
-                              className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-b border-black/10 py-4 transition-colors hover:bg-black/[0.02] sm:grid-cols-[auto_auto_minmax(0,1fr)_auto_auto] sm:gap-6 sm:px-2"
+                              className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-b border-black/10 py-4 transition-colors hover:bg-black/[0.02] sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:gap-6 sm:px-2"
                             >
-                              <span className="hidden font-mono text-[10px] font-bold tracking-[0.1em] text-black/30 sm:block" aria-hidden="true">
-                                {String(i + 1).padStart(2, "0")}
-                              </span>
                               <span className="relative block h-20 w-16 shrink-0 overflow-hidden rounded-[12px] bg-[#e9e9ec] sm:h-24 sm:w-[4.75rem]">
                                 {product.image ? (
                                   <Image
@@ -565,17 +517,8 @@ export default function CategoryPageClient({
                                   />
                                 ) : null}
                               </span>
-                              <span className="min-w-0">
-                                <span className="block truncate text-[13px] font-semibold tracking-tight text-black sm:text-sm">
-                                  {product.name}
-                                </span>
-                                <span className="mt-1 flex flex-wrap items-center gap-x-2 text-[9.5px] font-medium uppercase tracking-[0.14em] text-black/45">
-                                  <span className="truncate">{categoryLabel(product.category)}</span>
-                                  <span aria-hidden="true" className="text-black/25">·</span>
-                                  <span className={product.reserved && !product.isSoldOut ? "font-bold text-amber-600" : undefined}>
-                                    {status}
-                                  </span>
-                                </span>
+                              <span className="block min-w-0 truncate text-[13px] font-semibold tracking-tight text-black sm:text-sm">
+                                {product.name}
                               </span>
                               <span className="shrink-0 text-[13px] font-semibold tracking-tight text-black sm:text-sm">
                                 ₹{product.price.toLocaleString("en-IN")}
