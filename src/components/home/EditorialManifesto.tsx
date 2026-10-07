@@ -125,7 +125,7 @@ export default function EditorialManifesto({
         aria-labelledby="manifesto-heading"
       >
         {/* Soft top gradient blend */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black via-black/40 to-transparent z-20" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#151518] via-[#151518]/40 to-transparent z-20" />
 
         {/* ── Central Model Cutout Image ── */}
         <div className="absolute inset-0 overflow-hidden flex items-center justify-center z-10">
