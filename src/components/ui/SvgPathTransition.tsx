@@ -80,14 +80,14 @@ export default function SvgPathTransitionProvider({ children }: { children: Reac
         .to(
           overlayPath,
           {
-            duration: 0.8,
+            duration: 0.3,
             ease: 'power4.in',
             attr: { d: PATHS.step1.inBetween.curve1 },
           },
           0
         )
         .to(overlayPath, {
-          duration: 0.2,
+          duration: 0.15,
           ease: 'power1',
           attr: { d: PATHS.step1.filled },
           onComplete: () => {

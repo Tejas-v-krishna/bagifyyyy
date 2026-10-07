@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getProductForDisplay } from "@/lib/product";
 import { categoryHref, categoryLabel } from "@/lib/categories";
@@ -7,6 +8,15 @@ import JsonLd from "@/components/seo/JsonLd";
 import ProductDetailClient from "@/components/product/ProductDetailClient";
 
 type Props = { params: Promise<{ id: string }> };
+
+// ISR: product pages revalidate in the background; repeat visits serve cached
+// HTML instead of paying fresh DB round trips. Stock truth is still enforced
+// live at cart/checkout, so a slightly stale page can never oversell.
+export const revalidate = 60;
+
+// Metadata + page both need the same product — share one DB hit per render
+// instead of querying twice.
+const getProduct = cache(getProductForDisplay);
 
 /** Meta descriptions get truncated around 160 characters, so do it on a word. */
 function clampDescription(text: string, limit = 155): string {
@@ -19,7 +29,7 @@ function clampDescription(text: string, limit = 155): string {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const product = await getProductForDisplay(id);
+  const product = await getProduct(id);
 
   if (!product) {
     return {
@@ -59,7 +69,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { id } = await params;
-  const product = await getProductForDisplay(id);
+  const product = await getProduct(id);
 
   // Renders the sibling not-found.tsx, which keeps the storefront's own
   // "PRODUCT NOT FOUND" screen and returns a real 404 status.
