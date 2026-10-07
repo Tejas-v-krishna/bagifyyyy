@@ -45,7 +45,7 @@ export default function ProductFlexCarousel({ products }: { products: ProductFle
         fit="portrait"
         cardHeight={0.7}
         gap={64}
-        radius={0}
+        radius={15}
         lensWidth={0.84}
         lensHeight={0.2}
         tilt={-90}

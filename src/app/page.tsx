@@ -204,7 +204,7 @@ export default async function Home() {
             </div>
             <Link
               href="/new-arrivals"
-              className="h-9 sm:h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-[#111111] text-white hover:bg-black/80"
+              className="h-9 sm:h-10 inline-flex items-center gap-2 rounded-[15px] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-[#111111] text-white hover:bg-black/80"
             >
               <span>See all pieces</span>
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
