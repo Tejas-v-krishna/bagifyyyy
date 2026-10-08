@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useCartStore } from "@/store/useCartStore";
+import AnimatedWordmark from "@/components/layout/AnimatedWordmark";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
@@ -220,12 +220,9 @@ export default function Header() {
           className="hover:opacity-75 hidden lg:flex items-center lg:absolute lg:left-1/2 lg:-translate-x-1/2 transition-all duration-300 pointer-events-auto"
         >
           <span className="sr-only">BAGIFYYYY Home</span>
-          <Image
-            src="/bagifyyyy-wordmark.webp"
-            alt="BAGIFYYYY Logo"
-            width={640}
-            height={166}
-            className={`h-auto w-[120px] sm:w-[135px] lg:w-[160px] object-contain transition-all duration-300 ${logoFilter}`}
+          <AnimatedWordmark
+            className="w-[120px] sm:w-[135px] lg:w-[160px]"
+            staticClassName={logoFilter}
           />
         </Link>
 
@@ -303,13 +300,7 @@ export default function Header() {
 
           <Link href="/" className="hover:opacity-75 transition-opacity">
             <span className="sr-only">BAGIFYYYY Home</span>
-            <Image
-              src="/bagifyyyy-wordmark.webp"
-              alt="BAGIFYYYY Logo"
-              width={640}
-              height={166}
-              className={`h-auto w-[120px] object-contain transition-all duration-300 ${logoFilter}`}
-            />
+            <AnimatedWordmark className="w-[120px]" staticClassName={logoFilter} />
           </Link>
 
           <div className="flex items-center gap-2">
@@ -350,13 +341,7 @@ export default function Header() {
                    className="fixed inset-y-0 left-0 z-[9999] w-[86vw] max-w-sm sm:w-[70vw] sm:max-w-md bg-[#f5f5f2] text-black border-r border-black/10 flex flex-col lg:hidden h-[100dvh]"
                 >
                   <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-black/[0.08] shrink-0">
-                    <Image
-                      src="/bagifyyyy-wordmark.webp"
-                      alt="BAGIFYYYY Logo"
-                      width={640}
-                      height={166}
-                      className="h-auto w-[110px] sm:w-[120px] object-contain"
-                    />
+                    <AnimatedWordmark className="w-[110px] sm:w-[120px]" />
                     <button
                       type="button"
                       onClick={() => setIsMobileMenuOpen(false)}

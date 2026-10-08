@@ -106,8 +106,8 @@ export default function Footer() {
       <div className="mx-auto w-full max-w-[1800px] px-4 pb-0 pt-9 sm:px-7 sm:pt-14 lg:px-[3.1vw] lg:pt-[3.4vw]">
          <div className="flex items-start justify-between gap-6">
            <h2 className="max-w-none text-[clamp(1.8rem,4.4vw,5.5rem)] font-display font-bold uppercase leading-[0.88] tracking-[-0.03em] text-white">
-             <span className="block lg:whitespace-nowrap">Hear About The Next One</span>
-             <span className="block pl-[clamp(2rem,16vw,14rem)] lg:whitespace-nowrap">Before It Goes Live</span>
+             <span className="block lg:whitespace-nowrap">First To Know</span>
+             <span className="block pl-[clamp(2rem,16vw,14rem)] lg:whitespace-nowrap">Wins</span>
            </h2>
         </div>
 

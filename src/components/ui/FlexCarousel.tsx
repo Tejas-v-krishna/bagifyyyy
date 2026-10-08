@@ -219,6 +219,12 @@ const STYLE = `
 
 const FIT_ASPECT: Record<string, number> = { portrait: 0.75, square: 1, landscape: 4 / 3 };
 const TAPS = 12;
+// Touch gesture thresholds: a phone finger jitters diagonally, so the
+// carousel only captures clearly-horizontal gestures. Anything else is
+// released immediately so vertical page scroll never gets trapped.
+const TOUCH_SLOP = 24;
+const MOUSE_SLOP = 5;
+const TOUCH_DIRECTION_RATIO = 1.4;
 const PIXEL_BUDGET = 4.5e6;
 const INTRO_DURATION: Record<string, number> = { rise: 2.1, bloom: 1.6, spin: 2.2, deal: 1.5, fade: 0.35 };
 
@@ -1190,24 +1196,37 @@ const FlexCarousel = ({
       if (pointer.down && e.pointerId === pointer.id) {
         const dx = x - pointer.startX;
         const dy = y - pointer.startY;
-        const slop = pointer.touch ? 10 : 5;
+        const ax = Math.abs(dx);
+        const ay = Math.abs(dy);
         if (!pointer.dragging) {
-          if (pointer.touch && Math.abs(dy) > slop && Math.abs(dy) > Math.abs(dx)) {
-            pointer.down = false;
+          if (pointer.touch) {
+            // Vertical (or undecided) gesture: hand it back to the page so
+            // scrolling up/down never gets stuck inside the carousel.
+            if (ay > TOUCH_SLOP && ay >= ax) {
+              pointer.down = false;
+              return;
+            }
+            // Only capture when the gesture is clearly horizontal.
+            if (ax <= TOUCH_SLOP || ax <= ay * TOUCH_DIRECTION_RATIO) {
+              dirty = true;
+              start();
+              return;
+            }
+          } else if (ax <= MOUSE_SLOP) {
+            dirty = true;
+            start();
             return;
           }
-          if (Math.abs(dx) > slop) {
+          pointer.dragging = true;
+          pointer.startX = x;
+          pointer.startPos = pos;
+          closeFocus();
+          try {
+            container.setPointerCapture(e.pointerId);
+          } catch {
             pointer.dragging = true;
-            pointer.startX = x;
-            pointer.startPos = pos;
-            closeFocus();
-            try {
-              container.setPointerCapture(e.pointerId);
-            } catch {
-              pointer.dragging = true;
-            }
-            container.setAttribute('data-dragging', '');
           }
+          container.setAttribute('data-dragging', '');
         }
         if (pointer.dragging) {
           pos = pointer.startPos - (x - pointer.startX);

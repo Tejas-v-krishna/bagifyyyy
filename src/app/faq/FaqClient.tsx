@@ -13,15 +13,15 @@ export const FAQ_FALLBACK: FaqCategory[] = [
     items: [
       {
         q: "How do I track my shipment?",
-        a: "You can track your order live using our Track Shipment page (/track) by entering your order number (e.g. 1001) or Airway Bill ID. Real-time updates are also dispatched via SMS and Email.",
+        a: "Enter your order number on the Track page — you'll also get SMS and email updates along the way.",
       },
       {
         q: "What are your delivery timelines?",
-        a: "Orders are dispatched within 24–48 hours. Standard delivery across India takes 3–5 business days, while Express Air takes 1–3 business days.",
+        a: "We ship in 24–48 hours. Standard delivery takes 3–5 business days across India, Express Air takes 1–3.",
       },
       {
         q: "Do you ship internationally?",
-        a: "Yes. International courier transit takes 7–14 business days. Duties and local import charges are calculated based on your jurisdiction.",
+        a: "Yes — 7–14 business days. Any duties at your end are on you.",
       },
     ],
   },
@@ -30,11 +30,11 @@ export const FAQ_FALLBACK: FaqCategory[] = [
     items: [
       {
         q: "Are the vintage pieces authentic?",
-        a: "Yes. Vintage pieces are checked for age, labels, construction, hardware, and condition before they are listed.",
+        a: "Yes. Every vintage piece gets checked — age, labels, stitching, hardware — before it goes live.",
       },
       {
         q: "How does sizing work?",
-        a: "Most tops have a relaxed, slightly dropped shoulder. Use the Size Guide on the product page and compare the measurements with a piece you already own.",
+        a: "Most tops fit relaxed with a slightly dropped shoulder. Compare the Size Guide measurements with something you already own.",
       },
     ],
   },
@@ -43,11 +43,11 @@ export const FAQ_FALLBACK: FaqCategory[] = [
     items: [
       {
         q: "What is your return policy?",
-        a: "All sales are final because many pieces are one-off vintage or small-run items. Check the measurements and photos before ordering.",
+        a: "All sales are final — most pieces are one of one, so there's nothing to swap it with. Check measurements and photos first.",
       },
       {
         q: "What payment methods are supported?",
-        a: "We accept UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, and Net Banking via Razorpay. All payments are online and secured.",
+        a: "UPI, cards and netbanking via Razorpay. Everything's prepaid and secure.",
       },
     ],
   },

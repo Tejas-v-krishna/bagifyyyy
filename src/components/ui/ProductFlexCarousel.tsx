@@ -37,7 +37,9 @@ export default function ProductFlexCarousel({ products }: { products: ProductFle
 
   return (
     <div className="w-full">
-    <div style={{ width: '100%', height: '740px', position: 'relative', overflow: 'hidden' }}>
+    {/* Height steps down on phones so the carousel never fills the whole
+        screen and traps the page scroll behind a single touch target. */}
+    <div className="relative h-[540px] w-full overflow-hidden sm:h-[660px] lg:h-[740px]">
       <FlexCarousel
         items={items}
         preset="liquid"

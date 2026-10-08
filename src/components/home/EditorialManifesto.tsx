@@ -30,7 +30,7 @@ const PINS_DATA: GarmentPin[] = [
       { label: "WEAVE", value: "RAW POPLIN" },
       { label: "FIT", value: "RELAXED" },
     ],
-    desc: "Boxy button-down with dropped shoulders, a raw hem, and reinforced bar tacks at the stress points.",
+    desc: "Boxy, dropped shoulders, raw hem. Bar tacks where it usually rips first.",
     provenance: "FW26 // SMALL RUN",
     top: "22%",
     left: "48%",
@@ -48,7 +48,7 @@ const PINS_DATA: GarmentPin[] = [
       { label: "FINISH", value: "MIRROR CHROME" },
       { label: "GAUGE", value: "HEAVY 8MM" },
     ],
-    desc: "Solid chrome wallet chain with heavy links and an industrial carabiner clasp. It keeps its weight when you move.",
+    desc: "Heavy links, industrial clasp. You'll feel it when you walk.",
     provenance: "BAGIFYYYY HARDWARE",
     top: "42%",
     left: "52%",
@@ -66,7 +66,7 @@ const PINS_DATA: GarmentPin[] = [
       { label: "SHADE", value: "FADED INDIGO" },
       { label: "TINT", value: "MUD PATINA" },
     ],
-    desc: "Whisker fading across the knee and thigh. Each pair gets its own stone wash, so no two fades land exactly alike.",
+    desc: "Whiskers at the knee and thigh. Stone-washed one pair at a time, so no two fades match.",
     provenance: "HAND-FINISHED",
     top: "54%",
     left: "60%",
@@ -84,7 +84,7 @@ const PINS_DATA: GarmentPin[] = [
       { label: "COTTON", value: "100% RING-SPUN" },
       { label: "LEG", value: "STACKED PUDDLE" },
     ],
-    desc: "Extra-wide legs with enough structure to stack over boots and platform soles.",
+    desc: "Extra-wide with enough backbone to stack over boots.",
     provenance: "TOKYO PATTERN STUDY",
     top: "65%",
     left: "38%",
@@ -182,11 +182,12 @@ export default function EditorialManifesto({
                 onMouseEnter={() => setHoveredPin(pin.id)}
                 onMouseLeave={() => setHoveredPin(null)}
               >
-                {/* ── Reticle Target Button (Hover-only trigger) ── */}
+                {/* Numbered tag button (hover on desktop, tap on touch) */}
                 <button
                   type="button"
                   aria-expanded={isOpen}
                   aria-label={pin.title}
+                  onClick={() => setHoveredPin(isOpen ? null : pin.id)}
                   className="relative flex items-center gap-2 cursor-pointer focus:outline-none p-2 group"
                 >
                   {/* Optical Reticle Container */}
@@ -198,48 +199,27 @@ export default function EditorialManifesto({
                       }`}
                     />
 
-                    {/* Rotating Dashed Outer Viewfinder Ring */}
+                    {/* Number dot with soft pulse */}
                     <div
-                      className={`absolute inset-0 rounded-full border border-dashed transition-all duration-500 ${
+                      className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300 ${
                         isOpen
-                          ? "border-white rotate-90 scale-110"
-                          : "border-white/35 group-hover:border-white/70 group-hover:rotate-45"
+                          ? "bg-black text-white border border-white scale-110"
+                          : "bg-white text-black group-hover:scale-110"
                       }`}
-                    />
-
-                    {/* Corner Micro-Ticks (Crosshair effect) */}
-                    <div className="absolute inset-1 pointer-events-none">
-                      <span className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-1 bg-white/70" />
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-1 bg-white/70" />
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-[1px] w-1 bg-white/70" />
-                      <span className="absolute right-0 top-1/2 -translate-y-1/2 h-[1px] w-1 bg-white/70" />
+                    >
+                      {pin.num}
                     </div>
-
-                    {/* Central Glowing Core Pulse */}
-                    <div
-                      className={`rounded-full transition-all duration-300 ${
-                        isOpen
-                          ? "w-2.5 h-2.5 bg-white shadow-[0_0_16px_rgba(255,255,255,1)] scale-125"
-                          : "w-1.5 h-1.5 bg-white/90 group-hover:scale-125 group-hover:bg-white"
-                      }`}
-                    />
                   </div>
 
                   {/* Micro Coordinate Pill Tag (Avant Garde font) */}
                   <div
-                    className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 ${
+                    className={`flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 ${
                       isOpen
-                        ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.3)] translate-x-0.5"
-                        : "bg-black/75 text-white/90 border-white/25 group-hover:border-white/60 group-hover:text-white"
+                        ? "bg-black text-white border-white/70"
+                        : "bg-white/95 text-black border-black/10"
                     }`}
                   >
-                    <span
-                      className="text-[9.5px] font-bold tracking-wider"
-                      style={{ fontFamily: '"ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
-                    >
-                      {pin.num}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-current opacity-60" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-50" />
                     <span
                       className="text-[10px] uppercase tracking-wider font-semibold whitespace-nowrap"
                       style={{ fontFamily: '"ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}

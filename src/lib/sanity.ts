@@ -49,6 +49,9 @@ export function sanityImageUrl(source: SanityImage, width = 1600): string | null
 export type HeroContent = {
   image?: SanityImage;
   alt?: string;
+  eyebrow?: string;
+  headline?: string;
+  subline?: string;
   ctaLabel?: string;
   ctaHref?: string;
 };
@@ -104,7 +107,7 @@ async function fetchSanity<T>(query: string, tag: string): Promise<T | null> {
 
 export const getHeroContent = () =>
   fetchSanity<HeroContent>(
-    `*[_type == "hero"][0]{ image, alt, ctaLabel, ctaHref }`,
+    `*[_type == "hero"][0]{ image, alt, eyebrow, headline, subline, ctaLabel, ctaHref }`,
     "sanity:hero"
   );
 

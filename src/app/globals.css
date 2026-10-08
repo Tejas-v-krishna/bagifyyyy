@@ -869,3 +869,17 @@ html.lenis body {
   animation: portalCardEntrance 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
   will-change: transform, opacity, filter;
 }
+/* (video wordmark mask below) */
+/* Header/preloader video wordmark: the loop has an opaque black
+   background, so it is keyed through the static logo silhouette via mask.
+   Only logo-shaped pixels ever paint — no box, on any background. */
+.wordmark-video-mask {
+  -webkit-mask-image: url('/bagifyyyy-wordmark.webp');
+  mask-image: url('/bagifyyyy-wordmark.webp');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
