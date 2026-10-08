@@ -4,7 +4,7 @@ import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { attachReservedFlags, availableProductWhere } from "@/lib/products";
 import { getHeroContent, getTickerContent, getManifestoContent, sanityImageUrl } from "@/lib/sanity";
-import NewInMarquee from "@/components/ui/NewInMarquee";
+import ShowcaseCard from "@/components/product/ShowcaseCard";
 import EditorialManifesto from "@/components/home/EditorialManifesto";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
@@ -232,19 +232,24 @@ export default async function Home() {
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
           </div>
-          <NewInMarquee
-            items={newArrivalsFlagged.map((p) => ({
-              id: p.id,
-              name: p.name,
-              price: p.price,
-              image: p.images[0]?.url || '/placeholder.jpg',
-              isNew: p.isNew,
-              isSoldOut: p.isSoldOut,
-              reserved: p.reserved,
-              sizes: Array.from(new Set(p.variants.map((v) => v.size))),
-              colors: Array.from(new Set(p.variants.map((v) => v.color))),
-            }))}
-          />
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-6">
+            {newArrivalsFlagged.slice(0, 8).map((p) => (
+              <ShowcaseCard
+                key={p.id}
+                product={{
+                  id: p.id,
+                  name: p.name,
+                  price: p.price,
+                  images: p.images.map((img) => img.url),
+                  isNew: p.isNew,
+                  isSoldOut: p.isSoldOut,
+                  reserved: p.reserved,
+                  sizes: Array.from(new Set(p.variants.map((v) => v.size))),
+                  colors: Array.from(new Set(p.variants.map((v) => v.color))),
+                }}
+              />
+            ))}
+          </div>
           <Link
             href="/new-arrivals"
             className="mt-4 mx-1 h-12 sm:hidden flex items-center justify-center gap-2 rounded-[15px] text-[12px] font-semibold uppercase tracking-[0.12em] bg-[#111111] text-white active:bg-black/80"
@@ -350,7 +355,8 @@ export default async function Home() {
           id: product.id,
           name: product.name,
           price: product.price,
-          image: product.images[0]?.url || "/placeholder.jpg",
+          images: product.images.map((img) => img.url),
+          isNew: product.isNew,
           isSoldOut: product.isSoldOut,
           reserved: product.reserved,
           sizes: Array.from(new Set(product.variants.map((v) => v.size))),

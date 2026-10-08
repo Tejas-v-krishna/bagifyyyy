@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import ProductFlexCarousel from "@/components/ui/ProductFlexCarousel";
+import ShowcaseCard from "@/components/product/ShowcaseCard";
 
 export type VintageArchiveItem = {
   id: string;
   name: string;
   price: number;
-  image: string;
+  images: string[];
+  isNew?: boolean;
   isSoldOut: boolean;
   reserved?: boolean;
   sizes?: string[];
@@ -15,13 +16,6 @@ export type VintageArchiveItem = {
 
 export default function VintageArchiveSection({ items }: { items: VintageArchiveItem[] }) {
   if (!items.length) return null;
-
-  const products = items.map((item) => ({
-    id: item.id,
-    name: item.name,
-    price: item.price,
-    image: item.image || "/placeholder.jpg",
-  }));
 
   return (
     <section className="curated-grails-dark w-full bg-[#151518] text-white" data-nav-theme="dark">
@@ -46,8 +40,25 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
           </div>
-          <div className="text-white [&_span]:!text-white">
-            <ProductFlexCarousel products={products} />
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 px-2 sm:grid-cols-3 sm:gap-x-5 sm:px-4 md:px-6 lg:grid-cols-4 lg:gap-x-6">
+            {items.slice(0, 8).map((item) => (
+              <ShowcaseCard
+                key={item.id}
+                tone="dark"
+                product={{
+                  id: item.id,
+                  name: item.name,
+                  price: item.price,
+                  images: item.images,
+                  isNew: item.isNew,
+                  isSoldOut: item.isSoldOut,
+                  reserved: item.reserved,
+                  sizes: item.sizes,
+                  colors: item.colors,
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>
