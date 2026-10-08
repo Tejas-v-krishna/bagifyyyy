@@ -308,8 +308,8 @@ export default function StudioNewProduct() {
               )}
             </div>
 
-            {/* Large Interactive Main Image Viewer */}
-            <div className="w-full aspect-[3/4] sm:aspect-[4/5] relative bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden group">
+            {/* Large Interactive Main Image Viewer — fixed 3:4, never crops */}
+            <div className="w-full aspect-[3/4] relative bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden group">
               {activeImgUrl ? (
                 <>
                   <Image
@@ -318,7 +318,7 @@ export default function StudioNewProduct() {
                     fill
                     loader={({ src }) => src}
                     unoptimized
-                    className="w-full h-full object-cover select-none"
+                    className="w-full h-full object-contain select-none"
                   />
 
                   {/* Previous / Next Arrow Controls */}
@@ -380,7 +380,7 @@ export default function StudioNewProduct() {
                       <div
                         key={idx}
                         onClick={() => setActiveImageIndex(idx)}
-                        className={`relative aspect-square border cursor-pointer transition-all overflow-hidden group/item ${
+                        className={`relative aspect-[3/4] border cursor-pointer transition-all overflow-hidden group/item ${
                           isSelected
                             ? "border-y2k-gunmetal ring-2 ring-y2k-gunmetal bg-white shadow-sm"
                             : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
@@ -392,7 +392,7 @@ export default function StudioNewProduct() {
                           fill
                           loader={({ src }) => src}
                           unoptimized
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
 
                         {/* Delete Thumbnail Button */}

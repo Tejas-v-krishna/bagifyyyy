@@ -554,8 +554,8 @@ export default function StudioEditProduct() {
                 )}
               </div>
 
-              {/* Large Interactive Main Image Viewer */}
-              <div className="w-full aspect-[3/4] sm:aspect-[4/5] relative bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden group">
+              {/* Large Interactive Main Image Viewer — fixed 3:4, never crops */}
+              <div className="w-full aspect-[3/4] relative bg-y2k-ice border border-y2k-gunmetal/15 overflow-hidden group">
                 {activeImgUrl ? (
                   <>
                      <Image
@@ -564,7 +564,7 @@ export default function StudioEditProduct() {
                        fill
                        loader={passthroughLoader}
                        unoptimized
-                       className="w-full h-full object-cover select-none"
+                       className="w-full h-full object-contain select-none"
                     />
 
                     {/* Previous / Next Arrow Controls */}
@@ -626,7 +626,7 @@ export default function StudioEditProduct() {
                         <div
                           key={img.id}
                           onClick={() => setActiveImageIndex(idx)}
-                          className={`relative aspect-square border cursor-pointer transition-all overflow-hidden group/item ${
+                          className={`relative aspect-[3/4] border cursor-pointer transition-all overflow-hidden group/item ${
                             isSelected
                               ? "border-y2k-gunmetal ring-2 ring-y2k-gunmetal bg-white shadow-sm"
                               : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
@@ -638,7 +638,7 @@ export default function StudioEditProduct() {
                             fill
                             loader={passthroughLoader}
                             unoptimized
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
 
                           {/* Delete Image Overlay Button */}
@@ -992,7 +992,7 @@ export default function StudioEditProduct() {
 
               {/* Center: Image Showcase */}
               <div className="flex flex-col items-center order-1 lg:order-2">
-                <div className="w-full aspect-[3/4] md:aspect-[4/5] relative bg-[#FAFAFA] border border-y2k-gunmetal/10 overflow-hidden group">
+                <div className="w-full aspect-[3/4] relative bg-[#FAFAFA] border border-y2k-gunmetal/10 overflow-hidden group">
                   {images.length > 0 ? (
                     <>
                        <Image
@@ -1001,7 +1001,7 @@ export default function StudioEditProduct() {
                          fill
                          loader={passthroughLoader}
                          unoptimized
-                         className="w-full h-full object-cover"
+                         className="w-full h-full object-contain"
                       />
 
                       {images.length > 1 && (
