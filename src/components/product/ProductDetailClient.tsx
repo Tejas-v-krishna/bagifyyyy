@@ -292,10 +292,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
           <aside className="min-w-0 lg:sticky lg:top-24">
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-black/45">
-              {categoryLabel(product.category)}
-              {product.brand ? ` — ${product.brand}` : ""}
-            </p>
             <h1 className="mt-2 text-[30px] sm:text-[36px] font-bold leading-[1.02] tracking-[-0.02em] text-y2k-gunmetal uppercase">
               {product.name}
             </h1>
@@ -327,9 +323,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 </p>
               )}
             </div>
-            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-y2k-gunmetal/50">
-              One-of-one piece · sold as shown
-            </p>
 
             {/* Hold signal */}
             {isReservedInCheckout && !product.isSoldOut && (
@@ -386,11 +379,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     );
                   })}
                 </div>
-                {selectedVariant && selectedVariant.stock > 0 && selectedVariant.stock <= 5 && (
-                  <p className="mt-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">
-                    Only {selectedVariant.stock} left in this size
-                  </p>
-                )}
               </div>
             )}
 
@@ -526,9 +514,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         {product.relatedProducts && product.relatedProducts.length > 0 && (
           <div className="mt-20 lg:mt-28">
             <div className="mb-8">
-              <p className="text-[9px] uppercase tracking-[0.22em] text-y2k-gunmetal/40 font-semibold mb-1">
-                 MORE PIECES
-              </p>
               <h2 className="text-[22px] sm:text-[26px] font-bold tracking-[-0.02em] text-y2k-gunmetal uppercase">
                  YOU MIGHT LIKE
               </h2>

@@ -150,17 +150,8 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
       style={{ userSelect: "none", WebkitUserSelect: "none" }}
       aria-label="Recently viewed products"
     >
-      {/* Header with Title and Scroll Arrows */}
-      <div className="flex items-center justify-between mb-6 sm:mb-8">
-        <div>
-          <h2 className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-black/50">
-            RECENTLY VIEWED
-          </h2>
-          <p className="text-[10px] uppercase tracking-[0.14em] text-black/35 mt-1 font-mono">
-            {recentProducts.length} {recentProducts.length === 1 ? "PIECE" : "PIECES"}
-          </p>
-        </div>
-
+      {/* Header with Scroll Arrows */}
+      <div className="flex items-center justify-end mb-6 sm:mb-8">
         {/* Prev / Next Scroll Buttons */}
         <div className="flex items-center gap-2">
           <button

@@ -25,9 +25,6 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
         <div className="mx-auto w-full max-w-[1700px]">
           <div className="mb-6 flex items-end justify-between px-2 sm:px-4 md:px-6">
             <div className="flex flex-col gap-1">
-              <span className="font-sans text-[11px] sm:text-[12px] tracking-[0.14em] font-medium text-white/50">
-                Hard-to-find pieces
-              </span>
               <h2 className="font-display uppercase text-[20px] sm:text-[26px] md:text-[32px] font-bold tracking-[-0.03em] leading-none text-white">
                 The good stuff
               </h2>
