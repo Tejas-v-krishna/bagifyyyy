@@ -131,7 +131,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
   };
 
   return (
-    <section className="mt-16 sm:mt-20 border-t border-black/10 pt-10 sm:pt-12">
+    <section id="reviews" className="mt-16 sm:mt-20 border-t border-black/10 pt-10 sm:pt-12 scroll-mt-24">
       {/* Editorial header — matches product page / checkout typography */}
       <div className="flex items-start justify-between gap-6 mb-8 sm:mb-10">
         <div>
