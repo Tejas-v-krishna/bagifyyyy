@@ -107,6 +107,11 @@ export default function StudioEditProduct() {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const [deletingImageId, setDeletingImageId] = useState<string | null>(null);
+  const dragFromRef = useRef<number | null>(null);
+  const suppressClickRef = useRef(false);
+  const saveTimerRef = useRef<number | null>(null);
+  const [dropTarget, setDropTarget] = useState<number | null>(null);
+  const [orderSaving, setOrderSaving] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   // Preview interactive state
@@ -269,6 +274,42 @@ export default function StudioEditProduct() {
     } finally {
       setUploadingFiles(false);
     }
+  };
+
+  // Thumbnail arrange: reorder locally, then persist positions (debounced).
+  // The array order is the display order — position 0 is the cover photo.
+  const schedulePersist = (ordered: ProductImage[]) => {
+    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    setOrderSaving(true);
+    saveTimerRef.current = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/admin/products/${id}/images`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order: ordered.map((img) => img.id) }),
+        });
+        if (!res.ok) throw new Error();
+      } catch {
+        alert("Could not save photo order. Please try again.");
+      } finally {
+        setOrderSaving(false);
+      }
+    }, 800);
+  };
+
+  const moveImage = (from: number, to: number) => {
+    if (from === to || from < 0 || to < 0 || from >= images.length || to >= images.length) return;
+    const next = [...images];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    setImages(next);
+    setActiveImageIndex((prev) => {
+      if (prev === from) return to;
+      if (from < prev && prev <= to) return prev - 1;
+      if (to <= prev && prev < from) return prev + 1;
+      return prev;
+    });
+    schedulePersist(next);
   };
 
   const handleDeleteImage = async (imageId: string) => {
@@ -615,8 +656,13 @@ export default function StudioEditProduct() {
                 <div className="w-full mt-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate">
-                      Click any thumbnail to preview or manage:
+                      Drag, use arrows, or click to preview:
                     </span>
+                    {orderSaving && (
+                      <span className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate/70">
+                        Saving order…
+                      </span>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-4 sm:grid-cols-5 gap-2.5">
@@ -625,12 +671,43 @@ export default function StudioEditProduct() {
                       return (
                         <div
                           key={img.id}
-                          onClick={() => setActiveImageIndex(idx)}
-                          className={`relative aspect-[3/4] border cursor-pointer transition-all overflow-hidden group/item ${
+                          draggable
+                          onDragStart={(e) => {
+                            dragFromRef.current = idx;
+                            e.dataTransfer.effectAllowed = "move";
+                          }}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDropTarget(idx);
+                          }}
+                          onDragLeave={() => setDropTarget((t) => (t === idx ? null : t))}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            const from = dragFromRef.current;
+                            dragFromRef.current = null;
+                            setDropTarget(null);
+                            if (from !== null && from !== idx) {
+                              suppressClickRef.current = true;
+                              moveImage(from, idx);
+                            }
+                          }}
+                          onDragEnd={() => {
+                            dragFromRef.current = null;
+                            setDropTarget(null);
+                          }}
+                          onClick={() => {
+                            if (suppressClickRef.current) {
+                              suppressClickRef.current = false;
+                              return;
+                            }
+                            setActiveImageIndex(idx);
+                          }}
+                          title="Drag to rearrange · click to preview"
+                          className={`relative aspect-[3/4] border cursor-grab active:cursor-grabbing transition-all overflow-hidden group/item ${
                             isSelected
                               ? "border-y2k-gunmetal ring-2 ring-y2k-gunmetal bg-white shadow-sm"
                               : "border-y2k-gunmetal/10 opacity-75 hover:opacity-100 hover:border-y2k-gunmetal"
-                          }`}
+                          } ${dropTarget === idx ? "ring-2 ring-y2k-slate" : ""}`}
                         >
                           <Image
                             src={img.url}
@@ -638,8 +715,38 @@ export default function StudioEditProduct() {
                             fill
                             loader={passthroughLoader}
                             unoptimized
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain pointer-events-none"
                           />
+
+                          {/* Arrange arrows */}
+                          <div className="absolute bottom-1 right-1 flex gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                moveImage(idx, idx - 1);
+                              }}
+                              className="w-6 h-6 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black disabled:opacity-30 cursor-pointer"
+                              title="Move left"
+                              aria-label={`Move photo ${idx + 1} left`}
+                            >
+                              <ChevronLeft className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === images.length - 1}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                moveImage(idx, idx + 1);
+                              }}
+                              className="w-6 h-6 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black disabled:opacity-30 cursor-pointer"
+                              title="Move right"
+                              aria-label={`Move photo ${idx + 1} right`}
+                            >
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
 
                           {/* Delete Image Overlay Button */}
                           <button

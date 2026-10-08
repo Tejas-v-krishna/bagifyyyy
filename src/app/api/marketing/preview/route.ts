@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     if (productIds && productIds.length > 0) {
       const dbProducts = await prisma.product.findMany({
         where: { id: { in: productIds } },
-        include: { images: true },
+        include: { images: { orderBy: { position: 'asc' } } },
       });
 
       products = dbProducts.map((p) => ({
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     if (products.length === 0) {
       const defaultProducts = await prisma.product.findMany({
         take: 4,
-        include: { images: true },
+        include: { images: { orderBy: { position: 'asc' } } },
         orderBy: { createdAt: 'desc' },
       });
 

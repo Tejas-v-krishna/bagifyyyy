@@ -30,7 +30,7 @@ export async function queryBundles(): Promise<Bundle[]> {
         products: {
           include: {
             product: {
-              include: { images: { take: 1 }, variants: true },
+              include: { images: { take: 1, orderBy: { position: 'asc' } }, variants: true },
             },
           },
         },

@@ -102,7 +102,7 @@ export async function PATCH(
       const url = image.trim();
       const existingImages = await prisma.image.findMany({
         where: { productId: id },
-        orderBy: { id: 'asc' },
+        orderBy: { position: 'asc' },
         take: 1,
       });
 

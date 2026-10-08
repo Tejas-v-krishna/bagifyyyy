@@ -24,7 +24,7 @@ export async function GET(request: Request) {
           { description: { contains: q } },
         ],
       },
-      include: { images: { take: 1 } },
+      include: { images: { take: 1, orderBy: { position: 'asc' } } },
       take: 8,
       orderBy: { createdAt: 'desc' },
     });

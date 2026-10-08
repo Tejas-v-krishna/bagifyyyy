@@ -116,7 +116,7 @@ export async function queryProducts({
       orderBy: filter === 'grails' || filter === 'curated' ? { price: 'desc' } : { createdAt: 'desc' },
       take,
       include: {
-        images: true,
+        images: { orderBy: { position: 'asc' } },
         variants: true,
       },
     });
@@ -129,7 +129,7 @@ export async function queryProducts({
         orderBy: filter === 'grails' || filter === 'curated' ? { price: 'desc' } : { createdAt: 'desc' },
         take: 30,
         include: {
-          images: true,
+          images: { orderBy: { position: 'asc' } },
           variants: true,
         },
       });

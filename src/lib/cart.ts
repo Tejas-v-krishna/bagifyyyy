@@ -106,7 +106,7 @@ export async function priceCart(options: {
 
     const product = await prisma.product.findUnique({
       where: { id: productId },
-      include: { images: true, variants: true },
+      include: { images: { orderBy: { position: 'asc' } }, variants: true },
     });
 
     if (!product) {

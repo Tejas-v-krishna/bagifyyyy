@@ -70,7 +70,7 @@ export async function getProductForDisplay(
   const product = await prisma.product.findUnique({
     where: { id },
     include: {
-      images: true,
+      images: { orderBy: { position: 'asc' } },
       variants: true,
     },
   });
@@ -94,7 +94,7 @@ export async function getProductForDisplay(
         id: { not: product.id },
       },
       take: 4,
-      include: { images: true },
+      include: { images: { orderBy: { position: 'asc' } } },
     }),
     prisma.review.aggregate({
       where: { productId: id },

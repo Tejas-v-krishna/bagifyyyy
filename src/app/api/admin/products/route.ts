@@ -11,7 +11,7 @@ export async function GET() {
   try {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' },
-      include: { images: true, variants: true },
+      include: { images: { orderBy: { position: 'asc' } }, variants: true },
     });
     return NextResponse.json(products);
   } catch (error) {
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
         isBestSeller: Boolean(isBestSeller),
         brand: typeof collectionTag === 'string' && collectionTag.trim() ? collectionTag.trim() : "BAGIFYYYY",
         images: {
-          create: [{ url: image.trim() }]
+          create: [{ url: image.trim(), position: 0 }]
         },
         variants: {
           create: [

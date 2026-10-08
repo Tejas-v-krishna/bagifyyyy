@@ -14,7 +14,7 @@ export async function GET() {
           include: {
             product: {
               include: {
-                images: { take: 1 },
+                images: { take: 1, orderBy: { position: 'asc' } },
               },
             },
           },
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
         products: {
           include: {
             product: {
-              include: { images: { take: 1 } },
+              include: { images: { take: 1, orderBy: { position: 'asc' } } },
             },
           },
         },
