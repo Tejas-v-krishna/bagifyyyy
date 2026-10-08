@@ -190,43 +190,31 @@ export default function EditorialManifesto({
                   onClick={() => setHoveredPin(isOpen ? null : pin.id)}
                   className="relative flex items-center gap-2 cursor-pointer focus:outline-none p-2 group"
                 >
-                  {/* Optical Reticle Container */}
-                  <div className="relative w-8 h-8 flex items-center justify-center">
-                    {/* Continuous Expanding Radar Ring */}
-                    <span
-                      className={`absolute inset-0 rounded-full border border-white/40 transition-all duration-700 ${
-                        isOpen ? "scale-150 opacity-0" : "animate-ping opacity-60"
-                      }`}
-                    />
-
-                    {/* Number dot with soft pulse */}
-                    <div
-                      className={`relative flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold transition-all duration-300 ${
-                        isOpen
-                          ? "bg-black text-white border border-white scale-110"
-                          : "bg-white text-black group-hover:scale-110"
-                      }`}
-                    >
-                      {pin.num}
-                    </div>
-                  </div>
-
-                  {/* Micro Coordinate Pill Tag (Avant Garde font) */}
-                  <div
-                    className={`flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 ${
+                  {/* Unified swing-tag: number + title + expand cue in one pill */}
+                  <span
+                    className={`flex items-center gap-2 rounded-full border backdrop-blur-md pl-2.5 pr-3 py-1.5 transition-all duration-300 ${
                       isOpen
-                        ? "bg-black text-white border-white/70"
-                        : "bg-white/95 text-black border-black/10"
+                        ? "bg-white text-black border-white"
+                        : "bg-black/85 text-white border-white/25 group-hover:border-white/60"
                     }`}
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-50" />
+                    <span
+                      className="text-[11px] font-bold tracking-wider"
+                      style={{ fontFamily: '"ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+                    >
+                      {pin.num}
+                    </span>
+                    <span className="h-3 w-px bg-current opacity-30" />
                     <span
                       className="text-[10px] uppercase tracking-wider font-semibold whitespace-nowrap"
                       style={{ fontFamily: '"ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
                     >
                       {pin.title}
                     </span>
-                  </div>
+                    <span className={`text-[13px] font-medium leading-none transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}>
+                      +
+                    </span>
+                  </span>
                 </button>
 
                 {/* ── Editorial Spec Card (Compact Luxury Swing-Tag) ── */}
@@ -249,37 +237,38 @@ export default function EditorialManifesto({
                   <div
                     className={`hidden sm:block absolute top-4 h-[1px] bg-gradient-to-r ${
                       pin.side === "right"
-                        ? "-left-3 w-3 from-white/40 to-transparent"
-                        : "-right-3 w-3 from-transparent to-white/40"
+                        ? "-left-3 w-3 from-black/30 to-transparent"
+                        : "-right-3 w-3 from-transparent to-black/30"
                     }`}
                   />
 
-                  {/* Clean Spec Box Container */}
-                  <div className="relative bg-[#1e1e22]/95 border border-white/15 rounded-[0.4rem] p-3 sm:p-3.5 shadow-[0_16px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl text-left">
-                    {/* Header: Title + Minimal Spec Badge */}
+                  {/* White editorial spec card */}
+                  <div className="relative bg-white text-black rounded-[0.4rem] p-4 sm:p-4 shadow-[0_16px_36px_rgba(0,0,0,0.55)] text-left">
                     <div className="flex items-center justify-between gap-2">
-                      <h3
-                        className="font-sans font-bold text-[12.5px] text-white uppercase tracking-wider leading-tight"
-                        style={{ fontFamily: '"ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
-                      >
-                        {pin.title}
-                      </h3>
-                      <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-white/40 border border-white/10 px-1.5 py-0.5 rounded-full bg-white/[0.04] shrink-0">
-                         {pin.num} {"//"} FW26
+                      <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-black/45 border border-black/15 px-1.5 py-0.5 rounded-full shrink-0">
+                        {pin.num} {"//"} FW26
+                      </span>
+                      <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-black/45 truncate">
+                        {pin.provenance}
                       </span>
                     </div>
-
-                    {/* Subtitle / Key Cut */}
-                    <p className="font-sans text-[10.5px] text-white/55 tracking-wide mt-1">
+                    <h3
+                      className="font-bold text-[15px] text-black uppercase tracking-wider leading-tight mt-2"
+                      style={{ fontFamily: '"ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+                    >
+                      {pin.title}
+                    </h3>
+                    <p className="text-[11px] text-black/55 tracking-wide mt-0.5">
                       {pin.subtitle}
                     </p>
-
-                    {/* Minimal Inline Spec Row */}
-                    <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between gap-1 text-[8.5px] font-mono text-white/60 uppercase tracking-wide">
-                      {pin.specs.map((spec, i) => (
-                        <span key={i} className="flex items-center gap-1 truncate">
-                          {i > 0 && <span className="text-white/20 select-none">·</span>}
-                          <span className="text-white/90 font-medium">{spec.value}</span>
+                    <p className="text-[12.5px] leading-snug text-black/80 mt-2">
+                      {pin.desc}
+                    </p>
+                    <div className="mt-3 pt-2.5 border-t border-black/10 grid grid-cols-3 gap-2">
+                      {pin.specs.map((spec) => (
+                        <span key={spec.label} className="flex flex-col min-w-0">
+                          <span className="text-[8px] font-mono uppercase tracking-[0.12em] text-black/40">{spec.label}</span>
+                          <span className="text-[10px] font-medium text-black uppercase tracking-wide truncate">{spec.value}</span>
                         </span>
                       ))}
                     </div>
