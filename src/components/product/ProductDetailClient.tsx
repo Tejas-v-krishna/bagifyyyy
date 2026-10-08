@@ -188,7 +188,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           {/* ── LEFT: Gallery ─────────────────────────────────────────────── */}
           <div className="min-w-0">
             <div
-              className="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-[#F2F2F2] overflow-hidden touch-pan-y select-none rounded-[15px]"
+              className="relative h-[58vh] w-full overflow-hidden rounded-[15px] bg-[#F2F2F2] touch-pan-y select-none sm:h-[64vh] lg:h-[74vh]"
               onTouchStart={(e) => {
                 touchStartX.current = e.touches[0]?.clientX ?? null;
               }}
@@ -256,56 +256,38 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   >
                     <ChevronRight className="w-5 h-5" aria-hidden="true" />
                   </button>
-                  {/* Counter + dots */}
-                  <div className="absolute bottom-3 inset-x-0 z-10 flex flex-col items-center gap-2 pointer-events-none">
-                    <span className="text-[10px] font-mono tracking-[0.14em] text-black/70 bg-white/85 backdrop-blur px-2.5 py-1 rounded-full border border-black/10">
-                      {activeImageIndex + 1} / {productImages.length}
-                    </span>
-                    <div className="flex items-center gap-1.5 pointer-events-auto">
-                      {productImages.map((_, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => goToImage(idx)}
-                          aria-label={`View image ${idx + 1}`}
-                          className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                            activeImageIndex === idx ? "w-6 bg-black" : "w-1.5 bg-black/25 hover:bg-black/50"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  {/* Counter - docked top-right, clear of the thumbnails */}
+                  <span className="absolute right-3 top-3 z-10 text-[10px] font-mono tracking-[0.14em] text-black/70 bg-white/85 backdrop-blur px-2.5 py-1 rounded-full border border-black/10">
+                    {activeImageIndex + 1} / {productImages.length}
+                  </span>
                 </>
               )}
             </div>
-
-            {/* Thumbnail strip */}
-            {productImages.length > 1 && (
-              <div className="mt-3 flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-                {productImages.map((img, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setActiveImageIndex(idx)}
-                    aria-label={`View image ${idx + 1}`}
-                    aria-pressed={activeImageIndex === idx}
-                    className={`relative h-20 w-16 shrink-0 overflow-hidden rounded-[10px] bg-[#F2F2F2] transition-all cursor-pointer ${
-                      activeImageIndex === idx
-                        ? "ring-2 ring-black ring-offset-2 ring-offset-white"
-                        : "opacity-55 hover:opacity-100"
-                    }`}
-                  >
-                    <Image
-                      src={img}
-                      alt=""
-                      fill
-                      sizes="80px"
-                      className="object-contain object-center p-1"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+                  {/* Thumbnails - docked inside the frame */}
+                  <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-2 px-4">
+                    {productImages.map((img, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveImageIndex(idx)}
+                        aria-label={`View image ${idx + 1}`}
+                        aria-pressed={activeImageIndex === idx}
+                        className={`relative h-16 w-14 shrink-0 overflow-hidden rounded-[10px] bg-white/90 backdrop-blur transition-all cursor-pointer ${
+                          activeImageIndex === idx
+                            ? "ring-2 ring-black ring-offset-2 ring-offset-transparent"
+                            : "opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <Image
+                          src={img}
+                          alt=""
+                          fill
+                          sizes="64px"
+                          className="object-contain object-center p-1"
+                        />
+                      </button>
+                    ))}
+                  </div>
           </div>
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
