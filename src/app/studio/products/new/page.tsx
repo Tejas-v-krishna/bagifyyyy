@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
 import Link from "next/link";
 import Image from "next/image";
+import { uploadDeviceImages } from "@/lib/studioUpload";
 import {
   ArrowLeft,
   Plus,
@@ -63,20 +64,9 @@ export default function StudioNewProduct() {
     setUploadingFiles(true);
 
     try {
-      const formData = new FormData();
-      Array.from(fileList).forEach((file) => {
-        formData.append("files", file);
-      });
+      // Blob direct upload on production, legacy local route as fallback.
+      const uploadedUrls = await uploadDeviceImages(Array.from(fileList));
 
-      const uploadRes = await fetch("/api/studio/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const uploadData = await uploadRes.json();
-      if (!uploadRes.ok) throw new Error(uploadData.error || "Upload failed");
-
-      const uploadedUrls: string[] = uploadData.urls || [uploadData.url];
       setImages((prev) => [...prev, ...uploadedUrls]);
       setActiveImageIndex(images.length);
     } catch (err) {

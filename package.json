@@ -27,6 +27,7 @@
     "@sanity/image-url": "^2.1.1",
     "@types/bcryptjs": "^2.4.6",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/blob": "^2.8.1",
     "@vercel/speed-insights": "^2.0.0",
     "animejs": "^5.0.0-beta.1",
     "bcryptjs": "^3.0.3",
