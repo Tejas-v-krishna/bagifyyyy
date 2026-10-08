@@ -4,8 +4,7 @@ import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { attachReservedFlags, availableProductWhere } from "@/lib/products";
 import { getHeroContent, getTickerContent, getManifestoContent, sanityImageUrl } from "@/lib/sanity";
-import ProductFlexCarousel from "@/components/ui/ProductFlexCarousel";
-import ProductCard from "@/components/product/ProductCard";
+import NewInRail from "@/components/ui/NewInRail";
 import EditorialManifesto from "@/components/home/EditorialManifesto";
 import InstagramFeed from "@/components/ui/InstagramFeed";
 import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
@@ -233,25 +232,19 @@ export default async function Home() {
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 px-1 sm:hidden">
-            {newArrivalsFlagged.slice(0, 4).map((p) => (
-              <ProductCard
-                key={p.id}
-                product={{
-                  id: p.id,
-                  name: p.name,
-                  price: p.price,
-                  image: p.images[0]?.url || '/placeholder.jpg',
-                  category: p.category,
-                  isNew: p.isNew,
-                  isSoldOut: p.isSoldOut,
-                  reserved: p.reserved,
-                  sizes: Array.from(new Set(p.variants.map((v) => v.size))),
-                  colors: Array.from(new Set(p.variants.map((v) => v.color))),
-                }}
-              />
-            ))}
-          </div>
+          <NewInRail
+            items={newArrivalsFlagged.map((p) => ({
+              id: p.id,
+              name: p.name,
+              price: p.price,
+              image: p.images[0]?.url || '/placeholder.jpg',
+              isNew: p.isNew,
+              isSoldOut: p.isSoldOut,
+              reserved: p.reserved,
+              sizes: Array.from(new Set(p.variants.map((v) => v.size))),
+              colors: Array.from(new Set(p.variants.map((v) => v.color))),
+            }))}
+          />
           <Link
             href="/new-arrivals"
             className="mt-4 mx-1 h-12 sm:hidden flex items-center justify-center gap-2 rounded-[15px] text-[12px] font-semibold uppercase tracking-[0.12em] bg-[#111111] text-white active:bg-black/80"
@@ -259,16 +252,6 @@ export default async function Home() {
             <span>Shop all new pieces</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
-          <div className="hidden sm:block">
-          <ProductFlexCarousel
-            products={newArrivalsFlagged.map((p) => ({
-              id: p.id,
-              name: p.name,
-              price: p.price,
-              image: p.images[0]?.url || '/placeholder.jpg',
-            }))}
-          />
-          </div>
         </div>
       </section>
       )}
