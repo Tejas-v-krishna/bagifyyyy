@@ -186,7 +186,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,400px)] gap-10 xl:gap-16 items-start">
 
           {/* ── LEFT: Gallery ─────────────────────────────────────────────── */}
-          <div className="min-w-0">
+          <div className="min-w-0 pb-8">
             <div
               className="relative h-[58vh] w-full overflow-hidden rounded-[15px] bg-[#F2F2F2] touch-pan-y select-none sm:h-[64vh] lg:h-[74vh]"
               onTouchStart={(e) => {
@@ -263,31 +263,32 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 </>
               )}
             </div>
-                  {/* Thumbnails - docked inside the frame */}
-                  <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-2 px-4">
-                    {productImages.map((img, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setActiveImageIndex(idx)}
-                        aria-label={`View image ${idx + 1}`}
-                        aria-pressed={activeImageIndex === idx}
-                        className={`relative h-16 w-14 shrink-0 overflow-hidden rounded-[10px] bg-white/90 backdrop-blur transition-all cursor-pointer ${
-                          activeImageIndex === idx
-                            ? "ring-2 ring-black ring-offset-2 ring-offset-transparent"
-                            : "opacity-70 hover:opacity-100"
-                        }`}
-                      >
-                        <Image
-                          src={img}
-                          alt=""
-                          fill
-                          sizes="64px"
-                          className="object-contain object-center p-1"
-                        />
-                      </button>
-                    ))}
-                  </div>
+            {productImages.length > 1 && (
+              <div className="-mt-8 relative z-10 flex justify-center gap-2 px-4">
+                {productImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    aria-label={`View image ${idx + 1}`}
+                    aria-pressed={activeImageIndex === idx}
+                    className={`relative h-16 w-14 shrink-0 overflow-hidden rounded-[10px] bg-white/95 backdrop-blur transition-all cursor-pointer shadow-[0_8px_24px_rgba(0,0,0,0.18)] ${
+                      activeImageIndex === idx
+                        ? "ring-2 ring-black ring-offset-2 ring-offset-white"
+                        : "opacity-80 hover:opacity-100"
+                    }`}
+                  >
+                    <Image
+                      src={img}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-contain object-center p-1"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
