@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { 
@@ -95,6 +96,22 @@ export default function StudioLayout({
 }) {
   const pathname = usePathname();
 
+  // The storefront lives on the bare domain while the studio sits on an
+  // admin./studio. subdomain (or a secret path). A bare "/" on the admin
+  // host resolves back into the studio, so derive the real store URL from
+  // the current host. State + effect keeps SSR and first paint identical
+  // (no hydration mismatch), then corrects to the true origin.
+  const [storeUrl, setStoreUrl] = useState(process.env.NEXT_PUBLIC_APP_URL || "/");
+  useEffect(() => {
+    const { protocol, hostname, port } = window.location;
+    const host = hostname.toLowerCase();
+    if (host.startsWith("admin.") || host.startsWith("studio.")) {
+      setStoreUrl(`${protocol}//${host.replace(/^(admin|studio)\./, "")}${port ? `:${port}` : ""}/`);
+    } else if (host === "localhost" || host === "127.0.0.1") {
+      setStoreUrl(`${window.location.origin}/`);
+    }
+  }, []);
+
   // If on studio/login, render without sidebar layout
   if (pathname === "/studio/login") {
     return <div className="min-h-screen bg-[#f5f5f2] text-black font-sans">{children}</div>;
@@ -125,7 +142,7 @@ export default function StudioLayout({
 
           {/* Quick Return to Store Button */}
           <Link
-            href={process.env.NEXT_PUBLIC_APP_URL || "/"}
+            href={storeUrl}
             target="_blank"
             className="mt-4 flex items-center justify-between w-full bg-[#f5f5f2] border border-black/10 rounded-[0.35rem] px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all cursor-pointer shadow-xs"
           >
@@ -169,7 +186,7 @@ export default function StudioLayout({
               <span>SYSTEM ONLINE</span>
             </div>
             <Link
-              href={process.env.NEXT_PUBLIC_APP_URL || "/"}
+              href={storeUrl}
               target="_blank"
               className="hidden sm:flex items-center gap-1.5 text-black/50 hover:text-black transition-colors"
             >
