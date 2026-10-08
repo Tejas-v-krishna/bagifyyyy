@@ -592,6 +592,23 @@ html.lenis body {
   animation-play-state: paused;
 }
 
+/* NEW IN belt: slow continuous right-to-left drift. Track holds two
+   identical halves; a -50% loop is seamless. */
+.newin-marquee-track {
+  animation: marquee-seamless 60s linear infinite;
+  will-change: transform;
+}
+
+.newin-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .newin-marquee-track {
+    animation: none;
+  }
+}
+
 @keyframes marquee-seamless {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
