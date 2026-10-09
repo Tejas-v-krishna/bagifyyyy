@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { computeBundleSavings, type BundleLine, type BundleSaving } from '@/lib/bundlePricing';
+import { validateCouponCode } from '@/lib/coupons';
 
 /** Promo codes and their fractional discount. Server-side source of truth. */
 export const VALID_PROMO_CODES: Record<string, number> = { BAGIFY10: 0.10 };
@@ -195,16 +196,30 @@ export async function priceCart(options: {
 
   const discountableSubtotal = Math.max(0, Math.round((subtotal - bundleDiscount) * 100) / 100);
 
-  const normalizedPromo =
-    typeof promoCode === 'string' && VALID_PROMO_CODES[promoCode.toUpperCase()]
-      ? promoCode.toUpperCase()
-      : null;
-  const promoDiscount = normalizedPromo ? VALID_PROMO_CODES[normalizedPromo] : 0;
-  const promoAmount = Math.round(discountableSubtotal * promoDiscount * 100) / 100;
-  const discountAmount = Math.round((bundleDiscount + promoAmount) * 100) / 100;
+  let normalizedPromo: string | null = null;
+  let promoDiscount = 0;
+  let promoAmount = 0;
+  let shippingFee = STANDARD_SHIPPING_FEE;
 
-  // Flat ₹80 delivery cost, folded into the total (no separate shipping line).
-  const shippingFee = STANDARD_SHIPPING_FEE;
+  if (typeof promoCode === 'string' && promoCode.trim()) {
+    const couponRes = await validateCouponCode(promoCode.trim(), discountableSubtotal);
+    if (couponRes.valid && couponRes.coupon) {
+      normalizedPromo = couponRes.coupon.code;
+      if (couponRes.coupon.discountType === 'PERCENTAGE') {
+        promoDiscount = couponRes.coupon.discountValue / 100;
+        promoAmount = couponRes.coupon.discountAmount;
+      } else if (couponRes.coupon.discountType === 'FIXED') {
+        promoAmount = couponRes.coupon.discountAmount;
+        promoDiscount = discountableSubtotal > 0 ? promoAmount / discountableSubtotal : 0;
+      } else if (couponRes.coupon.discountType === 'FREE_SHIPPING') {
+        shippingFee = 0;
+        promoAmount = 80;
+        promoDiscount = 0;
+      }
+    }
+  }
+
+  const discountAmount = Math.round((bundleDiscount + promoAmount) * 100) / 100;
 
   return {
     items: pricedItems,

@@ -283,3 +283,18 @@ model Subcategory {
 
   @@unique([category, slug])
 }
+
+model Coupon {
+  id                String    @id @default(uuid())
+  code              String    @unique
+  discountType      String    @default("PERCENTAGE") // PERCENTAGE, FIXED, FREE_SHIPPING
+  discountValue     Float
+  minOrderAmount    Float     @default(0)
+  maxDiscountAmount Float?
+  usageLimit        Int?
+  usedCount         Int       @default(0)
+  isActive          Boolean   @default(true)
+  expiresAt         DateTime?
+  createdAt         DateTime  @default(now())
+}
+

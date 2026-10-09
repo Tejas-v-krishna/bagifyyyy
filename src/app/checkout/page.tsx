@@ -184,13 +184,43 @@ function CheckoutContent() {
   const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
   const [promoError, setPromoError] = useState("");
 
-  const handleApplyPromo = () => {
+  const handleApplyPromo = async () => {
+    if (!promoInputValue.trim()) return;
+    setPromoError("");
+
     const res = applyPromo(promoInputValue);
     if (res.ok) {
       setPromoInput(promoInputValue.trim().toUpperCase());
       setPromoError("");
+      return;
     }
-    else setPromoError(res.error || "Invalid promo code.");
+
+    try {
+      const apiRes = await fetch(
+        `/api/coupons?code=${encodeURIComponent(promoInputValue.trim())}&subtotal=${cartSubtotal()}`
+      );
+      const data = await apiRes.json();
+
+      if (apiRes.ok && data.coupon) {
+        let discountFraction = 0;
+        const sub = cartSubtotal();
+        if (data.coupon.discountType === "PERCENTAGE") {
+          discountFraction = data.coupon.discountValue / 100;
+        } else if (sub > 0) {
+          discountFraction = data.coupon.discountAmount / sub;
+        }
+        useCartStore.setState({
+          promoCode: data.coupon.code,
+          promoDiscount: discountFraction,
+        });
+        setPromoInput(data.coupon.code);
+        setPromoError("");
+      } else {
+        setPromoError(data.error || "Invalid promo code.");
+      }
+    } catch {
+      setPromoError("Unable to validate coupon.");
+    }
   };
 
   // Address Form State

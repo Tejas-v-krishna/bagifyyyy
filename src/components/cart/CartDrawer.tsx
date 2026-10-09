@@ -177,13 +177,50 @@ export default function CartDrawer() {
     return () => releaseScrollLock();
   }, [isOpen]);
 
-  const handleApplyPromo = () => {
-    const res = applyPromo(promoInputValue);
-    if (res.ok) {
-      setPromoInput(promoInputValue.trim().toUpperCase());
-      setPromoError("");
+  const [applyingPromo, setApplyingPromo] = useState(false);
+
+  const handleApplyPromo = async () => {
+    if (!promoInputValue.trim()) return;
+    setApplyingPromo(true);
+    setPromoError("");
+
+    try {
+      // First try local store (instant)
+      const res = applyPromo(promoInputValue);
+      if (res.ok) {
+        setPromoInput(promoInputValue.trim().toUpperCase());
+        setPromoError("");
+        setApplyingPromo(false);
+        return;
+      }
+
+      // Check dynamic coupon from DB via API
+      const apiRes = await fetch(
+        `/api/coupons?code=${encodeURIComponent(promoInputValue.trim())}&subtotal=${goodsTotal}`
+      );
+      const data = await apiRes.json();
+
+      if (apiRes.ok && data.coupon) {
+        let discountFraction = 0;
+        if (data.coupon.discountType === "PERCENTAGE") {
+          discountFraction = data.coupon.discountValue / 100;
+        } else if (goodsTotal > 0) {
+          discountFraction = data.coupon.discountAmount / goodsTotal;
+        }
+        useCartStore.setState({
+          promoCode: data.coupon.code,
+          promoDiscount: discountFraction,
+        });
+        setPromoInput(data.coupon.code);
+        setPromoError("");
+      } else {
+        setPromoError(data.error || "Invalid promo code.");
+      }
+    } catch {
+      setPromoError("Unable to validate coupon.");
+    } finally {
+      setApplyingPromo(false);
     }
-    else setPromoError(res.error || "Invalid promo code.");
   };
 
   if (pathname?.startsWith("/studio") || pathname?.startsWith("/admin")) {
