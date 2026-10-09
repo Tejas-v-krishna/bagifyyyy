@@ -117,9 +117,9 @@ export default async function Home() {
               className="font-microgramma font-bold uppercase leading-[0.9] tracking-[-0.05em] text-[#050505] w-full select-none"
             >
               <span className="flex flex-col leading-[0.95] text-[clamp(2.5rem,15.5vw,4.5rem)] sm:hidden">
-                <span>Your</span>
-                <span>New</span>
-                <span>Old</span>
+                <span className="text-left">Your</span>
+                <span className="text-center">New</span>
+                <span className="text-right">Old</span>
               </span>
               <span className="hidden sm:flex w-full items-baseline justify-between whitespace-nowrap text-[clamp(1.6rem,13.2vw,24rem)]">
                 <span>Your</span>
