@@ -142,7 +142,7 @@ export default function EditorialManifesto({
         />
 
         {/* ── TOP MANIFESTO & HEADLINE ── */}
-        <div className="absolute top-[8%] left-[4%] max-w-[50%] sm:max-w-[48%] z-25 pointer-events-none">
+        <div className="absolute top-[8%] left-[4%] max-w-[72%] sm:max-w-[48%] z-25 pointer-events-none">
           <h2
             id="manifesto-heading"
             className="uppercase font-bold leading-[0.96] tracking-[-0.03em] text-[clamp(1.1rem,3vw,3rem)] text-white"
@@ -153,7 +153,7 @@ export default function EditorialManifesto({
           </h2>
         </div>
 
-        <div className="absolute top-[8%] right-[4%] max-w-[260px] sm:max-w-[300px] text-right z-25 pointer-events-none">
+        <div className="hidden sm:block absolute top-[8%] right-[4%] max-w-[260px] sm:max-w-[300px] text-right z-25 pointer-events-none">
           <p className="font-mono text-[8px] sm:text-[9px] tracking-[0.05em] leading-[1.65] text-white/60">
             {intro}
           </p>
@@ -169,8 +169,8 @@ export default function EditorialManifesto({
           </p>
         </div>
 
-        {/* ── PRECISION RETICLE PINS & SPEC HUD CARDS ── */}
-        <div className="absolute inset-0 z-35 pointer-events-auto">
+        {/* ── PRECISION RETICLE PINS & SPEC HUD CARDS (desktop only — mobile stays clean) ── */}
+        <div className="absolute inset-0 z-35 pointer-events-auto hidden sm:block">
           {PINS_DATA.map((pin) => {
             const isOpen = hoveredPin === pin.id;
 
