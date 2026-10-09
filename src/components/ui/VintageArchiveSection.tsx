@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import ShowcaseCard from "@/components/product/ShowcaseCard";
 
 export type VintageArchiveItem = {
@@ -29,13 +27,6 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
                 The good stuff
               </h2>
             </div>
-            <Link
-              href="/curated-grails"
-              className="h-9 sm:h-10 inline-flex items-center gap-2 rounded-[15px] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-white text-black hover:bg-white/85"
-            >
-              <span>See all pieces</span>
-              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 px-2 sm:grid-cols-3 sm:gap-x-5 sm:px-4 md:px-6 lg:grid-cols-4 lg:gap-x-6">

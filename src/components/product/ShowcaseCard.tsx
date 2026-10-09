@@ -62,7 +62,7 @@ export default function ShowcaseCard({
       <Link
         href={`/product/${product.id}`}
         aria-label={product.name}
-        className="relative block aspect-[4/5] w-full overflow-hidden rounded-[15px] bg-[#e9e9ec] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+        className="relative block aspect-[4/5] w-full overflow-hidden rounded-[10px] bg-[#e9e9ec] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
         onMouseEnter={start}
         onMouseLeave={reset}
         onFocus={start}
@@ -119,14 +119,14 @@ export default function ShowcaseCard({
         )}
       </Link>
 
-      <div className="flex items-baseline gap-3 px-1 pt-4">
+      <div className="flex items-baseline gap-2 px-0.5 pt-3">
         <h3
-          className={`min-w-0 flex-1 truncate text-[13px] font-semibold leading-tight tracking-tight ${textColor}`}
+          className={`min-w-0 flex-1 truncate text-[12px] font-semibold leading-tight tracking-tight sm:text-[13px] ${textColor}`}
           title={product.name}
         >
           {product.name}
         </h3>
-        <span className={`shrink-0 text-[13px] font-semibold tracking-tight ${textColor}`}>
+        <span className={`shrink-0 text-[12px] font-semibold tracking-tight sm:text-[13px] ${textColor}`}>
           ₹{product.price.toLocaleString("en-IN")}
         </span>
       </div>
