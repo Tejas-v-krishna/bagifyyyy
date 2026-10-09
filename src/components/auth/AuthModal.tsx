@@ -141,7 +141,7 @@ export default function AuthModal() {
               className="absolute right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-transform hover:scale-105 cursor-pointer"
               aria-label="Close"
             >
-              <X strokeWidth={2.2} className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </button>
 
             {/* Left Column: Welcome Offer & Action */}
@@ -166,7 +166,7 @@ export default function AuthModal() {
                   >
                     BAGIFY10
                     {copied ? (
-                      <Check className="h-3 w-3 text-green-600" strokeWidth={2.5} />
+                      <Check className="h-3 w-3 text-green-600" />
                     ) : null}
                   </button>
                   {copied ? <span className="ml-1.5 text-[11px] font-semibold text-green-700">Copied!</span> : null}.

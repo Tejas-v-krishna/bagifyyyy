@@ -118,6 +118,29 @@ export default function EditorialManifesto({
 }: ManifestoProps) {
   const [hoveredPin, setHoveredPin] = useState<string | null>(null);
 
+  const splitStatementA = (text: string): [string, string | null] => {
+    const commaIdx = text.indexOf(",");
+    if (commaIdx !== -1 && commaIdx < text.length - 1) {
+      return [text.slice(0, commaIdx + 1).trim(), text.slice(commaIdx + 1).trim()];
+    }
+    const words = text.trim().split(/\s+/);
+    if (words.length >= 3) {
+      return [words.slice(0, 2).join(" "), words.slice(2).join(" ")];
+    }
+    return [text, null];
+  };
+
+  const splitStatementB = (text: string): [string, string | null] => {
+    const words = text.trim().split(/\s+/);
+    if (words.length >= 2) {
+      return [words[0], words.slice(1).join(" ")];
+    }
+    return [text, null];
+  };
+
+  const [stmtALine1, stmtALine2] = splitStatementA(statementA);
+  const [stmtBLine1, stmtBLine2] = splitStatementB(statementB);
+
   return (
     <div className="relative w-full bg-[#151518] select-none" data-nav-theme="dark">
       <section
@@ -141,11 +164,11 @@ export default function EditorialManifesto({
           aria-hidden="true"
         />
 
-        {/* ── TOP MANIFESTO & HEADLINE ── */}
-        <div className="absolute top-[8%] left-[4%] max-w-[72%] sm:max-w-[48%] z-25 pointer-events-none">
+        {/* ── TOP MANIFESTO & HEADLINE (Centered above collar on mobile, top-left on desktop) ── */}
+        <div className="absolute top-[8.5%] sm:top-[7.5%] inset-x-4 text-center sm:inset-x-auto sm:left-[4%] sm:text-left sm:max-w-[46%] z-25 pointer-events-none">
           <h2
             id="manifesto-heading"
-            className="uppercase font-bold leading-[0.96] tracking-[-0.03em] text-[clamp(1.1rem,3vw,3rem)] text-white"
+            className="uppercase font-bold leading-[0.92] tracking-[-0.04em] text-[clamp(1.65rem,6.6vw,3.2rem)] text-white"
           >
             {headingLine1}
             <br />
@@ -153,19 +176,24 @@ export default function EditorialManifesto({
           </h2>
         </div>
 
-        <div className="hidden sm:block absolute top-[8%] right-[4%] max-w-[260px] sm:max-w-[300px] text-right z-25 pointer-events-none">
-          <p className="font-mono text-[8px] sm:text-[9px] tracking-[0.05em] leading-[1.65] text-white/60">
+        <div className="hidden sm:block absolute top-[6.5%] right-[4%] max-w-[290px] text-right z-25 pointer-events-none">
+          <p className="font-mono text-[9px] tracking-[0.05em] leading-[1.65] text-white/60">
             {intro}
           </p>
         </div>
 
-        {/* ── HERO STATEMENT: ARCHIVE OVER TREND // ENDURANCE OVER HYPE ── */}
-        <div className="absolute top-[29%] left-[3.2%] right-[3.2%] flex flex-col gap-1 sm:gap-2 z-25 pointer-events-none">
-          <p className="uppercase font-bold leading-none tracking-[-0.03em] text-[clamp(1.1rem,3.2vw,3.2rem)] text-white">
-            {statementA}
+        {/* ── STAGGERED MID-FRAME STATEMENTS (Flanking negative space around silhouette) ── */}
+        <div className="absolute top-[23%] sm:top-[27%] left-[4.5%] sm:left-[4%] z-25 pointer-events-none">
+          <p className="uppercase font-bold leading-[0.96] tracking-[-0.03em] text-[clamp(0.95rem,3.6vw,2.5rem)] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.75)]">
+            <span className="block whitespace-nowrap">{stmtALine1}</span>
+            {stmtALine2 ? <span className="block whitespace-nowrap">{stmtALine2}</span> : null}
           </p>
-          <p className="uppercase font-bold leading-none tracking-[-0.03em] text-[clamp(1.1rem,3.2vw,3.2rem)] text-white text-right">
-            {statementB}
+        </div>
+
+        <div className="absolute top-[46.5%] sm:top-[44%] right-[4.5%] sm:right-[4%] text-right z-25 pointer-events-none">
+          <p className="uppercase font-bold leading-[0.96] tracking-[-0.03em] text-[clamp(0.95rem,3.6vw,2.5rem)] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.75)]">
+            <span className="block whitespace-nowrap">{stmtBLine1}</span>
+            {stmtBLine2 ? <span className="block whitespace-nowrap">{stmtBLine2}</span> : null}
           </p>
         </div>
 
@@ -280,12 +308,12 @@ export default function EditorialManifesto({
         </div>
 
         {/* ── MONUMENTAL CLOSING HEADLINE ── */}
-        <div className="absolute bottom-[6.5%] sm:bottom-[7.5%] left-[3%] right-[3%] z-[60] pointer-events-none">
-          <p className="uppercase font-bold leading-[0.88] tracking-[-0.04em] text-[clamp(1.8rem,7vw,6.5rem)] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
+        <div className="absolute bottom-[6%] sm:bottom-[7%] left-[4.5%] right-[4.5%] sm:left-[4%] sm:right-[4%] z-[60] pointer-events-none">
+          <p className="uppercase font-bold leading-[0.9] tracking-[-0.04em] text-[clamp(1.75rem,6.8vw,6.2rem)] text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
             <span className="block text-left">
               {closingA}
             </span>
-            <span className="block text-right sm:text-left">
+            <span className="block mt-1 sm:mt-1.5 text-right">
               {closingB}
             </span>
           </p>

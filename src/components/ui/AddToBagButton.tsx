@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, Check, X } from "lucide-react";
+import { ShoppingBag, Check, X, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 
 interface AddToBagButtonProps {
@@ -115,13 +115,22 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
         onClick={handleAddToBag}
         aria-label={`Add ${product.name} to bag`}
         title="Add to bag"
-        className={`group/bagbtn flex items-center justify-center min-h-11 min-w-11 border-0 bg-transparent text-black shadow-none outline-none transition-opacity duration-300 hover:opacity-55 active:scale-90 cursor-pointer focus-visible:outline-black focus-visible:outline-2 focus-visible:outline-offset-2 ${className}`}
+        className={`group/bagbtn relative flex items-center justify-center min-h-11 min-w-11 border-0 bg-transparent text-black shadow-none outline-none transition-all duration-300 hover:opacity-70 active:scale-85 cursor-pointer focus-visible:outline-black focus-visible:outline-2 focus-visible:outline-offset-2 ${className}`}
       >
-        {added ? (
-          <Check className="h-4 w-4 animate-in zoom-in-50 text-black duration-200" strokeWidth={2.5} />
-        ) : (
-          <ShoppingBag className="h-4 w-4 text-black transition-transform duration-300 group-hover/bagbtn:scale-110" strokeWidth={1.8} />
-        )}
+        <span
+          className={`flex items-center justify-center transition-transform duration-300 ${
+            added ? "scale-110 text-emerald-600" : "group-hover/bagbtn:scale-115 text-black"
+          }`}
+        >
+          {added ? (
+            <span className="relative flex items-center justify-center">
+              <span className="absolute -inset-1.5 rounded-full bg-emerald-500/15 animate-ping" />
+              <Check className="h-4 w-4 animate-in zoom-in-75 duration-200 stroke-[2.5]" />
+            </span>
+          ) : (
+            <ShoppingBag className="h-4 w-4 transition-transform duration-200" />
+          )}
+        </span>
       </button>
 
       {picking &&
@@ -209,9 +218,10 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
                 type="button"
                 onClick={handleConfirm}
                 disabled={!canConfirm}
-                className="mt-6 inline-flex w-full items-center justify-center bg-black px-6 py-3.5 text-xs font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-black/90 disabled:cursor-not-allowed disabled:bg-black/20 disabled:text-black/40 cursor-pointer"
+                className="btn-bagify btn-bagify-dark mt-6 w-full text-xs uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               >
-                Add to bag →
+                <span>Add to bag</span>
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </div>
           </div>,

@@ -13,7 +13,8 @@ import {
   Layers, 
   Camera, 
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Tags
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/studio", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/studio/products", label: "Products & Catalog", icon: Package, parentOfNew: true },
   { href: "/studio/products/new", label: "Add Product", icon: Plus, exact: true },
+  { href: "/studio/subcategories", label: "Categories & Fits", icon: Tags },
   { href: "/studio/bundles", label: "Bundles", icon: Layers },
   { href: "/studio/orders", label: "Orders", icon: ShoppingBag },
   { href: "/studio/instagram", label: "Instagram Feed", icon: Camera },

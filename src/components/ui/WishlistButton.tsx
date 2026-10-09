@@ -26,7 +26,6 @@ export default function WishlistButton({ productId, className = "" }: Props) {
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
     >
       <Heart
-        strokeWidth={1.5}
         className={`w-4 h-4 transition-transform active:scale-125 ${wishlisted ? "fill-current" : ""}`}
       />
     </button>

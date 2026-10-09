@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `${product.name} — ${categoryLabel(product.category)}`;
+  const title = `${product.name} · ${categoryLabel(product.category)}`;
   const description = clampDescription(
     product.description ||
       `${product.name} from BAGIFYYYY. ₹${product.price.toLocaleString("en-IN")}. Limited quantity, no restocks.`

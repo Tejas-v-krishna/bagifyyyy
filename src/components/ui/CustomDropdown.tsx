@@ -100,7 +100,6 @@ export default function CustomDropdown<T extends string = string>({
           className={`w-3.5 h-3.5 text-black/45 transition-transform duration-200 group-hover:text-black ${
             isOpen ? "rotate-180 text-black" : ""
           }`}
-          strokeWidth={1.8}
           aria-hidden="true"
         />
       </button>
@@ -140,7 +139,7 @@ export default function CustomDropdown<T extends string = string>({
                       <span className="truncate">{option.label}</span>
                     </span>
                     {isSelected && (
-                      <Check className="w-3.5 h-3.5 text-white shrink-0" strokeWidth={2.2} aria-hidden="true" />
+                      <Check className="w-3.5 h-3.5 text-white shrink-0" aria-hidden="true" />
                     )}
                   </button>
                 );

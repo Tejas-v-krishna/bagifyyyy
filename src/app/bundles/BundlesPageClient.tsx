@@ -232,7 +232,7 @@ export default function BundlesPageClient({ initialBundles }: { initialBundles: 
                 <article
                   key={bundle.id}
                   className={`group animate-fade-up delay-${((i % 4) + 1) * 100}`}
-                  aria-label={`${bundle.name} bundle — ${bundle.discount}% off`}
+                  aria-label={`${bundle.name} bundle: ${bundle.discount}% off`}
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#ededed] p-3 sm:rounded-2xl sm:p-4">
                     <div
@@ -314,16 +314,16 @@ export default function BundlesPageClient({ initialBundles }: { initialBundles: 
                             ? `${bundle.products.length} pieces added to bag`
                             : `Add ${bundle.name} set to bag for ₹${displayBundlePrice.toLocaleString("en-IN")}`
                       }
-                      className="mt-4 w-full px-5 py-3 text-[10px] font-bold tracking-[0.12em]"
+                      className="mt-4 w-full text-[10px] uppercase tracking-[0.12em]"
                     >
                       {isUnavailable ? (
                         <span>Set unavailable</span>
                       ) : isAdding ? (
                         <><LoaderCircle className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" /><span>Adding set</span></>
                       ) : isAdded ? (
-                        <><Check className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" /><span>{bundle.products.length} pieces added</span></>
+                        <><span>{bundle.products.length} pieces added</span><Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /></>
                       ) : (
-                        <><ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} aria-hidden="true" /><span>Add the set</span></>
+                        <><span>Add the set</span><ShoppingBag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /></>
                       )}
                     </Button>
                   </div>

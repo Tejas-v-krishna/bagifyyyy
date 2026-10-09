@@ -163,7 +163,7 @@ export default function SearchOverlay({
           aria-expanded={isOpen}
           className="bg-[#EFEFEF] hover:bg-neutral-200 text-black rounded-[0.35rem] h-9 px-3 flex items-center gap-2 text-[11px] font-semibold tracking-wide transition-colors cursor-pointer"
         >
-          <Search className="w-3.5 h-3.5 text-black" strokeWidth={2} />
+          <Search className="w-3.5 h-3.5 text-black" />
           <span className="hidden xl:inline">Search</span>
           <kbd className="hidden xl:inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold text-black/40 bg-black/5 rounded">
             ⌘K
@@ -183,7 +183,7 @@ export default function SearchOverlay({
             Search
           </span>
           <span className="absolute inset-0 flex translate-y-5 items-center justify-center opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100" aria-hidden="true">
-            <Search className="w-[18px] h-[18px]" strokeWidth={1.8} />
+            <Search className="w-[18px] h-[18px]" />
           </span>
         </button>
       ) : (
@@ -194,7 +194,7 @@ export default function SearchOverlay({
           aria-expanded={isOpen}
           className="text-current hover:opacity-60 transition-opacity cursor-pointer p-1.5 flex items-center justify-center"
         >
-          <Search className="w-4 h-4 text-current" strokeWidth={1.5} />
+          <Search className="w-4 h-4 text-current" />
         </button>
       )}
 
@@ -216,170 +216,166 @@ export default function SearchOverlay({
                   aria-hidden="true"
                 />
 
-                {/* 2. Full-Width Top Slide-Down Curtain Panel */}
+                {/* 2. Compact Floating Search Modal (does not cover whole page) */}
                 <motion.div
-                  key="search-curtain"
-                  initial={{ y: "-100%" }}
-                  animate={{ y: 0 }}
-                  exit={{ y: "-100%" }}
-                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  key="search-modal"
+                  initial={{ opacity: 0, y: -20, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -16, scale: 0.98 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                   role="dialog"
                   aria-modal="true"
-                   aria-label="Search products"
+                  aria-label="Search products"
                   data-lenis-prevent="true"
-                  style={{ backgroundColor: "#f5f5f2" }}
-                  className="search-dialog-panel fixed top-0 inset-x-0 z-[10000] bg-[#f5f5f2] border-b border-black/15 shadow-[0_25px_60px_rgba(0,0,0,0.14)] text-black font-sans max-h-[88vh] overflow-y-auto"
+                  className="fixed top-16 sm:top-24 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10000] w-auto sm:w-full sm:max-w-xl bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] text-black font-sans overflow-hidden"
                 >
-                  <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-10">
-                    {/* Top Search Input Bar */}
-                    <div className="flex items-center gap-4 sm:gap-6 py-6 sm:py-8 border-b border-black/10">
-                      <Search className="w-6 h-6 sm:w-7 sm:h-7 text-black/40 shrink-0" strokeWidth={1.8} />
+                  {/* Top Search Input Bar */}
+                  <div className="flex items-center gap-3 px-4 sm:px-5 py-3.5 border-b border-black/8">
+                    <Search className="w-4 h-4 text-black/40 shrink-0" />
 
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                         placeholder="SEARCH PRODUCTS, CATEGORIES..."
-                        className="search-dialog-input flex-1 bg-transparent text-lg sm:text-xl md:text-2xl font-microgramma font-bold uppercase tracking-tight text-black placeholder:text-black/30 outline-none border-0"
-                        autoComplete="off"
-                        aria-label="Search input"
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Search archive..."
+                      className="search-dialog-input flex-1 !bg-transparent text-sm font-mono tracking-wide text-black placeholder:text-black/35 outline-none border-0"
+                      autoComplete="off"
+                      aria-label="Search input"
+                    />
+
+                    {loading && (
+                      <Loader2
+                        className="w-4 h-4 text-black/40 animate-spin shrink-0"
+                        aria-label="Searching"
                       />
+                    )}
 
-                      {/* Right controls */}
-                      <div className="flex items-center gap-3 shrink-0">
-                        {loading && (
-                          <Loader2
-                            className="w-5 h-5 text-black/40 animate-spin"
-                            aria-label="Searching"
-                          />
-                        )}
+                    {query.length > 0 && !loading && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuery("");
+                          inputRef.current?.focus();
+                        }}
+                        className="text-[10px] font-mono uppercase tracking-wider text-black/40 hover:text-black transition-colors px-1 cursor-pointer"
+                        aria-label="Clear query"
+                      >
+                        Clear
+                      </button>
+                    )}
 
-                        {query.length > 0 && !loading && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setQuery("");
-                              inputRef.current?.focus();
-                            }}
-                            className="text-[11px] font-mono uppercase tracking-wider text-black/45 hover:text-black transition-colors px-2 py-1 cursor-pointer"
-                            aria-label="Clear query"
-                          >
-                            Clear
-                          </button>
-                        )}
+                    <button
+                      type="button"
+                      onClick={close}
+                      aria-label="Close search"
+                      className="h-7 w-7 rounded-full flex items-center justify-center text-black/40 hover:text-black hover:bg-black/5 transition-colors cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
-                        <button
-                          type="button"
-                          onClick={close}
-                          aria-label="Close search"
-                          className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-black/70 hover:text-black px-3.5 py-2 rounded-[0.35rem] border border-black/15 hover:border-black hover:bg-black hover:text-white transition-all cursor-pointer"
+                  {/* Body Content */}
+                  <div className="max-h-[60vh] overflow-y-auto p-4 sm:p-5">
+                    <AnimatePresence mode="wait">
+                      {/* 1. Results List */}
+                      {results.length > 0 && (
+                        <motion.div
+                          key="results"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="space-y-1.5"
                         >
-                          <span className="hidden sm:inline text-[11px]">Close</span>
-                          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform duration-200" />
-                        </button>
-                      </div>
-                    </div>
+                          <div className="flex items-center justify-between pb-2 mb-1 px-1">
+                            <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-black/40">
+                              {results.length} {results.length === 1 ? "result" : "results"}
+                            </span>
+                            <Link
+                              href={`/products?q=${encodeURIComponent(debouncedQuery)}`}
+                              onClick={close}
+                              className="text-[10.5px] font-mono uppercase tracking-[0.12em] text-black/70 hover:text-black flex items-center gap-1"
+                            >
+                              <span>View all</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </Link>
+                          </div>
 
-                    {/* Body Content */}
-                    <div className="py-6 sm:py-8">
-                      <AnimatePresence mode="wait">
-                        {/* 1. Results Grid */}
-                        {results.length > 0 && (
-                          <motion.div
-                            key="results"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 8 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <div className="flex items-center justify-between pb-4 mb-2">
-                              <p
-                                className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-black/50"
-                                aria-live="polite"
-                              >
-                                {results.length} piece{results.length !== 1 ? "s" : ""} found for &ldquo;{debouncedQuery}&rdquo;
-                              </p>
+                          <div className="space-y-1" role="listbox">
+                            {results.slice(0, 6).map((item, idx) => (
                               <Link
-                                href={`/products?q=${encodeURIComponent(debouncedQuery)}`}
+                                key={item.id}
+                                href={`/product/${item.id}`}
                                 onClick={close}
-                                className="text-xs font-semibold uppercase tracking-[0.12em] text-black hover:opacity-60 transition-opacity inline-flex items-center gap-1"
+                                role="option"
+                                aria-selected={activeIndex === idx}
+                                className={`flex items-center gap-3 p-2 rounded-xl transition-colors ${
+                                  activeIndex === idx
+                                    ? "bg-black text-white"
+                                    : "hover:bg-black/5 text-black"
+                                }`}
+                                onMouseEnter={() => setHighlighted(idx)}
                               >
-                                 <span>See all results</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
+                                <div className="relative h-12 w-10 rounded-lg bg-[#e9e9ec] shrink-0 overflow-hidden">
+                                  <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    fill
+                                    className="object-cover object-center"
+                                    sizes="48px"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0 pr-2">
+                                  <p className="truncate text-xs font-semibold uppercase tracking-tight">
+                                    {item.name}
+                                  </p>
+                                  <p className={`text-[10px] font-mono uppercase tracking-wider ${
+                                    activeIndex === idx ? "text-white/60" : "text-black/40"
+                                  }`}>
+                                    {item.category}
+                                  </p>
+                                </div>
+                                <span className="font-mono text-xs font-bold shrink-0 tabular-nums">
+                                  ₹{item.price.toLocaleString("en-IN")}
+                                </span>
                               </Link>
-                            </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
 
-                            {/* Visual Grid matching luxury lookbook */}
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5" role="listbox">
-                              {results.map((item, idx) => (
-                                <Link
-                                  key={item.id}
-                                  href={`/product/${item.id}`}
-                                  onClick={close}
-                                  role="option"
-                                  aria-selected={activeIndex === idx}
-                                  className={`group relative flex flex-col rounded-xl p-2.5 transition-all duration-200 ${
-                                    activeIndex === idx
-                                      ? "bg-black text-white ring-2 ring-black"
-                                      : "bg-white hover:bg-white/90 border border-black/10 text-black"
-                                  }`}
-                                  onMouseEnter={() => setHighlighted(idx)}
-                                >
-                                  {/* Visual Thumbnail Tile */}
-                                  <div className="relative aspect-[3/4] w-full rounded-lg bg-[#EDEDED] overflow-hidden flex items-center justify-center">
-                                    <Image
-                                      src={item.image}
-                                      alt={item.name}
-                                      fill
-                                      className="object-contain p-2 transition-transform duration-500 group-hover:scale-[1.05]"
-                                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                                    />
-                                  </div>
+                      {/* 2. Empty State */}
+                      {!loading && debouncedQuery === query && debouncedQuery.length >= 2 && results.length === 0 && (
+                        <motion.div
+                          key="empty"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="py-8 text-center"
+                        >
+                          <p className="text-xs font-mono uppercase tracking-wider text-black mb-1">
+                            No pieces found for &ldquo;{debouncedQuery}&rdquo;
+                          </p>
+                          <p className="text-[11px] font-mono text-black/40">
+                            Try denim, cargos, or tees.
+                          </p>
+                        </motion.div>
+                      )}
 
-                                  {/* Information */}
-                                  <div className="pt-2.5 flex flex-col flex-1 justify-between">
-                                    <div>
-                                      <p className={`text-[10px] uppercase font-mono tracking-wider truncate ${
-                                        activeIndex === idx ? "text-white/60" : "text-black/45"
-                                      }`}>
-                                        {item.category}
-                                      </p>
-                                      <h4 className={`text-xs font-semibold tracking-tight uppercase truncate mt-0.5 ${
-                                        activeIndex === idx ? "text-white" : "text-black group-hover:text-black/70"
-                                      }`}>
-                                        {item.name}
-                                      </h4>
-                                    </div>
-                                    <p className={`text-xs font-mono font-bold mt-2 ${
-                                      activeIndex === idx ? "text-white" : "text-black"
-                                    }`}>
-                                      ₹{item.price.toLocaleString("en-IN")}
-                                    </p>
-                                  </div>
-                                </Link>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-
-                        {/* 2. Empty State */}
-                        {!loading && debouncedQuery === query && debouncedQuery.length >= 2 && results.length === 0 && (
-                          <motion.div
-                            key="empty"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="py-12 text-center max-w-md mx-auto"
-                          >
-                            <p className="text-base font-bold uppercase tracking-tight text-black mb-1">
-                               No products found for &ldquo;{debouncedQuery}&rdquo;
+                      {/* 3. Idle State — compact tags only */}
+                      {query.length < 2 && (
+                        <motion.div
+                          key="hint"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="space-y-4"
+                        >
+                          <div>
+                            <p className="text-[9.5px] font-mono uppercase tracking-[0.16em] text-black/40 mb-2.5">
+                              Popular
                             </p>
-                            <p className="text-xs text-black/50 leading-relaxed mb-6">
-                               Try hoodies, denim, cargo, or one of the categories below.
-                            </p>
-                            <div className="flex flex-wrap justify-center gap-2">
-                              {POPULAR_SEARCHES.slice(0, 5).map((tag) => (
+                            <div className="flex flex-wrap gap-1.5">
+                              {POPULAR_SEARCHES.map((tag) => (
                                 <button
                                   key={tag}
                                   type="button"
@@ -387,85 +383,21 @@ export default function SearchOverlay({
                                     setQuery(tag);
                                     inputRef.current?.focus();
                                   }}
-                                  className="px-3.5 py-1.5 rounded-[0.35rem] bg-white border border-black/15 text-[11px] font-semibold text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
+                                  className="px-3 py-1.5 rounded-full bg-black/[0.04] hover:bg-black hover:text-white transition-colors text-[10.5px] font-mono tracking-tight text-black/75 cursor-pointer"
                                 >
                                   {tag}
                                 </button>
                               ))}
                             </div>
-                          </motion.div>
-                        )}
+                          </div>
 
-                        {/* 3. Idle / Welcome State (Curated Editorial Directory) */}
-                        {query.length < 2 && (
-                          <motion.div
-                            key="hint"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="space-y-8"
-                          >
-                            {/* Popular Searches */}
-                            <div>
-                              <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45 mb-3.5">
-                                 Popular searches
-                              </p>
-                              <div className="flex flex-wrap gap-2">
-                                {POPULAR_SEARCHES.map((tag) => (
-                                  <button
-                                    key={tag}
-                                    type="button"
-                                    onClick={() => {
-                                      setQuery(tag);
-                                      inputRef.current?.focus();
-                                    }}
-                                    className="px-4 py-2 rounded-[0.35rem] bg-white border border-black/12 text-xs font-semibold text-black hover:bg-black hover:text-white hover:border-black transition-all cursor-pointer shadow-xs"
-                                  >
-                                    {tag}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
-                            {/* Quick Archive Department Links */}
-                            <div className="pt-6 border-t border-black/10">
-                              <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45 mb-4">
-                                 Browse categories
-                              </p>
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                                {[
-                                  { name: "New Arrivals", href: "/new-arrivals", count: "FW26 Drop" },
-                                   { name: "Topwears", href: "/topwears", count: "Tops" },
-                                  { name: "Bottomwears", href: "/bottomwears", count: "Denim & Cargos" },
-                                   { name: "Bundles", href: "/bundles", count: "Full fits" },
-                                ].map((dept) => (
-                                  <Link
-                                    key={dept.name}
-                                    href={dept.href}
-                                    onClick={close}
-                                    className="p-4 rounded-xl bg-white border border-black/10 hover:border-black transition-all group flex flex-col justify-between"
-                                  >
-                                    <span className="text-[10px] font-mono uppercase tracking-wider text-black/40">
-                                      {dept.count}
-                                    </span>
-                                    <div className="mt-4 flex items-center justify-between">
-                                      <span className="text-xs sm:text-sm font-microgramma font-bold uppercase tracking-tight text-black group-hover:text-black/70">
-                                        {dept.name}
-                                      </span>
-                                      <ArrowRight className="w-3.5 h-3.5 text-black/30 group-hover:text-black group-hover:translate-x-0.5 transition-all" />
-                                    </div>
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="pt-4 flex items-center justify-between text-[11px] font-mono text-black/40">
-                               <span>TYPE AT LEAST 2 CHARACTERS TO SEARCH</span>
-                              <span className="hidden sm:inline">PRESS ESC TO DISMISS</span>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                          <div className="pt-3 border-t border-black/8 flex items-center justify-between text-[10px] font-mono text-black/35">
+                            <span>Type to search</span>
+                            <span>Esc to close</span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
               </div>

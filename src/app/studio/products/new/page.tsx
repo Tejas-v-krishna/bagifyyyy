@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
 import Link from "next/link";
@@ -39,10 +39,13 @@ export default function StudioNewProduct() {
     comparePrice: "",
     collectionTag: "BAGIFYYYY",
     category: CATEGORIES[0].slug,
+    subcategory: "",
     isNew: true,
     isSoldOut: false,
     isBestSeller: false,
   });
+
+  const [availableSubcategories, setAvailableSubcategories] = useState<{ id: string; name: string; slug: string }[]>([]);
 
   const [images, setImages] = useState<string[]>([]);
   const dragFromRef = useRef<number | null>(null);
@@ -58,8 +61,29 @@ export default function StudioNewProduct() {
     const target = e.target as HTMLInputElement;
     const value =
       target.type === "checkbox" ? target.checked : target.value;
-    setForm((prev) => ({ ...prev, [target.name]: value }));
+    setForm((prev) => {
+      const updated = { ...prev, [target.name]: value };
+      if (target.name === "category") {
+        updated.subcategory = "";
+      }
+      return updated;
+    });
   };
+
+  useEffect(() => {
+    async function loadSubcategories() {
+      try {
+        const res = await fetch(`/api/subcategories?category=${form.category}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableSubcategories(data.subcategories || []);
+        }
+      } catch (err) {
+        console.error("Error loading subcategories:", err);
+      }
+    }
+    loadSubcategories();
+  }, [form.category]);
 
   // ── Device File Upload Handler ───────────────────────────────────────────────
   const handleDeviceUpload = async (fileList: FileList | null) => {
@@ -131,6 +155,7 @@ export default function StudioNewProduct() {
           price: parseFloat(form.price) || 0,
           compareAtPrice: form.comparePrice.trim() ? parseFloat(form.comparePrice) : null,
           category: form.category,
+          subcategory: form.subcategory || undefined,
           description: form.description,
           isNew: form.isNew,
           isSoldOut: form.isSoldOut,
@@ -277,6 +302,35 @@ export default function StudioNewProduct() {
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Subcategory / Fit Dropdown */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+                  Fit / Subcategory (Optional)
+                </label>
+                <Link
+                  href="/studio/subcategories"
+                  target="_blank"
+                  className="text-[9px] font-bold uppercase tracking-wider text-black/60 hover:text-black underline"
+                >
+                  Manage Fits
+                </Link>
+              </div>
+              <select
+                name="subcategory"
+                value={form.subcategory}
+                onChange={handleChange}
+                className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+              >
+                <option value="">None / General</option>
+                {availableSubcategories.map((sub) => (
+                  <option key={sub.id} value={sub.slug}>
+                    {sub.name}
+                  </option>
                 ))}
               </select>
             </div>

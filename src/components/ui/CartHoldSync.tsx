@@ -79,7 +79,7 @@ export default function CartHoldSync() {
           releasedRef.current = true;
           lastRefreshRef.current = 0;
           void syncCartHolds([]);
-          showToast("Your bag was idle — pieces are back in the shop");
+          showToast("Your bag was idle · pieces are back in the shop");
         }
         return;
       }

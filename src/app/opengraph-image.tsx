@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "BAGIFYYYY (Bagify) — Y2K Streetwear & Vintage Finds";
+  "BAGIFYYYY (Bagify): Y2K Streetwear & Vintage Finds";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

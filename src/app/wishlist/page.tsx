@@ -77,7 +77,7 @@ export default function WishlistPage() {
         ) : products.length === 0 ? (
           <div className="w-full flex flex-col items-center justify-center py-24 sm:py-32 rounded-2xl bg-white border border-black/10 text-center px-4">
             <div className="w-14 h-14 rounded-full bg-[#f2f2f2] flex items-center justify-center mb-5">
-              <Heart strokeWidth={1.4} className="w-6 h-6 text-black/40" />
+              <Heart className="w-6 h-6 text-black/40" />
             </div>
             <h2 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black mb-2">
               YOUR WISHLIST IS EMPTY

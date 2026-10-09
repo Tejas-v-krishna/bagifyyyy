@@ -9,6 +9,7 @@ export type CatalogProduct = {
   brand?: string;
   description?: string;
   category: string;
+  subcategory?: string | null;
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
@@ -161,6 +162,7 @@ export async function queryProducts({
         brand: product.brand ?? undefined,
         description: product.description ?? undefined,
         category: product.category,
+        subcategory: (product as { subcategory?: string | null }).subcategory ?? null,
         isNew: product.isNew,
         isSoldOut: product.isSoldOut || product.variants.length === 0 || !hasStock,
         isBestSeller: product.isBestSeller,

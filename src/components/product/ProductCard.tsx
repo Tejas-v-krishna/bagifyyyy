@@ -11,8 +11,10 @@ export interface Product {
   name: string;
   price: number;
   image: string;
+  images?: string[];
   hoverImage?: string;
   category: string;
+  subcategory?: string | null;
   brand?: string;
   isNew?: boolean;
   isSoldOut?: boolean;
@@ -32,10 +34,10 @@ export default function ProductCard({ product }: { product: Product }) {
       href={`/product/${product.id}`}
       className="group product-card flex flex-col w-full h-full bg-transparent relative overflow-hidden font-sans border-0 cursor-pointer select-none"
     >
-      {/* ── Light-gray rounded card container matching reference ── */}
+      {/* ── Image is the card, full-bleed aspect-[4/5] matching New In ShowcaseCard ── */}
       <div
         ref={imageContainerRef}
-        className="media-card relative w-full aspect-[4/5] flex items-center justify-center transition-colors duration-500 group-hover:bg-[var(--surface-panel-hover)] cursor-pointer"
+        className="relative w-full aspect-[4/5] overflow-hidden rounded-[10px] bg-[#e9e9ec] transition-colors duration-500 cursor-pointer"
       >
         {/* Base Product Image */}
         {product.image ? (
@@ -46,7 +48,7 @@ export default function ProductCard({ product }: { product: Product }) {
               fill
               draggable={false}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-              className={`object-contain object-center p-4 sm:p-5 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] select-none pointer-events-none ${
+              className={`object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] select-none pointer-events-none ${
                 product.hoverImage ? "group-hover:opacity-0" : ""
               } ${product.isSoldOut ? "blur-sm opacity-60" : "opacity-100"}`}
             />
@@ -59,7 +61,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 fill
                 draggable={false}
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-                className="object-contain object-center p-4 sm:p-5 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none"
+                className="object-cover object-center opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none"
               />
             )}
 
@@ -78,8 +80,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* NEW Badge */}
         {product.isNew && (
-          <div className="absolute top-3 left-3 z-20">
-            <span className="text-[8px] font-semibold tracking-[0.12em] bg-black text-white px-2 py-0.5 rounded-[var(--radius-cta)]">
+          <div className="absolute top-2.5 left-2.5 z-20">
+            <span className="text-[8px] font-medium tracking-[0.12em] uppercase bg-black/45 text-white/85 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded-full shadow-xs">
               New
             </span>
           </div>
@@ -87,8 +89,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* On-hold signal: first-to-bag holds the piece */}
         {product.reserved && !product.isSoldOut && (
-          <div className="absolute top-3 right-3 z-20">
-            <span className="text-[8px] font-semibold tracking-[0.12em] bg-amber-400 text-black px-2 py-0.5 rounded-[var(--radius-cta)]">
+          <div className="absolute top-2.5 right-2.5 z-20">
+            <span className="text-[8px] font-medium tracking-[0.12em] uppercase bg-amber-500/20 text-amber-900 backdrop-blur-md border border-amber-500/30 px-2 py-0.5 rounded-full shadow-xs">
               On Hold
             </span>
           </div>

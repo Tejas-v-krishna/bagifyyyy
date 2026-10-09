@@ -10,7 +10,7 @@ import { queryProducts } from "@/lib/products";
 export const revalidate = 30;
 
 export const metadata: Metadata = collectionMetadata({
-  title: "Topwear — Shirts & Tees",
+  title: "Topwear: Shirts & Tees",
   description:
     "Oversized tees, heavyweight shirts, and jackets from BAGIFYYYY. Y2K shapes in small runs.",
   path: "/topwears",

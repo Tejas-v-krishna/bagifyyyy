@@ -6,14 +6,14 @@ import { Search, Plus, Minus } from "lucide-react";
 import EditorialPageShell from "@/components/layout/EditorialPageShell";
 import type { FaqCategory } from "@/lib/sanity";
 
-/** Hardcoded fallback — used when Sanity is unconfigured or unreachable. */
+/** Hardcoded fallback used when Sanity is unconfigured or unreachable. */
 export const FAQ_FALLBACK: FaqCategory[] = [
   {
     category: "Orders & Shipping",
     items: [
       {
         q: "How do I track my shipment?",
-        a: "Enter your order number on the Track page — you'll also get SMS and email updates along the way.",
+        a: "Enter your order number on the Track page. You'll also get SMS and email updates along the way.",
       },
       {
         q: "What are your delivery timelines?",
@@ -21,7 +21,7 @@ export const FAQ_FALLBACK: FaqCategory[] = [
       },
       {
         q: "Do you ship internationally?",
-        a: "Yes — 7–14 business days. Any duties at your end are on you.",
+        a: "Yes, 7–14 business days. Any duties at your end are on you.",
       },
     ],
   },
@@ -30,7 +30,7 @@ export const FAQ_FALLBACK: FaqCategory[] = [
     items: [
       {
         q: "Are the vintage pieces authentic?",
-        a: "Yes. Every vintage piece gets checked — age, labels, stitching, hardware — before it goes live.",
+        a: "Yes. Every vintage piece gets checked for age, labels, stitching, and hardware before it goes live.",
       },
       {
         q: "How does sizing work?",
@@ -43,7 +43,7 @@ export const FAQ_FALLBACK: FaqCategory[] = [
     items: [
       {
         q: "What is your return policy?",
-        a: "All sales are final — most pieces are one of one, so there's nothing to swap it with. Check measurements and photos first.",
+        a: "All sales are final. Most pieces are one of one, so there's nothing to swap it with. Check measurements and photos first.",
       },
       {
         q: "What payment methods are supported?",

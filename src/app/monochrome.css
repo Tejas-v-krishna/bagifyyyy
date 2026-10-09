@@ -9,7 +9,7 @@
   --mono-soft-ink: #5e5e5e;
   --mono-line: rgba(11, 11, 11, .18);
   --mono-soft-line: rgba(11, 11, 11, .1);
-  --mono-radius-cta: .35rem;
+  --mono-radius-cta: 9999px;
   --mono-radius-image: .75rem;
   --mono-radius-image-lg: 1rem;
 }
@@ -69,18 +69,18 @@ body.monochrome-site .editorial-glass-nav.is-scrolled.is-dark {
   box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45) !important;
 }
 
-body.monochrome-site button:not([class*="rounded-full"]),
+body.monochrome-site button:not([class*="rounded-full"]):not([role="tab"]),
 body.monochrome-site input[type="button"]:not([class*="rounded-full"]),
 body.monochrome-site input[type="submit"]:not([class*="rounded-full"]),
 body.monochrome-site input[type="reset"]:not([class*="rounded-full"]),
 body.monochrome-site [role="button"]:not([class*="rounded-full"]),
-body.monochrome-site a.btn-bagify:not([class*="rounded-full"]),
-body.monochrome-site .btn-bagify:not([class*="rounded-full"]),
-body.monochrome-site .btn-bagify-dark:not([class*="rounded-full"]),
-body.monochrome-site .editorial-cta:not([class*="rounded-full"]),
-body.monochrome-site .editorial-cta-dark:not([class*="rounded-full"]) {
+body.monochrome-site a.btn-bagify,
+body.monochrome-site .btn-bagify,
+body.monochrome-site .btn-bagify-dark,
+body.monochrome-site .editorial-cta,
+body.monochrome-site .editorial-cta-dark {
   font-family: inherit;
-  border-radius: var(--mono-radius-cta, .35rem) !important;
+  border-radius: 9999px !important;
 }
 
 body.monochrome-site input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
@@ -154,18 +154,45 @@ body.monochrome-site [class*="border-y2k-gunmetal"],
 body.monochrome-site [class*="border-y2k-pale"],
 body.monochrome-site [class*="border-y2k-soft"] { border-color: var(--mono-line) !important; }
 
-body.monochrome-site .btn-bagify {
-  color: #000 !important;
-  background: #fff !important;
-  border: 1px solid rgba(11, 11, 11, .16) !important;
+body.monochrome-site .btn-bagify,
+body.monochrome-site .btn-bagify-dark,
+body.monochrome-site .editorial-cta,
+body.monochrome-site .editorial-cta-dark {
+  color: #ffffff !important;
+  background: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  border-radius: 9999px !important;
   box-shadow: none !important;
 }
-body.monochrome-site .btn-bagify:hover { color: #fff !important; background: #000 !important; border-color: #000 !important; }
-body.monochrome-site .btn-bagify-dark { color: #fff !important; background: #000 !important; border: 1px solid #000 !important; }
-body.monochrome-site .btn-bagify-dark:hover { color: #fff !important; background: #222 !important; border-color: #222 !important; }
+body.monochrome-site .btn-bagify:hover,
+body.monochrome-site .btn-bagify-dark:hover,
+body.monochrome-site .editorial-cta:hover,
+body.monochrome-site .editorial-cta-dark:hover {
+  color: #ffffff !important;
+  background: #0b0b0b !important;
+  border-color: rgba(255, 255, 255, .28) !important;
+}
 
-body.monochrome-site input,
-body.monochrome-site textarea,
+body.monochrome-site [data-nav-theme="dark"] .editorial-cta,
+body.monochrome-site [data-nav-theme="dark"] .editorial-cta-dark,
+body.monochrome-site .curated-grails-dark .btn-bagify,
+body.monochrome-site .curated-grails-dark .btn-bagify-dark,
+body.monochrome-site .btn-bagify-light {
+  color: #000000 !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+body.monochrome-site [data-nav-theme="dark"] .editorial-cta:hover,
+body.monochrome-site [data-nav-theme="dark"] .editorial-cta-dark:hover,
+body.monochrome-site .curated-grails-dark .btn-bagify:hover,
+body.monochrome-site .curated-grails-dark .btn-bagify-dark:hover,
+body.monochrome-site .btn-bagify-light:hover {
+  color: #000000 !important;
+  background: #f4f4f4 !important;
+}
+
+body.monochrome-site input:not([class*="bg-transparent"]):not([class*="search-dialog-input"]),
+body.monochrome-site textarea:not([class*="bg-transparent"]),
 body.monochrome-site select {
   color: #000 !important;
   background: #fff !important;
@@ -173,21 +200,13 @@ body.monochrome-site select {
   box-shadow: none !important;
 }
 
-body.monochrome-site .archive-footer input {
-  color: #fff !important;
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-body.monochrome-site .search-dialog-panel {
-  background-color: var(--mono-paper) !important;
-  color: var(--mono-ink) !important;
-}
-
+body.monochrome-site input[class*="bg-transparent"],
+body.monochrome-site textarea[class*="bg-transparent"],
 body.monochrome-site input.search-dialog-input,
+body.monochrome-site [role="dialog"] input,
 body.monochrome-site [role="dialog"] input.search-dialog-input {
   background: transparent !important;
+  background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
   outline: none !important;

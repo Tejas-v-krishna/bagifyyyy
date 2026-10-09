@@ -130,7 +130,7 @@ export default function BugReportModal() {
                 </button>
               </div>
               <p className="text-xs text-black/55 leading-relaxed mb-5 ml-[46px]">
-                Found something broken? Tell us where — it lands straight with the studio team.
+                Found something broken? Tell us where and it lands straight with the studio team.
               </p>
 
               {status === "sent" ? (

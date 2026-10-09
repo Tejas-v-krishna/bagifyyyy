@@ -84,16 +84,16 @@ export default function ShowcaseCard({
         ))}
 
         {product.isNew && !product.isSoldOut && (
-          <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-md border border-white/10 shadow-xs">
             New
           </span>
         )}
         {product.isSoldOut ? (
-          <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-md border border-white/10 shadow-xs">
             Sold Out
           </span>
         ) : product.reserved ? (
-          <span className="absolute left-3 top-3 rounded-full bg-amber-400 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-amber-500/20 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-amber-900 backdrop-blur-md border border-amber-500/30 shadow-xs">
             On Hold
           </span>
         ) : null}

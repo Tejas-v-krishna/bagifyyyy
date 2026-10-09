@@ -359,7 +359,7 @@ export default function ShippingLabelModal({
                 Lakshmi Niwas, Bhutani&apos;s Colony, near Freshmart, Green Valley
               </p>
               <p className="font-bold text-black uppercase">
-                Phagwara, Punjab — 144411, India
+                Phagwara, Punjab - 144411, India
               </p>
               <p className="font-mono font-bold text-[9px] text-black pt-0.5">
                 TEL: +91 8848080388 | EMAIL: support@bagifyyyy.com

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import ShowcaseCard from "@/components/product/ShowcaseCard";
 
 export type VintageArchiveItem = {
@@ -19,7 +21,7 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
     <section className="curated-grails-dark w-full bg-[#151518] text-white" data-nav-theme="dark">
       <div className="curated-grails-transition curated-grails-transition-in" aria-hidden="true" />
 
-      <div className="relative bg-[#151518] px-3 py-20 text-white sm:px-6 sm:py-24 md:py-32 lg:px-10">
+      <div className="relative bg-[#151518] px-3 pt-6 pb-6 text-white sm:px-6 sm:pt-10 sm:pb-12 md:pt-14 md:pb-16 lg:px-10">
         <div className="mx-auto w-full max-w-[1700px]">
           <div className="mb-6 flex items-end justify-between px-2 sm:px-4 md:px-6">
             <div className="flex flex-col gap-1">
@@ -47,6 +49,16 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
                 }}
               />
             ))}
+          </div>
+
+          <div className="mt-8 flex justify-center px-2 sm:px-4 md:px-6">
+            <Link
+              href="/topwears"
+              className="btn-bagify btn-bagify-light w-full sm:w-auto sm:min-w-[280px] sm:max-w-xs text-[11px] uppercase tracking-[0.14em]"
+            >
+              <span>Shop all archive pieces</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </div>

@@ -432,10 +432,10 @@ function LoginContent() {
                           type="button"
                           onClick={handleForgotPassword}
                           disabled={forgotLoading}
-                          className="btn-bagify btn-bagify-dark text-[10px] font-bold uppercase tracking-[0.18em] py-2.5 flex items-center justify-center gap-2 cursor-pointer"
+                          className="btn-bagify btn-bagify-dark text-[10px] uppercase tracking-[0.18em] cursor-pointer"
                         >
                           {forgotLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                          {forgotLoading ? "Sending…" : "Send Reset Link →"}
+                          <span>{forgotLoading ? "Sending…" : "Send Reset Link"}</span>
                         </button>
                       </div>
                     </motion.div>

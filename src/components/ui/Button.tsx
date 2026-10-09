@@ -34,7 +34,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`${VARIANT_CLASSES[variant]} inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+      className={`${VARIANT_CLASSES[variant]} inline-flex cursor-pointer items-center justify-between gap-3 rounded-full transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
       {...props}
     />
   );

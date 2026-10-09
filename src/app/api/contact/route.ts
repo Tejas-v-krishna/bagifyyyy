@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     try {
       await sendEmail({
         to: 'support@bagifyyyy.com',
-        subject: `[Support] New ticket from ${safeName}${safeOrder ? ` — Order #${safeOrder}` : ''}`,
+        subject: `[Support] New ticket from ${safeName}${safeOrder ? ` · Order #${safeOrder}` : ''}`,
         html: `
           <div style="font-family: monospace; max-width: 600px; margin: 0 auto; padding: 24px; background: #f8f5e9;">
             <h2 style="font-family: sans-serif; font-size: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #232D3B;">
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     try {
       await sendEmail({
         to: email,
-        subject: `We received your message — BAGIFYYYY Support`,
+        subject: `We received your message · BAGIFYYYY Support`,
         html: `
           <div style="font-family: monospace; max-width: 600px; margin: 0 auto; padding: 24px; background: #f8f5e9;">
             <h2 style="font-family: sans-serif; font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #232D3B;">
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
               <b style="color: #232D3B; text-transform: uppercase; letter-spacing: 0.08em;">Your message:</b><br /><br />
               ${safeMsg}
             </div>
-            <p style="margin-top: 24px; font-size: 11px; color: #999;">BAGIFYYYY — Premium Y2K Archive Streetwear</p>
+            <p style="margin-top: 24px; font-size: 11px; color: #999;">BAGIFYYYY · Premium Y2K Archive Streetwear</p>
           </div>
         `,
       });

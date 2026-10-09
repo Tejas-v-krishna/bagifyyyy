@@ -19,7 +19,7 @@ export async function alertManualRefundRequired(input: {
   try {
     await sendEmail({
       to,
-      subject: `[ACTION REQUIRED] Manual refund needed — ${input.orderNumber}`,
+      subject: `[ACTION REQUIRED] Manual refund needed: ${input.orderNumber}`,
       html: `
         <div style="font-family: monospace; max-width: 600px; margin: 0 auto; padding: 24px; background: #f8f5e9;">
           <h2 style="font-family: sans-serif; font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #b00020;">

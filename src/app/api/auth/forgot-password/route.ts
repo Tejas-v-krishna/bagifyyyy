@@ -68,7 +68,7 @@ export async function POST(request: Request) {
             RESET PASSWORD →
           </a>
           <p style="margin-top: 24px; font-size: 11px; color: #999;">
-            If you didn't request this, ignore this email — your password won't change.<br />
+            If you didn't request this, ignore this email. Your password won't change.<br />
             Link: ${resetLink}
           </p>
         </div>

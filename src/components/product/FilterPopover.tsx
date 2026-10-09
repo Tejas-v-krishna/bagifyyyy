@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { SlidersHorizontal, X, RotateCcw, Check } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -110,8 +111,25 @@ export default function FilterPopover({
   hasActiveFilters,
   totalFilteredCount,
 }: FilterPopoverProps) {
+  const [mounted, setMounted] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock body scroll on mobile when open
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    if (window.innerWidth < 640) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
 
   // Close on outside click or escape
   useEffect(() => {
@@ -153,100 +171,72 @@ export default function FilterPopover({
     (c) => c.id.toLowerCase() === selectedCategory.toLowerCase()
   );
 
-  return (
-    <div className="relative inline-block text-left">
-      {/* ── Filter Trigger Button ── */}
-      <button
-        ref={buttonRef}
-        type="button"
-        onClick={onToggle}
-        aria-expanded={isOpen}
-        aria-haspopup="dialog"
-        aria-label="Toggle filters"
-        className={`group relative inline-flex items-center gap-2 py-1 px-2.5 rounded-lg text-[13px] font-medium tracking-tight text-black hover:bg-black/5 transition-all duration-150 cursor-pointer select-none ${
-          isOpen ? "bg-black/5" : ""
-        }`}
-      >
-        <span className="underline underline-offset-4 decoration-black/40 group-hover:decoration-black transition-colors">
-          Filter
-        </span>
-        <SlidersHorizontal className="w-3.5 h-3.5 text-black/70 group-hover:text-black transition-transform duration-200" />
-
-        {/* Active Filter Dot */}
-        {hasActiveFilters && (
-          <span
-            className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-black ml-0.5 animate-pulse"
-            title="Active filters applied"
-          />
-        )}
-      </button>
-
-      {/* ── Filter Panel: bottom sheet on mobile, anchored popover on sm+ ── */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.button
-            key="filter-scrim"
-            type="button"
-            aria-label="Close filters"
+  const filterContent = (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[9999] pointer-events-auto">
+          {/* Backdrop Scrim */}
+          <motion.div
+            key="filter-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 z-[80] bg-black/40 cursor-pointer sm:hidden"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
           />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            key="filter-panel"
-            ref={popoverRef}
-              initial={{ opacity: 0, y: 24, scale: 0.99 }}
+
+          {/* Filter Container: slide up sheet on mobile, slide in from right drawer / dialog on desktop */}
+          <div className="absolute inset-0 flex flex-col justify-end sm:justify-center sm:items-center sm:p-4 pointer-events-none">
+            <motion.div
+              key="filter-panel"
+              ref={popoverRef}
+              initial={{ opacity: 0, y: 40, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 24, scale: 0.99 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              exit={{ opacity: 0, y: 40, scale: 0.98 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
               role="dialog"
               aria-label="Filter products"
-              className="fixed inset-x-3 bottom-3 top-auto z-[90] max-h-[82dvh] overflow-y-auto rounded-2xl border border-black/15 bg-[#f5f5f2] p-5 shadow-[0_24px_55px_rgba(0,0,0,0.25)] font-sans text-black sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:bottom-auto sm:z-50 sm:mt-2.5 sm:w-[410px] sm:max-h-none sm:overflow-visible sm:p-6 sm:shadow-[0_24px_55px_rgba(0,0,0,0.13)]"
+              className="pointer-events-auto w-full max-h-[85vh] sm:max-h-[85vh] sm:max-w-[440px] flex flex-col rounded-t-[1.25rem] sm:rounded-2xl border border-black/15 bg-[#f5f5f2] shadow-[0_25px_60px_rgba(0,0,0,0.35)] font-sans text-black overflow-hidden"
             >
-            {/* Header: Title + Active Count + Reset + Close */}
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-black/10">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-black">
-                  Filters
-                </span>
-                {totalFilteredCount !== undefined && (
-                  <span className="text-[10px] font-mono tracking-wider text-black/50 bg-black/[0.04] px-2 py-0.5 rounded-full border border-black/5">
-                    {totalFilteredCount} {totalFilteredCount === 1 ? "PIECE" : "PIECES"}
+              {/* Header: Title + Active Count + Reset + Close */}
+              <div className="flex items-center justify-between p-5 pb-4 border-b border-black/10 shrink-0 bg-[#f5f5f2]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-black">
+                    Filters
                   </span>
-                )}
-              </div>
+                  {totalFilteredCount !== undefined && (
+                    <span className="text-[10px] font-mono tracking-wider text-black/50 bg-black/[0.04] px-2 py-0.5 rounded-full border border-black/5">
+                      {totalFilteredCount} {totalFilteredCount === 1 ? "PIECE" : "PIECES"}
+                    </span>
+                  )}
+                </div>
 
-              <div className="flex items-center gap-2">
-                {hasActiveFilters && (
+                <div className="flex items-center gap-2">
+                  {hasActiveFilters && (
+                    <button
+                      type="button"
+                      onClick={onReset}
+                      className="inline-flex items-center gap-1.5 text-[10.5px] font-semibold tracking-wider uppercase text-black/50 hover:text-black transition-colors cursor-pointer py-1 px-2 rounded-md hover:bg-black/5"
+                      title="Reset all filters"
+                    >
+                      <RotateCcw className="w-2.5 h-2.5" />
+                      Reset
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={onReset}
-                    className="inline-flex items-center gap-1.5 text-[10.5px] font-semibold tracking-wider uppercase text-black/50 hover:text-black transition-colors cursor-pointer py-1 px-2 rounded-md hover:bg-black/5"
-                    title="Reset all filters"
+                    onClick={onClose}
+                    className="w-7 h-7 rounded-lg text-black/45 hover:text-black hover:bg-black/5 flex items-center justify-center transition-colors cursor-pointer"
+                    aria-label="Close filters"
                   >
-                    <RotateCcw className="w-2.5 h-2.5" />
-                    Reset
+                    <X className="w-3.5 h-3.5" />
                   </button>
-                )}
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="w-7 h-7 rounded-lg text-black/45 hover:text-black hover:bg-black/5 flex items-center justify-center transition-colors cursor-pointer"
-                  aria-label="Close filters"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-5 text-[13px]">
+              {/* Scrollable Filter Body */}
+              <div className="p-5 overflow-y-auto space-y-6 text-[13px] overscroll-contain">
               {/* ── Section 1: Color ── */}
               {availableColors.length > 0 && (
                 <div className="space-y-2">
@@ -283,7 +273,6 @@ export default function FilterPopover({
                           {isSelected && (
                             <Check
                               className={`w-3 h-3 ${isLight ? "text-black" : "text-white"}`}
-                              strokeWidth={2.6}
                               aria-hidden="true"
                             />
                           )}
@@ -381,7 +370,7 @@ export default function FilterPopover({
                         >
                           <span className="truncate">{cat.label}</span>
                           {isSelected && (
-                            <Check className="w-3 h-3 text-white shrink-0 ml-1.5" strokeWidth={2.4} />
+                            <Check className="w-3 h-3 text-white shrink-0 ml-1.5" />
                           )}
                         </button>
                       );
@@ -391,29 +380,63 @@ export default function FilterPopover({
               )}
             </div>
 
-            {/* ── Footer: Apply & Done ── */}
-            <div className="pt-5 mt-5 border-t border-black/10 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-black text-white text-[11.5px] font-semibold tracking-[0.08em] uppercase hover:bg-black/90 active:scale-[0.99] transition-all cursor-pointer shadow-xs text-center"
-              >
-                View {totalFilteredCount !== undefined ? `${totalFilteredCount} Pieces` : "Pieces"}
-              </button>
-              {hasActiveFilters && (
+              {/* ── Footer: Apply & Done ── */}
+              <div className="p-5 border-t border-black/10 shrink-0 bg-[#f5f5f2] flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={onReset}
-                  className="py-2.5 px-3 rounded-xl border border-black/15 bg-white/70 hover:bg-white text-black text-[11px] font-semibold tracking-[0.06em] uppercase transition-all cursor-pointer"
-                  title="Clear all filters"
+                  onClick={onClose}
+                  className="btn-bagify btn-bagify-dark flex-1 text-[11px] tracking-[0.08em] uppercase cursor-pointer"
                 >
-                  Clear
+                  <span>View {totalFilteredCount !== undefined ? `${totalFilteredCount} Pieces` : "Pieces"}</span>
                 </button>
-              )}
-            </div>
-          </motion.div>
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={onReset}
+                    className="py-2.5 px-4 rounded-full border border-black/15 bg-white/70 hover:bg-white text-black text-[11px] font-medium tracking-[0.06em] uppercase transition-all cursor-pointer"
+                    title="Clear all filters"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+
+  return (
+    <div className="relative inline-block text-left">
+      {/* ── Filter Trigger Button ── */}
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        aria-label="Toggle filters"
+        className={`group relative inline-flex items-center gap-2 py-1 px-2.5 rounded-lg text-[13px] font-medium tracking-tight text-black hover:bg-black/5 transition-all duration-150 cursor-pointer select-none ${
+          isOpen ? "bg-black/5" : ""
+        }`}
+      >
+        <span className="underline underline-offset-4 decoration-black/40 group-hover:decoration-black transition-colors">
+          Filter
+        </span>
+        <SlidersHorizontal className="w-3.5 h-3.5 text-black/70 group-hover:text-black transition-transform duration-200" />
+
+        {/* Active Filter Dot */}
+        {hasActiveFilters && (
+          <span
+            className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-black ml-0.5 animate-pulse"
+            title="Active filters applied"
+          />
         )}
-      </AnimatePresence>
+      </button>
+
+      {/* Render Filter Drawer via Portal directly to body */}
+      {mounted && createPortal(filterContent, document.body)}
     </div>
   );
 }

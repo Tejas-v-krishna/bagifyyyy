@@ -17,8 +17,8 @@ export default defineType({
     }),
     defineField({ name: "heroAlt", title: "Hero alt text", type: "string" }),
     defineField({ name: "kicker", title: "Kicker (e.g. BAGIFYYYY / ABOUT)", type: "string" }),
-    defineField({ name: "quoteLine1", title: "Quote — line 1", type: "string" }),
-    defineField({ name: "quoteLine2", title: "Quote — line 2", type: "string" }),
+    defineField({ name: "quoteLine1", title: "Quote: line 1", type: "string" }),
+    defineField({ name: "quoteLine2", title: "Quote: line 2", type: "string" }),
     defineField({ name: "tagline", title: "Tagline under the quote", type: "string" }),
     defineField({ name: "ideaTitle", title: "Manifesto title", type: "string" }),
     defineField({

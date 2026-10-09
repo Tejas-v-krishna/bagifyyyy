@@ -111,7 +111,7 @@ function SuccessContent() {
       <div className="min-h-screen bg-[#f5f5f2] flex items-center justify-center px-4 py-20 text-black font-sans">
         <div className="bg-white border border-black/10 rounded-2xl max-w-[540px] w-full p-8 sm:p-12 text-center shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
           <div className="w-14 h-14 bg-[#f5f5f2] border border-black/15 rounded-full flex items-center justify-center mx-auto mb-5 text-black">
-            <AlertCircle strokeWidth={2} className="w-6 h-6" aria-hidden="true" />
+            <AlertCircle className="w-6 h-6" aria-hidden="true" />
           </div>
           <h1 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black mb-3">
             {isMissing ? "Receipt Not Found" : "Could Not Load Receipt"}
@@ -162,7 +162,7 @@ function SuccessContent() {
       <div className="min-h-screen bg-[#f5f5f2] flex items-center justify-center px-4 py-20 text-black font-sans">
         <div className="bg-white border border-black/10 rounded-2xl max-w-[540px] w-full p-8 sm:p-12 text-center shadow-[0_2px_16px_rgba(0,0,0,0.03)]">
           <div className="w-14 h-14 bg-[#f5f5f2] border border-black/15 rounded-full flex items-center justify-center mx-auto mb-5 text-black">
-            <AlertCircle strokeWidth={2} className="w-6 h-6" aria-hidden="true" />
+            <AlertCircle className="w-6 h-6" aria-hidden="true" />
           </div>
           <h1 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black mb-3">
             Payment Not Completed
@@ -176,9 +176,10 @@ function SuccessContent() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               href="/checkout"
-              className="flex-1 bg-black text-white py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors text-center cursor-pointer shadow-xs"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 bg-black text-white py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors text-center cursor-pointer shadow-xs"
             >
-              Back to Checkout →
+              <span>Back to Checkout</span>
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
             <Link
               href="/"
@@ -230,7 +231,7 @@ function SuccessContent() {
           {/* 1. Confirmation header */}
           <div className="p-8 sm:p-12 text-center border-b border-black/10">
             <div className="w-14 h-14 bg-[#f5f5f2] border border-black/10 rounded-full flex items-center justify-center mx-auto mb-5 text-black shadow-xs">
-              <Check strokeWidth={2.5} className="w-6 h-6 text-black" aria-hidden="true" />
+              <Check className="w-6 h-6 text-black" aria-hidden="true" />
             </div>
 
             <h1 className="font-microgramma font-bold text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight leading-tight text-black mb-3">
@@ -402,27 +403,27 @@ function SuccessContent() {
         </div>
 
         {/* 5. Navigation actions */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
-          <Link
-            href="/"
-            className="flex-1 bg-black text-white py-4 text-xs font-semibold uppercase tracking-[0.14em] text-center hover:bg-black/85 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-          >
-            <span>Return to Home Screen</span>
-            <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
-          <Link
-            href="/account"
-            className="flex-1 border border-black/15 bg-white text-black py-4 text-xs font-semibold uppercase tracking-[0.14em] text-center hover:border-black hover:bg-black/[0.02] transition-colors cursor-pointer"
-          >
-            View in My Account
-          </Link>
-          <Link
-            href="/products"
-            className="flex-1 border border-black/15 bg-white text-black py-4 text-xs font-semibold uppercase tracking-[0.14em] text-center hover:border-black hover:bg-black/[0.02] transition-colors cursor-pointer"
-          >
-            Continue Shopping
-          </Link>
-        </div>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
+            <Link
+              href="/"
+              className="btn-bagify btn-bagify-dark flex-1 text-xs uppercase tracking-[0.14em] cursor-pointer"
+            >
+              <span>Return to Home Screen</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+            <Link
+              href="/account"
+              className="flex-1 rounded-full border border-black/15 bg-white text-black py-3.5 px-5 text-xs font-medium uppercase tracking-[0.14em] text-center hover:border-black hover:bg-black/[0.02] transition-colors cursor-pointer flex items-center justify-center"
+            >
+              View in My Account
+            </Link>
+            <Link
+              href="/products"
+              className="flex-1 rounded-full border border-black/15 bg-white text-black py-3.5 px-5 text-xs font-medium uppercase tracking-[0.14em] text-center hover:border-black hover:bg-black/[0.02] transition-colors cursor-pointer flex items-center justify-center"
+            >
+              Continue Shopping
+            </Link>
+          </div>
 
         <p className="text-center text-[11px] text-black/45 mt-8">
           Need help with this order? Email{" "}

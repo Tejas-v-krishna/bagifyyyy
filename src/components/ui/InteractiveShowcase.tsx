@@ -197,7 +197,7 @@ export default function InteractiveShowcase({
         <div className="flex items-center justify-between gap-2 sm:justify-start sm:self-auto">
           <Link
             href={viewAllHref}
-            className={`h-9 sm:h-10 inline-flex items-center gap-2 rounded-[0.35rem] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${tone === "dark" ? "bg-white text-black hover:bg-white/85 focus-visible:outline-white" : "bg-[#111111] text-white hover:bg-black/80 focus-visible:outline-black"}`}
+            className="btn-bagify btn-bagify-dark text-[10px] sm:text-[11px] uppercase tracking-[0.12em] whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             <span>See all pieces</span>
             <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -207,17 +207,17 @@ export default function InteractiveShowcase({
             type="button"
             onClick={goPrev}
             aria-label="Previous product"
-            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
-            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
+            <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             type="button"
             onClick={goNext}
             aria-label="Next product"
-            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-[0.35rem] flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${tone === "dark" ? "border border-white/25 bg-transparent text-white hover:bg-white hover:text-black" : "border border-black/10 bg-white text-black/80 hover:bg-black hover:text-white shadow-sm"}`}
           >
-            <ChevronRight className="w-4 h-4" strokeWidth={2} />
+            <ChevronRight className="w-4 h-4" />
           </button>
           </div>
         </div>

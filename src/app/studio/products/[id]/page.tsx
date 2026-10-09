@@ -127,10 +127,13 @@ export default function StudioEditProduct() {
     brand: "",
     collectionTag: "BAGIFYYYY",
     category: CATEGORIES[0].slug,
+    subcategory: "",
     isNew: false,
     isSoldOut: false,
     isBestSeller: false,
   });
+
+  const [availableSubcategories, setAvailableSubcategories] = useState<{ id: string; name: string; slug: string }[]>([]);
 
   const fetchProduct = useCallback(async () => {
     try {
@@ -149,6 +152,7 @@ export default function StudioEditProduct() {
           brand: data.brand || "BAGIFYYYY",
           collectionTag: data.collectionTag || data.brand || "BAGIFYYYY",
           category: canonicalCategory(data.category) || CATEGORIES[0].slug,
+          subcategory: data.subcategory || "",
           isNew: Boolean(data.isNew),
           isSoldOut: Boolean(data.isSoldOut),
           isBestSeller: Boolean(data.isBestSeller),
@@ -181,6 +185,21 @@ export default function StudioEditProduct() {
     loadProduct();
   }, [fetchProduct]);
 
+  useEffect(() => {
+    async function loadSubcategories() {
+      try {
+        const res = await fetch(`/api/subcategories?category=${form.category}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableSubcategories(data.subcategories || []);
+        }
+      } catch (err) {
+        console.error("Error loading subcategories:", err);
+      }
+    }
+    loadSubcategories();
+  }, [form.category]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -189,7 +208,13 @@ export default function StudioEditProduct() {
     const target = e.target as HTMLInputElement;
     const value =
       target.type === "checkbox" ? target.checked : target.value;
-    setForm((prev) => ({ ...prev, [target.name]: value }));
+    setForm((prev) => {
+      const updated = { ...prev, [target.name]: value };
+      if (target.name === "category" && target.value !== prev.category) {
+        updated.subcategory = "";
+      }
+      return updated;
+    });
   };
 
   const handleSave = async (e?: React.FormEvent) => {
@@ -543,6 +568,35 @@ export default function StudioEditProduct() {
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Subcategory / Fit Dropdown */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate">
+                    Fit / Subcategory (Optional)
+                  </label>
+                  <Link
+                    href="/studio/subcategories"
+                    target="_blank"
+                    className="text-[9px] font-bold uppercase tracking-wider text-black/60 hover:text-black underline"
+                  >
+                    Manage Fits
+                  </Link>
+                </div>
+                <select
+                  name="subcategory"
+                  value={form.subcategory}
+                  onChange={handleChange}
+                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+                >
+                  <option value="">None / General</option>
+                  {availableSubcategories.map((sub) => (
+                    <option key={sub.id} value={sub.slug}>
+                      {sub.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -1002,7 +1056,7 @@ export default function StudioEditProduct() {
             <div className="flex items-center gap-2">
               <Eye className="w-4 h-4 text-y2k-gunmetal" />
               <span className="text-[10px] font-bold uppercase tracking-wide text-y2k-gunmetal">
-                STOREFRONT LIVE CUSTOMER PREVIEW — This reflects your current edits in real-time
+                STOREFRONT LIVE CUSTOMER PREVIEW: This reflects your current edits in real-time
               </span>
             </div>
             <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react";
+import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft, ArrowRight } from "lucide-react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -82,33 +82,38 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
   };
 
   return (
-    <div className="mt-6">
-      <div className="flex items-center justify-between mb-3">
-        <p className="font-sans text-[15px] font-medium tracking-tight text-black">
-          You may also like…
-        </p>
-        <div className="flex items-center gap-2">
+    <div className="mt-8 pt-6 border-t border-black/10">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <p className="font-microgramma text-[15px] font-bold uppercase tracking-tight text-black leading-none">
+            You may also like
+          </p>
+          <p className="text-[10px] font-mono uppercase tracking-[0.1em] text-black/45 mt-1">
+            Complementary archive pieces
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => scrollRail(-1)}
             aria-label="Scroll recommendations back"
-            className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center transition-colors cursor-pointer text-black"
+            className="w-7 h-7 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors cursor-pointer text-black"
           >
-            <ChevronLeft className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+            <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
           <button
             type="button"
             onClick={() => scrollRail(1)}
             aria-label="Scroll recommendations forward"
-            className="w-8 h-8 rounded-full bg-black hover:bg-black/80 flex items-center justify-center transition-colors cursor-pointer text-white"
+            className="w-7 h-7 rounded-full bg-black hover:bg-black/80 flex items-center justify-center transition-colors cursor-pointer text-white"
           >
-            <ChevronRight className="w-4 h-4" strokeWidth={2.2} aria-hidden="true" />
+            <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>
       <div
         ref={railRef}
-        className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory"
+        className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
         style={{ scrollbarWidth: "none" }}
       >
         {products.map((p) => {
@@ -119,32 +124,32 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
           return (
             <div
               key={p.id}
-              className="snap-start shrink-0 w-[240px] sm:w-[260px] border border-black/10 bg-white rounded-sm p-3 flex items-center gap-3"
+              className="group/item snap-start shrink-0 w-[200px] sm:w-[220px] border border-black/10 bg-white rounded-xl p-2 flex items-center gap-2.5 transition-colors hover:border-black/30"
             >
               <Link
                 href={`/product/${p.id}`}
                 onClick={closeCart}
-                className="relative w-14 h-[72px] bg-[#f2f2f2] rounded-xs shrink-0 overflow-hidden"
+                className="relative w-16 h-20 bg-[#e9e9ec] rounded-lg shrink-0 overflow-hidden"
                 aria-label={p.name}
               >
-                <Image src={img} alt={p.name} fill draggable={false} sizes="60px" className="object-contain p-1 mix-blend-multiply" />
+                <Image src={img} alt={p.name} fill draggable={false} sizes="80px" className="object-cover object-center transition-transform duration-500 group-hover/item:scale-105" />
               </Link>
-              <div className="flex-1 min-w-0">
-                <Link href={`/product/${p.id}`} onClick={closeCart} className="block truncate text-[11px] font-bold uppercase tracking-tight text-black hover:opacity-60 transition-opacity" title={p.name}>
+              <div className="flex-1 min-w-0 pr-0.5">
+                <Link href={`/product/${p.id}`} onClick={closeCart} className="block truncate text-[11px] font-semibold uppercase tracking-tight text-black hover:opacity-60 transition-opacity" title={p.name}>
                   {p.name}
                 </Link>
-                <p className="text-[11px] font-medium text-black mt-0.5 tabular-nums">
+                <p className="text-[11px] font-mono font-medium text-black mt-0.5 tabular-nums">
                   ₹{p.price.toLocaleString("en-IN")}
                 </p>
+                <button
+                  type="button"
+                  onClick={() => handleAdd(p)}
+                  disabled={added}
+                  className={`mt-2 w-full py-1 px-2.5 rounded-full text-[9px] font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${added ? "bg-emerald-700 text-white" : "bg-black text-white hover:bg-black/80 active:scale-95"}`}
+                >
+                  {added ? "Added ✓" : "Add to bag +"}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => handleAdd(p)}
-                disabled={added}
-                className={`shrink-0 px-4 py-2 rounded-md text-[11px] font-semibold tracking-wide transition-all cursor-pointer ${added ? "bg-emerald-700 text-white" : "bg-black text-white hover:bg-black/80 active:scale-95"}`}
-              >
-                {added ? "Added" : "Add"}
-              </button>
             </div>
           );
         })}
@@ -221,14 +226,18 @@ export default function CartDrawer() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 sm:px-8 py-6 border-b border-black/10 bg-white">
-              <div>
+              <div className="flex items-baseline gap-3">
                 <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
                   Your Bag
                 </h2>
-                {items.length > 0 && (
-                  <p className="text-[10px] font-mono uppercase tracking-[0.16em] text-black/50 mt-0.5">
-                     {items.reduce((t, i) => t + i.quantity, 0)} {items.reduce((t, i) => t + i.quantity, 0) === 1 ? "PIECE" : "PIECES"} IN YOUR BAG
-                  </p>
+                {!isAuthenticated && (
+                  <Link
+                    href="/login"
+                    onClick={closeCart}
+                    className="text-[10px] font-mono uppercase tracking-[0.14em] text-black/45 hover:text-black underline underline-offset-2 transition-colors"
+                  >
+                    Sign In
+                  </Link>
                 )}
               </div>
               <button
@@ -237,145 +246,148 @@ export default function CartDrawer() {
                 className="w-9 h-9 rounded-full bg-[#f2f2f2] hover:bg-black hover:text-white flex items-center justify-center transition-colors cursor-pointer text-black"
               >
                 <span className="sr-only">Close cart</span>
-                <X className="h-4 w-4" strokeWidth={1.75} />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Cart Items */}
             <div data-lenis-prevent="true" className="flex-1 overflow-y-auto px-6 sm:px-8 py-6">
               {items.length === 0 ? (
-                <div className="flex flex-col py-2">
-                  <p className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black text-center">
-                    Your cart is empty.
-                  </p>
-                  <p className="text-xs text-black/55 leading-relaxed mt-1.5 mb-6 text-center">
-                    Find trending collection, products right below!
-                  </p>
+                <div className="flex flex-col py-1">
+                  <div className="text-center mb-6">
+                    <p className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black leading-none">
+                      Your bag is empty
+                    </p>
+                    <p className="text-[11px] text-black/50 leading-relaxed mt-2 font-mono uppercase tracking-[0.08em]">
+                      Explore the archive & categories below
+                    </p>
+                  </div>
+
                   <div className="flex flex-col gap-3">
                     {[
-                      { href: "/bottomwears", label: "Bottoms", image: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", alt: "Shop bottoms" },
-                      { href: "/topwears", label: "Tops", image: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", alt: "Shop tops" },
-                      { href: "/accessories", label: "Accessories", image: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", alt: "Shop accessories" },
+                      { href: "/products", label: "All pieces", count: "Archive & Drops", image: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg", pos: "object-[50%_25%]" },
+                      { href: "/topwears", label: "Topwears", count: "Hoodies & Jackets", image: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", pos: "object-[50%_18%]" },
+                      { href: "/bottomwears", label: "Bottomwears", count: "Cargos & Denim", image: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", pos: "object-[50%_48%]" },
+                      { href: "/accessories", label: "Accessories", count: "Bags & Chains", image: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", pos: "object-[50%_45%]" },
                     ].map((cat) => (
                       <Link
                         key={cat.href}
                         href={cat.href}
                         onClick={closeCart}
-                        className="group relative block aspect-[16/8] overflow-hidden rounded-xl bg-[#e7e7e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+                        className="group relative flex h-[104px] items-center justify-between overflow-hidden rounded-2xl bg-[#e7e7e9] pl-5 border border-black/[0.04] transition-all duration-300 hover:border-black/20 hover:bg-[#dedee0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
                       >
-                        <Image
-                          src={cat.image}
-                          alt={cat.alt}
-                          fill
-                          draggable={false}
-                          sizes="(max-width: 768px) 100vw, 448px"
-                          className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
-                        />
-                        <span className="absolute inset-0 bg-gradient-to-r from-white/55 via-white/10 to-transparent pointer-events-none" aria-hidden="true" />
-                        <span className="absolute inset-y-0 left-5 flex items-center font-microgramma text-xl font-bold uppercase tracking-tight text-[#0a0a0a]">
-                          {cat.label}
-                        </span>
-                        <span className="absolute inset-y-0 right-4 flex items-center">
-                          <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
-                            <ChevronRight className="w-5 h-5 text-black" strokeWidth={2} aria-hidden="true" />
+                        <div className="relative z-10 flex flex-col justify-center min-w-0 pr-2">
+                          <span className="font-microgramma text-[17px] font-bold uppercase tracking-tight text-[#0a0a0a] leading-tight">
+                            {cat.label}
                           </span>
-                        </span>
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-black/45 mt-1">
+                            {cat.count}
+                          </span>
+                        </div>
+
+                        <div className="relative h-full w-[46%] shrink-0 overflow-hidden">
+                          <Image
+                            src={cat.image}
+                            alt={`Shop ${cat.label}`}
+                            fill
+                            draggable={false}
+                            sizes="200px"
+                            className={`object-cover ${cat.pos} transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]`}
+                            style={{
+                              maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 28%, black 65%)",
+                              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 28%, black 65%)",
+                            }}
+                          />
+                          <div
+                            className="pointer-events-none absolute inset-y-0 left-0 w-8 backdrop-blur-[2px]"
+                            style={{
+                              maskImage: "linear-gradient(to right, black 0%, transparent 100%)",
+                              WebkitMaskImage: "linear-gradient(to right, black 0%, transparent 100%)",
+                            }}
+                            aria-hidden="true"
+                          />
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-black shadow-xs transition-transform duration-300 group-hover:scale-110 group-hover:bg-black group-hover:text-white">
+                            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                          </div>
+                        </div>
                       </Link>
                     ))}
+                  </div>
+
+                  <div className="mt-5 pt-5 border-t border-black/10">
+                    <Link
+                      href="/products"
+                      onClick={closeCart}
+                      className="btn-bagify btn-bagify-dark w-full justify-between text-[11px] uppercase tracking-[0.12em]"
+                    >
+                      <span>Explore all pieces</span>
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                    </Link>
                   </div>
                 </div>
               ) : (
                 <>
-                  {!isAuthenticated && (
-                    <div className="mb-6 p-4 rounded-xl bg-white border border-black/10 text-[10px] uppercase tracking-[0.16em] text-black/75 flex items-center justify-between shadow-xs">
-                      <span className="font-semibold">Checking out as guest</span>
-                      <Link
-                        href="/login"
-                        onClick={closeCart}
-                        className="text-black font-bold underline underline-offset-4 hover:opacity-70 transition-opacity"
-                      >
-                        Sign in →
-                      </Link>
-                    </div>
-                  )}
-                  <ul className="space-y-4">
-                    {items.map((item) => {
-                      const key = getItemKey(item);
-                      return (
-                        <li key={key} className="flex gap-4 p-4 rounded-2xl bg-white border border-black/10 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-                          {/* Image */}
-                          <div className="relative h-24 w-[76px] bg-[#f2f2f2] rounded-xl shrink-0 overflow-hidden">
-                            <Image
-                              src={item.image || "/placeholder.jpg"}
-                              alt={item.name}
-                              fill
-                              draggable={false}
-                              className="object-contain p-1 mix-blend-multiply"
-                            />
-                          </div>
-
-                          {/* Details */}
-                          <div className="flex flex-1 flex-col justify-between min-w-0">
-                            <div>
-                              <div className="flex justify-between items-start gap-2">
-                                <h3 className="text-xs font-bold uppercase tracking-tight text-black leading-snug line-clamp-2 flex-1">
-                                  {item.name}
-                                </h3>
-                                <p className="font-bold text-xs text-black shrink-0 tabular-nums">
-                                  ₹{item.price.toLocaleString("en-IN")}
-                                </p>
-                              </div>
-                              <p className="text-[10px] font-mono uppercase tracking-[0.14em] text-black/50 mt-1">
-                                {item.color} / {item.size}
-                              </p>
-                              {item.bundleName && (
-                                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-700 mt-1">
-                                  Part of {item.bundleName}
-                                </p>
-                              )}
+                  <ul className="space-y-3.5">
+                    <AnimatePresence initial={false} mode="popLayout">
+                      {items.map((item) => {
+                        const key = getItemKey(item);
+                        return (
+                          <motion.li
+                            key={key}
+                            layout
+                            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.18 } }}
+                            transition={{ type: "spring", damping: 25, stiffness: 280 }}
+                            className="flex gap-4 py-4 border-b border-black/10 transition-colors"
+                          >
+                            {/* Image is the card cover thumbnail */}
+                            <div className="relative h-24 w-18 sm:h-28 sm:w-20 bg-[#e9e9ec] rounded-lg shrink-0 overflow-hidden">
+                              <Image
+                                src={item.image || "/placeholder.jpg"}
+                                alt={item.name}
+                                fill
+                                draggable={false}
+                                className="object-cover object-center"
+                              />
                             </div>
 
-                            <div className="flex items-center justify-between mt-3 pt-2 border-t border-black/5">
-                              <div className="flex items-center rounded-lg border border-black/10 bg-[#f8f8f8] p-0.5">
+                            {/* Details */}
+                            <div className="flex flex-1 flex-col justify-between min-w-0">
+                              <div>
+                                <div className="flex justify-between items-start gap-2">
+                                  <h3 className="text-[13px] sm:text-[14px] font-bold uppercase tracking-tight text-black leading-snug line-clamp-2 flex-1">
+                                    {item.name}
+                                  </h3>
+                                  <p className="font-mono font-bold text-xs sm:text-[13px] text-black shrink-0 tabular-nums">
+                                    ₹{item.price.toLocaleString("en-IN")}
+                                  </p>
+                                </div>
+                                <p className="text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.12em] text-black/50 mt-1">
+                                  {item.color} / {item.size}
+                                </p>
+                                {item.bundleName && (
+                                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-700 mt-1">
+                                    Part of {item.bundleName}
+                                  </p>
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-end mt-2 pt-1">
                                 <button
                                   type="button"
-                                  aria-label={item.quantity <= 1 ? "Remove item" : "Decrease quantity"}
-                                  onClick={() =>
-                                    item.quantity <= 1
-                                      ? removeItem(key)
-                                      : updateQuantity(key, item.quantity - 1)
-                                  }
-                                  className="p-1 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors"
+                                  onClick={() => removeItem(key)}
+                                  className="text-[10px] font-mono uppercase tracking-[0.14em] text-black/45 hover:text-red-600 underline underline-offset-2 transition-colors cursor-pointer"
+                                  aria-label={`Remove ${item.name} from bag`}
                                 >
-                                  <Minus className="w-3 h-3" aria-hidden="true" />
-                                </button>
-                                <span className="w-7 text-center text-xs font-mono font-bold text-black" aria-live="polite" aria-label={`Quantity ${item.quantity}`}>
-                                  {item.quantity}
-                                </span>
-                                <button
-                                  type="button"
-                                  aria-label="Increase quantity"
-                                  disabled={item.quantity >= 10}
-                                  onClick={() =>
-                                    updateQuantity(key, item.quantity + 1)
-                                  }
-                                  className="p-1 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-white rounded cursor-pointer text-black/60 hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                >
-                                  <Plus className="w-3 h-3" aria-hidden="true" />
+                                  Remove
                                 </button>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => removeItem(key)}
-                                className="text-[9.5px] font-mono uppercase tracking-wider text-black/40 hover:text-red-600 underline underline-offset-2 cursor-pointer transition-colors"
-                              >
-                                Remove
-                              </button>
                             </div>
-                          </div>
-                        </li>
-                      );
-                    })}
+                          </motion.li>
+                        );
+                      })}
+                    </AnimatePresence>
                   </ul>
                   <CartUpsell closeCart={closeCart} />
                 </>
@@ -390,7 +402,7 @@ export default function CartDrawer() {
                   <div className="flex items-center justify-between bg-[#f8f8f8] border border-black/10 rounded-xl px-4 py-2.5">
                     <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                      {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
+                      {appliedPromo.code} · {(appliedPromo.discount * 100).toFixed(0)}% OFF
                     </span>
                     <button
                       type="button"
@@ -413,7 +425,7 @@ export default function CartDrawer() {
                         onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
                         onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
                         placeholder="Promo code"
-                        className="w-full text-xs uppercase tracking-wider outline-none bg-transparent text-black placeholder:text-black/35 font-mono"
+                        className="w-full text-xs uppercase tracking-wider outline-none !bg-transparent text-black placeholder:text-black/35 font-mono border-0"
                       />
                     </div>
                     <button
@@ -432,13 +444,15 @@ export default function CartDrawer() {
 
                 {/* Totals */}
                 <div className="space-y-2 pt-2 border-t border-black/5">
-                  <div className="flex justify-between items-baseline text-xs text-black/60 font-mono">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal.toLocaleString("en-IN")}</span>
-                  </div>
+                  {(setDiscount > 0 || (discountAmount > 0 && appliedPromo)) && (
+                    <div className="flex justify-between items-baseline text-xs text-black/60 font-mono">
+                      <span>Subtotal</span>
+                      <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                    </div>
+                  )}
                   {setDiscount > 0 && (
                     <div className="flex justify-between items-baseline text-xs text-emerald-700 font-bold font-mono">
-                       <span>Set discount</span>
+                      <span>Set discount</span>
                       <span>−₹{setDiscount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
@@ -448,7 +462,7 @@ export default function CartDrawer() {
                       <span>−₹{discountAmount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-baseline pt-2 border-t border-black/10">
+                  <div className={`flex justify-between items-baseline ${(setDiscount > 0 || (discountAmount > 0 && appliedPromo)) ? "pt-2 border-t border-black/10" : ""}`}>
                     <span className="text-xs uppercase tracking-[0.16em] font-bold text-black">Total</span>
                     <span className="font-microgramma font-bold text-xl sm:text-2xl tracking-tight text-black tabular-nums">
                       ₹{finalTotal.toLocaleString("en-IN")}

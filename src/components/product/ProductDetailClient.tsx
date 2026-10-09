@@ -12,7 +12,7 @@ import NotifyMeSection from "@/components/product/NotifyMeSection";
 import ReviewSection from "@/components/product/ReviewSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import { categoryHref, categoryLabel } from "@/lib/categories";
-import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package } from "lucide-react";
+import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package, Check, ArrowRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { ProductForDisplay } from "@/lib/product";
 
@@ -188,7 +188,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           {/* ── LEFT: Gallery ─────────────────────────────────────────────── */}
           <div className="min-w-0 pb-8">
             <div
-              className="relative h-[58vh] w-full overflow-hidden rounded-[15px] bg-[#F2F2F2] touch-pan-y select-none sm:h-[64vh] lg:h-[74vh]"
+              className="relative h-[58vh] w-full overflow-hidden rounded-lg bg-[#F2F2F2] touch-pan-y select-none sm:h-[64vh] lg:h-[74vh]"
               onTouchStart={(e) => {
                 touchStartX.current = e.touches[0]?.clientX ?? null;
               }}
@@ -244,7 +244,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     type="button"
                     onClick={goToPrevImage}
                     aria-label="Previous image"
-                    className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 backdrop-blur border border-black/10 flex items-center justify-center text-black shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
+                    className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur border border-black/10 flex items-center justify-center text-black shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
                   >
                     <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                   </button>
@@ -252,7 +252,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     type="button"
                     onClick={goToNextImage}
                     aria-label="Next image"
-                    className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/90 backdrop-blur border border-black/10 flex items-center justify-center text-black shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
+                    className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur border border-black/10 flex items-center justify-center text-black shadow-sm hover:bg-white active:scale-95 transition cursor-pointer"
                   >
                     <ChevronRight className="w-5 h-5" aria-hidden="true" />
                   </button>
@@ -264,7 +264,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               )}
             </div>
             {productImages.length > 1 && (
-              <div className="-mt-8 relative z-10 flex justify-center gap-2 px-4">
+              <div className="mt-3 relative z-10 flex justify-center gap-2 px-1">
                 {productImages.map((img, idx) => (
                   <button
                     key={idx}
@@ -272,10 +272,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     onClick={() => setActiveImageIndex(idx)}
                     aria-label={`View image ${idx + 1}`}
                     aria-pressed={activeImageIndex === idx}
-                    className={`relative h-16 w-14 shrink-0 overflow-hidden rounded-[10px] bg-white/95 backdrop-blur transition-all cursor-pointer shadow-[0_8px_24px_rgba(0,0,0,0.18)] ${
+                    className={`relative h-18 w-14 shrink-0 overflow-hidden rounded-[3px] bg-[#f2f2f2] transition-all cursor-pointer ${
                       activeImageIndex === idx
-                        ? "ring-2 ring-black ring-offset-2 ring-offset-white"
-                        : "opacity-80 hover:opacity-100"
+                        ? "ring-1.5 ring-black opacity-100 shadow-xs"
+                        : "opacity-60 hover:opacity-100 border border-black/10"
                     }`}
                   >
                     <Image
@@ -283,7 +283,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       alt=""
                       fill
                       sizes="64px"
-                      className="object-contain object-center p-1"
+                      className="object-cover object-center"
                     />
                   </button>
                 ))}
@@ -308,7 +308,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 </>
               ) : (
                 <a href="#reviews" className="text-xs text-black/55 hover:text-black hover:underline transition-colors">
-                  No reviews yet — be the first
+                  No reviews yet. Be the first
                 </a>
               )}
             </div>
@@ -330,12 +330,12 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               heldByYou ? (
                 <div className="mt-5 flex items-center gap-3 border-2 border-black bg-black px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white">
                   <Clock className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
-                  <span>In your bag — Reserved for you{holdMinutesLeft ? ` · ${holdMinutesLeft}m left` : ""}</span>
+                  <span>In your bag · Reserved for you{holdMinutesLeft ? ` · ${holdMinutesLeft}m left` : ""}</span>
                 </div>
               ) : (
                 <div className="mt-5 flex items-center gap-3 border-2 border-amber-500 bg-amber-400 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-black">
                   <Clock className="h-4 w-4 shrink-0 text-black" aria-hidden="true" />
-                  <span>On hold — another collector has this{holdMinutesLeft ? ` (~${holdMinutesLeft}m left)` : ""}</span>
+                  <span>On hold: another collector has this{holdMinutesLeft ? ` (~${holdMinutesLeft}m left)` : ""}</span>
                 </div>
               )
             )}
@@ -346,16 +346,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </p>
             )}
 
-            {/* Sizes */}
-            {product.sizes.length > 0 && (
+            {/* Sizes: Only shown when 2 or more sizes are available */}
+            {product.sizes.length > 1 && (
               <div className="mt-7">
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black">
-                    Select size{selectedSize ? <span className="text-black/45"> — {selectedSize}</span> : null}
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
+                    Select size{selectedSize ? <span className="text-black/45">: {selectedSize}</span> : null}
                   </p>
-                  <Link href="/size-guide" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/50 underline underline-offset-4 hover:text-black transition-colors">
-                    Size guide
-                  </Link>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((size) => {
@@ -367,7 +364,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         type="button"
                         onClick={() => handleSelectSize(size)}
                         aria-pressed={selected}
-                        className={`min-h-11 min-w-11 cursor-pointer border px-4 text-[11px] font-bold uppercase tracking-[0.08em] transition-colors ${
+                        className={`min-h-10 min-w-10 cursor-pointer border px-3 text-[11px] font-mono font-bold uppercase tracking-[0.08em] transition-colors ${
                           selected
                             ? "border-black bg-black text-white"
                             : live
@@ -395,7 +392,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   disabled
                   className="flex-1 cursor-not-allowed border border-black/10 bg-[#e8e8e8] px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/40"
                 >
-                  <span>{heldByYou ? "RESERVED — IN YOUR BAG" : "ON HOLD — CHECK BACK SOON"}</span>
+                  <span>{heldByYou ? "RESERVED · IN YOUR BAG" : "ON HOLD · CHECK BACK SOON"}</span>
                 </button>
                 <button
                   type="button"
@@ -405,52 +402,44 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 >
                   <Heart
                     className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
-                    strokeWidth={1.5}
                   />
                 </button>
               </div>
             ) : (
               <div className="mt-7 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
-                  {/* Quantity stepper */}
-                  <div className="flex h-[52px] items-center border border-black/15" aria-label="Quantity">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      disabled={quantity <= 1}
-                      aria-label="Decrease quantity"
-                      className="flex h-full w-11 items-center justify-center text-black transition-colors hover:bg-black/5 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <Minus className="w-4 h-4" aria-hidden="true" />
-                    </button>
-                    <span className="w-8 text-center text-sm font-bold tabular-nums" aria-live="polite">{quantity}</span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
-                      disabled={quantity >= maxQuantity}
-                      aria-label="Increase quantity"
-                      className="flex h-full w-11 items-center justify-center text-black transition-colors hover:bg-black/5 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      <Plus className="w-4 h-4" aria-hidden="true" />
-                    </button>
-                  </div>
                   <Button
                     onClick={handleAddToCart}
                     disabled={!canAddSelectedVariant}
-                    className="flex-1 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em]"
+                    className={`flex-1 text-[10.5px] uppercase tracking-[0.18em] transition-all duration-300 ${
+                      addedAnimation
+                        ? "bg-emerald-950 text-white scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.25)] border-emerald-500/40"
+                        : "active:scale-[0.98]"
+                    }`}
                   >
-                    <span>{addedAnimation ? "✓ ADDED TO BAG" : "ADD TO BAG"}</span>
-                    <span className="text-[11px]" aria-hidden="true">→</span>
+                    {addedAnimation ? (
+                      <>
+                        <span className="flex items-center gap-2">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                          <span>ADDED TO BAG</span>
+                        </span>
+                        <Check className="h-4 w-4 text-emerald-400 animate-in zoom-in-75 duration-200 stroke-[2.5]" aria-hidden="true" />
+                      </>
+                    ) : (
+                      <>
+                        <span>ADD TO BAG</span>
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                      </>
+                    )}
                   </Button>
                   <button
                     type="button"
                     onClick={() => toggleItem(id)}
                     aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                    className="w-[52px] h-[52px] border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
+                    className="w-[44px] h-[44px] rounded-full border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
                   >
                     <Heart
                       className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
-                      strokeWidth={1.5}
                     />
                   </button>
                 </div>
@@ -458,52 +447,48 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             )}
 
             {/* Trust badges */}
-            <div className="mt-6 grid grid-cols-3 gap-2 border-y border-black/10 py-4">
+            <div className="mt-6 grid grid-cols-3 gap-2 border-y border-black/8 py-3.5">
               <div className="flex flex-col items-center gap-1.5 text-center">
-                <Package className="w-4 h-4 text-black" aria-hidden="true" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-black/60 leading-tight">
+                <Package className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
+                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/45 leading-tight">
                   {product.isSoldOut ? "Sold out" : "In stock now"}
                 </span>
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
-                <Truck className="w-4 h-4 text-black" aria-hidden="true" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-black/60 leading-tight">
+                <Truck className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
+                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/45 leading-tight">
                   Ships in 24–48 hrs
                 </span>
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
-                <ShieldCheck className="w-4 h-4 text-black" aria-hidden="true" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-black/60 leading-tight">
+                <ShieldCheck className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
+                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/45 leading-tight">
                   Secure checkout
                 </span>
               </div>
             </div>
 
             {/* Accordions */}
-            <div className="mt-2 border-t border-black/10">
+            <div className="mt-1">
               <Accordion title="Details & fit" defaultOpen>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5 pt-0.5">
                   {detailBullets.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-2 uppercase tracking-[0.04em] text-[12px]">
-                      <span className="shrink-0 mt-0.5" aria-hidden="true">—</span>
+                    <li key={i} className="flex items-start gap-2 uppercase tracking-[0.06em] text-[11px] font-mono text-black/60">
+                      <span className="shrink-0 text-black/30 select-none" aria-hidden="true">—</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
               </Accordion>
               <Accordion title="Shipping & returns">
-                <p>
+                <p className="text-[12px] leading-relaxed text-black/60">
                   Dispatched within 24–48 hours. Standard delivery across India takes 3–5 business
-                  days. All sales are final — many pieces are one-off vintage or small-run, so check
+                  days. All sales are final. Many pieces are one-off vintage or small-run, so check
                   the measurements and photos before ordering.
                 </p>
-                <p className="mt-3">
+                <p className="mt-2.5 text-[11px] font-mono uppercase tracking-[0.08em] text-black/50">
                   <Link href="/shipping" className="underline underline-offset-4 hover:text-black transition-colors">
                     Full delivery details
-                  </Link>
-                  {" · "}
-                  <Link href="/size-guide" className="underline underline-offset-4 hover:text-black transition-colors">
-                    Size guide
                   </Link>
                 </p>
               </Accordion>
@@ -543,9 +528,19 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
            <Button
              onClick={handleAddToCart}
              disabled={!canAddSelectedVariant}
-             className="shrink-0 px-6 py-3.5 text-[10px] font-bold uppercase tracking-[0.18em]"
+             className="shrink-0 text-[10px] uppercase tracking-[0.18em]"
            >
-            {addedAnimation ? "✓ ADDED" : "ADD TO BAG"}
+            {addedAnimation ? (
+              <>
+                <span>ADDED</span>
+                <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              </>
+            ) : (
+              <>
+                <span>ADD TO BAG</span>
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </>
+            )}
           </Button>
         </div>,
         document.body
@@ -561,7 +556,6 @@ function RatingStars({ value }: { value: number }) {
         <Star
           key={s}
           className={`h-3.5 w-3.5 ${s <= Math.round(value) ? "fill-black text-black" : "text-black/20"}`}
-          strokeWidth={1.5}
           aria-hidden="true"
         />
       ))}
@@ -580,15 +574,15 @@ function Accordion({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-black/10">
+    <div className="border-b border-black/8">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full cursor-pointer items-center justify-between py-4 text-left"
+        className="flex w-full cursor-pointer items-center justify-between py-3.5 text-left"
       >
-        <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-black">{title}</span>
-        <Plus className={`h-4 w-4 text-black transition-transform duration-300 ${open ? "rotate-45" : ""}`} aria-hidden="true" />
+        <span className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-black/90">{title}</span>
+        <Plus className={`h-3.5 w-3.5 text-black/45 transition-transform duration-300 ${open ? "rotate-45" : ""}`} aria-hidden="true" />
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -599,7 +593,7 @@ function Accordion({
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="pb-5 text-[13px] leading-[1.7] text-black/70">{children}</div>
+            <div className="pb-4 text-[12px] leading-[1.65] text-black/60">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>

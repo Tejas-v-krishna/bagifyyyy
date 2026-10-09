@@ -94,7 +94,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
           </div>
           <Link
             href="/bundles"
-            className="h-10 inline-flex items-center gap-2 rounded-[0.35rem] bg-[#111111] px-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+            className="btn-bagify btn-bagify-dark text-[11px] uppercase tracking-[0.12em] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -115,7 +115,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
               <article
                 key={bundle.id}
                 className={`group animate-fade-up delay-${(i + 1) * 100}`}
-                aria-label={`${bundle.name} bundle — ${bundle.discount}% off`}
+                aria-label={`${bundle.name} bundle: ${bundle.discount}% off`}
               >
                 <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#ededed] p-3 sm:rounded-2xl sm:p-4">
                   <div
@@ -197,18 +197,18 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
                           ? `${bundle.products.length} pieces added to bag`
                           : `Add ${bundle.name} set to bag for ₹${bundle.bundlePrice.toLocaleString("en-IN")}`
                     }
-                    className="mt-4 w-full px-5 py-3 text-[10px] font-bold tracking-[0.12em]"
+                    className="mt-4 w-full text-[10px] uppercase tracking-[0.12em]"
                   >
                     {isUnavailable ? (
                       <span>Set unavailable</span>
                     ) : isAdding ? (
                       <><LoaderCircle className="h-3.5 w-3.5 shrink-0 animate-spin" aria-hidden="true" /><span>Adding set</span></>
                     ) : isAdded ? (
-                      <><Check className="h-3.5 w-3.5 shrink-0" strokeWidth={2.5} aria-hidden="true" /><span>{bundle.products.length} pieces added</span></>
+                      <><span>{bundle.products.length} pieces added</span><Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /></>
                     ) : (
-                        <><ShoppingBag className="h-3.5 w-3.5 shrink-0" strokeWidth={1.7} aria-hidden="true" /><span>Add the set</span></>
-                      )}
-                    </Button>
+                      <><span>Add the set</span><ShoppingBag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /></>
+                    )}
+                  </Button>
                 </div>
               </article>
             );

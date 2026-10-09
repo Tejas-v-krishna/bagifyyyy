@@ -6,7 +6,7 @@ import AnimatedWordmark from "@/components/layout/AnimatedWordmark";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { X, Heart, User, ShoppingBag } from "lucide-react";
+import { Menu, X, Heart, User, ShoppingBag, ArrowRight } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -183,6 +183,12 @@ export default function Header() {
         {/* Desktop nav — left side matching reference */}
         <nav className={`hidden lg:flex items-center gap-5 xl:gap-6 flex-1 ${navTextColor} pointer-events-auto transition-colors duration-200`}>
           <Link
+            href="/products"
+            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
+          >
+            All pieces
+          </Link>
+          <Link
             href="/new-arrivals"
             className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
           >
@@ -206,12 +212,6 @@ export default function Header() {
           >
             Accessories
           </Link>
-          <Link
-            href="/bundles"
-            className={`nav-link-animated text-[13px] md:text-[13.5px] font-normal tracking-tight ${navTextColor} ${navHoverColor} transition-colors`}
-          >
-            Bundles
-          </Link>
         </nav>
 
         {/* Brand wordmark / Logo (Centered, desktop only — mobile bar has its own) */}
@@ -231,7 +231,7 @@ export default function Header() {
           <NavAction
             href="/wishlist"
             label="Wishlist"
-            icon={<Heart className="w-[18px] h-[18px]" strokeWidth={1.8} />}
+            icon={<Heart className="w-[18px] h-[18px]" />}
             dark={isDark}
             textColor={navTextColor}
             hoverColor={navHoverColor}
@@ -244,7 +244,7 @@ export default function Header() {
             <NavAction
               href="/account"
               label={user?.name?.split(" ")[0] || "Account"}
-              icon={<User className="w-[18px] h-[18px]" strokeWidth={1.8} />}
+              icon={<User className="w-[18px] h-[18px]" />}
               dark={isDark}
               textColor={navTextColor}
               hoverColor={navHoverColor}
@@ -254,7 +254,7 @@ export default function Header() {
             <NavAction
               href="/login"
               label="Account"
-              icon={<User className="w-[18px] h-[18px]" strokeWidth={1.8} />}
+              icon={<User className="w-[18px] h-[18px]" />}
               dark={isDark}
               textColor={navTextColor}
               hoverColor={navHoverColor}
@@ -266,10 +266,10 @@ export default function Header() {
             onClick={toggleCart}
             label={`Cart (${itemCount})`}
             icon={
-              <span className={`relative inline-flex transition-transform duration-300 ${cartBump ? "scale-125" : "scale-100"}`}>
-                <ShoppingBag className="w-[18px] h-[18px]" strokeWidth={1.8} />
+              <span className={`relative inline-flex transition-transform duration-300 ease-out ${cartBump ? "scale-130 -rotate-6" : "scale-100 rotate-0"}`}>
+                <ShoppingBag className="w-[18px] h-[18px]" />
                 {itemCount > 0 && (
-                  <span className={`absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full px-0.5 text-[9px] font-bold tabular-nums ${isDark ? "bg-white text-black" : "bg-black text-white"}`}>
+                  <span className={`absolute -top-1 -right-1.5 flex h-3 min-w-3 items-center justify-center rounded-full px-[2.5px] text-[7.5px] font-normal leading-none tabular-nums ${cartBump ? "cart-badge-bounce" : ""} ${isDark ? "bg-white text-black" : "bg-black text-white"}`}>
                     {itemCount}
                   </span>
                 )}
@@ -291,10 +291,11 @@ export default function Header() {
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
-            <span className="relative flex h-4 w-4 items-center justify-center" aria-hidden="true">
-              <span className={`absolute h-[1.5px] w-4 bg-current transition-all duration-300 ${isMobileMenuOpen ? "rotate-45" : "-translate-y-[4px]"}`} />
-              <span className={`absolute h-[1.5px] w-4 bg-current transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45" : "translate-y-[4px]"}`} />
-            </span>
+            {isMobileMenuOpen ? (
+              <X className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Menu className="h-4 w-4" aria-hidden="true" />
+            )}
             <span>Menu</span>
           </button>
 
@@ -308,11 +309,20 @@ export default function Header() {
             <button
               type="button"
               onClick={toggleCart}
-              className={`${navTextColor} ${navHoverColor} transition-colors cursor-pointer text-xs font-medium`}
+              className={`${navTextColor} ${navHoverColor} transition-colors cursor-pointer p-1.5 flex items-center justify-center relative`}
               aria-label={`Cart, ${itemCount} items`}
             >
-              <span className={`inline-block transition-transform duration-300 ${cartBump ? "scale-125" : "scale-100"}`}>
-                Cart ({itemCount})
+              <span className={`relative inline-flex items-center justify-center transition-transform duration-300 ease-out ${cartBump ? "scale-130 -rotate-6" : "scale-100 rotate-0"}`}>
+                <ShoppingBag className="w-4 h-4" aria-hidden="true" />
+                <span
+                  className={`absolute -top-1 -right-1 flex h-[11px] min-w-[11px] items-center justify-center rounded-full px-[2px] text-[7px] font-normal leading-none tabular-nums ${
+                    cartBump ? "cart-badge-bounce" : ""
+                  } ${
+                    isDark ? "bg-white text-black" : "bg-black text-white"
+                  }`}
+                >
+                  {itemCount}
+                </span>
               </span>
             </button>
           </div>
@@ -355,11 +365,11 @@ export default function Header() {
                   <nav className="flex flex-col px-5 sm:px-6 py-5 sm:py-6 gap-5 sm:gap-6 flex-1 overflow-y-auto">
                     <div className="flex flex-col gap-1 sm:gap-2">
                       {[
+                        { href: "/products", label: "All pieces" },
                         { href: "/new-arrivals", label: "New in" },
-                         { href: "/topwears", label: "Tops" },
-                         { href: "/bottomwears", label: "Bottoms" },
+                        { href: "/topwears", label: "Tops" },
+                        { href: "/bottomwears", label: "Bottoms" },
                         { href: "/accessories", label: "Accessories" },
-                        { href: "/bundles", label: "Bundles" },
                         { href: "/wishlist", label: "Wishlist" },
                       ].map(({ href, label }, i) => (
                         <motion.span
@@ -375,7 +385,7 @@ export default function Header() {
                             className="text-[17px] sm:text-lg font-normal tracking-tight text-black hover:opacity-60 active:opacity-40 transition-opacity flex items-center justify-between py-2.5 min-h-[44px] group/drawer-link"
                           >
                             <span>{label}</span>
-                            <span className="text-black/30 text-xs transition-transform duration-300 group-hover/drawer-link:translate-x-1 group-active/drawer-link:translate-x-1">→</span>
+                            <ArrowRight className="h-4 w-4 text-black/30 transition-transform duration-300 group-hover/drawer-link:translate-x-1 group-active/drawer-link:translate-x-1" aria-hidden="true" />
                           </Link>
                         </motion.span>
                       ))}

@@ -80,7 +80,7 @@ export default function MarketingStudioPage() {
           const pad = (n: number) => String(n).padStart(2, "0");
           setDropAt(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`);
           setDropLabel(data.label || "");
-          setDropStatus(`Live on site — counting to ${d.toLocaleString()}`);
+          setDropStatus(`Live on site: counting to ${d.toLocaleString()}`);
         }
       })
       .catch(() => {});
@@ -103,7 +103,7 @@ export default function MarketingStudioPage() {
       if (!res.ok) {
         setDropStatus(data.error || "Could not save countdown.");
       } else {
-        setDropStatus(`Live on site — counting to ${new Date(data.targetAt).toLocaleString()}`);
+        setDropStatus(`Live on site: counting to ${new Date(data.targetAt).toLocaleString()}`);
       }
     } catch {
       setDropStatus("Could not save countdown.");

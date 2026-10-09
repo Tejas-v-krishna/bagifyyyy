@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useCartStore, getItemKey, VALID_PROMOS } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Loader2, ArrowRight, ArrowLeft, User, CreditCard, Tag, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, User, CreditCard, Tag, CheckCircle2, AlertCircle, Minus, Plus, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -488,9 +488,9 @@ function CheckoutContent() {
         </p>
         <Link
           href="/products"
-          className="bg-black text-white px-8 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors shadow-xs"
+          className="btn-bagify btn-bagify-dark text-xs uppercase tracking-[0.14em]"
         >
-          Shop The Drop →
+          <span>Shop The Drop</span>
         </Link>
       </div>
     );
@@ -575,13 +575,13 @@ function CheckoutContent() {
                     setFailureDetails(null);
                     setLoading(false);
                   }}
-                  className="w-full bg-white text-black px-6 py-4 text-xs font-bold uppercase tracking-[0.14em] hover:bg-white/85 active:scale-[0.99] transition-all cursor-pointer rounded-sm"
+                  className="btn-bagify btn-bagify-dark w-full text-xs uppercase tracking-[0.14em] cursor-pointer"
                 >
-                  Try Again / Back to Checkout →
+                  <span>Try Again / Back to Checkout</span>
                 </button>
                 <Link
                   href="/"
-                  className="w-full border border-white/20 bg-transparent text-white px-6 py-4 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-white/10 active:scale-[0.99] transition-all text-center cursor-pointer rounded-sm"
+                  className="w-full rounded-full border border-white/20 bg-transparent text-white px-6 py-3.5 text-xs font-medium uppercase tracking-[0.14em] hover:bg-white/10 active:scale-[0.99] transition-all text-center cursor-pointer"
                 >
                   Return to Home Screen
                 </Link>
@@ -609,9 +609,9 @@ function CheckoutContent() {
                     <p className="text-[11px] text-black/60 mb-6 h-8">Fast checkout with email &amp; phone.</p>
                     <button 
                       onClick={() => setCheckoutMode('guest')}
-                      className="w-full bg-black text-white px-4 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors cursor-pointer"
+                      className="btn-bagify btn-bagify-dark w-full text-xs uppercase tracking-[0.14em] cursor-pointer"
                     >
-                      CONTINUE →
+                      <span>CONTINUE</span>
                     </button>
                   </div>
                   {/* Option 2: Sign In */}
@@ -623,9 +623,9 @@ function CheckoutContent() {
                       <p className="text-[11px] text-black/60 mb-6 h-8">Save your details and earn points.</p>
                     <Link 
                       href="/login?from=/checkout"
-                      className="w-full border border-black/15 text-black px-4 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:border-black hover:bg-black/[0.02] transition-colors text-center inline-block cursor-pointer"
+                      className="btn-bagify btn-bagify-dark w-full text-xs uppercase tracking-[0.14em] cursor-pointer"
                     >
-                      SIGN IN →
+                      <span>SIGN IN</span>
                     </Link>
                   </div>
                 </div>
@@ -808,9 +808,9 @@ function CheckoutContent() {
                     <div className="flex justify-end mt-4">
                       <button
                         type="submit"
-                        className="bg-black text-white px-8 py-3.5 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors cursor-pointer shadow-xs"
+                        className="btn-bagify btn-bagify-dark text-xs uppercase tracking-[0.14em] cursor-pointer"
                       >
-                        CONTINUE TO PAYMENT ›
+                        <span>CONTINUE TO PAYMENT</span>
                       </button>
                     </div>
                   </form>
@@ -859,16 +859,18 @@ function CheckoutContent() {
                         variant="dark"
                         onClick={handleProceedToPayment}
                         disabled={loading || paymentState === 'initiating' || paymentState === 'verifying'}
-                        className="w-full px-10 py-4 text-xs font-semibold uppercase tracking-[0.14em] shadow-xs sm:w-auto"
+                        className="w-full text-xs uppercase tracking-[0.14em] sm:w-auto"
                       >
                         {(loading || paymentState === 'initiating' || paymentState === 'verifying') && (
                           <Loader2 className="w-4 h-4 animate-spin text-white" />
                         )}
-                        {paymentState === 'initiating'
-                          ? 'Opening payment…'
-                          : paymentState === 'verifying'
-                          ? 'Verifying Payment…'
-                          : 'Pay with Razorpay →'}
+                        <span>
+                          {paymentState === 'initiating'
+                            ? 'Opening payment…'
+                            : paymentState === 'verifying'
+                            ? 'Verifying Payment…'
+                            : 'Pay with Razorpay'}
+                        </span>
                       </Button>
                     </div>
                   </div>
@@ -902,13 +904,13 @@ function CheckoutContent() {
                       
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-2 text-xs font-semibold">
-                          <button aria-label="Decrease quantity" disabled={item.quantity <= 1} onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-black/15 flex items-center justify-center hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed text-black cursor-pointer rounded-xs">-</button>
+                          <button aria-label="Decrease quantity" disabled={item.quantity <= 1} onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-black/15 flex items-center justify-center hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed text-black cursor-pointer rounded-xs"><Minus className="w-3 h-3" aria-hidden="true" /></button>
                           <span aria-live="polite" className="text-black">{item.quantity}{item.quantity >= 10 ? " (max)" : ""}</span>
-                          <button aria-label="Increase quantity" disabled={item.quantity >= 10} onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-black/15 flex items-center justify-center hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed text-black cursor-pointer rounded-xs">+</button>
+                          <button aria-label="Increase quantity" disabled={item.quantity >= 10} onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-black/15 flex items-center justify-center hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed text-black cursor-pointer rounded-xs"><Plus className="w-3 h-3" aria-hidden="true" /></button>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-semibold text-black">₹{(item.price * item.quantity).toFixed(2)}</span>
-                          <button onClick={() => removeItem(key)} className="text-black/40 hover:text-black text-xs cursor-pointer">✕</button>
+                          <button onClick={() => removeItem(key)} aria-label="Remove item" className="text-black/40 hover:text-black cursor-pointer flex items-center justify-center"><X className="w-3.5 h-3.5" aria-hidden="true" /></button>
                         </div>
                       </div>
                     </div>
@@ -923,7 +925,7 @@ function CheckoutContent() {
                 <div className="flex items-center justify-between bg-[#f5f5f2] border border-black/10 px-3 py-2 rounded-sm">
                   <span className="text-[10px] font-semibold text-black uppercase tracking-wider flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    {appliedPromo.code} — {(appliedPromo.discount * 100).toFixed(0)}% OFF
+                    {appliedPromo.code} · {(appliedPromo.discount * 100).toFixed(0)}% OFF
                   </span>
                   <button
                     onClick={() => { clearPromo(); setPromoInput(""); }}
@@ -942,14 +944,14 @@ function CheckoutContent() {
                       onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
                       onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
                       placeholder="Promo code"
-                      className="w-full text-xs font-semibold uppercase outline-none bg-transparent tracking-wider placeholder:normal-case placeholder:tracking-normal placeholder:text-black/40 text-black"
+                      className="w-full text-xs font-semibold uppercase outline-none !bg-transparent tracking-wider placeholder:normal-case placeholder:tracking-normal placeholder:text-black/40 text-black border-0"
                     />
                   </div>
                   <button
                     onClick={handleApplyPromo}
-                    className="px-4 py-2 bg-black text-white text-[10px] font-semibold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors cursor-pointer rounded-sm"
+                    className="btn-bagify btn-bagify-dark text-[10px] uppercase tracking-[0.14em] cursor-pointer"
                   >
-                    Apply
+                    <span>Apply</span>
                   </button>
                 </div>
               )}

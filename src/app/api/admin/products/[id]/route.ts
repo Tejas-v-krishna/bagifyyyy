@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { canonicalCategory } from '@/lib/categories';
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
+import { updateProductSubcategory } from '@/lib/subcategories';
 
 type ProductPatchBody = {
   name?: unknown;
@@ -15,6 +16,7 @@ type ProductPatchBody = {
   isSoldOut?: unknown;
   isBestSeller?: unknown;
   category?: unknown;
+  subcategory?: unknown;
 };
 
 function isSafeImageUrl(value: string): boolean {
@@ -40,7 +42,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    const { name, description, price, compareAtPrice, comparePrice, image, collectionTag, isNew, isSoldOut, isBestSeller, category } = body;
+    const { name, description, price, compareAtPrice, comparePrice, image, collectionTag, isNew, isSoldOut, isBestSeller, category, subcategory } = body;
 
     if (name !== undefined && (typeof name !== 'string' || !name.trim())) {
       return NextResponse.json({ error: 'Product name is required' }, { status: 400 });
@@ -97,6 +99,13 @@ export async function PATCH(
         ...(isBestSeller !== undefined && { isBestSeller: Boolean(isBestSeller) }),
       },
     });
+
+    if (subcategory !== undefined) {
+      await updateProductSubcategory(
+        id,
+        typeof subcategory === 'string' && subcategory.trim() ? subcategory.trim().toLowerCase() : null
+      );
+    }
 
     if (typeof image === 'string' && image.trim()) {
       const url = image.trim();

@@ -476,7 +476,7 @@ export default function StudioDashboard() {
 
         {bugReports.length === 0 ? (
           <div className="py-12 text-center text-black/40 text-xs uppercase tracking-wider">
-            No bug reports — shoppers are happy
+            No bug reports. Shoppers are happy
           </div>
         ) : (
           <div className="divide-y divide-black/10">

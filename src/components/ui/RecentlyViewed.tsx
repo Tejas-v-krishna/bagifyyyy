@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import ProductMetaRow from "@/components/product/ProductMetaRow";
+import ShowcaseCard from "@/components/product/ShowcaseCard";
 
 type RecentProduct = {
   id: string;
@@ -12,6 +12,11 @@ type RecentProduct = {
   price?: number;
   image?: string;
   images?: string[];
+  isNew?: boolean;
+  isSoldOut?: boolean;
+  reserved?: boolean;
+  sizes?: string[];
+  colors?: string[];
 };
 
 interface RecentlyViewedProps {
@@ -234,49 +239,33 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
         onDragStart={(e) => e.preventDefault()}
       >
         {recentProducts.map((product) => (
-          <Link
+          <div
             key={product.id}
-            href={`/product/${product.id}`}
-            draggable={false}
-            onDragStart={(e) => e.preventDefault()}
-            onClick={(e) => {
+            onClickCapture={(e) => {
               if (isDraggingRef.current || isDragging) {
                 e.preventDefault();
                 e.stopPropagation();
               }
             }}
-            className="group shrink-0 w-[240px] sm:w-[270px] md:w-[300px] lg:w-[330px] snap-start flex flex-col cursor-pointer select-none"
-            style={{
-              userSelect: "none",
-              WebkitUserSelect: "none",
-            }}
+            className="shrink-0 w-[240px] sm:w-[270px] md:w-[300px] lg:w-[330px] snap-start select-none"
           >
-            {/* Bigger Card Surface with Hover Zoom and Drag Protection */}
-            <div
-              className="media-card relative w-full aspect-[4/5] overflow-hidden rounded-xl bg-[#f2f2f2] group-hover:bg-[#ebebeb] flex items-center justify-center transition-colors duration-300 select-none shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
-              style={{
-                userSelect: "none",
-                WebkitUserSelect: "none",
+            <ShowcaseCard
+              product={{
+                id: product.id,
+                name: product.name,
+                price: product.price ?? 0,
+                images:
+                  product.images && product.images.length > 0
+                    ? product.images
+                    : [product.image || "/placeholder.jpg"],
+                isNew: product.isNew,
+                isSoldOut: product.isSoldOut,
+                reserved: product.reserved,
+                sizes: product.sizes,
+                colors: product.colors,
               }}
-            >
-              <div className="relative w-full h-full flex items-center justify-center p-5 pointer-events-none select-none">
-                <Image
-                  src={product.image || product.images?.[0] || "/placeholder.jpg"}
-                  alt={product.name}
-                  fill
-                  draggable={false}
-                  sizes="(max-width: 640px) 240px, (max-width: 1024px) 300px, 340px"
-                  className="object-contain mix-blend-multiply group-hover:scale-[1.05] transition-transform duration-500 pointer-events-none select-none p-4"
-                  style={{
-                    WebkitUserDrag: "none",
-                    userSelect: "none",
-                  } as React.CSSProperties}
-                />
-              </div>
-            </div>
-
-            <ProductMetaRow name={product.name} price={product.price} className="pointer-events-none select-none px-0.5 mt-1" />
-          </Link>
+            />
+          </div>
         ))}
       </div>
 

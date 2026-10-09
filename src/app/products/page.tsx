@@ -10,7 +10,7 @@ import { queryProducts } from "@/lib/products";
 export const revalidate = 30;
 
 export const metadata: Metadata = collectionMetadata({
-  title: "All Drops",
+  title: "All Products",
   description:
     "The full BAGIFYYYY catalogue: Y2K streetwear, vintage finds, oversized tees, cargos, and heavy denim.",
   path: "/products",
@@ -19,11 +19,12 @@ export const metadata: Metadata = collectionMetadata({
 export default async function ProductsPage() {
   const products = await queryProducts({});
   return (
-    <Suspense fallback={<CategoryPageSkeleton title="All Drops" />}>
+    <Suspense fallback={<CategoryPageSkeleton title="All Pieces" />}>
       <CategoryPageClient
         initialProducts={products}
-        prefix="Collection"
-        title="All Drops"
+        prefix="Catalogue"
+        title="All Pieces"
+        subtitle="The entire BAGIFYYYY collection. Small-run streetwear and archive vintage."
       />
     </Suspense>
   );

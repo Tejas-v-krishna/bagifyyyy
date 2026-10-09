@@ -238,7 +238,7 @@ export default function AccountPage() {
   };
 
   const handleClearHistory = async () => {
-    if (!confirm("Clear your order history view? Your orders stay safe with us — they just won't show here.")) return;
+    if (!confirm("Clear your order history view? Your orders stay safe with us, they just won't show here.")) return;
     setClearMsg(null);
     setClearingHistory(true);
     try {
@@ -432,7 +432,7 @@ export default function AccountPage() {
               </div>
               <div className="relative">
                 <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-white/45">Chrome Club / 001</span>
-                <User className="mt-8 h-8 w-8 text-white/75" strokeWidth={1.4} aria-hidden="true" />
+                <User className="mt-8 h-8 w-8 text-white/75" aria-hidden="true" />
               </div>
               <p className="relative max-w-[18rem] text-[11px] uppercase leading-[1.55] tracking-[0.14em] text-white/60">
                 Your orders and saved pieces, all in one place.
@@ -849,10 +849,10 @@ export default function AccountPage() {
                       setShowAddressForm(true);
                     }
                   }}
-                  className="btn-bagify cursor-pointer px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em]"
+                  className="btn-bagify cursor-pointer text-[9px] uppercase tracking-[0.14em]"
                 >
-                  <Plus className="w-3 h-3" />
                   <span>{showAddressForm ? "Cancel" : "Add Address"}</span>
+                  <Plus className="w-3 h-3" />
                 </button>
               </div>
 
@@ -1305,7 +1305,7 @@ export default function AccountPage() {
                 <div className="mt-4 border-t border-black/10 pt-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-[11px] leading-relaxed text-black/55">
-                      Prefer email? We&apos;ll send a reset link to your Gmail — it opens a page to set a new password.
+                      Prefer email? We&apos;ll send a reset link to your Gmail. It opens a page to set a new password.
                     </p>
                     <button
                       type="button"

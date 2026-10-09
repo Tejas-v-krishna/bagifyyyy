@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 const HERO_SLIDES = [
   {
     id: 1,
     image: "/hero-main.webp",
     link: "/new-arrivals",
-    alt: "New arrivals — unisex streetwear drop",
+    alt: "New arrivals · unisex streetwear drop",
     title: "NEW ARRIVALS",
     subtitle: "UNISEX ARCHIVE STREETWEAR",
   },
@@ -143,12 +144,11 @@ export default function HeroCarousel() {
           <div className="flex flex-col items-start gap-6">
             <Link
               href={slide.link}
-              aria-label={`${slide.alt} — explore collection`}
-              className="pointer-events-auto bg-white flex items-center gap-3 px-7 py-3.5 text-y2k-gunmetal text-[10px] uppercase tracking-[0.22em] font-bold hover:bg-y2k-ice hover:scale-[1.02] transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+              aria-label={`${slide.alt}: explore collection`}
+              className="editorial-cta pointer-events-auto text-[10px] uppercase tracking-[0.18em] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
             >
               <span>Explore</span>
-              <span className="w-4 h-px bg-y2k-gunmetal/60" aria-hidden="true" />
-              <span aria-hidden="true">→</span>
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
 
             <span

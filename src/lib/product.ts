@@ -18,6 +18,7 @@ export type DisplayProduct = {
   brand: string | null;
   description: string;
   category: string;
+  subcategory?: string | null;
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
@@ -41,6 +42,7 @@ export type RelatedProduct = {
   name: string;
   price: number;
   image: string;
+  images?: string[];
   category: string;
 };
 
@@ -114,6 +116,7 @@ export async function getProductForDisplay(
     brand: product.brand,
     description: product.description,
     category: product.category,
+    subcategory: (product as { subcategory?: string | null }).subcategory ?? null,
     isNew: product.isNew,
     isSoldOut: product.isSoldOut || (variants.length > 0 && totalStock <= 0),
     isBestSeller: product.isBestSeller,
@@ -127,6 +130,7 @@ export async function getProductForDisplay(
       name: rp.name,
       price: rp.price,
       image: rp.images[0]?.url || '/placeholder.jpg',
+      images: rp.images.map((img) => img.url),
       category: rp.category,
     })),
     totalStock,

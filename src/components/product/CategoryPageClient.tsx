@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Product } from "@/components/product/ProductCard";
 import AddToBagButton from "@/components/ui/AddToBagButton";
-import { LayoutGrid, List, ArrowLeft, ArrowRight } from "lucide-react";
+import { LayoutGrid, List, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
@@ -20,69 +20,100 @@ const SORT_OPTIONS: DropdownOption[] = [
 ];
 
 function EditorialGridCard({ product }: { product: Product }) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const timerRef = useRef<number | null>(null);
+  const imageList = product.images && product.images.length > 0 ? product.images : [product.image];
+
+  const stop = () => {
+    if (timerRef.current) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  useEffect(() => stop, []);
+
+  const start = () => {
+    if (imageList.length < 2 || timerRef.current) return;
+    timerRef.current = window.setInterval(() => {
+      setActiveIdx((i) => (i + 1) % imageList.length);
+    }, 1200);
+  };
+
+  const reset = () => {
+    stop();
+    setActiveIdx(0);
+  };
+
   return (
     <article className="group" role="listitem" data-animate="scroll-reveal">
-      <Link href={`/product/${product.id}`} className="block" aria-label={product.name}>
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[15px] bg-[#e9e9ec] transition-shadow duration-500 group-hover:shadow-[0_28px_60px_-28px_rgba(0,0,0,0.4)]">
-          {product.image ? (
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              draggable={false}
-              sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw"
-              className={`object-contain p-5 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05] ${
-                product.isSoldOut ? "opacity-50 saturate-0" : "opacity-100"
-              }`}
+      <Link
+        href={`/product/${product.id}`}
+        aria-label={product.name}
+        className="relative block aspect-[4/5] w-full overflow-hidden rounded-[10px] bg-[#e9e9ec] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
+        onMouseEnter={start}
+        onMouseLeave={reset}
+        onFocus={start}
+        onBlur={reset}
+      >
+        {imageList.map((src, i) => (
+          <Image
+            key={`${product.id}-${i}`}
+            src={src || "/placeholder.jpg"}
+            alt={i === 0 ? product.name : `${product.name} view ${i + 1}`}
+            fill
+            draggable={false}
+            loading={i === 0 ? "eager" : "lazy"}
+            sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw"
+            className={`h-full w-full object-cover transition-opacity duration-500 ${
+              i === activeIdx ? "opacity-100" : "opacity-0"
+            } ${product.isSoldOut ? "saturate-0" : ""}`}
+          />
+        ))}
+
+        {product.isNew && !product.isSoldOut && (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-md border border-white/10 shadow-xs">
+            New
+          </span>
+        )}
+        {product.isSoldOut ? (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-md border border-white/10 shadow-xs">
+            Sold Out
+          </span>
+        ) : product.reserved ? (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-amber-500/20 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-amber-900 backdrop-blur-md border border-amber-500/30 shadow-xs">
+            On Hold
+          </span>
+        ) : null}
+
+        {!product.isSoldOut && !product.reserved && (
+          <div
+            className="absolute bottom-3 right-3"
+            onClick={(e) => e.preventDefault()}
+          >
+            <AddToBagButton
+              product={{
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.image,
+                isSoldOut: product.isSoldOut,
+                sizes: product.sizes,
+                colors: product.colors,
+              }}
+              className="h-10 w-10 rounded-full border border-black/10 bg-white/95 p-0 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur transition-transform duration-300 hover:scale-105 active:scale-95"
             />
-          ) : (
-            <div className="absolute inset-0 bg-[#e9e9ec]" />
-          )}
-
-          {product.isNew && !product.isSoldOut && (
-            <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">
-              New
-            </span>
-          )}
-          {product.isSoldOut ? (
-            <span className="absolute left-3 top-3 rounded-full bg-black px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">
-              Sold Out
-            </span>
-          ) : product.reserved ? (
-            <span className="absolute left-3 top-3 rounded-full bg-amber-400 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
-              On Hold
-            </span>
-          ) : null}
-
-          {!product.isSoldOut && !product.reserved && (
-            <div
-              className="absolute bottom-3 right-3 opacity-100 transition-all duration-300 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100"
-              onClick={(e) => e.preventDefault()}
-            >
-              <AddToBagButton
-                product={{
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  image: product.image,
-                  isSoldOut: product.isSoldOut,
-                  sizes: product.sizes,
-                  colors: product.colors,
-                }}
-                className="h-10 w-10 rounded-full border border-black/10 bg-white/95 p-0 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur"
-              />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </Link>
 
-      <div className="flex items-baseline gap-3 px-1 pt-4">
+      <div className="flex items-baseline gap-2 px-0.5 pt-3">
         <Link href={`/product/${product.id}`} className="block min-w-0 flex-1">
-          <h3 className="truncate text-[13px] font-semibold leading-tight tracking-tight text-black transition-opacity group-hover:opacity-60" title={product.name}>
+          <h3 className="truncate text-[12px] font-semibold leading-tight tracking-tight sm:text-[13px] text-black transition-opacity group-hover:opacity-60" title={product.name}>
             {product.name}
           </h3>
         </Link>
-        <span className="shrink-0 text-[13px] font-semibold tracking-tight text-black">
+        <span className="shrink-0 text-[12px] font-semibold tracking-tight sm:text-[13px] text-black">
           ₹{product.price.toLocaleString("en-IN")}
         </span>
       </div>
@@ -125,12 +156,33 @@ export default function CategoryPageClient({
   const [sizeFilter, setSizeFilter] = useState("");
   const [colorFilter, setColorFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [subcategoryFilter, setSubcategoryFilter] = useState("");
+  const [availableSubcategories, setAvailableSubcategories] = useState<
+    { id: string; name: string; slug: string }[]
+  >([]);
   const [selectedMaxPrice, setSelectedMaxPrice] = useState<number>(5000);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(12);
   const [reloadToken, setReloadToken] = useState(0);
 
   const queryKey = `${category ?? ""}|${filter ?? ""}|${query}|${reloadToken}`;
+
+  // Fetch admin-defined subcategories for the current category (e.g. bottomwears)
+  useEffect(() => {
+    if (!category) return;
+    let isMounted = true;
+    fetch(`/api/subcategories?category=${category}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.subcategories) {
+          setAvailableSubcategories(data.subcategories);
+        }
+      })
+      .catch((err) => console.error("Error fetching subcategories:", err));
+    return () => {
+      isMounted = false;
+    };
+  }, [category]);
 
   // Server-rendered first paint: seed the initial catalogue synchronously so
   // the grid paints with the HTML (no skeleton flash, no /api round trip).
@@ -283,6 +335,21 @@ export default function CategoryPageClient({
       });
     }
 
+    if (subcategoryFilter) {
+      const subLower = subcategoryFilter.toLowerCase();
+      result = result.filter((p) => {
+        const prodSub = (p.subcategory || "").toLowerCase();
+        const prodName = (p.name || "").toLowerCase();
+        const prodDesc = (p.description || "").toLowerCase();
+        return (
+          prodSub === subLower ||
+          prodSub.includes(subLower) ||
+          prodName.includes(subLower) ||
+          prodDesc.includes(subLower)
+        );
+      });
+    }
+
     if (sortBy === "Price: Low to High") {
       result.sort((a, b) => a.price - b.price);
     } else if (sortBy === "Price: High to Low") {
@@ -290,7 +357,7 @@ export default function CategoryPageClient({
     }
 
     return result;
-  }, [products, sortBy, selectedMaxPrice, maxCatalogPrice, sizeFilter, colorFilter, categoryFilter]);
+  }, [products, sortBy, selectedMaxPrice, maxCatalogPrice, sizeFilter, colorFilter, categoryFilter, subcategoryFilter]);
 
   const displayedProducts = useMemo(() => {
     return filteredAndSortedProducts.slice(0, visibleCount);
@@ -300,6 +367,7 @@ export default function CategoryPageClient({
     setSizeFilter("");
     setColorFilter("");
     setCategoryFilter("");
+    setSubcategoryFilter("");
     setSelectedMaxPrice(maxCatalogPrice);
     setSortBy("Newest");
   };
@@ -308,18 +376,19 @@ export default function CategoryPageClient({
     sizeFilter ||
     colorFilter ||
     categoryFilter ||
+    subcategoryFilter ||
     selectedMaxPrice < maxCatalogPrice ||
     sortBy !== "Newest"
   );
 
   return (
-    <div className="editorial-page min-h-screen bg-[#f5f5f2] px-4 py-8 font-sans text-black sm:px-6 sm:py-12 lg:px-10 selection:bg-black selection:text-white">
+    <div className="editorial-page min-h-screen bg-[#f5f5f2] px-3 sm:px-6 lg:px-10 py-4 sm:py-8 font-sans text-black selection:bg-black selection:text-white">
       <div className="mx-auto w-full max-w-[1440px]">
         {/* Navigation Bar matching Wishlist page */}
-        <div className="mb-8 flex items-center justify-start border-b border-black/10 pb-3">
+        <div className="mb-4 sm:mb-6 flex items-center justify-start border-b border-black/10 pb-2.5">
           <Link
             href="/"
-            className="editorial-back inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
+            className="editorial-back inline-flex items-center gap-2 text-[10px] sm:text-[10.5px] font-bold uppercase tracking-[0.16em] text-black/50 transition-colors hover:text-black"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to store
@@ -327,26 +396,97 @@ export default function CategoryPageClient({
         </div>
 
         {/* Monumental Editorial Header */}
-        <header className="editorial-page-header mb-0 pb-8 sm:pb-10">
+        <header className="editorial-page-header mb-0 pb-4 sm:pb-6">
           <div className="max-w-2xl">
-              <h1 className="max-w-[16ch] font-microgramma text-[clamp(2rem,5.5vw,5.2rem)] font-bold uppercase leading-[0.88] tracking-tight text-[#050505]">
-                {cleanTitle}
-              </h1>
-              {query && (
-                <p className="mt-5 max-w-xl text-xs leading-relaxed text-black/60 sm:text-sm">
-                  {loading
-                     ? "Searching the catalogue…"
-                    : `${filteredAndSortedProducts.length} ${
-                        filteredAndSortedProducts.length === 1 ? "piece" : "pieces"
-                      } matching “${query}”`}
-                </p>
-              )}
-            </div>
+            <h1 className="max-w-[16ch] font-microgramma text-[clamp(1.8rem,5vw,4.5rem)] font-bold uppercase leading-[0.9] tracking-tight text-[#050505]">
+              {cleanTitle}
+            </h1>
+            {query && (
+              <p className="mt-3 max-w-xl text-xs leading-relaxed text-black/60 sm:text-sm">
+                {loading
+                   ? "Searching the catalogue…"
+                  : `${filteredAndSortedProducts.length} ${
+                      filteredAndSortedProducts.length === 1 ? "piece" : "pieces"
+                    } matching “${query}”`}
+              </p>
+            )}
+          </div>
         </header>
 
+        {/* Dynamic Horizontal Sliding Subcategories Bar (Bootcut, Baggy, Cargos, etc.) */}
+        {availableSubcategories.length > 0 && (
+          <div className="relative mb-6 sm:mb-8">
+            <div className="relative group/rail flex items-center">
+              {/* Left Scroll Trigger Button for desktop */}
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("subcategory-scroll-rail");
+                  el?.scrollBy({ left: -260, behavior: "smooth" });
+                }}
+                aria-label="Scroll categories left"
+                className="hidden md:flex absolute -left-3.5 z-10 w-8 h-8 rounded-full bg-white border border-black/15 shadow-md items-center justify-center text-black/70 hover:text-black hover:scale-105 transition-all opacity-0 group-hover/rail:opacity-100 cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {/* Horizontal Scroll Track */}
+              <div
+                id="subcategory-scroll-rail"
+                className="w-full flex items-center gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 -mx-1"
+                style={{ scrollSnapType: "x mandatory" }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSubcategoryFilter("")}
+                  style={{ scrollSnapAlign: "start" }}
+                  className={`shrink-0 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer whitespace-nowrap border ${
+                    !subcategoryFilter
+                      ? "bg-black text-white border-black shadow-sm ring-1 ring-black/20"
+                      : "bg-white/90 text-black/75 border-black/15 hover:border-black hover:text-black hover:bg-white"
+                  }`}
+                >
+                  All Bottomwear
+                </button>
+                {availableSubcategories.map((sub) => {
+                  const isActive = subcategoryFilter === sub.slug;
+                  return (
+                    <button
+                      key={sub.id}
+                      type="button"
+                      onClick={() => setSubcategoryFilter(isActive ? "" : sub.slug)}
+                      style={{ scrollSnapAlign: "start" }}
+                      className={`shrink-0 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer whitespace-nowrap border ${
+                        isActive
+                          ? "bg-black text-white border-black shadow-sm ring-1 ring-black/20"
+                          : "bg-white/90 text-black/75 border-black/15 hover:border-black hover:text-black hover:bg-white"
+                      }`}
+                    >
+                      {sub.name}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Right Scroll Trigger Button for desktop */}
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("subcategory-scroll-rail");
+                  el?.scrollBy({ left: 260, behavior: "smooth" });
+                }}
+                aria-label="Scroll categories right"
+                className="hidden md:flex absolute -right-3.5 z-10 w-8 h-8 rounded-full bg-white border border-black/15 shadow-md items-center justify-center text-black/70 hover:text-black hover:scale-105 transition-all opacity-0 group-hover/rail:opacity-100 cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Sticky toolbar — tools stay in reach while scrolling the rail */}
-        <div className="sticky top-[56px] lg:top-[60px] z-30 -mx-4 border-y border-black/10 bg-[#f5f5f2]/90 px-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
-          <div className="mx-auto flex w-full max-w-[1440px] items-center justify-end gap-3 py-2.5">
+        <div className="sticky top-[56px] lg:top-[60px] z-30 -mx-3 sm:-mx-6 lg:-mx-10 border-y border-black/10 bg-[#f5f5f2]/90 px-3 sm:px-6 lg:px-10 backdrop-blur-md mb-6 sm:mb-8">
+          <div className="mx-auto flex w-full max-w-[1440px] items-center justify-end gap-3 py-2 sm:py-2.5">
             {/* Right: Actions bar (Filter button + View toggle + Sort) */}
             <div className="flex items-center gap-3 sm:gap-4">
               {/* Filter Popover Dropdown */}
@@ -364,7 +504,7 @@ export default function CategoryPageClient({
                 maxPrice={maxCatalogPrice}
                 selectedMaxPrice={selectedMaxPrice}
                 onPriceChange={setSelectedMaxPrice}
-                availableCategories={contextualCategories}
+                availableCategories={category ? [] : contextualCategories}
                 selectedCategory={categoryFilter}
                 onCategoryChange={setCategoryFilter}
                 onReset={resetFilters}
@@ -490,7 +630,7 @@ export default function CategoryPageClient({
                          {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? "piece" : "pieces"} in this run.
                       </p>
                       <Link href="/size-guide" className="mt-10 inline-flex items-center gap-2 border-b border-black pb-1 text-[11px] font-semibold tracking-[0.08em] text-black">
-                        Size Guide <span aria-hidden="true">→</span>
+                        Size Guide <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                       </Link>
                     </div>
                     <div className="min-w-0 overflow-hidden border-t border-black/10">
@@ -540,7 +680,7 @@ export default function CategoryPageClient({
                     type="button"
                     onClick={() => setVisibleCount((prev) => prev + 12)}
                     className="btn-bagify btn-bagify-dark px-12 text-[10.5px] tracking-[0.18em] cursor-pointer"
-                    aria-label={`Load 12 more products — ${filteredAndSortedProducts.length - visibleCount} remaining`}
+                    aria-label={`Load 12 more products, ${filteredAndSortedProducts.length - visibleCount} remaining`}
                   >
                     Load More
                   </button>

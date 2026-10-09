@@ -148,11 +148,11 @@ export default async function Home() {
 
             {/* Hero shopping cue: first-time visitors learn this is a thrift
                 store and can buy right away. Copy editable via Sanity hero. */}
-            <div className="absolute inset-x-4 bottom-[clamp(5.5rem,11.5vh,7.5rem)] z-30 flex flex-col items-center text-center">
+            <div className="absolute inset-x-4 bottom-[clamp(7.5rem,19vh,12rem)] z-30 flex flex-col items-center text-center">
               <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
                 {sanityHero?.eyebrow || "Thrifted in India"}
               </p>
-              <p className="mt-3 font-microgramma font-bold uppercase leading-none tracking-[-0.02em] text-white text-[clamp(1.35rem,4.5vw,2.1rem)] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
+              <p className="mt-2.5 font-microgramma font-bold uppercase leading-none tracking-[-0.02em] text-white text-[clamp(1.35rem,4.5vw,2.1rem)] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">
                 {sanityHero?.headline || "Found for you."}
               </p>
               {sanityHero?.subline ? (
@@ -161,30 +161,70 @@ export default async function Home() {
                 </p>
               ) : null}
               <Link
-                href={sanityHero?.ctaHref || "/new-arrivals"}
-                className="editorial-cta group mt-4"
+                href={sanityHero?.ctaHref || "/products"}
+                className="editorial-cta group mt-4 sm:mt-5"
               >
                 {sanityHero?.ctaLabel || "Shop now"}
-                <ArrowRight className="editorial-cta-arrow" strokeWidth={1.8} aria-hidden="true" />
+                <ArrowRight className="editorial-cta-arrow" aria-hidden="true" />
               </Link>
             </div>
 
-            {/* Progressive image blur and fade, with no separate transition strip. */}
-             <div className="hero-image-dissolve absolute bottom-0 inset-x-0" aria-label="New piece announcements">
-              <div className="hero-transition-marquee">
+            {/* Dual-track editorial marquee with rounded thumbnail vignettes */}
+            <div className="hero-image-dissolve absolute bottom-0 inset-x-0 !h-[clamp(7rem,14vh,9.5rem)]" aria-label="New piece announcements">
+              <div className="hero-transition-marquee flex flex-col gap-2 py-1.5 sm:py-2">
+                {/* Track 1: Moving left */}
                 <div className="marquee-track flex w-max whitespace-nowrap">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex shrink-0 items-center gap-7 px-4 text-[11px] md:text-sm" aria-hidden={i !== 0}>
-                      {(sanityTicker?.phrases?.length ? sanityTicker.phrases : [
-                        "FW26 small-run pieces",
-                        "10% off your first order",
-                        "New pieces are live",
-                        "Made to be worn hard",
-                      ]).map((phrase) => (
-                        <span key={phrase} className="flex shrink-0 items-center gap-7">
-                          <span>{phrase}</span>
-                          <Asterisk strokeWidth={2.2} className="h-4 w-4 shrink-0 text-white/50" />
-                        </span>
+                    <div key={i} className="flex shrink-0 items-center gap-7 px-4" aria-hidden={i !== 0}>
+                      {[
+                        { text: "NEW PIECES ARE LIVE", img: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg" },
+                        { text: "FW26 SMALL-RUN PIECES", img: "/assets/ai/prod_model_4_cyberzip_1786659858926.jpg" },
+                        { text: "MADE TO BE WORN HARD", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
+                        { text: "THRIFTED IN INDIA", img: "/assets/ai/prod_model_7_chromebelt_1786660225515.jpg" },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex shrink-0 items-center gap-3.5">
+                          <span className="font-serif uppercase tracking-[0.08em] text-[10.5px] sm:text-[13px] font-bold text-white/95 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
+                            {item.text}
+                          </span>
+                          <span className="relative h-6 w-10 sm:h-7 sm:w-11 shrink-0 overflow-hidden rounded-full border border-white/30 bg-black/40 shadow-xs">
+                            <Image
+                              src={item.img}
+                              alt=""
+                              fill
+                              sizes="44px"
+                              className="object-cover object-center"
+                            />
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Track 2: Alternating offset track */}
+                <div className="marquee-track flex w-max whitespace-nowrap" style={{ animationDirection: "reverse", animationDuration: "36s" }}>
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="flex shrink-0 items-center gap-7 px-4" aria-hidden={i !== 0}>
+                      {[
+                        { text: "10% OFF YOUR FIRST ORDER", img: "/assets/ai/prod_model_2_cargo_1786659253971.jpg" },
+                        { text: "ARCHIVE VINTAGE FINDS", img: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg" },
+                        { text: "LIMITED RUN · NO RESTOCKS", img: "/assets/ai/prod_model_3_denim_1786659846387.jpg" },
+                        { text: "WEAR IT, DON'T CHASE IT", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex shrink-0 items-center gap-3.5">
+                          <span className="relative h-6 w-10 sm:h-7 sm:w-11 shrink-0 overflow-hidden rounded-full border border-white/30 bg-black/40 shadow-xs">
+                            <Image
+                              src={item.img}
+                              alt=""
+                              fill
+                              sizes="44px"
+                              className="object-cover object-center"
+                            />
+                          </span>
+                          <span className="font-serif uppercase tracking-[0.08em] text-[10.5px] sm:text-[13px] font-bold text-white/95 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
+                            {item.text}
+                          </span>
+                        </div>
                       ))}
                     </div>
                   ))}
@@ -218,7 +258,7 @@ export default async function Home() {
           there's more), liquid-glass carousel on larger screens.
           Hidden entirely when nothing is flagged new. */}
       {newArrivalsFlagged.length > 0 && (
-      <section id="showcase" className="w-full bg-white px-3 pt-24 pb-16 sm:px-6 sm:py-24 md:py-32 lg:px-10 scroll-mt-20 overflow-hidden">
+      <section id="showcase" className="w-full bg-white px-3 pt-4 pb-16 sm:px-6 sm:pt-6 sm:pb-20 md:pt-8 md:pb-24 lg:px-10 scroll-mt-20 overflow-hidden">
         <div className="mx-auto w-full max-w-[1700px]">
           <div className="mb-6 flex items-end justify-between px-2 sm:px-4 md:px-6">
             <div className="flex flex-col gap-1">
@@ -226,13 +266,6 @@ export default async function Home() {
                 New In
               </h2>
             </div>
-            <Link
-              href="/new-arrivals"
-              className="h-9 sm:h-10 hidden sm:inline-flex items-center gap-2 rounded-[15px] px-4 sm:px-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-nowrap bg-[#111111] text-white hover:bg-black/80"
-            >
-              <span>See all pieces</span>
-              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </Link>
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-6">
             {newArrivalsFlagged.slice(0, 8).map((p) => (
@@ -252,19 +285,21 @@ export default async function Home() {
               />
             ))}
           </div>
-          <Link
-            href="/new-arrivals"
-            className="mt-4 mx-1 h-12 sm:hidden flex items-center justify-center gap-2 rounded-[15px] text-[12px] font-semibold uppercase tracking-[0.12em] bg-[#111111] text-white active:bg-black/80"
-          >
-            <span>Shop all new pieces</span>
-            <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
+          <div className="mt-8 flex justify-center px-1">
+            <Link
+              href="/new-arrivals"
+              className="btn-bagify btn-bagify-dark w-full sm:w-auto sm:min-w-[280px] sm:max-w-xs text-[11px] uppercase tracking-[0.14em]"
+            >
+              <span>Shop all new pieces</span>
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </section>
       )}
 
       {/* 3. Asymmetric editorial category index */}
-      <section className="w-full bg-white px-4 py-16 text-[#0a0a0a] sm:px-7 sm:py-20 lg:px-10 lg:py-24" aria-labelledby="category-heading">
+      <section className="w-full bg-white px-4 pt-14 pb-8 text-[#0a0a0a] sm:px-7 sm:pt-16 sm:pb-10 lg:px-10 lg:pt-20 lg:pb-12" aria-labelledby="category-heading">
         <div className="mx-auto w-full max-w-[1700px]">
           <div className="flex items-start gap-6">
             <h2 id="category-heading" className="font-microgramma uppercase text-[clamp(1.2rem,2vw,2.1rem)] font-bold leading-none tracking-tight">
@@ -272,32 +307,44 @@ export default async function Home() {
             </h2>
           </div>
 
-          {/* Mobile: compact category rows (image + label) so all three
-              fit on one screen with no long scroll. */}
-          <div className="mx-auto mt-6 flex w-full flex-col gap-3 sm:hidden">
+          {/* Mobile: taller category cards with blurred fade on the left of the image */}
+          <div className="mx-auto mt-6 flex w-full flex-col gap-3.5 sm:hidden">
             {[
-              { href: "/topwears", label: "Topwears", src: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", pos: "object-[50%_20%]" },
+              { href: "/topwears", label: "Topwears", src: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", pos: "object-[50%_18%]" },
               { href: "/bottomwears", label: "Bottomwears", src: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", pos: "object-[50%_48%]" },
               { href: "/accessories", label: "Accessories", src: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", pos: "object-[50%_45%]" },
             ].map((c) => (
               <Link
                 key={c.href}
                 href={c.href}
-                className="group flex h-[92px] items-center justify-between overflow-hidden rounded-2xl bg-[#e7e7e9] pl-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-3 active:bg-[#dedee0]"
+                className="group relative flex h-[120px] items-center justify-between overflow-hidden rounded-2xl bg-[#e7e7e9] pl-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-3 active:bg-[#dedee0]"
               >
-                <span className="font-microgramma font-bold uppercase text-[19px] leading-none tracking-tight text-[#0a0a0a]">
+                <span className="relative z-10 font-microgramma font-bold uppercase text-[21px] leading-none tracking-tight text-[#0a0a0a]">
                   {c.label}
                 </span>
-                <span className="relative h-full w-[128px] shrink-0 overflow-hidden">
+                <div className="relative h-full w-[48%] shrink-0 overflow-hidden">
                   <Image
                     src={c.src}
                     alt={`Shop BAGIFYYYY ${c.label.toLowerCase()}`}
                     fill
                     draggable={false}
-                    sizes="128px"
+                    sizes="50vw"
                     className={`object-cover ${c.pos} transition-transform duration-500 group-hover:scale-[1.04] group-active:scale-[1.04]`}
+                    style={{
+                      maskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 28%, black 65%)",
+                      WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 28%, black 65%)",
+                    }}
                   />
-                </span>
+                  {/* Subtle blur bleed overlay to enhance the smooth edge transition */}
+                  <div
+                    className="pointer-events-none absolute inset-y-0 left-0 w-8 backdrop-blur-[2px]"
+                    style={{
+                      maskImage: "linear-gradient(to right, black 0%, transparent 100%)",
+                      WebkitMaskImage: "linear-gradient(to right, black 0%, transparent 100%)",
+                    }}
+                    aria-hidden="true"
+                  />
+                </div>
               </Link>
             ))}
           </div>

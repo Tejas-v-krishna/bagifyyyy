@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     if (!body || typeof body !== 'object') {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
-    const { name, price, category, description, isNew, isSoldOut, isBestSeller, image, collectionTag, compareAtPrice, comparePrice } = body as Record<string, unknown>;
+    const { name, price, category, description, isNew, isSoldOut, isBestSeller, image, collectionTag, compareAtPrice, comparePrice, subcategory } = body as Record<string, unknown>;
     const parsedPrice = Number(price);
     if (typeof name !== 'string' || !name.trim() || !Number.isFinite(parsedPrice) || parsedPrice <= 0 ||
         typeof category !== 'string' || !canonicalCategory(category) || typeof description !== 'string' || !description.trim() ||
@@ -68,6 +68,11 @@ export async function POST(request: Request) {
         }
       }
     });
+
+    if (subcategory) {
+      const { updateProductSubcategory } = await import('@/lib/subcategories');
+      await updateProductSubcategory(product.id, String(subcategory));
+    }
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

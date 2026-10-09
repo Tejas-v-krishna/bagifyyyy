@@ -35,6 +35,7 @@ model Product {
   compareAtPrice Float?
   brand         String?
   category      String
+  subcategory   String?
   isNew         Boolean  @default(false)
   isBestSeller  Boolean  @default(false)
   isSoldOut     Boolean  @default(false)
@@ -271,4 +272,14 @@ model StockReservation {
   @@index([variantId, expiresAt])
   @@index([productId, expiresAt])
   @@index([sessionId])
+}
+
+model Subcategory {
+  id        String   @id @default(uuid())
+  category  String
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+
+  @@unique([category, slug])
 }

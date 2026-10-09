@@ -37,10 +37,10 @@ export default function GlobalError({
         <div className="flex flex-col gap-2.5">
           <button
             onClick={() => reset()}
-            className="btn-bagify w-full py-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+            className="btn-bagify w-full text-xs uppercase tracking-wider cursor-pointer"
           >
+            <span>TRY AGAIN</span>
             <RotateCcw className="w-3.5 h-3.5" />
-             <span>TRY AGAIN</span>
           </button>
 
           <Link
