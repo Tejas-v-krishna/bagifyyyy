@@ -97,7 +97,12 @@ export default async function Home() {
       bundlePrice,
       savings,
     };
-  });
+  }).filter(
+    // The landing page only shows complete, buyable sets — empty bundles or
+    // sets with any sold-out member never render here. The /bundles page
+    // keeps its own listing with explicit unavailable states.
+    (b) => b.products.length > 0 && !b.products.some((p) => p.isSoldOut)
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
