@@ -520,19 +520,19 @@ export default function CartDrawer() {
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 4, scale: 0.94 }}
                                         transition={{ duration: 0.15, ease: "easeOut" }}
-                                        className="absolute bottom-full left-0 mb-2 z-40 w-52 rounded-xl bg-black text-white p-3 shadow-[0_12px_32px_rgba(0,0,0,0.35)] border border-white/15"
+                                        className="absolute bottom-full left-0 mb-2 z-40 w-52 rounded-xl bg-white text-black p-3 shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-black/15"
                                       >
-                                        <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-white/95 leading-snug">
+                                        <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-black leading-snug">
                                           Are you sure you want to remove this?
                                         </p>
-                                        <div className="flex items-center justify-end gap-2 mt-2.5 pt-2 border-t border-white/10">
+                                        <div className="flex items-center justify-end gap-2 mt-2.5 pt-2 border-t border-black/10">
                                           <button
                                             type="button"
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               setConfirmRemoveKey(null);
                                             }}
-                                            className="px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-white/60 hover:text-white transition-colors cursor-pointer"
+                                            className="px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-black/50 hover:text-black transition-colors cursor-pointer"
                                           >
                                             Cancel
                                           </button>
@@ -543,13 +543,13 @@ export default function CartDrawer() {
                                               removeItem(key);
                                               setConfirmRemoveKey(null);
                                             }}
-                                            className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white rounded transition-colors cursor-pointer active:scale-90 shadow-2xs"
+                                            className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-black hover:bg-neutral-800 text-white rounded transition-colors cursor-pointer active:scale-90 shadow-2xs"
                                           >
                                             Yes, remove
                                           </button>
                                         </div>
                                         {/* Caret arrow */}
-                                        <div className="absolute top-full left-3.5 -mt-1 w-2 h-2 bg-black border-r border-b border-white/15 rotate-45" />
+                                        <div className="absolute top-full left-3.5 -mt-1 w-2 h-2 bg-white border-r border-b border-black/15 rotate-45" />
                                       </motion.div>
                                     )}
                                   </AnimatePresence>
@@ -610,16 +610,16 @@ export default function CartDrawer() {
                     initial={{ opacity: 0, scale: 0.88, y: -6 }}
                     animate={{ opacity: 1, scale: [0.95, 1.04, 1], y: 0 }}
                     transition={{ type: "spring", stiffness: 450, damping: 20 }}
-                    className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-2.5 shadow-xs"
+                    className="flex items-center justify-between bg-[#f4f4f2] border border-black/10 rounded-xl px-4 py-2.5 shadow-2xs"
                   >
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-950 flex items-center gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 animate-bounce" aria-hidden="true" />
-                      <span className="bg-emerald-600 text-white px-2 py-0.5 rounded text-[9px] tracking-widest font-bold shadow-2xs">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-black" aria-hidden="true" />
+                      <span className="bg-black text-white px-2 py-0.5 rounded text-[9px] tracking-widest font-bold shadow-2xs">
                         {appliedPromo.code}
                       </span>
-                      <span>·</span>
-                      <span className="text-emerald-800 font-bold">
-                        {isFree ? "FREE SHIPPING" : `${(appliedPromo.discount * 100).toFixed(0)}% OFF`}
+                      <span className="text-black/40">·</span>
+                      <span className="text-black font-bold">
+                        {isFreeShipping ? "FREE SHIPPING" : `${(appliedPromo.discount * 100).toFixed(0)}% OFF`}
                       </span>
                     </span>
                     <motion.button

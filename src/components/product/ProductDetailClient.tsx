@@ -381,18 +381,18 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
             {/* Live 5-Minute Hold Countdown Banner under the images */}
             {isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-4 w-full rounded-2xl border-2 border-amber-400 bg-amber-50/95 p-4 text-black shadow-sm">
+              <div className="mt-4 w-full rounded-xl border border-[#e4dec8] bg-[#fbf9f4] p-3.5 sm:p-4 text-black shadow-2xs">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="relative flex h-3 w-3 shrink-0">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500" />
+                    <span className="relative flex h-2.5 w-2.5 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4a838] opacity-60" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#cda434]" />
                     </span>
                     <div>
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-black leading-tight">
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-black leading-tight">
                         {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
                       </h4>
-                      <p className="text-[10.5px] text-black/60 font-medium leading-tight mt-0.5">
+                      <p className="text-[10.5px] text-black/55 font-normal leading-tight mt-0.5">
                         {heldByYou
                           ? "Held for 5 minutes · Complete checkout before 00:00"
                           : "Held for 5 minutes · Returns to store if session expires"}
@@ -401,15 +401,15 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   </div>
 
                   {/* Digital Clock Box: 05:00 */}
-                  <div className="flex items-center font-mono font-bold text-sm sm:text-base bg-black text-amber-300 px-3.5 py-1.5 rounded-lg tracking-widest shadow-2xs shrink-0 select-none">
+                  <div className="flex items-center font-mono font-bold text-xs sm:text-sm bg-black/[0.04] border border-black/10 text-black px-3 py-1 rounded-md tracking-widest shadow-2xs shrink-0 select-none">
                     <span>{countdownStr}</span>
                   </div>
                 </div>
 
                 {/* Live Progress Bar */}
-                <div className="w-full bg-amber-200/80 rounded-full h-1.5 overflow-hidden mt-3">
+                <div className="w-full bg-black/[0.05] rounded-full h-1 overflow-hidden mt-3">
                   <div
-                    className="bg-amber-500 h-full transition-all duration-1000 ease-linear rounded-full"
+                    className="bg-[#cda434]/70 h-full transition-all duration-1000 ease-linear rounded-full"
                     style={{
                       width: `${Math.min(100, Math.max(0, (msLeft / (5 * 60 * 1000)) * 100))}%`,
                     }}
@@ -420,15 +420,15 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
             {/* Hold Expired Notice under images (When countdown reaches 00:00 idle) */}
             {idleExpired && !isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-4 w-full rounded-xl border border-black/15 bg-neutral-100 p-4 text-black shadow-2xs animate-in fade-in duration-300">
+              <div className="mt-4 w-full rounded-xl border border-black/10 bg-[#f5f5f3] p-3.5 text-black shadow-2xs animate-in fade-in duration-300">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-neutral-500 shrink-0 mt-0.5" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-black">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-black">
                         Reservation Expired (Idle) · Piece Back In Store
                       </p>
-                      <p className="text-[11px] text-black/60 mt-0.5 leading-snug">
+                      <p className="text-[10.5px] text-black/55 mt-0.5 leading-snug">
                         Since the 5-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
                       </p>
                     </div>
@@ -436,7 +436,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   <button
                     type="button"
                     onClick={() => setIdleExpired(false)}
-                    className="text-black/40 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
+                    className="text-black/35 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
                     aria-label="Dismiss notice"
                   >
                     ✕
@@ -563,29 +563,35 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             ) : isHeld ? (
               <div className="mt-7 flex items-center gap-2">
                 {heldByYou ? (
-                  <button
-                    type="button"
+                  <Button
                     onClick={openCart}
-                    className="flex-1 border-2 border-black bg-black hover:bg-neutral-900 text-white px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 active:scale-[0.99] shadow-sm"
+                    variant="dark"
+                    className="flex-1 text-[10.5px] uppercase tracking-[0.16em]"
                   >
-                    <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
-                    <span>IN YOUR BAG · VIEW BAG</span>
-                  </button>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-white" />
+                      <span>IN YOUR BAG · VIEW BAG</span>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Button>
                 ) : (
                   <button
                     type="button"
                     disabled
-                    className="flex-1 border border-black/10 bg-[#e8e8e8] text-black/40 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-center gap-2 cursor-not-allowed"
+                    className="flex-1 rounded-full border border-black/10 bg-black/[0.03] text-black/40 px-5 py-3 text-[10.5px] font-medium uppercase tracking-[0.16em] flex items-center justify-between cursor-not-allowed"
                   >
-                    <Clock className="w-3.5 h-3.5 text-black/40" />
-                    <span>ON HOLD BY ANOTHER SHOPPER</span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-black/35" />
+                      <span>ON HOLD BY ANOTHER SHOPPER</span>
+                    </div>
+                    <span className="text-[9px] font-mono">1 OF 1</span>
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => toggleItem(id)}
                   aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                  className="w-12 h-12 border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
+                  className="w-12 h-12 rounded-full border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
                 >
                   <Heart
                     className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
@@ -601,7 +607,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       disabled={!canAddSelectedVariant}
                       className={`w-full text-[10.5px] uppercase tracking-[0.18em] transition-all duration-300 relative ${
                         addedAnimation
-                          ? "!bg-emerald-600 hover:!bg-emerald-600 !text-white scale-[1.01] shadow-[0_0_25px_rgba(16,185,129,0.35)]"
+                          ? "!bg-black !text-white scale-[1.01]"
                           : "active:scale-[0.98]"
                       }`}
                     >
@@ -634,7 +640,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       </AnimatePresence>
                     </Button>
 
-                    {/* Floating "+1 RESERVED" micro-pill */}
+                    {/* Floating "+1 IN YOUR BAG" micro-pill */}
                     <AnimatePresence>
                       {addedAnimation && (
                         <motion.div
@@ -642,7 +648,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                           animate={{ opacity: 1, y: -36, scale: 1 }}
                           exit={{ opacity: 0, y: -50, scale: 0.8 }}
                           transition={{ duration: 0.7, ease: "easeOut" }}
-                          className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-0 z-30 flex items-center gap-1 rounded-full bg-emerald-600 text-white px-2.5 py-0.5 text-[9.5px] font-mono font-bold shadow-lg uppercase tracking-wider"
+                          className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-0 z-30 flex items-center gap-1 rounded-full bg-black text-white px-2.5 py-0.5 text-[9px] font-mono font-bold shadow-md uppercase tracking-wider border border-white/20"
                         >
                           <span>+1 IN YOUR BAG</span>
                         </motion.div>

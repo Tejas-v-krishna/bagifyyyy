@@ -72,9 +72,9 @@ function StarRow({
             <Star
               className={`${starSize} transition-colors ${
                 isFilled
-                  ? "fill-amber-400 text-amber-400"
+                  ? "fill-black text-black"
                   : interactive
-                  ? "text-black/20 fill-black/[0.04] hover:text-amber-400/50"
+                  ? "text-black/20 fill-black/[0.04] hover:text-black/50"
                   : "text-black/15 fill-transparent"
               }`}
             />
@@ -304,7 +304,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-white text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:bg-neutral-800 active:scale-[0.98] disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="btn-bagify btn-bagify-dark mt-2 w-full justify-center text-xs uppercase tracking-[0.14em] cursor-pointer disabled:opacity-50"
                 >
                   {submitting ? (
                     <>
@@ -363,7 +363,7 @@ export default function ReviewSection({ productId }: { productId: string }) {
                             <p className="truncate text-xs font-bold uppercase tracking-wider text-black">
                               {review.authorName}
                             </p>
-                            <span className="hidden sm:inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 text-[9px] font-semibold text-emerald-700">
+                            <span className="hidden sm:inline-flex items-center rounded-full bg-black/[0.04] border border-black/10 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
                               Verified Buyer
                             </span>
                           </div>

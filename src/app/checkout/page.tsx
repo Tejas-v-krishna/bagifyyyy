@@ -608,10 +608,10 @@ function CheckoutContent() {
           </div>
         </div>
 
-        {/* Small Grey Processing Pop-up */}
+        {/* Light Stone Processing Pop-up */}
         {(paymentState === 'initiating' || paymentState === 'verifying') && (
           <div
-            className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
             role="status"
             aria-live="polite"
           >
@@ -620,24 +620,24 @@ function CheckoutContent() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              className="max-w-sm w-full rounded-2xl border border-white/15 bg-[#2d2f34] p-6 sm:p-7 text-center text-white shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
+              className="max-w-sm w-full rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
             >
               <div className="relative w-12 h-12 mx-auto mb-4" aria-hidden="true">
-                <span className="absolute inset-0 rounded-full border-2 border-white/15" />
-                <span className="absolute inset-0 rounded-full border-2 border-transparent border-t-white animate-spin" />
-                <span className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white">
+                <span className="absolute inset-0 rounded-full border-2 border-black/10" />
+                <span className="absolute inset-0 rounded-full border-2 border-transparent border-t-black animate-spin" />
+                <span className="absolute inset-0 flex items-center justify-center font-bold text-sm text-black">
                   ₹
                 </span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold uppercase tracking-tight text-white mb-2">
+              <h2 className="text-base sm:text-lg font-bold uppercase tracking-tight text-black mb-1.5">
                 Payment Processing
               </h2>
-              <p className="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto mb-5">
+              <p className="text-xs text-black/60 leading-relaxed max-w-xs mx-auto mb-5">
                 Your payment is being processed. Please do not close or refresh this tab.
               </p>
-              <div className="inline-flex items-center gap-2 border border-white/10 bg-[#3a3c43] px-4 py-2 rounded-full text-xs text-gray-200">
-                <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Total</span>
-                <span className="font-bold text-white">
+              <div className="inline-flex items-center gap-2 border border-black/10 bg-white px-4 py-2 rounded-full text-xs text-black shadow-2xs">
+                <span className="text-[10px] font-mono font-medium uppercase tracking-wider text-black/50">Total</span>
+                <span className="font-bold text-black tabular-nums">
                   ₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
@@ -645,10 +645,10 @@ function CheckoutContent() {
           </div>
         )}
 
-        {/* Small Grey Transaction Failed Pop-up */}
+        {/* Light Stone Transaction Failed Pop-up */}
         {paymentState === 'failed' && (
           <div
-            className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="pay-fail-title"
@@ -658,18 +658,18 @@ function CheckoutContent() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="max-w-sm w-full rounded-2xl border border-white/15 bg-[#2d2f34] p-6 sm:p-7 text-center text-white shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
+              className="max-w-sm w-full rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
             >
-              <div className="w-12 h-12 rounded-full border border-red-500/25 bg-red-500/15 flex items-center justify-center mx-auto mb-4 text-red-400">
-                <AlertCircle className="w-6 h-6" aria-hidden="true" />
+              <div className="w-12 h-12 rounded-full border border-black/10 bg-white flex items-center justify-center mx-auto mb-4 text-black shadow-2xs">
+                <AlertCircle className="w-5 h-5 text-black" aria-hidden="true" />
               </div>
               <h2
                 id="pay-fail-title"
-                className="text-base sm:text-lg font-bold uppercase tracking-tight text-white mb-2"
+                className="text-base sm:text-lg font-bold uppercase tracking-tight text-black mb-1.5"
               >
                 {failureDetails?.title || "Transaction Didn't Go Through"}
               </h2>
-              <p className="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto mb-6">
+              <p className="text-xs text-black/60 leading-relaxed max-w-xs mx-auto mb-6">
                 {failureDetails?.message || "Your transaction didn't go through, please try again."}
               </p>
               <div className="flex flex-col gap-2.5">
@@ -681,9 +681,9 @@ function CheckoutContent() {
                     setLoading(false);
                     handleProceedToPayment();
                   }}
-                  className="w-full rounded-xl bg-white hover:bg-neutral-100 text-black py-3 px-5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-xs"
+                  className="btn-bagify btn-bagify-dark w-full justify-center text-xs uppercase tracking-[0.14em] cursor-pointer"
                 >
-                  Retry Payment
+                  <span>Retry Payment</span>
                 </button>
                 <button
                   type="button"
@@ -693,9 +693,9 @@ function CheckoutContent() {
                     setLoading(false);
                     openCart();
                   }}
-                  className="w-full rounded-xl border border-white/15 bg-[#3a3c43] hover:bg-[#45474f] text-gray-200 py-2.5 px-5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-[0.98] cursor-pointer"
+                  className="btn-bagify btn-bagify-light w-full justify-center text-xs uppercase tracking-[0.14em] cursor-pointer"
                 >
-                  Back to Cart
+                  <span>Back to Cart</span>
                 </button>
               </div>
             </motion.div>
@@ -1044,19 +1044,19 @@ function CheckoutContent() {
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 4, scale: 0.94 }}
                                 transition={{ duration: 0.15, ease: "easeOut" }}
-                                className="absolute bottom-full left-0 mb-2 z-40 w-52 rounded-xl bg-black text-white p-3 shadow-[0_12px_32px_rgba(0,0,0,0.35)] border border-white/15"
+                                className="absolute bottom-full left-0 mb-2 z-40 w-52 rounded-xl bg-white text-black p-3 shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-black/15"
                               >
-                                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-white/95 leading-snug">
+                                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-black leading-snug">
                                   Are you sure you want to remove this?
                                 </p>
-                                <div className="flex items-center justify-end gap-2 mt-2.5 pt-2 border-t border-white/10">
+                                <div className="flex items-center justify-end gap-2 mt-2.5 pt-2 border-t border-black/10">
                                   <button
                                     type="button"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setConfirmRemoveKey(null);
                                     }}
-                                    className="px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-white/60 hover:text-white transition-colors cursor-pointer"
+                                    className="px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-black/50 hover:text-black transition-colors cursor-pointer"
                                   >
                                     Cancel
                                   </button>
@@ -1067,13 +1067,13 @@ function CheckoutContent() {
                                       removeItem(key);
                                       setConfirmRemoveKey(null);
                                     }}
-                                    className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white rounded transition-colors cursor-pointer active:scale-90 shadow-2xs"
+                                    className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-black hover:bg-neutral-800 text-white rounded transition-colors cursor-pointer active:scale-90 shadow-2xs"
                                   >
                                     Yes, remove
                                   </button>
                                 </div>
                                 {/* Caret arrow */}
-                                <div className="absolute top-full left-3.5 -mt-1 w-2 h-2 bg-black border-r border-b border-white/15 rotate-45" />
+                                <div className="absolute top-full left-3.5 -mt-1 w-2 h-2 bg-white border-r border-b border-black/15 rotate-45" />
                               </motion.div>
                             )}
                           </AnimatePresence>
@@ -1122,22 +1122,22 @@ function CheckoutContent() {
                   initial={{ opacity: 0, scale: 0.9, y: -4 }}
                   animate={{ opacity: 1, scale: [0.95, 1.04, 1], y: 0 }}
                   transition={{ type: "spring", stiffness: 450, damping: 20 }}
-                  className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 rounded-sm shadow-xs"
+                  className="flex items-center justify-between bg-[#f4f4f2] border border-black/10 px-3 py-2 rounded-xl shadow-2xs"
                 >
-                  <span className="text-[10px] font-semibold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 animate-bounce" />
-                    <span className="bg-emerald-600 text-white px-1.5 py-0.5 rounded text-[9px] font-mono tracking-widest font-bold">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-black" />
+                    <span className="bg-black text-white px-1.5 py-0.5 rounded text-[9px] font-mono tracking-widest font-bold">
                       {appliedPromo.code}
                     </span>
-                    <span>·</span>
-                    <span className="text-emerald-800 font-bold">
+                    <span className="text-black/40">·</span>
+                    <span className="text-black font-bold">
                       {isFree ? "FREE SHIPPING" : `${(appliedPromo.discount * 100).toFixed(0)}% OFF`}
                     </span>
                   </span>
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => { clearPromo(); setPromoInput(""); }}
-                    className="text-[10px] font-semibold text-black/60 hover:text-black underline cursor-pointer"
+                    className="text-[10px] font-mono uppercase tracking-wider text-black/50 hover:text-black underline cursor-pointer"
                   >
                     Remove
                   </motion.button>
