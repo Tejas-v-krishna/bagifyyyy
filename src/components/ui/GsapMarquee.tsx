@@ -24,7 +24,7 @@ export default function GsapMarquee() {
       gsap.to(trackRef.current, {
         xPercent: -50,
         repeat: -1,
-        duration: 25,
+        duration: 50,
         ease: "none",
       });
     }

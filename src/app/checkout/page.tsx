@@ -9,6 +9,8 @@ import { Loader2, ArrowRight, ArrowLeft, User, CreditCard, Tag, CheckCircle2, Al
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { triggerPromoSuccessBurst } from "@/lib/confetti";
 import Button from "@/components/ui/Button";
 // Hold identity is a server-minted cookie now — the client no longer picks it.
 
@@ -132,7 +134,27 @@ const loadRazorpayScript = (): Promise<boolean> => {
 
 function CheckoutContent() {
   const router = useRouter();
-  const { items, cartSubtotal, bundleDiscount, cartTotal, mrpTotal, mrpDiscount, promoCode, promoDiscount, promoAmount, applyPromo, clearPromo, updateQuantity, removeItem, clearCart } = useCartStore();
+  const {
+    items,
+    cartSubtotal,
+    bundleDiscount,
+    cartTotal,
+    mrpTotal,
+    mrpDiscount,
+    promoCode,
+    promoDiscount,
+    promoType,
+    isFreeShipping,
+    promoAmount,
+    shippingFee,
+    applyPromo,
+    setPromo,
+    clearPromo,
+    updateQuantity,
+    removeItem,
+    clearCart,
+    openCart,
+  } = useCartStore();
   const { user, isAuthenticated } = useAuthStore();
   const searchParams = useSearchParams();
   const promoFromCart = searchParams.get("promo");
@@ -177,21 +199,50 @@ function CheckoutContent() {
   const [promoInput, setPromoInput] = useState<string | null>(null);
   const promoFromUrl = promoFromCart?.trim().toUpperCase();
   const promoInputValue = promoInput ?? (
-    promoFromUrl && VALID_PROMOS[promoFromUrl] !== undefined
+    promoFromUrl && (VALID_PROMOS[promoFromUrl] !== undefined || promoFromUrl === 'FREESHIP')
       ? promoFromUrl
       : promoCode || ""
   );
   const appliedPromo = promoCode ? { code: promoCode, discount: promoDiscount } : null;
   const [promoError, setPromoError] = useState("");
+  const [shakePromo, setShakePromo] = useState(false);
+  const [confirmRemoveKey, setConfirmRemoveKey] = useState<string | null>(null);
 
-  const handleApplyPromo = async () => {
-    if (!promoInputValue.trim()) return;
+  useEffect(() => {
+    if (!confirmRemoveKey) return;
+    const handleDocClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest?.("[data-remove-tooltip]")) return;
+      setConfirmRemoveKey(null);
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmRemoveKey(null);
+    };
+    window.addEventListener("click", handleDocClick);
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("click", handleDocClick);
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [confirmRemoveKey]);
+
+  const triggerShake = () => {
+    setShakePromo(true);
+    setTimeout(() => setShakePromo(false), 500);
+  };
+
+  const handleApplyPromo = async (e?: React.MouseEvent) => {
+    if (!promoInputValue.trim()) {
+      triggerShake();
+      return;
+    }
     setPromoError("");
 
     const res = applyPromo(promoInputValue);
     if (res.ok) {
       setPromoInput(promoInputValue.trim().toUpperCase());
       setPromoError("");
+      triggerPromoSuccessBurst(e);
       return;
     }
 
@@ -202,24 +253,17 @@ function CheckoutContent() {
       const data = await apiRes.json();
 
       if (apiRes.ok && data.coupon) {
-        let discountFraction = 0;
-        const sub = cartSubtotal();
-        if (data.coupon.discountType === "PERCENTAGE") {
-          discountFraction = data.coupon.discountValue / 100;
-        } else if (sub > 0) {
-          discountFraction = data.coupon.discountAmount / sub;
-        }
-        useCartStore.setState({
-          promoCode: data.coupon.code,
-          promoDiscount: discountFraction,
-        });
+        setPromo(data.coupon);
         setPromoInput(data.coupon.code);
         setPromoError("");
+        triggerPromoSuccessBurst(e);
       } else {
         setPromoError(data.error || "Invalid promo code.");
+        triggerShake();
       }
     } catch {
       setPromoError("Unable to validate coupon.");
+      triggerShake();
     }
   };
 
@@ -288,17 +332,16 @@ function CheckoutContent() {
 
   // Mirrors priceCart() in src/lib/cart.ts exactly: set discounts come off
   // first, then the promo code applies to what's left.
-  // The flat ₹80 delivery cost rides inside the total instead of being shown
-  // as a separate shipping line. The server re-derives all of it.
   const subtotal = cartSubtotal();
   const setDiscount = bundleDiscount();
   // Studio MRP rows. Display only — they never change what is charged.
   const mrpTotalValue = mrpTotal();
   const mrpDiscountValue = mrpDiscount();
   const total = cartTotal();
-  const shipping = 80;
+  const isFree = isFreeShipping || promoType === "FREE_SHIPPING";
+  const deliveryCost = shippingFee();
   const discountAmount = promoAmount();
-  const finalTotal = total - discountAmount + shipping;
+  const finalTotal = Math.max(0, Math.round((total - discountAmount + deliveryCost) * 100) / 100);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -348,23 +391,29 @@ function CheckoutContent() {
         clearCart();
         router.push(`/checkout/success?order_id=${orderId}`);
       } else {
-        const msg = verifyData.error || 'Payment verification failed. Please contact support.';
+        const msg = verifyData.error || "Your transaction didn't go through, please try again.";
         setError(msg);
-        setPaymentState('failed');
-        setFailureDetails({
-          title: 'Verification Failed',
-          message: msg,
-        });
+        setPaymentState('idle');
+        setTimeout(() => {
+          setPaymentState('failed');
+          setFailureDetails({
+            title: "Transaction Didn't Go Through",
+            message: "Your transaction didn't go through, please try again.",
+          });
+        }, 800);
       }
     } catch (err: unknown) {
       console.error('Verify error:', err);
-      const msg = err instanceof Error ? err.message : 'Payment verification failed';
+      const msg = err instanceof Error ? err.message : "Your transaction didn't go through, please try again.";
       setError(msg);
-      setPaymentState('failed');
-      setFailureDetails({
-        title: 'Verification Error',
-        message: msg,
-      });
+      setPaymentState('idle');
+      setTimeout(() => {
+        setPaymentState('failed');
+        setFailureDetails({
+          title: "Transaction Didn't Go Through",
+          message: "Your transaction didn't go through, please try again.",
+        });
+      }, 800);
     } finally {
       setLoading(false);
     }
@@ -450,12 +499,15 @@ function CheckoutContent() {
         modal: {
           ondismiss: function () {
             setLoading(false);
+            setPaymentState('idle');
             if (!paymentCompletedRef.current) {
-              setPaymentState('failed');
-              setFailureDetails({
-                title: 'Payment Incomplete',
-                message: 'The Razorpay payment window was closed before completing the transaction. No amount was debited, and your cart items remain saved.',
-              });
+              setTimeout(() => {
+                setPaymentState('failed');
+                setFailureDetails({
+                  title: "Transaction Didn't Go Through",
+                  message: "Your transaction didn't go through, please try again.",
+                });
+              }, 800);
             }
           },
         },
@@ -464,26 +516,32 @@ function CheckoutContent() {
       const rzp = new (window.Razorpay as unknown as RazorpayConstructor)(options);
       rzp.on('payment.failed', function (resp: RazorpayFailureResponse) {
         paymentCompletedRef.current = false;
-        const failureReason = resp.error?.description || resp.error?.reason || 'Payment failed';
+        const failureReason = resp.error?.description || resp.error?.reason || "Your transaction didn't go through, please try again.";
         setError(`Payment failed: ${failureReason}`);
-        setPaymentState('failed');
-        setFailureDetails({
-          title: 'Payment Failed',
-          message: `${failureReason}. Please check your payment details or try an alternative payment method.`,
-        });
         setLoading(false);
+        setPaymentState('idle');
+        setTimeout(() => {
+          setPaymentState('failed');
+          setFailureDetails({
+            title: "Transaction Didn't Go Through",
+            message: "Your transaction didn't go through, please try again.",
+          });
+        }, 800);
       });
       rzp.open();
     } catch (err: unknown) {
       console.error(err);
-      const msg = err instanceof Error ? err.message : 'Checkout failed. Please try again.';
+      const msg = err instanceof Error ? err.message : "Your transaction didn't go through, please try again.";
       setError(msg);
-      setPaymentState('failed');
-      setFailureDetails({
-        title: 'Checkout Error',
-        message: msg,
-      });
       setLoading(false);
+      setPaymentState('idle');
+      setTimeout(() => {
+        setPaymentState('failed');
+        setFailureDetails({
+          title: "Transaction Didn't Go Through",
+          message: "Your transaction didn't go through, please try again.",
+        });
+      }, 800);
     }
   };
 
@@ -550,73 +608,97 @@ function CheckoutContent() {
           </div>
         </div>
 
-        {/* Fullscreen Processing Overlay */}
+        {/* Small Grey Processing Pop-up */}
         {(paymentState === 'initiating' || paymentState === 'verifying') && (
-          <div className="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-md flex items-center justify-center p-4" role="status" aria-live="polite">
-            <div className="max-w-md w-full rounded-2xl border border-white/10 bg-[#0b0b0b] p-8 sm:p-10 text-center text-white shadow-[0_32px_80px_rgba(0,0,0,0.55)]">
-              <div className="relative w-14 h-14 mx-auto mb-6" aria-hidden="true">
-                <span className="absolute inset-0 rounded-full border border-white/15" />
-                <span className="absolute inset-0 rounded-full border-t-2 border-t-white animate-spin" />
-                <span className="absolute inset-0 flex items-center justify-center font-microgramma text-base font-bold text-white">
+          <div
+            className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            role="status"
+            aria-live="polite"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 8 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              className="max-w-sm w-full rounded-2xl border border-white/15 bg-[#2d2f34] p-6 sm:p-7 text-center text-white shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
+            >
+              <div className="relative w-12 h-12 mx-auto mb-4" aria-hidden="true">
+                <span className="absolute inset-0 rounded-full border-2 border-white/15" />
+                <span className="absolute inset-0 rounded-full border-2 border-transparent border-t-white animate-spin" />
+                <span className="absolute inset-0 flex items-center justify-center font-bold text-sm text-white">
                   ₹
                 </span>
               </div>
-              <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-white mb-3">
-                 {paymentState === 'initiating' ? "Opening payment…" : "Processing payment…"}
+              <h2 className="text-base sm:text-lg font-bold uppercase tracking-tight text-white mb-2">
+                Payment Processing
               </h2>
-              <p className="text-xs sm:text-[13px] leading-relaxed text-white/60 mb-6 max-w-sm mx-auto">
-                {paymentState === 'initiating'
-                  ? "Opening the secure Razorpay window. Please do not close or refresh this tab."
-                   : "Checking your payment and preparing your receipt. Please wait."}
+              <p className="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto mb-5">
+                Your payment is being processed. Please do not close or refresh this tab.
               </p>
-              <p className="inline-flex items-baseline gap-2 border border-white/15 bg-white/5 px-5 py-2.5 rounded-full">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50">To pay</span>
-                <span className="text-base font-bold tabular-nums text-white">
+              <div className="inline-flex items-center gap-2 border border-white/10 bg-[#3a3c43] px-4 py-2 rounded-full text-xs text-gray-200">
+                <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Total</span>
+                <span className="font-bold text-white">
                   ₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
-              </p>
-              <div className="flex items-center justify-center gap-1.5 mt-7" aria-hidden="true">
-                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce" />
-                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-bounce [animation-delay:300ms]" />
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
 
-        {/* Fullscreen Failure Modal */}
+        {/* Small Grey Transaction Failed Pop-up */}
         {paymentState === 'failed' && (
-          <div className="fixed inset-0 z-[9990] bg-black/70 backdrop-blur-md flex items-center justify-center p-4" role="alertdialog" aria-modal="true" aria-labelledby="pay-fail-title">
-            <div className="max-w-md w-full rounded-2xl border border-white/10 bg-[#0b0b0b] p-8 sm:p-10 text-center text-white shadow-[0_32px_80px_rgba(0,0,0,0.55)]">
-              <div className="w-14 h-14 rounded-full border border-white/15 bg-white/5 flex items-center justify-center mx-auto mb-6 text-white">
-                <AlertCircle className="w-6 h-6 text-white" aria-hidden="true" />
+          <div
+            className="fixed inset-0 z-[9990] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="pay-fail-title"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 8 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="max-w-sm w-full rounded-2xl border border-white/15 bg-[#2d2f34] p-6 sm:p-7 text-center text-white shadow-[0_24px_64px_rgba(0,0,0,0.45)]"
+            >
+              <div className="w-12 h-12 rounded-full border border-red-500/25 bg-red-500/15 flex items-center justify-center mx-auto mb-4 text-red-400">
+                <AlertCircle className="w-6 h-6" aria-hidden="true" />
               </div>
-              <h2 id="pay-fail-title" className="font-microgramma text-xl sm:text-2xl font-bold uppercase leading-tight tracking-tight text-white mb-3">
-                {failureDetails?.title || "Payment Incomplete"}
+              <h2
+                id="pay-fail-title"
+                className="text-base sm:text-lg font-bold uppercase tracking-tight text-white mb-2"
+              >
+                {failureDetails?.title || "Transaction Didn't Go Through"}
               </h2>
-              <p className="text-xs sm:text-[13px] leading-relaxed text-white/60 mb-8 max-w-sm mx-auto">
-                {failureDetails?.message || "Your transaction was not completed. No amount was debited, and your cart pieces remain safely saved."}
+              <p className="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto mb-6">
+                {failureDetails?.message || "Your transaction didn't go through, please try again."}
               </p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5">
                 <button
                   type="button"
                   onClick={() => {
                     setPaymentState('idle');
                     setFailureDetails(null);
                     setLoading(false);
+                    handleProceedToPayment();
                   }}
-                  className="btn-bagify btn-bagify-dark w-full text-xs uppercase tracking-[0.14em] cursor-pointer"
+                  className="w-full rounded-xl bg-white hover:bg-neutral-100 text-black py-3 px-5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-xs"
                 >
-                  <span>Try Again / Back to Checkout</span>
+                  Retry Payment
                 </button>
-                <Link
-                  href="/"
-                  className="w-full rounded-full border border-white/20 bg-transparent text-white px-6 py-3.5 text-xs font-medium uppercase tracking-[0.14em] hover:bg-white/10 active:scale-[0.99] transition-all text-center cursor-pointer"
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPaymentState('idle');
+                    setFailureDetails(null);
+                    setLoading(false);
+                    openCart();
+                  }}
+                  className="w-full rounded-xl border border-white/15 bg-[#3a3c43] hover:bg-[#45474f] text-gray-200 py-2.5 px-5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-[0.98] cursor-pointer"
                 >
-                  Return to Home Screen
-                </Link>
+                  Back to Cart
+                </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         )}
 
@@ -922,10 +1004,30 @@ function CheckoutContent() {
                 return (
                   <div key={key} className="flex gap-4 group border-b border-black/10 pb-4 last:border-b-0">
                     <div className="relative w-[64px] h-[78px] bg-[#f5f5f2] border border-black/10 rounded-xs shrink-0 overflow-hidden">
-                      <Image src={item.image || "/placeholder.jpg"} alt={item.name} fill className="object-cover" />
+                      <Image
+                        src={item.image || "/placeholder.jpg"}
+                        alt={item.name}
+                        fill
+                        className={`object-cover ${item.isSoldOut ? "blur-[2px] opacity-60 grayscale" : ""}`}
+                      />
+                      {item.isSoldOut && (
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center p-1 text-center">
+                          <span className="text-[7.5px] font-mono font-bold uppercase tracking-wider text-white leading-tight">
+                            Sold
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
+                        {item.isSoldOut && (
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse shrink-0" />
+                            <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-red-600">
+                              Somebody bought this · Out of stock
+                            </span>
+                          </div>
+                        )}
                         <h4 className="text-xs font-semibold uppercase tracking-tight text-black">{item.name}</h4>
                         <p className="text-[10px] text-black/50 uppercase tracking-wider mt-0.5">
                           {item.color} | Size: {item.size}
@@ -933,14 +1035,78 @@ function CheckoutContent() {
                       </div>
                       
                       <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center gap-2 text-xs font-semibold">
-                          <button aria-label="Decrease quantity" disabled={item.quantity <= 1} onClick={() => updateQuantity(key, Math.max(1, item.quantity - 1))} className="w-5 h-5 border border-black/15 flex items-center justify-center hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed text-black cursor-pointer rounded-xs"><Minus className="w-3 h-3" aria-hidden="true" /></button>
-                          <span aria-live="polite" className="text-black">{item.quantity}{item.quantity >= 10 ? " (max)" : ""}</span>
-                          <button aria-label="Increase quantity" disabled={item.quantity >= 10} onClick={() => updateQuantity(key, item.quantity + 1)} className="w-5 h-5 border border-black/15 flex items-center justify-center hover:bg-black/5 disabled:opacity-30 disabled:cursor-not-allowed text-black cursor-pointer rounded-xs"><Plus className="w-3 h-3" aria-hidden="true" /></button>
+                        <div className="relative inline-flex items-center" data-remove-tooltip="true">
+                          {/* Tooltip pop-up confirmation */}
+                          <AnimatePresence>
+                            {confirmRemoveKey === key && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 6, scale: 0.94 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 4, scale: 0.94 }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
+                                className="absolute bottom-full left-0 mb-2 z-40 w-52 rounded-xl bg-black text-white p-3 shadow-[0_12px_32px_rgba(0,0,0,0.35)] border border-white/15"
+                              >
+                                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-white/95 leading-snug">
+                                  Are you sure you want to remove this?
+                                </p>
+                                <div className="flex items-center justify-end gap-2 mt-2.5 pt-2 border-t border-white/10">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setConfirmRemoveKey(null);
+                                    }}
+                                    className="px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-white/60 hover:text-white transition-colors cursor-pointer"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      removeItem(key);
+                                      setConfirmRemoveKey(null);
+                                    }}
+                                    className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white rounded transition-colors cursor-pointer active:scale-90 shadow-2xs"
+                                  >
+                                    Yes, remove
+                                  </button>
+                                </div>
+                                {/* Caret arrow */}
+                                <div className="absolute top-full left-3.5 -mt-1 w-2 h-2 bg-black border-r border-b border-white/15 rotate-45" />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+
+                          <div className="inline-flex items-center border border-black/15 rounded-xs bg-white overflow-hidden shadow-2xs">
+                            <button
+                              type="button"
+                              aria-label={`Remove ${item.name}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setConfirmRemoveKey((prev) => (prev === key ? null : key));
+                              }}
+                              className="w-5 h-5 flex items-center justify-center hover:bg-black/5 text-black cursor-pointer active:scale-90 transition-transform"
+                            >
+                              <Minus className="w-2.5 h-2.5" aria-hidden="true" />
+                            </button>
+                            <span aria-live="polite" className="w-5 text-center font-mono font-bold text-xs text-black select-none">
+                              {item.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              aria-label="Max quantity reached (1 of 1 piece)"
+                              disabled={true}
+                              title="1 of 1 unique piece"
+                              className="w-5 h-5 border-l border-black/10 flex items-center justify-center bg-black/[0.03] text-black/25 cursor-not-allowed select-none"
+                            >
+                              <Plus className="w-2.5 h-2.5" aria-hidden="true" />
+                            </button>
+                          </div>
                         </div>
+
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-semibold text-black">₹{(item.price * item.quantity).toFixed(2)}</span>
-                          <button onClick={() => removeItem(key)} aria-label="Remove item" className="text-black/40 hover:text-black cursor-pointer flex items-center justify-center"><X className="w-3.5 h-3.5" aria-hidden="true" /></button>
                         </div>
                       </div>
                     </div>
@@ -952,41 +1118,77 @@ function CheckoutContent() {
             {/* Promo Code */}
             <div className="border-t border-black/10 pt-4 pb-2">
               {appliedPromo ? (
-                <div className="flex items-center justify-between bg-[#f5f5f2] border border-black/10 px-3 py-2 rounded-sm">
-                  <span className="text-[10px] font-semibold text-black uppercase tracking-wider flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    {appliedPromo.code} · {(appliedPromo.discount * 100).toFixed(0)}% OFF
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: -4 }}
+                  animate={{ opacity: 1, scale: [0.95, 1.04, 1], y: 0 }}
+                  transition={{ type: "spring", stiffness: 450, damping: 20 }}
+                  className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 rounded-sm shadow-xs"
+                >
+                  <span className="text-[10px] font-semibold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 animate-bounce" />
+                    <span className="bg-emerald-600 text-white px-1.5 py-0.5 rounded text-[9px] font-mono tracking-widest font-bold">
+                      {appliedPromo.code}
+                    </span>
+                    <span>·</span>
+                    <span className="text-emerald-800 font-bold">
+                      {isFree ? "FREE SHIPPING" : `${(appliedPromo.discount * 100).toFixed(0)}% OFF`}
+                    </span>
                   </span>
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
                     onClick={() => { clearPromo(); setPromoInput(""); }}
                     className="text-[10px] font-semibold text-black/60 hover:text-black underline cursor-pointer"
                   >
                     Remove
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
               ) : (
-                <div className="flex gap-2">
-                  <div className="flex-1 flex items-center gap-2 border border-black/15 rounded-sm px-3 py-2">
-                    <Tag className="w-3.5 h-3.5 text-black/40 shrink-0" />
-                    <input
-                      type="text"
-                      value={promoInputValue}
-                      onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
-                      onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
-                      placeholder="Promo code"
-                      className="w-full text-xs font-semibold uppercase outline-none !bg-transparent tracking-wider placeholder:normal-case placeholder:tracking-normal placeholder:text-black/40 text-black border-0"
-                    />
+                <motion.div
+                  animate={shakePromo ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
+                  transition={{ duration: 0.4 }}
+                  className="space-y-1.5"
+                >
+                  <div className="flex gap-2">
+                    <div className="flex-1 flex items-center gap-2 border border-black/15 focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 focus-within:scale-[1.01] transition-all duration-200 rounded-sm px-3 py-2 bg-white">
+                      <Tag className={`w-3.5 h-3.5 transition-colors ${promoInputValue ? "text-black" : "text-black/40"} shrink-0`} />
+                      <input
+                        type="text"
+                        value={promoInputValue}
+                        onChange={(e) => { setPromoInput(e.target.value.toUpperCase()); setPromoError(""); }}
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
+                        placeholder="PROMO CODE"
+                        className="w-full text-xs font-bold uppercase outline-none !bg-transparent tracking-widest placeholder:tracking-wider placeholder:text-black/35 text-black border-0 font-mono"
+                      />
+                      {promoInputValue && (
+                        <motion.span
+                          initial={{ scale: 0.6, opacity: 0 }}
+                          animate={{ scale: [1, 1.15, 1], opacity: 1 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-[8.5px] font-mono text-emerald-700 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded font-bold shrink-0 tracking-wider"
+                        >
+                          READY ↵
+                        </motion.span>
+                      )}
+                    </div>
+                    <motion.button
+                      whileTap={{ scale: 0.94 }}
+                      whileHover={{ scale: 1.02 }}
+                      onClick={(e) => handleApplyPromo(e)}
+                      className="btn-bagify btn-bagify-dark text-[10px] uppercase tracking-[0.14em] cursor-pointer shadow-xs active:scale-95 transition-all"
+                    >
+                      <span>Apply</span>
+                    </motion.button>
                   </div>
-                  <button
-                    onClick={handleApplyPromo}
-                    className="btn-bagify btn-bagify-dark text-[10px] uppercase tracking-[0.14em] cursor-pointer"
-                  >
-                    <span>Apply</span>
-                  </button>
-                </div>
+                </motion.div>
               )}
               {promoError && (
-                <p className="text-[10px] text-red-600 font-semibold uppercase tracking-wider mt-1.5">{promoError}</p>
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-[10px] text-red-600 font-semibold uppercase tracking-wider mt-1.5"
+                >
+                  {promoError}
+                </motion.p>
               )}
             </div>
 
@@ -1009,20 +1211,29 @@ function CheckoutContent() {
                 <span className="font-semibold text-black">₹{subtotal.toFixed(2)}</span>
               </div>
               {setDiscount > 0 && (
-                <div className="flex justify-between items-center text-black font-semibold">
+                <div className="flex justify-between items-center text-emerald-700 font-semibold">
                    <span>Set discount:</span>
                   <span>−₹{setDiscount.toFixed(2)}</span>
                 </div>
               )}
-              {discountAmount > 0 && (
-                <div className="flex justify-between items-center text-black font-semibold">
+              {discountAmount > 0 && !isFree && (
+                <div className="flex justify-between items-center text-emerald-700 font-semibold">
                   <span>Promo ({appliedPromo!.code}):</span>
                   <span>−₹{discountAmount.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between items-center text-black/65">
-                <span>Tax:</span>
-                <span className="font-semibold text-black">Included</span>
+                <span>Standard Shipping:</span>
+                <span className="font-semibold text-black">
+                  {isFree ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="line-through text-black/40">₹80.00</span>
+                      <span className="text-emerald-700 font-bold">FREE</span>
+                    </span>
+                  ) : (
+                    "₹80.00"
+                  )}
+                </span>
               </div>
               <div className="flex justify-between items-center font-semibold text-sm border-t border-black/10 pt-3 mt-1 text-black">
                 <span>To Pay:</span>

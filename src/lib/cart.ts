@@ -43,6 +43,7 @@ export type PricedCart = {
   shippingFee: number;
   promoCode: string | null;
   promoDiscount: number;
+  isFreeShipping?: boolean;
 };
 
 /** Thrown for any client-correctable problem; carries the HTTP status to use. */
@@ -201,6 +202,8 @@ export async function priceCart(options: {
   let promoAmount = 0;
   let shippingFee = STANDARD_SHIPPING_FEE;
 
+  let isFreeShipping = false;
+
   if (typeof promoCode === 'string' && promoCode.trim()) {
     const couponRes = await validateCouponCode(promoCode.trim(), discountableSubtotal);
     if (couponRes.valid && couponRes.coupon) {
@@ -213,8 +216,9 @@ export async function priceCart(options: {
         promoDiscount = discountableSubtotal > 0 ? promoAmount / discountableSubtotal : 0;
       } else if (couponRes.coupon.discountType === 'FREE_SHIPPING') {
         shippingFee = 0;
-        promoAmount = 80;
+        promoAmount = 0;
         promoDiscount = 0;
+        isFreeShipping = true;
       }
     }
   }
@@ -233,6 +237,7 @@ export async function priceCart(options: {
     shippingFee,
     promoCode: normalizedPromo,
     promoDiscount,
+    isFreeShipping,
   };
 }
 

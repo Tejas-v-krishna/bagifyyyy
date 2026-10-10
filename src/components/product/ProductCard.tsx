@@ -50,7 +50,7 @@ export default function ProductCard({ product }: { product: Product }) {
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
               className={`object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[1] select-none pointer-events-none ${
                 product.hoverImage ? "group-hover:opacity-0" : ""
-              } ${product.isSoldOut ? "blur-sm opacity-60" : "opacity-100"}`}
+              } ${product.isSoldOut ? "blur-[3px] opacity-50 grayscale" : "opacity-100"}`}
             />
 
             {/* Hover Image (if available) */}
@@ -61,15 +61,20 @@ export default function ProductCard({ product }: { product: Product }) {
                 fill
                 draggable={false}
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-                className="object-cover object-center opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none"
+                className={`object-cover object-center opacity-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] z-[2] select-none pointer-events-none ${
+                  product.isSoldOut ? "blur-[3px] grayscale" : ""
+                }`}
               />
             )}
 
-            {/* Sold Out Overlay */}
+            {/* Sold Out / Somebody Bought This Overlay */}
             {product.isSoldOut && (
-              <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                <span className="bg-black text-white text-[8.5px] px-3 py-1 tracking-[0.14em] rounded-[var(--radius-cta)] font-semibold">
-                  Sold Out
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-black/45 backdrop-blur-[5px] z-30 pointer-events-none">
+                <span className="bg-white/95 text-black text-[9px] px-3 py-1.5 tracking-[0.14em] uppercase rounded-full font-mono font-bold shadow-lg">
+                  Somebody bought this
+                </span>
+                <span className="text-[8px] font-mono uppercase tracking-[0.18em] text-white/80 font-semibold mt-1">
+                  Out of stock · 1 of 1
                 </span>
               </div>
             )}

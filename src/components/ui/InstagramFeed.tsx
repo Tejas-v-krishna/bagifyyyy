@@ -155,7 +155,7 @@ export default function InstagramFeed() {
               <div className="absolute inset-x-4 bottom-4 z-10 flex items-end justify-between gap-3 text-white">
                 <div className="min-w-0">
                   <span className="block font-mono text-[9px] uppercase tracking-widest text-white/60">
-                    FW26 // 01
+                    ARCHIVE // 01
                   </span>
                   <p className="truncate font-sans text-[12.5px] sm:text-[14px] font-medium tracking-tight text-white/95 mt-0.5">
                     {posts[0].caption}

@@ -1,9 +1,10 @@
 "use client";
 
-import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft, ArrowRight } from "lucide-react";
+import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft, ArrowRight, Clock } from "lucide-react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
+import { triggerPinataBurst, triggerPromoSuccessBurst } from "@/lib/confetti";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -23,6 +24,37 @@ type UpsellProduct = {
   colors?: string[];
   isSoldOut?: boolean;
 };
+
+function CartItemHoldBadge({ expiresAt }: { expiresAt?: number }) {
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+    const update = () => {
+      const diff = expiresAt - Date.now();
+      if (diff <= 0) {
+        setTimeLeft("0:00");
+      } else {
+        const totalSec = Math.floor(diff / 1000);
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        setTimeLeft(`${mins}:${secs.toString().padStart(2, "0")}`);
+      }
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [expiresAt]);
+
+  if (!timeLeft || !expiresAt) return null;
+
+  return (
+    <span className="inline-flex items-center gap-1 font-mono text-[9px] font-semibold text-amber-950 bg-amber-400/25 border border-amber-500/30 px-1.5 py-0.5 rounded-sm">
+      <Clock className="w-2.5 h-2.5 text-amber-700" />
+      <span>Held: {timeLeft}</span>
+    </span>
+  );
+}
 
 /** "You may also like" rail inside the bag: live catalogue minus what's in it. */
 function CartUpsell({ closeCart }: { closeCart: () => void }) {
@@ -55,7 +87,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
     railRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
   };
 
-  const handleAdd = (p: UpsellProduct) => {
+  const handleAdd = (p: UpsellProduct, e?: React.MouseEvent) => {
     const hasOptions =
       (Array.isArray(p.sizes) && p.sizes.length > 1) ||
       (Array.isArray(p.colors) && p.colors.length > 1);
@@ -64,6 +96,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
       router.push(`/product/${p.id}`);
       return;
     }
+    triggerPinataBurst(e);
     const img = p.image
       ?? (typeof p.images?.[0] === "string" ? p.images[0] : (p.images?.[0] as { url?: string } | undefined)?.url)
       ?? "/placeholder.jpg";
@@ -97,7 +130,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
             type="button"
             onClick={() => scrollRail(-1)}
             aria-label="Scroll recommendations back"
-            className="w-7 h-7 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors cursor-pointer text-black"
+            className="w-7 h-7 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors cursor-pointer text-black active:scale-90"
           >
             <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
@@ -105,7 +138,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
             type="button"
             onClick={() => scrollRail(1)}
             aria-label="Scroll recommendations forward"
-            className="w-7 h-7 rounded-full bg-black hover:bg-black/80 flex items-center justify-center transition-colors cursor-pointer text-white"
+            className="w-7 h-7 rounded-full bg-black hover:bg-black/80 flex items-center justify-center transition-colors cursor-pointer text-white active:scale-90"
           >
             <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
@@ -141,14 +174,19 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
                 <p className="text-[11px] font-mono font-medium text-black mt-0.5 tabular-nums">
                   ₹{p.price.toLocaleString("en-IN")}
                 </p>
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.93 }}
                   type="button"
-                  onClick={() => handleAdd(p)}
+                  onClick={(e) => handleAdd(p, e)}
                   disabled={added}
-                  className={`mt-2 w-full py-1 px-2.5 rounded-full text-[9px] font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${added ? "bg-emerald-700 text-white" : "bg-black text-white hover:bg-black/80 active:scale-95"}`}
+                  className={`mt-2 w-full py-1 px-2.5 rounded-full text-[9px] font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                    added
+                      ? "bg-emerald-600 text-white font-bold"
+                      : "bg-black text-white hover:bg-black/80"
+                  }`}
                 >
                   {added ? "Added ✓" : "Add to bag +"}
-                </button>
+                </motion.button>
               </div>
             </div>
           );
@@ -160,8 +198,25 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
 
 export default function CartDrawer() {
   const pathname = usePathname();
-  const { isOpen, closeCart, items, removeItem, updateQuantity, cartSubtotal, bundleDiscount, cartTotal, promoCode, promoDiscount, applyPromo, clearPromo, promoAmount } =
-    useCartStore();
+  const {
+    isOpen,
+    closeCart,
+    items,
+    removeItem,
+    updateQuantity,
+    cartSubtotal,
+    bundleDiscount,
+    cartTotal,
+    promoCode,
+    promoDiscount,
+    promoType,
+    isFreeShipping,
+    applyPromo,
+    setPromo,
+    clearPromo,
+    promoAmount,
+    shippingFee,
+  } = useCartStore();
   const { isAuthenticated } = useAuthStore();
 
   const [promoInput, setPromoInput] = useState<string | null>(null);
@@ -178,9 +233,37 @@ export default function CartDrawer() {
   }, [isOpen]);
 
   const [applyingPromo, setApplyingPromo] = useState(false);
+  const [shakePromo, setShakePromo] = useState(false);
+  const [confirmRemoveKey, setConfirmRemoveKey] = useState<string | null>(null);
 
-  const handleApplyPromo = async () => {
-    if (!promoInputValue.trim()) return;
+  useEffect(() => {
+    if (!confirmRemoveKey) return;
+    const handleDocClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest?.("[data-remove-tooltip]")) return;
+      setConfirmRemoveKey(null);
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirmRemoveKey(null);
+    };
+    window.addEventListener("click", handleDocClick);
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("click", handleDocClick);
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [confirmRemoveKey]);
+
+  const triggerShake = () => {
+    setShakePromo(true);
+    setTimeout(() => setShakePromo(false), 500);
+  };
+
+  const handleApplyPromo = async (e?: React.MouseEvent) => {
+    if (!promoInputValue.trim()) {
+      triggerShake();
+      return;
+    }
     setApplyingPromo(true);
     setPromoError("");
 
@@ -191,6 +274,7 @@ export default function CartDrawer() {
         setPromoInput(promoInputValue.trim().toUpperCase());
         setPromoError("");
         setApplyingPromo(false);
+        triggerPromoSuccessBurst(e);
         return;
       }
 
@@ -201,23 +285,17 @@ export default function CartDrawer() {
       const data = await apiRes.json();
 
       if (apiRes.ok && data.coupon) {
-        let discountFraction = 0;
-        if (data.coupon.discountType === "PERCENTAGE") {
-          discountFraction = data.coupon.discountValue / 100;
-        } else if (goodsTotal > 0) {
-          discountFraction = data.coupon.discountAmount / goodsTotal;
-        }
-        useCartStore.setState({
-          promoCode: data.coupon.code,
-          promoDiscount: discountFraction,
-        });
+        setPromo(data.coupon);
         setPromoInput(data.coupon.code);
         setPromoError("");
+        triggerPromoSuccessBurst(e);
       } else {
         setPromoError(data.error || "Invalid promo code.");
+        triggerShake();
       }
     } catch {
       setPromoError("Unable to validate coupon.");
+      triggerShake();
     } finally {
       setApplyingPromo(false);
     }
@@ -228,13 +306,14 @@ export default function CartDrawer() {
   }
 
   // Set discounts come off before the promo code, matching priceCart() on the
-  // server. `goodsTotal` is what the shopper actually pays for the items, so it
-  // is also what the free-shipping progress bar measures against.
+  // server. `goodsTotal` is what the shopper actually pays for the items.
   const subtotal = cartSubtotal();
   const setDiscount = bundleDiscount();
   const goodsTotal = cartTotal();
   const discountAmount = promoAmount();
-  const finalTotal = goodsTotal - discountAmount;
+  const deliveryFee = shippingFee();
+  const isFree = isFreeShipping || promoType === "FREE_SHIPPING";
+  const finalTotal = Math.max(0, Math.round((goodsTotal - discountAmount + deliveryFee) * 100) / 100);
 
   return (
     <AnimatePresence>
@@ -376,8 +455,29 @@ export default function CartDrawer() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.18 } }}
                             transition={{ type: "spring", damping: 25, stiffness: 280 }}
-                            className="flex gap-4 py-4 border-b border-black/10 transition-colors"
+                            className={`relative flex gap-4 py-4 border-b border-black/10 transition-colors ${
+                              item.isSoldOut ? "opacity-75" : ""
+                            }`}
                           >
+                            {/* If product was bought / out of stock, blur and show overlay */}
+                            {item.isSoldOut && (
+                              <div className="absolute inset-0 bg-white/85 backdrop-blur-[3px] flex items-center justify-between p-3.5 z-20 rounded-lg border border-red-200 shadow-xs">
+                                <div className="flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" />
+                                  <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-red-600">
+                                    Somebody bought this · Out of stock
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeItem(key)}
+                                  className="text-[10px] font-mono uppercase tracking-wider text-black underline font-bold hover:text-red-600 cursor-pointer ml-2 shrink-0"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            )}
+
                             {/* Image is the card cover thumbnail */}
                             <div className="relative h-24 w-18 sm:h-28 sm:w-20 bg-[#e9e9ec] rounded-lg shrink-0 overflow-hidden">
                               <Image
@@ -385,7 +485,7 @@ export default function CartDrawer() {
                                 alt={item.name}
                                 fill
                                 draggable={false}
-                                className="object-cover object-center"
+                                className={`object-cover object-center ${item.isSoldOut ? "blur-[2px] opacity-60 grayscale" : ""}`}
                               />
                             </div>
 
@@ -410,15 +510,85 @@ export default function CartDrawer() {
                                 )}
                               </div>
 
-                              <div className="flex items-center justify-end mt-2 pt-1">
-                                <button
-                                  type="button"
-                                  onClick={() => removeItem(key)}
-                                  className="text-[10px] font-mono uppercase tracking-[0.14em] text-black/45 hover:text-red-600 underline underline-offset-2 transition-colors cursor-pointer"
-                                  aria-label={`Remove ${item.name} from bag`}
-                                >
-                                  Remove
-                                </button>
+                              <div className="flex items-center justify-between mt-3 pt-1">
+                                <div className="relative inline-flex items-center" data-remove-tooltip="true">
+                                  {/* Tooltip pop-up confirmation */}
+                                  <AnimatePresence>
+                                    {confirmRemoveKey === key && (
+                                      <motion.div
+                                        initial={{ opacity: 0, y: 6, scale: 0.94 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 4, scale: 0.94 }}
+                                        transition={{ duration: 0.15, ease: "easeOut" }}
+                                        className="absolute bottom-full left-0 mb-2 z-40 w-52 rounded-xl bg-black text-white p-3 shadow-[0_12px_32px_rgba(0,0,0,0.35)] border border-white/15"
+                                      >
+                                        <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-white/95 leading-snug">
+                                          Are you sure you want to remove this?
+                                        </p>
+                                        <div className="flex items-center justify-end gap-2 mt-2.5 pt-2 border-t border-white/10">
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setConfirmRemoveKey(null);
+                                            }}
+                                            className="px-2 py-1 text-[9px] font-mono uppercase tracking-wider text-white/60 hover:text-white transition-colors cursor-pointer"
+                                          >
+                                            Cancel
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              removeItem(key);
+                                              setConfirmRemoveKey(null);
+                                            }}
+                                            className="px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-red-600 hover:bg-red-500 text-white rounded transition-colors cursor-pointer active:scale-90 shadow-2xs"
+                                          >
+                                            Yes, remove
+                                          </button>
+                                        </div>
+                                        {/* Caret arrow */}
+                                        <div className="absolute top-full left-3.5 -mt-1 w-2 h-2 bg-black border-r border-b border-white/15 rotate-45" />
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+
+                                  <div className="inline-flex items-center border border-black/15 rounded-sm bg-white overflow-hidden shadow-2xs">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setConfirmRemoveKey((prev) => (prev === key ? null : key));
+                                      }}
+                                      aria-label={`Remove ${item.name} from bag`}
+                                      className="w-7 h-7 flex items-center justify-center text-black hover:bg-black/5 active:scale-95 transition-colors cursor-pointer"
+                                    >
+                                      <Minus className="w-3 h-3" aria-hidden="true" />
+                                    </button>
+                                    <span
+                                      aria-live="polite"
+                                      className="w-7 text-center font-mono font-bold text-xs text-black select-none"
+                                    >
+                                      {item.quantity}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      disabled={true}
+                                      aria-label="Max quantity reached (1-of-1 piece)"
+                                      title="1 of 1 unique piece"
+                                      className="w-7 h-7 flex items-center justify-center text-black/25 bg-black/[0.03] cursor-not-allowed border-l border-black/10 select-none"
+                                    >
+                                      <Plus className="w-3 h-3" aria-hidden="true" />
+                                    </button>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <CartItemHoldBadge expiresAt={item.holdExpiresAt} />
+                                  <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/40">
+                                    1 of 1 piece
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </motion.li>
@@ -436,70 +606,119 @@ export default function CartDrawer() {
               <div className="border-t border-black/10 px-6 sm:px-8 py-6 bg-white space-y-4 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
                 {/* Promo Code Row */}
                 {appliedPromo ? (
-                  <div className="flex items-center justify-between bg-[#f8f8f8] border border-black/10 rounded-xl px-4 py-2.5">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                      {appliedPromo.code} · {(appliedPromo.discount * 100).toFixed(0)}% OFF
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.88, y: -6 }}
+                    animate={{ opacity: 1, scale: [0.95, 1.04, 1], y: 0 }}
+                    transition={{ type: "spring", stiffness: 450, damping: 20 }}
+                    className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-2.5 shadow-xs"
+                  >
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-950 flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 animate-bounce" aria-hidden="true" />
+                      <span className="bg-emerald-600 text-white px-2 py-0.5 rounded text-[9px] tracking-widest font-bold shadow-2xs">
+                        {appliedPromo.code}
+                      </span>
+                      <span>·</span>
+                      <span className="text-emerald-800 font-bold">
+                        {isFree ? "FREE SHIPPING" : `${(appliedPromo.discount * 100).toFixed(0)}% OFF`}
+                      </span>
                     </span>
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
                       type="button"
                       onClick={() => { clearPromo(); setPromoInput(""); }}
                       className="text-[9.5px] font-mono uppercase tracking-wider text-black/50 hover:text-black underline cursor-pointer"
                       aria-label="Remove promo code"
                     >
                       Remove
-                    </button>
-                  </div>
+                    </motion.button>
+                  </motion.div>
                 ) : (
-                  <div className="flex gap-2">
-                    <div className="flex-1 flex items-center gap-2 bg-[#f8f8f8] border border-black/10 rounded-xl px-3 py-2">
-                      <Tag className="w-3.5 h-3.5 text-black/40 shrink-0" aria-hidden="true" />
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        aria-label="Promo code"
-                        value={promoInputValue}
-                        onChange={(e) => { setPromoInput(e.target.value); setPromoError(""); }}
-                        onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
-                        placeholder="Promo code"
-                        className="w-full text-xs uppercase tracking-wider outline-none !bg-transparent text-black placeholder:text-black/35 font-mono border-0"
-                      />
+                  <motion.div
+                    animate={shakePromo ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
+                    transition={{ duration: 0.4 }}
+                    className="space-y-1.5"
+                  >
+                    <div className="flex gap-2">
+                      <div className="flex-1 flex items-center gap-2 bg-[#f8f8f8] border border-black/10 focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 focus-within:scale-[1.01] transition-all duration-200 rounded-xl px-3 py-2">
+                        <Tag className={`w-3.5 h-3.5 transition-colors ${promoInputValue ? "text-black" : "text-black/40"} shrink-0`} aria-hidden="true" />
+                        <motion.input
+                          key="promo-input"
+                          type="text"
+                          autoComplete="off"
+                          aria-label="Promo code"
+                          value={promoInputValue}
+                          onChange={(e) => { setPromoInput(e.target.value.toUpperCase()); setPromoError(""); }}
+                          onKeyDown={(e) => e.key === "Enter" && handleApplyPromo()}
+                          placeholder="PROMO CODE"
+                          className="w-full text-xs font-bold uppercase tracking-widest outline-none !bg-transparent text-black placeholder:text-black/35 font-mono border-0 transition-all selection:bg-black selection:text-white"
+                        />
+                        {promoInputValue && (
+                          <motion.span
+                            initial={{ scale: 0.6, opacity: 0 }}
+                            animate={{ scale: [1, 1.15, 1], opacity: 1 }}
+                            transition={{ duration: 0.2 }}
+                            className="text-[8.5px] font-mono text-emerald-700 bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded font-bold shrink-0 tracking-wider"
+                          >
+                            READY ↵
+                          </motion.span>
+                        )}
+                      </div>
+                      <motion.button
+                        whileTap={{ scale: 0.94 }}
+                        whileHover={{ scale: 1.02 }}
+                        type="button"
+                        onClick={(e) => handleApplyPromo(e)}
+                        disabled={applyingPromo}
+                        className="btn-bagify btn-bagify-dark px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] cursor-pointer active:scale-95 transition-all shadow-xs"
+                        aria-label="Apply promo code"
+                      >
+                        {applyingPromo ? "..." : "Apply"}
+                      </motion.button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleApplyPromo}
-                      className="btn-bagify btn-bagify-dark px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] cursor-pointer"
-                      aria-label="Apply promo code"
-                    >
-                      Apply
-                    </button>
-                  </div>
+                  </motion.div>
                 )}
                 {promoError && (
-                  <p className="text-[10px] text-red-600 font-bold uppercase tracking-wider">{promoError}</p>
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-[10px] text-red-600 font-bold uppercase tracking-wider"
+                  >
+                    {promoError}
+                  </motion.p>
                 )}
 
                 {/* Totals */}
                 <div className="space-y-2 pt-2 border-t border-black/5">
-                  {(setDiscount > 0 || (discountAmount > 0 && appliedPromo)) && (
-                    <div className="flex justify-between items-baseline text-xs text-black/60 font-mono">
-                      <span>Subtotal</span>
-                      <span>₹{subtotal.toLocaleString("en-IN")}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between items-baseline text-xs text-black/60 font-mono">
+                    <span>Subtotal</span>
+                    <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                  </div>
                   {setDiscount > 0 && (
                     <div className="flex justify-between items-baseline text-xs text-emerald-700 font-bold font-mono">
                       <span>Set discount</span>
                       <span>−₹{setDiscount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
-                  {discountAmount > 0 && appliedPromo && (
+                  {discountAmount > 0 && appliedPromo && !isFree && (
                     <div className="flex justify-between items-baseline text-xs text-emerald-700 font-bold font-mono">
                       <span>Promo ({appliedPromo.code})</span>
                       <span>−₹{discountAmount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
-                  <div className={`flex justify-between items-baseline ${(setDiscount > 0 || (discountAmount > 0 && appliedPromo)) ? "pt-2 border-t border-black/10" : ""}`}>
+                  <div className="flex justify-between items-baseline text-xs text-black/60 font-mono">
+                    <span>Standard Shipping</span>
+                    <span>
+                      {isFree ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="line-through text-black/40">₹80</span>
+                          <span className="text-emerald-700 font-bold">FREE</span>
+                        </span>
+                      ) : (
+                        <span>₹80</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-baseline pt-2 border-t border-black/10">
                     <span className="text-xs uppercase tracking-[0.16em] font-bold text-black">Total</span>
                     <span className="font-microgramma font-bold text-xl sm:text-2xl tracking-tight text-black tabular-nums">
                       ₹{finalTotal.toLocaleString("en-IN")}

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Star, Loader2, CheckCircle2, ArrowUpRight, Sparkles, MessageSquareQuote } from "lucide-react";
+import { Star, Loader2, CheckCircle2, MessageSquare, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
+import { triggerPromoSuccessBurst } from "@/lib/confetti";
 
 type Review = {
   id: string;
@@ -12,12 +14,12 @@ type Review = {
   createdAt: string;
 };
 
-const RATING_DESCRIPTIONS: Record<number, string> = {
-  1: "1.0 // HEAVY VINTAGE DISTRESSING",
-  2: "2.0 // RUNS CROPPED / TIGHT",
-  3: "3.0 // TRUE TO VINTAGE FIT",
-  4: "4.0 // PREMIUM DRAPE & FIT",
-  5: "5.0 // TRUE ARCHIVE GRAIL",
+const RATING_LABELS: Record<number, string> = {
+  1: "Poor",
+  2: "Fair",
+  3: "Good",
+  4: "Very Good",
+  5: "Excellent",
 };
 
 function StarRow({
@@ -31,14 +33,15 @@ function StarRow({
   interactive?: boolean;
   onRate?: (r: number) => void;
   onHoverChange?: (r: number) => void;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 }) {
   const [hover, setHover] = useState(0);
 
-  const starSize = size === "sm" ? "w-3.5 h-3.5" : "w-[18px] h-[18px]";
+  const starSize =
+    size === "sm" ? "w-3.5 h-3.5" : size === "lg" ? "w-6 h-6" : "w-[18px] h-[18px]";
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1">
       {[1, 2, 3, 4, 5].map((s) => {
         const isFilled = s <= (hover || rating);
         return (
@@ -62,18 +65,16 @@ function StarRow({
             }}
             className={
               interactive
-                ? "cursor-pointer p-0.5 transition-transform hover:scale-110 active:scale-95"
+                ? "cursor-pointer p-0.5 transition-transform hover:scale-115 active:scale-95"
                 : "pointer-events-none p-0.5"
             }
           >
             <Star
               className={`${starSize} transition-colors ${
                 isFilled
-                  ? interactive
-                    ? "fill-white text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]"
-                    : "fill-black text-black"
+                  ? "fill-amber-400 text-amber-400"
                   : interactive
-                  ? "text-white/20 fill-transparent hover:text-white/40"
+                  ? "text-black/20 fill-black/[0.04] hover:text-amber-400/50"
                   : "text-black/15 fill-transparent"
               }`}
             />
@@ -125,15 +126,15 @@ export default function ReviewSection({ productId }: { productId: string }) {
     e.preventDefault();
     setFormError("");
     if (formRating === 0) {
-      setFormError("Select a star rating to verify fit.");
+      setFormError("Please select a rating.");
       return;
     }
     if (formBody.trim().length < 10) {
-      setFormError("Archive note must be at least 10 characters.");
+      setFormError("Review must be at least 10 characters.");
       return;
     }
     if (!formName.trim()) {
-      setFormError("Please enter your name or handle.");
+      setFormError("Please enter your name.");
       return;
     }
 
@@ -151,10 +152,11 @@ export default function ReviewSection({ productId }: { productId: string }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setFormError(data.error || "Failed to log review.");
+        setFormError(data.error || "Failed to submit review.");
       } else {
         setFormSuccess(true);
         setReviews((prev) => [data.review, ...prev]);
+        triggerPromoSuccessBurst();
       }
     } catch {
       setFormError("Network error. Please try again.");
@@ -164,42 +166,36 @@ export default function ReviewSection({ productId }: { productId: string }) {
   };
 
   const activeRatingDesc =
-    RATING_DESCRIPTIONS[hoverRating || formRating] || "TAP STARS TO RATE FIT & QUALITY";
+    RATING_LABELS[hoverRating || formRating] || "Click to rate";
 
   return (
     <section id="reviews" className="mt-20 sm:mt-24 border-t border-black/10 pt-12 sm:pt-16 scroll-mt-24">
       {/* ── Section Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 sm:mb-12">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 mb-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-black animate-pulse" aria-hidden="true" />
-            <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.2em] text-black/70">
-              ARCHIVE LOG // {reviews.length.toString().padStart(2, "0")} {reviews.length === 1 ? "NOTE" : "NOTES"}
-            </span>
-          </div>
-          <h2 className="font-microgramma text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-black">
-            Community Fit Notes
+          <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-black">
+            Customer Reviews
           </h2>
-          <p className="mt-1 text-xs font-mono uppercase tracking-[0.06em] text-black/50 max-w-md">
-            Verified collector feedback on drape, fabric weight, and vintage condition.
+          <p className="mt-1.5 text-xs text-black/60 max-w-md">
+            Real feedback and sizing advice from verified buyers.
           </p>
         </div>
 
         {reviews.length > 0 && (
-          <div className="flex items-center gap-4 rounded-[10px] border border-black/10 bg-black/[0.02] px-4 py-3 shrink-0">
-            <div className="flex flex-col items-start">
-              <span className="font-microgramma text-3xl font-bold tracking-tight text-black leading-none">
+          <div className="flex items-center gap-4 rounded-xl border border-black/10 bg-white px-5 py-3.5 shadow-2xs shrink-0">
+            <div className="flex flex-col">
+              <span className="text-3xl font-bold tracking-tight text-black leading-none">
                 {avgRating.toFixed(1)}
               </span>
-              <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-black/40 mt-1">
-                OVERALL SCORE
+              <span className="text-[10px] uppercase tracking-wider text-black/40 mt-1 font-medium">
+                Average Rating
               </span>
             </div>
             <div className="h-8 w-px bg-black/10" aria-hidden="true" />
             <div className="flex flex-col gap-1">
               <StarRow rating={Math.round(avgRating)} size="sm" />
-              <span className="text-[9.5px] font-mono uppercase tracking-[0.1em] text-black/50">
-                {reviews.length} {reviews.length === 1 ? "Verified Note" : "Verified Notes"}
+              <span className="text-xs text-black/60 font-medium">
+                {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
               </span>
             </div>
           </div>
@@ -208,40 +204,32 @@ export default function ReviewSection({ productId }: { productId: string }) {
 
       {/* ── Grid: Form Card (Left) vs Review Logs (Right) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 lg:gap-12 items-start">
-        {/* ── Left: Archival Form Card ── */}
+        {/* ── Left: White Revamped Form Card ── */}
         <div className="lg:sticky lg:top-24">
-          <div className="relative overflow-hidden rounded-[14px] bg-[#111111] text-white p-6 sm:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-white/10">
-            {/* Subtle corner badge / indicator */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-[9.5px] font-mono font-semibold uppercase tracking-[0.18em] text-white/70">
-                  SPEC // FIT_LOG
-                </span>
-              </div>
-              <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-white/40">
-                1-OF-1 ARCHIVE
-              </span>
-            </div>
-
-            <div className="mb-5">
-              <h3 className="font-microgramma text-base font-bold uppercase tracking-tight text-white flex items-center gap-2">
-                Document This Piece
-                <Sparkles className="h-3.5 w-3.5 text-white/40" />
+          <div className="rounded-2xl bg-white text-black p-6 sm:p-7 shadow-[0_2px_16px_rgba(0,0,0,0.04)] border border-black/10">
+            <div className="mb-6">
+              <h3 className="text-lg font-bold uppercase tracking-tight text-black">
+                Write a Review
               </h3>
-              <p className="mt-1 text-[11px] leading-relaxed text-white/60">
-                Own or tried this piece? Leave sizing, GSM weight, and wear notes for the next collector.
+              <p className="mt-1 text-xs text-black/60 leading-relaxed">
+                Bought or tried this piece? Share your thoughts on fit, fabric, and condition.
               </p>
             </div>
 
             {formSuccess ? (
-              <div className="flex flex-col gap-3 py-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2.5 text-[10.5px] font-mono font-bold uppercase tracking-[0.14em] text-white w-fit border border-white/20">
-                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
-                  ARCHIVED // NOTE RECORDED
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col gap-3 py-6 text-center items-center"
+              >
+                <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-1">
+                  <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <p className="text-xs leading-relaxed text-white/75 mt-1">
-                  Thank you. Your fit note has been published to the community archive log.
+                <h4 className="text-sm font-bold uppercase tracking-wider text-black">
+                  Review Submitted
+                </h4>
+                <p className="text-xs text-black/60 max-w-xs leading-relaxed">
+                  Thank you! Your feedback has been published and helps fellow buyers shop with confidence.
                 </p>
                 <button
                   type="button"
@@ -250,86 +238,85 @@ export default function ReviewSection({ productId }: { productId: string }) {
                     setFormRating(0);
                     setFormBody("");
                   }}
-                  className="mt-3 text-[10.5px] font-mono uppercase tracking-[0.16em] text-white/60 hover:text-white underline underline-offset-4 cursor-pointer text-left"
+                  className="mt-4 text-xs font-semibold uppercase tracking-wider text-black hover:text-black/70 underline underline-offset-4 cursor-pointer"
                 >
-                  Document another note →
+                  Write another review
                 </button>
-              </div>
+              </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                {/* Field 01: Name */}
+                {/* Field: Name */}
                 <div>
-                  <label className="flex items-center justify-between text-[9px] font-mono font-bold uppercase tracking-[0.16em] text-white/50 mb-1.5">
-                    <span>[ 01 ] COLLECTOR HANDLE / NAME</span>
-                    <span className="text-white/30">REQ</span>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-black/70 mb-1.5">
+                    Your Name
                   </label>
                   <input
                     type="text"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     required
-                    placeholder="e.g. Yash K. (@yashk_)"
-                    className="w-full rounded-[6px] border border-white/15 bg-white/[0.04] px-3.5 py-2.5 text-xs font-mono text-white placeholder:text-white/25 outline-none transition-all focus:border-white/50 focus:bg-white/[0.08]"
+                    placeholder="e.g. Alex M."
+                    className="w-full rounded-xl border border-black/15 bg-[#fafafa] px-3.5 py-2.5 text-xs text-black placeholder:text-black/35 outline-none transition-all focus:border-black focus:bg-white focus:ring-1 focus:ring-black"
                   />
                 </div>
 
-                {/* Field 02: Rating */}
+                {/* Field: Rating */}
                 <div>
-                  <div className="flex items-center justify-between text-[9px] font-mono font-bold uppercase tracking-[0.16em] text-white/50 mb-2">
-                    <span>[ 02 ] FIT & PIECE RATING</span>
-                    <span className="text-white/30">REQ</span>
-                  </div>
-                  <div className="rounded-[6px] border border-white/15 bg-white/[0.04] p-3 flex flex-col gap-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-black/70 mb-1.5">
+                    Rating
+                  </label>
+                  <div className="rounded-xl border border-black/15 bg-[#fafafa] p-3 flex items-center justify-between">
                     <StarRow
                       rating={formRating}
                       interactive
                       onRate={setFormRating}
                       onHoverChange={setHoverRating}
+                      size="md"
                     />
-                    <span className="text-[9.5px] font-mono font-medium tracking-[0.12em] text-white/75">
+                    <span className="text-xs font-medium text-black/60">
                       {activeRatingDesc}
                     </span>
                   </div>
                 </div>
 
-                {/* Field 03: Fit & Sizing note */}
+                {/* Field: Review Body */}
                 <div>
-                  <label className="flex items-center justify-between text-[9px] font-mono font-bold uppercase tracking-[0.16em] text-white/50 mb-1.5">
-                    <span>[ 03 ] FIT, WASH & SILHOUETTE NOTE</span>
-                    <span className="text-white/30">REQ</span>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-black/70 mb-1.5">
+                    Your Review
                   </label>
                   <textarea
                     value={formBody}
                     onChange={(e) => setFormBody(e.target.value)}
                     required
-                    rows={3}
-                    placeholder="e.g. Fits boxy with dropped shoulders, heavy 280 GSM cotton, flawless vintage fade..."
-                    className="w-full rounded-[6px] border border-white/15 bg-white/[0.04] px-3.5 py-2.5 text-xs text-white placeholder:text-white/25 outline-none transition-all focus:border-white/50 focus:bg-white/[0.08] resize-none leading-relaxed"
+                    rows={4}
+                    placeholder="Tell us about the fit, fabric quality, and how it feels..."
+                    className="w-full rounded-xl border border-black/15 bg-[#fafafa] px-3.5 py-2.5 text-xs text-black placeholder:text-black/35 outline-none transition-all focus:border-black focus:bg-white focus:ring-1 focus:ring-black resize-none leading-relaxed"
                   />
                 </div>
 
                 {formError && (
-                  <p className="rounded-[6px] border border-red-500/30 bg-red-500/10 px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-red-400">
+                  <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 font-medium">
                     {formError}
                   </p>
                 )}
 
-                {/* Split Capsule CTA */}
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="group mt-2 flex w-full items-center justify-between rounded-full bg-white px-5 py-2 text-black transition-all duration-300 hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-white text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:bg-neutral-800 active:scale-[0.98] disabled:opacity-50 cursor-pointer shadow-xs"
                 >
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.16em]">
-                    {submitting ? "Logging Note…" : "Submit Archive Note"}
-                  </span>
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-white transition-all duration-300 group-hover:scale-105 group-hover:rotate-12">
-                    {submitting ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    )}
-                  </span>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Submitting…</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Submit Review</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -340,78 +327,73 @@ export default function ReviewSection({ productId }: { productId: string }) {
         <div className="min-w-0">
           {loading ? (
             <div className="space-y-4">
-              <div className="h-28 rounded-[12px] bg-black/[0.03] animate-pulse border border-black/5" />
-              <div className="h-28 rounded-[12px] bg-black/[0.03] animate-pulse border border-black/5" />
+              <div className="h-28 rounded-xl bg-black/[0.03] animate-pulse border border-black/5" />
+              <div className="h-28 rounded-xl bg-black/[0.03] animate-pulse border border-black/5" />
             </div>
           ) : reviews.length === 0 ? (
-            <div className="relative overflow-hidden rounded-[14px] border border-black/10 bg-[#f9f9f8] p-8 sm:p-12 text-center flex flex-col items-center justify-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white mb-4 shadow-sm">
-                <MessageSquareQuote className="h-5 w-5 text-black/50" />
+            <div className="rounded-2xl border border-black/10 bg-white p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-2xs">
+              <div className="w-12 h-12 rounded-full border border-black/10 bg-black/[0.02] flex items-center justify-center mb-3 text-black/40">
+                <MessageSquare className="w-5 h-5" />
               </div>
-              <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] text-black/40 mb-1">
-                INDEX 00 // REPOSITORY EMPTY
-              </span>
-              <p className="font-microgramma text-base sm:text-lg font-bold uppercase tracking-tight text-black">
-                No Archive Notes Yet
+              <p className="text-base font-bold uppercase tracking-tight text-black">
+                No Reviews Yet
               </p>
-              <p className="mt-2 text-xs font-mono uppercase tracking-[0.06em] text-black/55 max-w-sm leading-relaxed">
-                Every piece in this drop is a unique 1-of-1 archive find. Test the drape and record the first fit note using the card on the left.
+              <p className="mt-1.5 text-xs text-black/55 max-w-sm leading-relaxed">
+                Be the first to share your thoughts on this unique piece. Use the review form on the left.
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {reviews.map((review, idx) => (
-                <div
-                  key={review.id}
-                  className="group relative rounded-[12px] border border-black/10 bg-white p-5 sm:p-6 transition-all duration-200 hover:border-black/25 hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
-                >
-                  {/* Top card header */}
-                  <div className="flex items-start justify-between gap-4 pb-3 border-b border-black/6">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-[10px] font-mono font-bold tracking-wider text-white">
-                        {review.authorName[0]?.toUpperCase() ?? "?"}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="truncate text-xs font-bold uppercase tracking-wider text-black">
-                            {review.authorName}
-                          </p>
-                          <span className="hidden sm:inline-block rounded-full bg-black/[0.05] px-2 py-0.5 text-[8.5px] font-mono uppercase tracking-[0.1em] text-black/60">
-                            Verified Collector
-                          </span>
+              <AnimatePresence initial={false}>
+                {reviews.map((review) => (
+                  <motion.div
+                    key={review.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl border border-black/10 bg-white p-5 sm:p-6 shadow-2xs transition-shadow duration-200 hover:shadow-xs"
+                  >
+                    {/* Top card header */}
+                    <div className="flex items-start justify-between gap-4 pb-3 border-b border-black/6">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-black/5 border border-black/10 flex items-center justify-center text-xs font-bold text-black shrink-0">
+                          {review.authorName[0]?.toUpperCase() ?? "U"}
                         </div>
-                        <p className="font-mono text-[9px] tracking-[0.06em] text-black/40 mt-0.5">
-                          {new Date(review.createdAt).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </p>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="truncate text-xs font-bold uppercase tracking-wider text-black">
+                              {review.authorName}
+                            </p>
+                            <span className="hidden sm:inline-flex items-center rounded-full bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 text-[9px] font-semibold text-emerald-700">
+                              Verified Buyer
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-black/40 mt-0.5">
+                            {new Date(review.createdAt).toLocaleDateString("en-IN", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <StarRow rating={review.rating} size="sm" />
+                        <span className="text-xs font-bold text-black/80 ml-1">
+                          {review.rating.toFixed(1)}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <StarRow rating={review.rating} size="sm" />
-                      <span className="font-mono text-[10px] font-bold text-black/80 bg-black/[0.04] px-1.5 py-0.5 rounded">
-                        {review.rating.toFixed(1)}
-                      </span>
+                    {/* Review Content */}
+                    <div className="mt-3.5">
+                      <p className="text-xs sm:text-[13px] leading-relaxed text-black/80 font-normal">
+                        {review.body}
+                      </p>
                     </div>
-                  </div>
-
-                  {/* Review Content */}
-                  <div className="mt-3.5">
-                    <p className="text-xs sm:text-[13px] leading-relaxed text-black/80 font-normal">
-                      &ldquo;{review.body}&rdquo;
-                    </p>
-                  </div>
-
-                  {/* Card bottom metadata pill */}
-                  <div className="mt-4 flex items-center justify-between text-[9px] font-mono uppercase tracking-[0.14em] text-black/35 pt-2">
-                    <span>RECORD #{String(reviews.length - idx).padStart(2, "0")}</span>
-                    <span>AUTHENTIC 1-OF-1 DROP</span>
-                  </div>
-                </div>
-              ))}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </div>

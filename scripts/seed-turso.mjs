@@ -4,6 +4,14 @@ import crypto from 'crypto';
 
 dotenv.config();
 
+// SAFETY GUARD: Prevent accidental execution that wipes or overwrites live catalog data.
+if (process.env.ALLOW_TURSO_SEED !== 'true') {
+  console.error('\n⛔ BLOCKED: seed-turso.mjs is disabled to protect live products.');
+  console.error('If you intentionally want to run this demo seed, run:');
+  console.error('ALLOW_TURSO_SEED=true node scripts/seed-turso.mjs\n');
+  process.exit(1);
+}
+
 const turso = createClient({
   url: process.env.TURSO_DATABASE_URL,
   authToken: process.env.TURSO_AUTH_TOKEN,

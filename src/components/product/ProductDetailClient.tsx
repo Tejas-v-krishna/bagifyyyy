@@ -12,8 +12,10 @@ import NotifyMeSection from "@/components/product/NotifyMeSection";
 import ReviewSection from "@/components/product/ReviewSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import { categoryHref, categoryLabel } from "@/lib/categories";
-import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package, Check, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package, Check, ArrowRight, ArrowLeft } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { triggerPinataBurst } from "@/lib/confetti";
 import type { ProductForDisplay } from "@/lib/product";
 
 /**
@@ -22,13 +24,30 @@ import type { ProductForDisplay } from "@/lib/product";
  *   quantity, CTA, trust badges, accordions.
  *   Below: related pieces, reviews with summary, recently viewed.
  */
+function formatCountdown(ms: number): string {
+  if (ms <= 0) return "00:00";
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default function ProductDetailClient({ product }: { product: ProductForDisplay }) {
+  const router = useRouter();
   const id = product.id;
   const firstAvailableVariant =
     product.variants.find((variant) => variant.stock > 0) ?? product.variants[0];
 
-  const { addItem } = useCartStore();
+  const { addItem, openCart } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(categoryHref(product.category));
+    }
+  };
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string>(
@@ -44,6 +63,19 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const [heldByYou, setHeldByYou] = useState(false);
   const [reservationExpiresAt, setReservationExpiresAt] = useState<string | null>(null);
   const [nowTick, setNowTick] = useState(() => Date.now());
+  const [idleExpired, setIdleExpired] = useState(false);
+
+  // Check if current user already has this product in cart
+  const cartItem = useCartStore((state) => state.items.find((i) => i.id === product.id));
+
+  // Sync immediately with cart item if present
+  useEffect(() => {
+    if (cartItem && cartItem.holdExpiresAt && cartItem.holdExpiresAt > Date.now()) {
+      setIsReservedInCheckout(true);
+      setHeldByYou(true);
+      setReservationExpiresAt(new Date(cartItem.holdExpiresAt).toISOString());
+    }
+  }, [cartItem]);
 
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -65,15 +97,15 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize && variant.color === selectedColor
   );
-  // Any active hold (yours or another shopper's) means the piece is
-  // effectively taken until expiry — grey out the CTA.
   const isHeld = isReservedInCheckout && !product.isSoldOut;
   const canAddSelectedVariant =
     (!hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0)) && !isHeld;
   const maxQuantity = Math.max(1, Math.min(10, selectedVariant?.stock ?? 10));
-  const holdMinutesLeft = reservationExpiresAt
-    ? Math.max(1, Math.ceil((new Date(reservationExpiresAt).getTime() - nowTick) / 60000))
-    : null;
+
+  const msLeft = reservationExpiresAt
+    ? Math.max(0, new Date(reservationExpiresAt).getTime() - nowTick)
+    : 0;
+  const countdownStr = formatCountdown(msLeft);
 
   const rating = product.rating;
   const hasRating = Boolean(rating && rating.count > 0);
@@ -83,38 +115,62 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
     const checkStockReservation = async () => {
       try {
-        // Hold identity rides in the server-minted HttpOnly cookie.
+        const inOurCart = useCartStore.getState().items.find((i) => i.id === product.id);
+        if (inOurCart && inOurCart.holdExpiresAt && inOurCart.holdExpiresAt > Date.now()) {
+          setIsReservedInCheckout(true);
+          setHeldByYou(true);
+          setReservationExpiresAt(new Date(inOurCart.holdExpiresAt).toISOString());
+          return;
+        }
+
         const response = await fetch(`/api/stock-status?productId=${product.id}`);
         if (response.ok && !cancelled) {
           const data = await response.json();
-          setIsReservedInCheckout(Boolean(data.isReserved));
-          setHeldByYou(Boolean(data.heldByYou));
-          setReservationExpiresAt(typeof data.expiresAt === 'string' ? data.expiresAt : null);
+          if (data.isReserved) {
+            setIsReservedInCheckout(true);
+            setHeldByYou(Boolean(data.heldByYou));
+            setReservationExpiresAt(typeof data.expiresAt === "string" ? data.expiresAt : null);
+          } else {
+            setIsReservedInCheckout(false);
+            setHeldByYou(false);
+            setReservationExpiresAt(null);
+          }
         }
       } catch {
-        // Reservation status is informational; a failed poll must not block buying.
+        // Reservation status is informational
       }
     };
 
     checkStockReservation();
-    const interval = window.setInterval(checkStockReservation, 15000);
+    const interval = window.setInterval(checkStockReservation, 4000);
     return () => {
       cancelled = true;
       window.clearInterval(interval);
     };
   }, [product.id]);
 
-  // Live countdown while a hold is active, so the signal stays honest.
+  // Live second-by-second countdown timer. When 0:00 is reached, release back to page!
   useEffect(() => {
     if (!isReservedInCheckout || !reservationExpiresAt) return;
-    const ticker = window.setInterval(() => setNowTick(Date.now()), 1000);
+    const ticker = window.setInterval(() => {
+      const now = Date.now();
+      const target = new Date(reservationExpiresAt).getTime();
+      if (target - now <= 0) {
+        // 5-minute hold expired! Return piece back to the shop
+        setIsReservedInCheckout(false);
+        setHeldByYou(false);
+        setReservationExpiresAt(null);
+        useCartStore.getState().removeItem(product.id);
+        setIdleExpired(true);
+      } else {
+        setNowTick(now);
+      }
+    }, 1000);
     return () => window.clearInterval(ticker);
-  }, [isReservedInCheckout, reservationExpiresAt]);
+  }, [isReservedInCheckout, reservationExpiresAt, product.id]);
 
   const handleSelectSize = (size: string) => {
     setSelectedSize(size);
-    // Keep the colour if that pair exists and is live, otherwise fall back to
-    // the first live colour for the chosen size.
     const pairOk = product.variants.some(
       (v) => v.size === size && v.color === selectedColor && v.stock > 0
     );
@@ -128,25 +184,37 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     setSelectionError("");
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e?: React.MouseEvent) => {
     if (!canAddSelectedVariant) {
       setSelectionError("This piece is no longer available.");
       return;
     }
 
+    // Trigger joyful Piñata confetti burst right at the user's click location!
+    triggerPinataBurst(e);
+
+    const expiryTime = Date.now() + 5 * 60 * 1000;
     addItem({
       id: product.id,
       name: product.name,
       price: product.price,
       mrp: product.compareAtPrice ?? null,
       image: productImages[activeImageIndex] || productImages[0] || "/placeholder.jpg",
-      quantity: Math.max(1, Math.min(quantity, maxQuantity)),
+      quantity: 1,
       size: selectedSize || (product.sizes?.[0] ?? "One Size"),
       color: selectedColor || (product.colors?.[0] ?? "Default"),
+      addedAt: Date.now(),
+      holdExpiresAt: expiryTime,
     });
+    // Immediately trigger the 5-minute hold and live countdown right when user clicks
+    setIdleExpired(false);
+    setIsReservedInCheckout(true);
+    setHeldByYou(true);
+    setReservationExpiresAt(new Date(expiryTime).toISOString());
+    setNowTick(Date.now());
     setSelectionError("");
     setAddedAnimation(true);
-    setTimeout(() => setAddedAnimation(false), 1500);
+    setTimeout(() => setAddedAnimation(false), 1600);
   };
 
   // Turn the product description into short detail bullets.
@@ -171,16 +239,20 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     <div className="w-full bg-white text-y2k-gunmetal min-h-screen pb-24">
       <div className="max-w-[1480px] mx-auto px-6 sm:px-10 lg:px-16 pt-6 lg:pt-8">
 
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.18em] text-y2k-gunmetal/40 mb-6" aria-label="Breadcrumb">
-          <Link href="/products" className="hover:text-y2k-gunmetal transition-colors">SHOP</Link>
-          <span>/</span>
-          <Link href={categoryHref(product.category)} className="hover:text-y2k-gunmetal transition-colors">
-            {categoryLabel(product.category).toUpperCase()}
-          </Link>
-          <span>/</span>
-          <span className="text-y2k-gunmetal/70 truncate max-w-[40vw]">{product.name.toUpperCase()}</span>
-        </nav>
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="group inline-flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-y2k-gunmetal/70 hover:text-y2k-gunmetal transition-colors py-1 cursor-pointer"
+            aria-label={`Go back to ${categoryLabel(product.category)}`}
+          >
+            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-black/10 bg-black/5 group-hover:bg-black group-hover:text-white transition-all">
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+            </span>
+            <span>BACK</span>
+          </button>
+        </div>
 
         {/* ── Main Grid: Gallery (left) + Buy panel (right) ─────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,400px)] gap-10 xl:gap-16 items-start">
@@ -227,13 +299,30 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       priority
                       draggable={false}
                       sizes="(max-width: 1023px) 100vw, 60vw"
-                      className="object-contain object-center pointer-events-none"
+                      className={`object-contain object-center pointer-events-none transition-all ${
+                        product.isSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
+                      }`}
                     />
                   </motion.div>
                 </AnimatePresence>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-[9.5px] uppercase tracking-[0.2em] text-y2k-gunmetal/30">
                   Image unavailable
+                </div>
+              )}
+
+              {/* Sold Out / Somebody Bought This Overlay in Main Gallery */}
+              {product.isSoldOut && (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center bg-black/45 backdrop-blur-[6px] select-none pointer-events-none">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-black shadow-2xl">
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+                    <span className="font-mono text-xs font-bold uppercase tracking-[0.16em]">
+                      Somebody bought this
+                    </span>
+                  </div>
+                  <p className="mt-2 text-[10px] sm:text-[11px] font-mono text-white/90 uppercase tracking-[0.16em] font-medium drop-shadow-sm">
+                    Out of stock · Unique 1 of 1 piece
+                  </p>
                 </div>
               )}
 
@@ -289,11 +378,38 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 ))}
               </div>
             )}
+
+            {/* Yellow pop-up under the product image */}
+            {isReservedInCheckout && !product.isSoldOut && (
+              <div className="mt-3.5 w-full bg-amber-400 border-2 border-amber-500 rounded-xl p-3 text-black shadow-sm flex items-center justify-between animate-in fade-in duration-200">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Clock className="w-4 h-4 text-black shrink-0 animate-pulse" aria-hidden="true" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider leading-tight">
+                    {heldByYou
+                      ? "In your bag · Held for 5 minutes"
+                      : "This product is in someone's cart and is held for 5 minutes"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 pl-2">
+                  <span className="font-mono font-bold text-xs bg-black text-amber-300 px-2.5 py-1 rounded tracking-widest shadow-2xs">
+                    {countdownStr}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
           <aside className="min-w-0 lg:sticky lg:top-24">
-            <h1 className="mt-2 text-[30px] sm:text-[36px] font-bold leading-[1.02] tracking-[-0.02em] text-y2k-gunmetal uppercase">
+            {/* 1 of 1 unique piece pill */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/[0.04] border border-black/10 text-black mb-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[9.5px] font-mono font-bold uppercase tracking-[0.16em]">
+                1 of 1 Unique Piece · Only 1 Available
+              </span>
+            </div>
+
+            <h1 className="mt-1 text-[30px] sm:text-[36px] font-bold leading-[1.02] tracking-[-0.02em] text-y2k-gunmetal uppercase">
               {product.name}
             </h1>
 
@@ -325,20 +441,20 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               )}
             </div>
 
-            {/* Hold signal */}
-            {isReservedInCheckout && !product.isSoldOut && (
-              heldByYou ? (
-                <div className="mt-5 flex items-center gap-3 border-2 border-black bg-black px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white">
-                  <Clock className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
-                  <span>In your bag · Reserved for you{holdMinutesLeft ? ` · ${holdMinutesLeft}m left` : ""}</span>
-                </div>
-              ) : (
-                <div className="mt-5 flex items-center gap-3 border-2 border-amber-500 bg-amber-400 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-black">
-                  <Clock className="h-4 w-4 shrink-0 text-black" aria-hidden="true" />
-                  <span>On hold: another collector has this{holdMinutesLeft ? ` (~${holdMinutesLeft}m left)` : ""}</span>
-                </div>
-              )
-            )}
+            {/* 1 of 1 uniqueness guarantee note */}
+            <div className="mt-4 p-3.5 rounded-xl bg-[#f8f8f9] border border-black/[0.08] flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center shrink-0 text-base select-none">
+                ✨
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-tight text-black leading-snug">
+                  Authentic 1-of-1 Thrift Piece
+                </p>
+                <p className="text-[10px] font-mono text-black/60 tracking-[0.02em] mt-0.5 leading-relaxed">
+                  Only 1 piece in stock. Every item on BAGIFY is an authentic single-piece original. Once purchased, it will never be restocked.
+                </p>
+              </div>
+            </div>
 
             {selectionError && (
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-600" role="alert">
@@ -380,20 +496,121 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
+            {/* Live 5-Minute Hold Countdown Menu */}
+            {isReservedInCheckout && !product.isSoldOut && (
+              <div className="mt-6 mb-3 rounded-2xl border-2 border-amber-400 bg-amber-50/95 p-4 text-black shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="relative flex h-3 w-3 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-black leading-tight">
+                        {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
+                      </h4>
+                      <p className="text-[10.5px] text-black/60 font-medium leading-tight mt-0.5">
+                        {heldByYou
+                          ? "5-minute hold active · Complete checkout before time expires"
+                          : "Held for 5 minutes · Returns to store if session expires"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Digital Clock Box: T-05:00 */}
+                  <div className="flex items-center gap-1 font-mono font-bold text-sm sm:text-base bg-black text-amber-300 px-3 py-1.5 rounded-lg tracking-widest shadow-2xs shrink-0 select-none">
+                    <span className="text-[10px] text-amber-400/70 font-semibold">T-</span>
+                    <span>{countdownStr}</span>
+                  </div>
+                </div>
+
+                {/* Live Progress Bar */}
+                <div className="w-full bg-amber-200/80 rounded-full h-1.5 overflow-hidden mt-3">
+                  <div
+                    className="bg-amber-500 h-full transition-all duration-1000 ease-linear rounded-full"
+                    style={{
+                      width: `${Math.min(100, Math.max(0, (msLeft / (5 * 60 * 1000)) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Hold Expired Notice (When countdown reaches 00:00 idle) */}
+            {idleExpired && !isReservedInCheckout && !product.isSoldOut && (
+              <div className="mt-6 mb-3 rounded-xl border border-black/15 bg-neutral-100 p-4 text-black shadow-2xs animate-in fade-in duration-300">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-neutral-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-black">
+                        Reservation Expired (Idle) · Piece Back In Store
+                      </p>
+                      <p className="text-[11px] text-black/60 mt-0.5 leading-snug">
+                        Since the 5-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIdleExpired(false)}
+                    className="text-black/40 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
+                    aria-label="Dismiss notice"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Quantity + CTA */}
             {product.isSoldOut ? (
-              <div className="mt-7">
+              <div className="mt-7 space-y-4">
+                <div className="p-4 rounded-xl bg-black/[0.04] border border-black/15 text-center space-y-1.5 backdrop-blur-xs">
+                  <span className="inline-flex items-center gap-1.5 bg-black text-white text-[9.5px] font-mono font-bold uppercase tracking-[0.16em] px-3 py-1 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    Somebody bought this
+                  </span>
+                  <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-black pt-1">
+                    Out of stock · 1-of-1 Piece Sold
+                  </p>
+                  <p className="text-[10px] font-mono text-black/50 leading-relaxed">
+                    This thrift piece was a unique single original and is no longer available.
+                  </p>
+                </div>
                 <NotifyMeSection productId={product.id} />
               </div>
             ) : isHeld ? (
-              <div className="mt-7 flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled
-                  className="flex-1 cursor-not-allowed border border-black/10 bg-[#e8e8e8] px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/40"
-                >
-                  <span>{heldByYou ? "RESERVED · IN YOUR BAG" : "ON HOLD · CHECK BACK SOON"}</span>
-                </button>
+              <div className="mt-3 flex items-center gap-2">
+                {heldByYou ? (
+                  <button
+                    type="button"
+                    onClick={openCart}
+                    className="flex-1 border-2 border-black bg-black hover:bg-neutral-900 text-white px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-between gap-2 cursor-pointer transition-all duration-200 active:scale-[0.99] shadow-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+                      <span>IN YOUR BAG · VIEW BAG</span>
+                    </div>
+                    <span className="font-mono text-xs bg-white/15 px-2 py-0.5 rounded text-amber-300 tracking-wider">
+                      T-{countdownStr}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    className="flex-1 border border-black/10 bg-[#e8e8e8] text-black/40 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-between gap-2 cursor-not-allowed"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 text-black/40" />
+                      <span>ON HOLD BY ANOTHER SHOPPER</span>
+                    </div>
+                    <span className="font-mono text-xs text-black/40 tracking-wider">
+                      T-{countdownStr}
+                    </span>
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => toggleItem(id)}
@@ -408,35 +625,65 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             ) : (
               <div className="mt-7 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
-                  <Button
-                    onClick={handleAddToCart}
-                    disabled={!canAddSelectedVariant}
-                    className={`flex-1 text-[10.5px] uppercase tracking-[0.18em] transition-all duration-300 ${
-                      addedAnimation
-                        ? "bg-emerald-950 text-white scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.25)] border-emerald-500/40"
-                        : "active:scale-[0.98]"
-                    }`}
-                  >
-                    {addedAnimation ? (
-                      <>
-                        <span className="flex items-center gap-2">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                          <span>ADDED TO BAG</span>
-                        </span>
-                        <Check className="h-4 w-4 text-emerald-400 animate-in zoom-in-75 duration-200 stroke-[2.5]" aria-hidden="true" />
-                      </>
-                    ) : (
-                      <>
-                        <span>ADD TO BAG</span>
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
-                      </>
-                    )}
-                  </Button>
+                  <motion.div whileTap={{ scale: 0.96 }} className="relative flex-1">
+                    <Button
+                      onClick={(e) => handleAddToCart(e)}
+                      disabled={!canAddSelectedVariant}
+                      className={`w-full text-[10.5px] uppercase tracking-[0.18em] transition-all duration-300 relative ${
+                        addedAnimation
+                          ? "!bg-emerald-600 hover:!bg-emerald-600 !text-white scale-[1.01] shadow-[0_0_25px_rgba(16,185,129,0.35)]"
+                          : "active:scale-[0.98]"
+                      }`}
+                    >
+                      <AnimatePresence mode="wait">
+                        {addedAnimation ? (
+                          <motion.span
+                            key="added"
+                            initial={{ opacity: 0, scale: 0.85 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.85 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                            className="flex items-center gap-2"
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
+                            <span>ADDED TO BAG</span>
+                            <Check className="h-4 w-4 text-white stroke-[3] animate-bounce" aria-hidden="true" />
+                          </motion.span>
+                        ) : (
+                          <motion.span
+                            key="add"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex items-center gap-2"
+                          >
+                            <span>ADD TO BAG</span>
+                            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </Button>
+
+                    {/* Floating "+1 RESERVED" micro-pill */}
+                    <AnimatePresence>
+                      {addedAnimation && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 0, scale: 0.7 }}
+                          animate={{ opacity: 1, y: -36, scale: 1 }}
+                          exit={{ opacity: 0, y: -50, scale: 0.8 }}
+                          transition={{ duration: 0.7, ease: "easeOut" }}
+                          className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-0 z-30 flex items-center gap-1 rounded-full bg-emerald-600 text-white px-2.5 py-0.5 text-[9.5px] font-mono font-bold shadow-lg uppercase tracking-wider"
+                        >
+                          <span>+1 IN YOUR BAG</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
                   <button
                     type="button"
                     onClick={() => toggleItem(id)}
                     aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                    className="w-[44px] h-[44px] rounded-full border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
+                    className="w-[44px] h-[44px] rounded-full border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0 active:scale-90"
                   >
                     <Heart
                       className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
@@ -450,8 +697,8 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             <div className="mt-6 grid grid-cols-3 gap-2 border-y border-black/8 py-3.5">
               <div className="flex flex-col items-center gap-1.5 text-center">
                 <Package className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
-                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/45 leading-tight">
-                  {product.isSoldOut ? "Sold out" : "In stock now"}
+                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/60 leading-tight">
+                  {product.isSoldOut ? "Somebody bought this" : "1 of 1 · Single piece"}
                 </span>
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
@@ -525,23 +772,51 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               ₹{product.price.toLocaleString("en-IN")}
             </p>
           </div>
-           <Button
-             onClick={handleAddToCart}
-             disabled={!canAddSelectedVariant}
-             className="shrink-0 text-[10px] uppercase tracking-[0.18em]"
-           >
-            {addedAnimation ? (
-              <>
-                <span>ADDED</span>
-                <Check className="h-3.5 w-3.5" aria-hidden="true" />
-              </>
-            ) : (
-              <>
-                <span>ADD TO BAG</span>
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-              </>
-            )}
-          </Button>
+           <motion.div whileTap={{ scale: 0.94 }} className="shrink-0">
+             {isHeld && heldByYou ? (
+               <Button
+                 onClick={openCart}
+                 className="shrink-0 text-[10px] uppercase tracking-[0.16em] font-bold !bg-black !text-white flex items-center gap-1.5 shadow-sm"
+               >
+                 <Check className="h-3.5 w-3.5 text-emerald-400 stroke-[3]" />
+                 <span>BAG (T-{countdownStr})</span>
+               </Button>
+             ) : (
+               <Button
+                 onClick={(e) => handleAddToCart(e)}
+                 disabled={!canAddSelectedVariant}
+                 className={`shrink-0 text-[10px] uppercase tracking-[0.18em] transition-all font-bold ${
+                   addedAnimation ? "!bg-emerald-600 !text-white scale-[1.02]" : ""
+                 }`}
+               >
+                 <AnimatePresence mode="wait">
+                   {addedAnimation ? (
+                     <motion.span
+                       key="m-added"
+                       initial={{ opacity: 0, scale: 0.8 }}
+                       animate={{ opacity: 1, scale: 1 }}
+                       exit={{ opacity: 0 }}
+                       className="flex items-center gap-1.5"
+                     >
+                       <span>ADDED</span>
+                       <Check className="h-3.5 w-3.5 stroke-[3] animate-bounce" aria-hidden="true" />
+                     </motion.span>
+                   ) : (
+                     <motion.span
+                       key="m-add"
+                       initial={{ opacity: 0 }}
+                       animate={{ opacity: 1 }}
+                       exit={{ opacity: 0 }}
+                       className="flex items-center gap-1.5"
+                     >
+                       <span>ADD TO BAG</span>
+                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                     </motion.span>
+                   )}
+                 </AnimatePresence>
+               </Button>
+             )}
+           </motion.div>
         </div>,
         document.body
       )}

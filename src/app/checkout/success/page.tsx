@@ -381,18 +381,21 @@ function SuccessContent() {
               <span className="font-semibold text-black">₹{money(itemsSubtotal)}</span>
             </div>
             {order.discountAmount > 0 && (
-              <div className="flex justify-between items-center text-xs font-semibold text-black">
+              <div className="flex justify-between items-center text-xs font-semibold text-emerald-700">
                 <span>Discounts Applied</span>
                 <span>−₹{money(order.discountAmount)}</span>
               </div>
             )}
+            <div className="flex justify-between items-center text-xs text-black/65">
+              <span>Standard Shipping</span>
+              <span className="font-semibold text-black">
+                {order.shippingAmount > 0 ? `₹${money(order.shippingAmount)}` : "FREE"}
+              </span>
+            </div>
             <div className="border-t border-black/10 pt-4 mt-1 flex justify-between items-center">
               <div>
                 <span className="font-bold text-xs uppercase tracking-wider text-black block">
                   {isPaid ? "Total Paid" : "Total"}
-                </span>
-                <span className="text-[10px] text-black/45 font-medium">
-                  Inclusive of all taxes &amp; GST
                 </span>
               </div>
               <span className="font-sans font-medium text-2xl sm:text-3xl text-black">

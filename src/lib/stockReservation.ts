@@ -34,10 +34,24 @@ export async function syncCartReservations(params: {
     return await prisma.$transaction(async (tx) => {
       const now = new Date();
       await tx.stockReservation.deleteMany({ where: { expiresAt: { lte: now } } });
+
+      // Preserve existing unexpired hold expiry times for this session so the
+      // 5-minute countdown doesn't get continually reset on every background tick.
+      const existingHolds = await tx.stockReservation.findMany({
+        where: { sessionId, expiresAt: { gt: now } },
+      });
+      const existingExpiryByVariant = new Map<string, Date>();
+      for (const hold of existingHolds) {
+        if (hold.variantId) {
+          existingExpiryByVariant.set(hold.variantId, hold.expiresAt);
+        }
+      }
+
       // Replace this session's holds with the current bag contents.
       await tx.stockReservation.deleteMany({ where: { sessionId } });
 
       const results: CartHoldResult[] = [];
+      const heldExpiries: Date[] = [];
 
       for (const item of items) {
         const product = await tx.product.findUnique({
@@ -81,21 +95,30 @@ export async function syncCartReservations(params: {
           continue;
         }
 
+        // Use preserved expiry if already held, otherwise start a fresh 5-minute hold
+        const itemExpiresAt = existingExpiryByVariant.get(variant.id) || expiresAt;
+
         await tx.stockReservation.create({
           data: {
             variantId: variant.id,
             productId: item.productId,
             sessionId,
             quantity: item.quantity,
-            expiresAt,
+            expiresAt: itemExpiresAt,
           },
         });
         results.push({ productId: item.productId, variantId: variant.id, status: 'held' });
+        heldExpiries.push(itemExpiresAt);
       }
+
+      const soonestExpiry =
+        heldExpiries.length > 0
+          ? heldExpiries.reduce((soonest, d) => (d < soonest ? d : soonest), heldExpiries[0])
+          : null;
 
       return {
         results,
-        expiresAt: results.some((result) => result.status === 'held') ? expiresAt : null,
+        expiresAt: soonestExpiry,
       };
     });
   } catch (err) {
@@ -235,7 +258,7 @@ export async function getProductReservationStatus(productId: string, sessionId?:
         productId,
         expiresAt: { gt: now },
       },
-      orderBy: { expiresAt: 'desc' },
+      orderBy: { expiresAt: 'asc' },
     });
 
     if (active.length === 0) {
@@ -245,17 +268,20 @@ export async function getProductReservationStatus(productId: string, sessionId?:
     const totalReservedQty = active.reduce((sum, r) => sum + r.quantity, 0);
     const yours = sessionId ? active.filter((r) => r.sessionId === sessionId) : [];
     const others = sessionId ? active.filter((r) => r.sessionId !== sessionId) : active;
-    // Prefer the soonest expiry among others' holds for the countdown, since
-    // that is when the piece frees up again.
-    const othersExpiry = others.length > 0
-      ? others.reduce((soonest, r) => (r.expiresAt < soonest ? r.expiresAt : soonest), others[0].expiresAt)
-      : null;
+
+    // Prefer others' hold expiry when present (since that tells this collector
+    // when the piece becomes free). Otherwise use the collector's own hold expiry.
+    const relevant = others.length > 0 ? others : yours;
+    const targetExpiresAt =
+      relevant.length > 0
+        ? relevant.reduce((soonest, r) => (r.expiresAt < soonest ? r.expiresAt : soonest), relevant[0].expiresAt)
+        : null;
 
     return {
       isReserved: totalReservedQty > 0,
       heldByYou: yours.length > 0,
       activeCount: totalReservedQty,
-      expiresAt: othersExpiry ?? active[0]?.expiresAt ?? null,
+      expiresAt: targetExpiresAt,
     };
   } catch (err) {
     console.warn('Error fetching product reservation status:', err);

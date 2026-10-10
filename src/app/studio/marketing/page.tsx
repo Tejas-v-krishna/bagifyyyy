@@ -322,7 +322,7 @@ export default function MarketingStudioPage() {
               type="text"
               value={dropLabel}
               onChange={(e) => setDropLabel(e.target.value)}
-              placeholder="e.g. FW26 Drop 09"
+              placeholder="e.g. Drop 09 · Vintage Archive"
               maxLength={60}
               className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
             />

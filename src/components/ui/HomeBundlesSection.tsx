@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Check, LoaderCircle, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import Button from "@/components/ui/Button";
+import { triggerPinataBurst } from "@/lib/confetti";
 
 export type HomeBundleItem = {
   id: string;
@@ -41,7 +42,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
   if (!bundles || bundles.length === 0) return null;
 
-  const handleAddBundle = (bundle: HomeBundle) => {
+  const handleAddBundle = (bundle: HomeBundle, e?: React.MouseEvent) => {
     // A set is priced as a whole, so it is added as a whole. Dropping the
     // sold-out pieces and adding the rest used to charge full price for a
     // partial set while the card still advertised the set discount.
@@ -51,6 +52,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
       bundle.products.length === 0
     ) return;
 
+    triggerPinataBurst(e);
     setAddingBundleId(bundle.id);
     const bundleSize = new Set(bundle.products.map((p) => p.id)).size;
     window.setTimeout(() => {
@@ -185,7 +187,7 @@ export default function HomeBundlesSection({ bundles }: { bundles: HomeBundle[] 
 
                   <Button
                     variant="dark"
-                    onClick={() => handleAddBundle(bundle)}
+                    onClick={(e) => handleAddBundle(bundle, e)}
                     disabled={isUnavailable || Boolean(addingBundleId)}
                     aria-live="polite"
                     aria-label={

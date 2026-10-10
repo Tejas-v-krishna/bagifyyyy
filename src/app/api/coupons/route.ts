@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllCoupons, createCoupon, deleteCoupon, toggleCouponActive, validateCouponCode } from "@/lib/coupons";
 import { requireStudioAuth } from "@/lib/requireStudioAuth";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export async function GET(request: Request) {
   try {
@@ -10,6 +11,16 @@ export async function GET(request: Request) {
 
     // Public validation endpoint for checkout/cart
     if (code) {
+      // Throttle brute-force attempts: max 20 validation checks per minute per IP
+      const ip = clientIp(request);
+      const rl = rateLimit(`coupon-validate:${ip}`, 20, 60_000);
+      if (!rl.ok) {
+        return NextResponse.json(
+          { error: "Too many attempts. Please try again later." },
+          { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } }
+        );
+      }
+
       const result = await validateCouponCode(code, subtotal);
       if (!result.valid) {
         return NextResponse.json({ error: result.error || "Invalid coupon code." }, { status: 400 });

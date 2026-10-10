@@ -28,6 +28,17 @@ describe('cartTotal', () => {
   it('rounds to paise', () => {
     expect(cartTotal(cart({ subtotal: 10.005, shippingFee: 0 }))).toBe(10.01);
   });
+
+  it('keeps base product price constant when free shipping is applied', () => {
+    // 1 item of ₹499 with standard ₹80 shipping: ₹579
+    expect(cartTotal(cart({ subtotal: 499, shippingFee: 80, discountAmount: 0 }))).toBe(579);
+
+    // Free shipping coupon waives the ₹80 shipping fee: total is ₹499 (never ₹419)
+    expect(cartTotal(cart({ subtotal: 499, shippingFee: 0, discountAmount: 0 }))).toBe(499);
+
+    // Percentage promo (e.g. 10% off ₹499 = ₹49.90) with ₹80 shipping: ₹529.10
+    expect(cartTotal(cart({ subtotal: 499, shippingFee: 80, discountAmount: 49.9 }))).toBe(529.1);
+  });
 });
 
 describe('assertValidShippingAddress', () => {

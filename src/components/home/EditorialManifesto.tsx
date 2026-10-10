@@ -31,7 +31,7 @@ const PINS_DATA: GarmentPin[] = [
       { label: "FIT", value: "RELAXED" },
     ],
     desc: "Boxy, dropped shoulders, raw hem. Bar tacks where it usually rips first.",
-    provenance: "FW26 // SMALL RUN",
+    provenance: "THRIFT ARCHIVE // 1-OF-1",
     top: "22%",
     left: "48%",
     side: "right",
@@ -107,7 +107,7 @@ export type ManifestoProps = {
 
 export default function EditorialManifesto({
   imageSrc = "/editorial-manifesto.webp",
-  imageAlt = "BAGIFYYYY editorial manifesto FW26",
+  imageAlt = "BAGIFYYYY editorial manifesto",
   headingLine1 = "Clothes For",
   headingLine2 = "The Offbeat",
   intro = "BAGIFYYYY pulls from early-2000s streetwear, club nights, and the clothes that looked better after a hundred wears.",
@@ -274,7 +274,7 @@ export default function EditorialManifesto({
                   <div className="relative bg-white text-black rounded-[0.4rem] p-4 sm:p-4 shadow-[0_16px_36px_rgba(0,0,0,0.55)] text-left">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-black/45 border border-black/15 px-1.5 py-0.5 rounded-full shrink-0">
-                        {pin.num} {"//"} FW26
+                        {pin.num} {"//"} ARCHIVE
                       </span>
                       <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-black/45 truncate">
                         {pin.provenance}

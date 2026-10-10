@@ -58,6 +58,19 @@ export async function ensureCouponTable(): Promise<void> {
         args: [randomUUID(), "BAGIFY10", "PERCENTAGE", 10, 0, 1],
       });
     }
+
+    // Ensure FREESHIP exists as a default starter promo
+    const existingFreeship = await db.execute({
+      sql: "SELECT id FROM Coupon WHERE code = 'FREESHIP' LIMIT 1",
+      args: [],
+    });
+
+    if (existingFreeship.rows.length === 0) {
+      await db.execute({
+        sql: `INSERT INTO Coupon (id, code, discountType, discountValue, minOrderAmount, isActive) VALUES (?, ?, ?, ?, ?, ?)`,
+        args: [randomUUID(), "FREESHIP", "FREE_SHIPPING", 0, 0, 1],
+      });
+    }
   } catch (error) {
     console.error("Error ensuring Coupon table:", error);
   }
@@ -219,7 +232,7 @@ export async function validateCouponCode(
     });
 
     if (res.rows.length === 0) {
-      // Hardcoded fallback for BAGIFY10 if not in DB yet
+      // Hardcoded fallback for BAGIFY10 and FREESHIP if not in DB yet
       if (upper === "BAGIFY10") {
         const discountAmount = Math.round(subtotal * 0.1 * 100) / 100;
         return {
@@ -230,6 +243,18 @@ export async function validateCouponCode(
             discountValue: 10,
             discountAmount,
             freeShipping: false,
+          },
+        };
+      }
+      if (upper === "FREESHIP") {
+        return {
+          valid: true,
+          coupon: {
+            code: "FREESHIP",
+            discountType: "FREE_SHIPPING",
+            discountValue: 0,
+            discountAmount: 80,
+            freeShipping: true,
           },
         };
       }

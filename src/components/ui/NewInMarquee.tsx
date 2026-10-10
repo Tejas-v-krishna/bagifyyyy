@@ -51,7 +51,7 @@ export default function NewInMarquee({ items }: { items: NewInRailItem[] }) {
                       draggable={false}
                       sizes="(max-width: 639px) 240px, 300px"
                       className={`h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] ${
-                        product.isSoldOut ? "opacity-50 saturate-0" : "opacity-100"
+                        product.isSoldOut ? "opacity-50 saturate-0 blur-[3px]" : "opacity-100"
                       }`}
                     />
                   ) : null}
@@ -62,9 +62,14 @@ export default function NewInMarquee({ items }: { items: NewInRailItem[] }) {
                     </span>
                   )}
                   {product.isSoldOut ? (
-                    <span className="absolute left-2.5 top-2.5 rounded-full bg-black/45 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-md border border-white/10 shadow-xs">
-                      Sold Out
-                    </span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-black/45 backdrop-blur-[5px] z-30 pointer-events-none">
+                      <span className="bg-white/95 text-black text-[9px] px-3 py-1.5 tracking-[0.14em] uppercase rounded-full font-mono font-bold shadow-lg">
+                        Somebody bought this
+                      </span>
+                      <span className="text-[8px] font-mono uppercase tracking-[0.18em] text-white/80 font-semibold mt-1">
+                        Out of stock · 1 of 1
+                      </span>
+                    </div>
                   ) : product.reserved ? (
                     <span className="absolute left-2.5 top-2.5 rounded-full bg-amber-500/20 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-amber-900 backdrop-blur-md border border-amber-500/30 shadow-xs">
                       On Hold

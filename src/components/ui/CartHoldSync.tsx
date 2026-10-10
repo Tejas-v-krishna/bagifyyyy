@@ -8,23 +8,21 @@ import { showToast } from "@/lib/toast";
 
 /** No interaction for this long and the bag goes back to the shop. */
 const IDLE_RELEASE_MS = 3 * 60 * 1000;
-/** Holding is refreshed at most this often while the shopper is active. */
-const REFRESH_THROTTLE_MS = 60 * 1000;
-const TICK_MS = 15 * 1000;
+/** Check hold expiries every 3 seconds so pieces are returned to the shop on time */
+const TICK_MS = 3 * 1000;
 
 const ACTIVITY_EVENTS: (keyof WindowEventMap)[] = ["pointerdown", "keydown", "touchstart", "wheel"];
 
 /**
  * Keeps the shopper's stock holds honest:
- * - active browsing refreshes the (5 minute) hold, throttled
- * - 3 minutes without any interaction releases the pieces back to the shop,
- *   with a notice; coming back re-holds silently when they are still free
- * - the checkout flow is exempt, so a payment is never released mid-flight
+ * - 5-minute hold countdown tracked per piece
+ * - when 5 minutes expire without buying, the piece returns to the shop
+ * - 3 minutes without any interaction releases pieces back to the shop
+ * - checkout flow is exempt while actively paying
  */
 export default function CartHoldSync() {
   const pathname = usePathname();
   const lastActivityRef = useRef(0);
-  const lastRefreshRef = useRef(0);
   const releasedRef = useRef(false);
   const pathnameRef = useRef(pathname);
 
@@ -38,14 +36,12 @@ export default function CartHoldSync() {
     // Initial sync: a bag restored from storage regains its holds.
     const now = Date.now();
     lastActivityRef.current = now;
-    lastRefreshRef.current = now;
     void syncCartHoldsAndApply();
 
     const markActive = () => {
       lastActivityRef.current = Date.now();
       if (releasedRef.current) {
         releasedRef.current = false;
-        lastRefreshRef.current = Date.now();
         // Silent re-hold; if someone took the piece meanwhile the store
         // reconciliation will surface that instead.
         void syncCartHoldsAndApply();
@@ -72,21 +68,24 @@ export default function CartHoldSync() {
 
       // Never release while the shopper is paying.
       const onCheckout = pathnameRef.current?.startsWith("/checkout") ?? false;
-      const idleFor = Date.now() - lastActivityRef.current;
-
-      if (!onCheckout && idleFor >= IDLE_RELEASE_MS) {
-        if (!releasedRef.current) {
-          releasedRef.current = true;
-          lastRefreshRef.current = 0;
-          void syncCartHolds([]);
-          showToast("Your bag was idle · pieces are back in the shop");
+      if (!onCheckout) {
+        // 1. Check if any piece reached its 5-minute hold expiry
+        const expired = useCartStore.getState().removeExpiredItems();
+        if (expired) {
+          showToast("5-minute hold expired · piece returned to the shop");
+          return;
         }
-        return;
-      }
 
-      if (Date.now() - lastRefreshRef.current >= REFRESH_THROTTLE_MS) {
-        lastRefreshRef.current = Date.now();
-        void syncCartHoldsAndApply();
+        // 2. Check idle release
+        const idleFor = Date.now() - lastActivityRef.current;
+        if (idleFor >= IDLE_RELEASE_MS) {
+          if (!releasedRef.current) {
+            releasedRef.current = true;
+            void syncCartHolds([]);
+            showToast("Your bag was idle · pieces are back in the shop");
+          }
+          return;
+        }
       }
     };
 

@@ -51,7 +51,7 @@ export default function Image() {
                 background: GUNMETAL,
               }}
             />
-           <span>FW26 / Small Run</span>
+           <span>1 of 1 Thrift Archive</span>
          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
             <span>Y2K Streetwear</span>

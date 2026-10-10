@@ -641,7 +641,7 @@ html.lenis body {
 /* The track contains two identical copies. Moving exactly one copy's width
    makes the second copy occupy the first copy's starting position with no jump. */
 .marquee-track {
-  animation: marquee-seamless 28s linear infinite;
+  animation: marquee-seamless 65s linear infinite;
   will-change: transform;
 }
 
@@ -652,7 +652,7 @@ html.lenis body {
 /* NEW IN belt: slow continuous right-to-left drift. Track holds two
    identical halves; a -50% loop is seamless. */
 .newin-marquee-track {
-  animation: marquee-seamless 60s linear infinite;
+  animation: marquee-seamless 80s linear infinite;
   will-change: transform;
 }
 

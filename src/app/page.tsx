@@ -137,7 +137,7 @@ export default async function Home() {
           <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">
             <Image
               src={sanityImageUrl(sanityHero?.image, 2000) ?? "/hero-main.webp"}
-              alt={sanityHero?.alt || "BAGIFYYYY FW26 campaign"}
+              alt={sanityHero?.alt || "BAGIFYYYY 1-of-1 Thrift Archive"}
               fill
               priority
               sizes="100vw"
@@ -172,14 +172,14 @@ export default async function Home() {
             {/* Dual-track editorial marquee with rounded thumbnail vignettes */}
             <div className="hero-image-dissolve absolute bottom-0 inset-x-0 !h-[clamp(7rem,14vh,9.5rem)]" aria-label="New piece announcements">
               <div className="hero-transition-marquee flex flex-col gap-2 py-1.5 sm:py-2">
-                {/* Track 1: Moving left */}
+                {/* Track 1: Moving left - calm steady glide */}
                 <div className="marquee-track flex w-max whitespace-nowrap">
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="flex shrink-0 items-center gap-7 px-4" aria-hidden={i !== 0}>
                       {[
-                        { text: "NEW PIECES ARE LIVE", img: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg" },
-                        { text: "FW26 SMALL-RUN PIECES", img: "/assets/ai/prod_model_4_cyberzip_1786659858926.jpg" },
-                        { text: "MADE TO BE WORN HARD", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
+                        { text: "1-OF-1 VINTAGE FINDS", img: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg" },
+                        { text: "CURATED THRIFT ARCHIVE", img: "/assets/ai/prod_model_4_cyberzip_1786659858926.jpg" },
+                        { text: "AUTHENTIC SINGLE PIECES", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
                         { text: "THRIFTED IN INDIA", img: "/assets/ai/prod_model_7_chromebelt_1786660225515.jpg" },
                       ].map((item, idx) => (
                         <div key={idx} className="flex shrink-0 items-center gap-3.5">
@@ -201,15 +201,15 @@ export default async function Home() {
                   ))}
                 </div>
 
-                {/* Track 2: Alternating offset track */}
-                <div className="marquee-track flex w-max whitespace-nowrap" style={{ animationDirection: "reverse", animationDuration: "36s" }}>
+                {/* Track 2: Alternating offset track - unhurried reverse pace */}
+                <div className="marquee-track flex w-max whitespace-nowrap" style={{ animationDirection: "reverse", animationDuration: "72s" }}>
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="flex shrink-0 items-center gap-7 px-4" aria-hidden={i !== 0}>
                       {[
-                        { text: "10% OFF YOUR FIRST ORDER", img: "/assets/ai/prod_model_2_cargo_1786659253971.jpg" },
-                        { text: "ARCHIVE VINTAGE FINDS", img: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg" },
-                        { text: "LIMITED RUN · NO RESTOCKS", img: "/assets/ai/prod_model_3_denim_1786659846387.jpg" },
-                        { text: "WEAR IT, DON'T CHASE IT", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
+                        { text: "USE CODE FREESHIP FOR FREE DELIVERY", img: "/assets/ai/prod_model_2_cargo_1786659253971.jpg" },
+                        { text: "GENUINE 1-OF-1 STREETWEAR", img: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg" },
+                        { text: "NO RESTOCKS · ONCE GONE IT'S GONE", img: "/assets/ai/prod_model_3_denim_1786659846387.jpg" },
+                        { text: "5-MINUTE BAG RESERVATION", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
                       ].map((item, idx) => (
                         <div key={idx} className="flex shrink-0 items-center gap-3.5">
                           <span className="relative h-6 w-10 sm:h-7 sm:w-11 shrink-0 overflow-hidden rounded-full border border-white/30 bg-black/40 shadow-xs">
@@ -238,7 +238,7 @@ export default async function Home() {
       {/* 1.5. Editorial Dark Manifesto with Live Style Switcher */}
       <EditorialManifesto
         imageSrc={sanityImageUrl(sanityManifesto?.image, 1600) ?? "/editorial-manifesto.webp"}
-        imageAlt={sanityManifesto?.alt || "BAGIFYYYY editorial manifesto FW26"}
+        imageAlt={sanityManifesto?.alt || "BAGIFYYYY editorial manifesto"}
         headingLine1={sanityManifesto?.headingLine1 || "Clothes For"}
         headingLine2={sanityManifesto?.headingLine2 || "The Offbeat"}
         intro={

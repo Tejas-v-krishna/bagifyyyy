@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, Check, X, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { triggerPinataBurst } from "@/lib/confetti";
 
 interface AddToBagButtonProps {
   product: {
@@ -54,7 +55,9 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
   const colors = Array.isArray(product.colors) ? product.colors : null;
   const needsPick = (sizes !== null && sizes.length > 1) || (colors !== null && colors.length > 1);
 
-  const doAdd = (size: string, color: string) => {
+  const doAdd = (size: string, color: string, e?: React.MouseEvent) => {
+    triggerPinataBurst(e);
+
     addItem({
       id: product.id,
       name: product.name,
@@ -86,7 +89,7 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
 
     // Single option each — add straight to the bag, no guessing involved.
     if (!needsPick) {
-      doAdd(sizes?.[0] || "OS", colors?.[0] || "Default");
+      doAdd(sizes?.[0] || "OS", colors?.[0] || "Default", e);
       return;
     }
 
@@ -104,7 +107,7 @@ export default function AddToBagButton({ product, className = "" }: AddToBagButt
     e.preventDefault();
     e.stopPropagation();
     if (!canConfirm) return;
-    doAdd(pickSize, pickColor ?? colors?.[0] ?? "Default");
+    doAdd(pickSize, pickColor ?? colors?.[0] ?? "Default", e);
     setPicking(false);
   };
 

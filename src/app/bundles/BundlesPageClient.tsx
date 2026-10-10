@@ -9,6 +9,7 @@ import FilterPopover from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
 import EditorialPageShell from "@/components/layout/EditorialPageShell";
 import Button from "@/components/ui/Button";
+import { triggerPinataBurst } from "@/lib/confetti";
 import type { Bundle } from "@/lib/bundles";
 
 const BUNDLE_SORT_OPTIONS: DropdownOption[] = [
@@ -100,13 +101,14 @@ export default function BundlesPageClient({ initialBundles }: { initialBundles: 
 
   const hasActiveFilters = selectedMaxPrice < maxBundlePrice || Boolean(bundleType);
 
-  const handleAddBundle = (bundle: Bundle) => {
+  const handleAddBundle = (bundle: Bundle, e?: React.MouseEvent) => {
     if (
       addingId ||
       bundle.products.some((p) => p.isSoldOut) ||
       bundle.products.length === 0
     ) return;
 
+    triggerPinataBurst(e);
     setAddingId(bundle.id);
     const bundleSize = new Set(bundle.products.map((p) => p.id)).size;
     setTimeout(() => {
@@ -302,7 +304,7 @@ export default function BundlesPageClient({ initialBundles }: { initialBundles: 
 
                     <Button
                       variant="dark"
-                      onClick={() => handleAddBundle(bundle)}
+                      onClick={(e) => handleAddBundle(bundle, e)}
                       disabled={isUnavailable || Boolean(addingId)}
                       aria-live="polite"
                       aria-label={

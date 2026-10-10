@@ -29,8 +29,15 @@ export type CartItem = {
   bundleName?: string;
   bundleDiscount?: number;
   bundleSize?: number;
+  /** Timestamp when this piece was added to the bag. */
+  addedAt?: number;
+  /** When the 5-minute hold expires (ms epoch). */
+  holdExpiresAt?: number;
+  /** Whether the product is sold out / bought by someone else. */
+  isSoldOut?: boolean;
 };
 
+export const STANDARD_SHIPPING_FEE = 80;
 export const VALID_PROMOS: Record<string, number> = { BAGIFY10: 0.1 };
 
 type CartStore = {
@@ -38,6 +45,8 @@ type CartStore = {
   items: CartItem[];
   promoCode: string | null;
   promoDiscount: number;
+  promoType: "PERCENTAGE" | "FIXED" | "FREE_SHIPPING" | null;
+  isFreeShipping: boolean;
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
@@ -45,7 +54,16 @@ type CartStore = {
   removeItem: (cartItemId: string) => void;
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
+  getItemHoldExpiry: (productId: string) => number | null;
+  removeExpiredItems: () => boolean;
   applyPromo: (code: string) => { ok: boolean; error?: string };
+  setPromo: (promo: {
+    code: string;
+    discountType: "PERCENTAGE" | "FIXED" | "FREE_SHIPPING";
+    discountValue: number;
+    discountAmount: number;
+    freeShipping?: boolean;
+  }) => void;
   clearPromo: () => void;
   /** Sum of every line at its normal price, before set or promo discounts. */
   cartSubtotal: () => number;
@@ -57,9 +75,11 @@ type CartStore = {
   bundleDiscount: () => number;
   /** What the goods actually cost: subtotal minus set discounts. */
   cartTotal: () => number;
-  /** Promo amount off goods total */
+  /** Promo amount off goods total (always 0 for free shipping promo) */
   promoAmount: () => number;
-  /** Final total after bundle + promo */
+  /** Shipping charge: 80, or 0 if bag is empty or free shipping coupon is applied */
+  shippingFee: () => number;
+  /** Final total after bundle + promo + shipping */
   finalTotal: () => number;
 };
 
@@ -120,6 +140,8 @@ export const useCartStore = create<CartStore>()(
       items: [],
       promoCode: null,
       promoDiscount: 0,
+      promoType: null,
+      isFreeShipping: false,
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
@@ -132,7 +154,15 @@ export const useCartStore = create<CartStore>()(
           }
           const safeQty = Math.max(1, Math.min(MAX_QTY, Math.round(item.quantity) || 1));
           const itemKey = getItemKey(item);
-          const fullItem: CartItem = { ...item, quantity: safeQty, cartItemId: itemKey };
+          const now = Date.now();
+          const holdExpiry = item.holdExpiresAt || (now + 5 * 60 * 1000);
+          const fullItem: CartItem = {
+            ...item,
+            quantity: safeQty,
+            cartItemId: itemKey,
+            addedAt: item.addedAt || now,
+            holdExpiresAt: holdExpiry,
+          };
           const existingIndex = state.items.findIndex(
             (i) => getItemKey(i) === itemKey
           );
@@ -149,14 +179,29 @@ export const useCartStore = create<CartStore>()(
         });
         void syncCartHoldsAndApply();
       },
-      // Both of these match on the full line key only. They used to also accept
-      // a bare product id, which meant removing one size silently removed every
-      // size of that product.
       removeItem: (cartItemId) => {
         set((state) => ({
-          items: state.items.filter((i) => getItemKey(i) !== cartItemId),
+          items: state.items.filter((i) => getItemKey(i) !== cartItemId && i.id !== cartItemId),
         }));
         void syncCartHoldsAndApply();
+      },
+      getItemHoldExpiry: (productId: string) => {
+        const { items } = get();
+        const found = items.find((i) => i.id === productId);
+        if (!found || !found.holdExpiresAt) return null;
+        if (found.holdExpiresAt <= Date.now()) return null;
+        return found.holdExpiresAt;
+      },
+      removeExpiredItems: () => {
+        const { items } = get();
+        const now = Date.now();
+        const activeItems = items.filter((i) => !i.holdExpiresAt || i.holdExpiresAt > now);
+        if (activeItems.length < items.length) {
+          set({ items: activeItems });
+          void syncCartHoldsAndApply();
+          return true;
+        }
+        return false;
       },
       updateQuantity: (cartItemId, quantity) => {
         const q = Math.max(1, Math.min(10, Math.round(quantity) || 1));
@@ -168,17 +213,59 @@ export const useCartStore = create<CartStore>()(
         void syncCartHoldsAndApply();
       },
       clearCart: () => {
-        set({ items: [], promoCode: null, promoDiscount: 0 });
+        set({
+          items: [],
+          promoCode: null,
+          promoDiscount: 0,
+          promoType: null,
+          isFreeShipping: false,
+        });
         void syncCartHoldsAndApply();
       },
       applyPromo: (code: string) => {
         const upper = code.trim().toUpperCase();
+        if (upper === 'FREESHIP') {
+          set({
+            promoCode: 'FREESHIP',
+            promoDiscount: 0,
+            promoType: 'FREE_SHIPPING',
+            isFreeShipping: true,
+          });
+          return { ok: true };
+        }
         const discount = VALID_PROMOS[upper];
         if (!discount) return { ok: false, error: "Invalid promo code." };
-        set({ promoCode: upper, promoDiscount: discount });
+        set({
+          promoCode: upper,
+          promoDiscount: discount,
+          promoType: 'PERCENTAGE',
+          isFreeShipping: false,
+        });
         return { ok: true };
       },
-      clearPromo: () => set({ promoCode: null, promoDiscount: 0 }),
+      setPromo: (promo) => {
+        const isFree = promo.discountType === 'FREE_SHIPPING' || Boolean(promo.freeShipping);
+        let discountFraction = 0;
+        if (promo.discountType === 'PERCENTAGE') {
+          discountFraction = promo.discountValue / 100;
+        } else if (promo.discountType === 'FIXED') {
+          const total = get().cartTotal();
+          discountFraction = total > 0 ? Math.min(promo.discountAmount, total) / total : 0;
+        }
+        set({
+          promoCode: promo.code.toUpperCase(),
+          promoDiscount: discountFraction,
+          promoType: promo.discountType,
+          isFreeShipping: isFree,
+        });
+      },
+      clearPromo: () =>
+        set({
+          promoCode: null,
+          promoDiscount: 0,
+          promoType: null,
+          isFreeShipping: false,
+        }),
       cartSubtotal: () => {
         const { items } = get();
         return items.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -210,17 +297,31 @@ export const useCartStore = create<CartStore>()(
         return Math.max(0, Math.round((cartSubtotal() - bundleDiscount()) * 100) / 100);
       },
       promoAmount: () => {
-        const { cartTotal, promoDiscount } = get();
+        const { cartTotal, promoDiscount, promoType, isFreeShipping } = get();
+        // Free shipping waives shipping fee only, does not reduce product price
+        if (isFreeShipping || promoType === 'FREE_SHIPPING') return 0;
         return Math.round(cartTotal() * promoDiscount * 100) / 100;
       },
+      shippingFee: () => {
+        const { items, isFreeShipping, promoType } = get();
+        if (items.length === 0) return 0;
+        if (isFreeShipping || promoType === 'FREE_SHIPPING') return 0;
+        return STANDARD_SHIPPING_FEE;
+      },
       finalTotal: () => {
-        const { cartTotal, promoAmount } = get();
-        return Math.max(0, Math.round((cartTotal() - promoAmount()) * 100) / 100);
+        const { cartTotal, promoAmount, shippingFee } = get();
+        return Math.max(0, Math.round((cartTotal() - promoAmount() + shippingFee()) * 100) / 100);
       },
     }),
     {
       name: 'bagify-cart-storage',
-      partialize: (state) => ({ items: state.items, promoCode: state.promoCode, promoDiscount: state.promoDiscount }),
+      partialize: (state) => ({
+        items: state.items,
+        promoCode: state.promoCode,
+        promoDiscount: state.promoDiscount,
+        promoType: state.promoType,
+        isFreeShipping: state.isFreeShipping,
+      }),
     }
   )
 );
