@@ -4,6 +4,20 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 async function main() {
+  // SAFETY: this script DELETES the catalog before re-creating demo data.
+  // Since src/lib/prisma prefers Turso whenever TURSO_* is set (which it is
+  // in .env), a bare `npm run prisma:seed` would wipe the LIVE database.
+  // Refuse remote wipes unless explicitly forced.
+  const allowRemote = process.argv.includes("--force-remote");
+  const targetsRemote = Boolean(process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN);
+  if (targetsRemote && !allowRemote) {
+    console.error(
+      "Refusing to seed: TURSO_DATABASE_URL is set, so this would DELETE the live catalog (products, variants, images, orders, reviews). " +
+        "Unset TURSO_* to seed the local dev.db instead, or re-run with --force-remote if you truly mean to wipe the remote DB."
+    );
+    process.exit(1);
+  }
+
   // Clear existing catalog data
   await prisma.review.deleteMany();
   await prisma.bundleProduct.deleteMany();
