@@ -379,21 +379,68 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
-            {/* Yellow pop-up under the product image */}
+            {/* Live 5-Minute Hold Countdown Banner under the images */}
             {isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-3.5 w-full bg-amber-400 border-2 border-amber-500 rounded-xl p-3 text-black shadow-sm flex items-center justify-between animate-in fade-in duration-200">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <Clock className="w-4 h-4 text-black shrink-0 animate-pulse" aria-hidden="true" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider leading-tight">
-                    {heldByYou
-                      ? "In your bag · Held for 5 minutes"
-                      : "This product is in someone's cart and is held for 5 minutes"}
-                  </span>
+              <div className="mt-4 w-full rounded-2xl border-2 border-amber-400 bg-amber-50/95 p-4 text-black shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="relative flex h-3 w-3 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-black leading-tight">
+                        {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
+                      </h4>
+                      <p className="text-[10.5px] text-black/60 font-medium leading-tight mt-0.5">
+                        {heldByYou
+                          ? "Held for 5 minutes · Complete checkout before 00:00"
+                          : "Held for 5 minutes · Returns to store if session expires"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Digital Clock Box: 05:00 */}
+                  <div className="flex items-center font-mono font-bold text-sm sm:text-base bg-black text-amber-300 px-3.5 py-1.5 rounded-lg tracking-widest shadow-2xs shrink-0 select-none">
+                    <span>{countdownStr}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0 pl-2">
-                  <span className="font-mono font-bold text-xs bg-black text-amber-300 px-2.5 py-1 rounded tracking-widest shadow-2xs">
-                    {countdownStr}
-                  </span>
+
+                {/* Live Progress Bar */}
+                <div className="w-full bg-amber-200/80 rounded-full h-1.5 overflow-hidden mt-3">
+                  <div
+                    className="bg-amber-500 h-full transition-all duration-1000 ease-linear rounded-full"
+                    style={{
+                      width: `${Math.min(100, Math.max(0, (msLeft / (5 * 60 * 1000)) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Hold Expired Notice under images (When countdown reaches 00:00 idle) */}
+            {idleExpired && !isReservedInCheckout && !product.isSoldOut && (
+              <div className="mt-4 w-full rounded-xl border border-black/15 bg-neutral-100 p-4 text-black shadow-2xs animate-in fade-in duration-300">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-neutral-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-black">
+                        Reservation Expired (Idle) · Piece Back In Store
+                      </p>
+                      <p className="text-[11px] text-black/60 mt-0.5 leading-snug">
+                        Since the 5-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIdleExpired(false)}
+                    className="text-black/40 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
+                    aria-label="Dismiss notice"
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
             )}
@@ -496,73 +543,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
-            {/* Live 5-Minute Hold Countdown Menu */}
-            {isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-6 mb-3 rounded-2xl border-2 border-amber-400 bg-amber-50/95 p-4 text-black shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="relative flex h-3 w-3 shrink-0">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500" />
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-black leading-tight">
-                        {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
-                      </h4>
-                      <p className="text-[10.5px] text-black/60 font-medium leading-tight mt-0.5">
-                        {heldByYou
-                          ? "5-minute hold active · Complete checkout before time expires"
-                          : "Held for 5 minutes · Returns to store if session expires"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Digital Clock Box: T-05:00 */}
-                  <div className="flex items-center gap-1 font-mono font-bold text-sm sm:text-base bg-black text-amber-300 px-3 py-1.5 rounded-lg tracking-widest shadow-2xs shrink-0 select-none">
-                    <span className="text-[10px] text-amber-400/70 font-semibold">T-</span>
-                    <span>{countdownStr}</span>
-                  </div>
-                </div>
-
-                {/* Live Progress Bar */}
-                <div className="w-full bg-amber-200/80 rounded-full h-1.5 overflow-hidden mt-3">
-                  <div
-                    className="bg-amber-500 h-full transition-all duration-1000 ease-linear rounded-full"
-                    style={{
-                      width: `${Math.min(100, Math.max(0, (msLeft / (5 * 60 * 1000)) * 100))}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Hold Expired Notice (When countdown reaches 00:00 idle) */}
-            {idleExpired && !isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-6 mb-3 rounded-xl border border-black/15 bg-neutral-100 p-4 text-black shadow-2xs animate-in fade-in duration-300">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-neutral-500 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-black">
-                        Reservation Expired (Idle) · Piece Back In Store
-                      </p>
-                      <p className="text-[11px] text-black/60 mt-0.5 leading-snug">
-                        Since the 5-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIdleExpired(false)}
-                    className="text-black/40 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
-                    aria-label="Dismiss notice"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Quantity + CTA */}
             {product.isSoldOut ? (
               <div className="mt-7 space-y-4">
@@ -581,34 +561,24 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 <NotifyMeSection productId={product.id} />
               </div>
             ) : isHeld ? (
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-7 flex items-center gap-2">
                 {heldByYou ? (
                   <button
                     type="button"
                     onClick={openCart}
-                    className="flex-1 border-2 border-black bg-black hover:bg-neutral-900 text-white px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-between gap-2 cursor-pointer transition-all duration-200 active:scale-[0.99] shadow-sm"
+                    className="flex-1 border-2 border-black bg-black hover:bg-neutral-900 text-white px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 active:scale-[0.99] shadow-sm"
                   >
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
-                      <span>IN YOUR BAG · VIEW BAG</span>
-                    </div>
-                    <span className="font-mono text-xs bg-white/15 px-2 py-0.5 rounded text-amber-300 tracking-wider">
-                      T-{countdownStr}
-                    </span>
+                    <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+                    <span>IN YOUR BAG · VIEW BAG</span>
                   </button>
                 ) : (
                   <button
                     type="button"
                     disabled
-                    className="flex-1 border border-black/10 bg-[#e8e8e8] text-black/40 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-between gap-2 cursor-not-allowed"
+                    className="flex-1 border border-black/10 bg-[#e8e8e8] text-black/40 px-5 py-4 text-[10.5px] font-bold uppercase tracking-[0.16em] flex items-center justify-center gap-2 cursor-not-allowed"
                   >
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5 text-black/40" />
-                      <span>ON HOLD BY ANOTHER SHOPPER</span>
-                    </div>
-                    <span className="font-mono text-xs text-black/40 tracking-wider">
-                      T-{countdownStr}
-                    </span>
+                    <Clock className="w-3.5 h-3.5 text-black/40" />
+                    <span>ON HOLD BY ANOTHER SHOPPER</span>
                   </button>
                 )}
                 <button
@@ -779,7 +749,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                  className="shrink-0 text-[10px] uppercase tracking-[0.16em] font-bold !bg-black !text-white flex items-center gap-1.5 shadow-sm"
                >
                  <Check className="h-3.5 w-3.5 text-emerald-400 stroke-[3]" />
-                 <span>BAG (T-{countdownStr})</span>
+                 <span>VIEW IN BAG</span>
                </Button>
              ) : (
                <Button
