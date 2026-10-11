@@ -169,60 +169,34 @@ export default async function Home() {
               </Link>
             </div>
 
-            {/* Dual-track editorial marquee with rounded thumbnail vignettes */}
-            <div className="hero-image-dissolve absolute bottom-0 inset-x-0 !h-[clamp(7rem,14vh,9.5rem)]" aria-label="New piece announcements">
-              <div className="hero-transition-marquee flex flex-col gap-2 py-1.5 sm:py-2">
-                {/* Track 1: Moving left - calm steady glide */}
+            {/* Single-track editorial marquee with chrome metal star divider elements */}
+            <div className="hero-image-dissolve absolute bottom-0 inset-x-0 !h-[clamp(4.5rem,9vh,6rem)]" aria-label="New piece announcements">
+              <div className="hero-transition-marquee flex items-center py-2 sm:py-3">
                 <div className="marquee-track flex w-max whitespace-nowrap">
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="flex shrink-0 items-center gap-7 px-4" aria-hidden={i !== 0}>
                       {[
-                        { text: "1-OF-1 VINTAGE FINDS", img: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg" },
-                        { text: "CURATED THRIFT ARCHIVE", img: "/assets/ai/prod_model_4_cyberzip_1786659858926.jpg" },
-                        { text: "AUTHENTIC SINGLE PIECES", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
-                        { text: "THRIFTED IN INDIA", img: "/assets/ai/prod_model_7_chromebelt_1786660225515.jpg" },
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex shrink-0 items-center gap-3.5">
-                          <span className="font-serif uppercase tracking-[0.08em] text-[10.5px] sm:text-[13px] font-bold text-white/95 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
-                            {item.text}
+                        "1-OF-1 VINTAGE FINDS",
+                        "THRIFTED IN INDIA",
+                        "AUTHENTIC SINGLE PIECES",
+                        "NO RESTOCKS · ONCE GONE IT'S GONE",
+                        "CURATED THRIFT ARCHIVE",
+                        "5-MINUTE BAG RESERVATION",
+                        "GENUINE 1-OF-1 STREETWEAR",
+                        "USE CODE FREESHIP FOR FREE DELIVERY",
+                      ].map((text, idx) => (
+                        <div key={idx} className="flex shrink-0 items-center gap-6">
+                          <span className="font-serif uppercase tracking-[0.1em] text-[11px] sm:text-[13px] font-bold text-white/95 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
+                            {text}
                           </span>
-                          <span className="relative h-6 w-10 sm:h-7 sm:w-11 shrink-0 overflow-hidden rounded-full border border-white/30 bg-black/40 shadow-xs">
+                          <span className="relative h-4 w-4 sm:h-5 sm:w-5 shrink-0 flex items-center justify-center">
                             <Image
-                              src={item.img}
+                              src="/chrome-metal.png"
                               alt=""
-                              fill
-                              sizes="44px"
-                              className="object-cover object-center"
+                              width={20}
+                              height={20}
+                              className="object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
                             />
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Track 2: Alternating offset track - unhurried reverse pace */}
-                <div className="marquee-track flex w-max whitespace-nowrap" style={{ animationDirection: "reverse", animationDuration: "72s" }}>
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="flex shrink-0 items-center gap-7 px-4" aria-hidden={i !== 0}>
-                      {[
-                        { text: "USE CODE FREESHIP FOR FREE DELIVERY", img: "/assets/ai/prod_model_2_cargo_1786659253971.jpg" },
-                        { text: "GENUINE 1-OF-1 STREETWEAR", img: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg" },
-                        { text: "NO RESTOCKS · ONCE GONE IT'S GONE", img: "/assets/ai/prod_model_3_denim_1786659846387.jpg" },
-                        { text: "5-MINUTE BAG RESERVATION", img: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg" },
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex shrink-0 items-center gap-3.5">
-                          <span className="relative h-6 w-10 sm:h-7 sm:w-11 shrink-0 overflow-hidden rounded-full border border-white/30 bg-black/40 shadow-xs">
-                            <Image
-                              src={item.img}
-                              alt=""
-                              fill
-                              sizes="44px"
-                              className="object-cover object-center"
-                            />
-                          </span>
-                          <span className="font-serif uppercase tracking-[0.08em] text-[10.5px] sm:text-[13px] font-bold text-white/95 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
-                            {item.text}
                           </span>
                         </div>
                       ))}
