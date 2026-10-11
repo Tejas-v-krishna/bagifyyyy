@@ -416,72 +416,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 ))}
               </div>
             )}
-
-            {/* Live 2-Minute Hold Countdown Banner under the images */}
-            {isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-4 w-full rounded-xl border border-[#e4dec8] bg-[#fbf9f4] p-3.5 sm:p-4 text-black shadow-2xs">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="relative flex h-2.5 w-2.5 shrink-0">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4a838] opacity-60" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#cda434]" />
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-black leading-tight">
-                        {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
-                      </h4>
-                      <p className="text-[10.5px] text-black/55 font-normal leading-tight mt-0.5">
-                        {heldByYou
-                          ? "Held for 2 minutes · Complete checkout before 00:00"
-                          : "Held for 2 minutes · Returns to store if session expires"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Digital Clock Box: 02:00 */}
-                  <div className="flex items-center font-mono font-bold text-xs sm:text-sm bg-black/[0.04] border border-black/10 text-black px-3 py-1 rounded-md tracking-widest shadow-2xs shrink-0 select-none">
-                    <span>{countdownStr}</span>
-                  </div>
-                </div>
-
-                {/* Live Progress Bar */}
-                <div className="w-full bg-black/[0.05] rounded-full h-1 overflow-hidden mt-3">
-                  <div
-                    className="bg-[#cda434]/70 h-full transition-all duration-1000 ease-linear rounded-full"
-                    style={{
-                      width: `${Math.min(100, Math.max(0, (msLeft / (2 * 60 * 1000)) * 100))}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Hold Expired Notice under images (When countdown reaches 00:00 idle) */}
-            {idleExpired && !isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-4 w-full rounded-xl border border-black/10 bg-[#f5f5f3] p-3.5 text-black shadow-2xs animate-in fade-in duration-300">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-black">
-                        Reservation Expired (Idle) · Piece Back In Store
-                      </p>
-                      <p className="text-[10.5px] text-black/55 mt-0.5 leading-snug">
-                        Since the 2-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIdleExpired(false)}
-                    className="text-black/35 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
-                    aria-label="Dismiss notice"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
@@ -571,6 +505,72 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       </button>
                     );
                   })}
+                </div>
+              </div>
+            )}
+
+            {/* Live 2-Minute Hold Countdown Banner placed right above the cart button */}
+            {isReservedInCheckout && !product.isSoldOut && (
+              <div className="mt-5 w-full rounded-xl border border-[#e4dec8] bg-[#fbf9f4] p-3.5 sm:p-4 text-black shadow-2xs">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="relative flex h-2.5 w-2.5 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4a838] opacity-60" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#cda434]" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-black leading-tight">
+                        {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
+                      </h4>
+                      <p className="text-[10.5px] text-black/55 font-normal leading-tight mt-0.5">
+                        {heldByYou
+                          ? "Held for 2 minutes · Complete checkout before 00:00"
+                          : "Held for 2 minutes · Returns to store if session expires"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Digital Clock Box: 02:00 */}
+                  <div className="flex items-center font-mono font-bold text-xs sm:text-sm bg-black/[0.04] border border-black/10 text-black px-3 py-1 rounded-md tracking-widest shadow-2xs shrink-0 select-none">
+                    <span>{countdownStr}</span>
+                  </div>
+                </div>
+
+                {/* Live Progress Bar */}
+                <div className="w-full bg-black/[0.05] rounded-full h-1 overflow-hidden mt-3">
+                  <div
+                    className="bg-[#cda434]/70 h-full transition-all duration-1000 ease-linear rounded-full"
+                    style={{
+                      width: `${Math.min(100, Math.max(0, (msLeft / (2 * 60 * 1000)) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Hold Expired Notice (When countdown reaches 00:00 idle) */}
+            {idleExpired && !isReservedInCheckout && !product.isSoldOut && (
+              <div className="mt-5 w-full rounded-xl border border-black/10 bg-[#f5f5f3] p-3.5 text-black shadow-2xs animate-in fade-in duration-300">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-neutral-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-black">
+                        Reservation Expired (Idle) · Piece Back In Store
+                      </p>
+                      <p className="text-[10.5px] text-black/55 mt-0.5 leading-snug">
+                        Since the 2-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIdleExpired(false)}
+                    className="text-black/35 hover:text-black text-xs font-bold p-1 cursor-pointer shrink-0"
+                    aria-label="Dismiss notice"
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
             )}
