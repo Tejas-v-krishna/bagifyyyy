@@ -21,11 +21,14 @@ export default function SimilarProducts({
 }: {
   products: RelatedProduct[];
 }) {
-  if (!products || products.length === 0) return null;
+  const availableProducts = (products || []).filter(
+    (p) => !p.isSoldOut && !(p as { isArchived?: boolean }).isArchived
+  );
+  if (availableProducts.length === 0) return null;
 
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-6">
-      {products.map((product) => (
+      {availableProducts.map((product) => (
         <ShowcaseCard
           key={product.id}
           product={{

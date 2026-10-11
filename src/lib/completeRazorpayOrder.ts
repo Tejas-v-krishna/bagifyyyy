@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { applyLoyaltyEarn } from '@/lib/loyalty';
+import { revalidatePath } from 'next/cache';
 
 export class PaymentFinalizationError extends Error {
   constructor(
@@ -29,7 +30,7 @@ export async function completeRazorpayOrder(input: {
   paymentId: string;
   signature: string;
 }): Promise<PaymentFinalizationResult> {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
       where: { id: input.orderId },
       include: { items: true },
@@ -150,4 +151,12 @@ export async function completeRazorpayOrder(input: {
       alreadyPaid: false,
     };
   });
+
+  try {
+    revalidatePath('/', 'layout');
+  } catch (err) {
+    console.warn('Failed to revalidate path after order completion:', err);
+  }
+
+  return result;
 }

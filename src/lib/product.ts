@@ -96,6 +96,8 @@ export async function getProductForDisplay(
         category: product.category,
         id: { not: product.id },
         isArchived: false,
+        isSoldOut: false,
+        variants: { some: { stock: { gt: 0 } } },
       },
       take: 4,
       include: { images: { orderBy: { position: 'asc' } } },

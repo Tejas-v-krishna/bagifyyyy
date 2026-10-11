@@ -64,6 +64,12 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const [reservationExpiresAt, setReservationExpiresAt] = useState<string | null>(null);
   const [nowTick, setNowTick] = useState(() => Date.now());
   const [idleExpired, setIdleExpired] = useState(false);
+  const [isSoldOutLive, setIsSoldOutLive] = useState(false);
+
+  const effectiveSoldOut =
+    product.isSoldOut ||
+    isSoldOutLive ||
+    (product.variants.length > 0 && product.totalStock <= 0);
 
   // Check if current user already has this product in cart
   const cartItem = useCartStore((state) => state.items.find((i) => i.id === product.id));
@@ -76,6 +82,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
       setReservationExpiresAt(new Date(cartItem.holdExpiresAt).toISOString());
     }
   }, [cartItem]);
+
+  // Purge from cart immediately if piece is sold out or acquired by another collector
+  useEffect(() => {
+    if (effectiveSoldOut) {
+      useCartStore.getState().removeItem(product.id);
+    }
+  }, [effectiveSoldOut, product.id]);
 
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -97,9 +110,11 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const selectedVariant = product.variants.find(
     (variant) => variant.size === selectedSize && variant.color === selectedColor
   );
-  const isHeld = isReservedInCheckout && !product.isSoldOut;
+  const isHeld = !effectiveSoldOut && isReservedInCheckout;
   const canAddSelectedVariant =
-    (!hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0)) && !isHeld;
+    !effectiveSoldOut &&
+    (!hasVariants || Boolean(selectedVariant && selectedVariant.stock > 0)) &&
+    !isHeld;
   const maxQuantity = Math.max(1, Math.min(10, selectedVariant?.stock ?? 10));
 
   const msLeft = reservationExpiresAt
@@ -115,17 +130,28 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
     const checkStockReservation = async () => {
       try {
-        const inOurCart = useCartStore.getState().items.find((i) => i.id === product.id);
-        if (inOurCart && inOurCart.holdExpiresAt && inOurCart.holdExpiresAt > Date.now()) {
-          setIsReservedInCheckout(true);
-          setHeldByYou(true);
-          setReservationExpiresAt(new Date(inOurCart.holdExpiresAt).toISOString());
-          return;
-        }
-
         const response = await fetch(`/api/stock-status?productId=${product.id}`);
         if (response.ok && !cancelled) {
           const data = await response.json();
+          if (data.isSoldOut) {
+            setIsSoldOutLive(true);
+            setIsReservedInCheckout(false);
+            setHeldByYou(false);
+            setReservationExpiresAt(null);
+            useCartStore.getState().removeItem(product.id);
+            return;
+          } else {
+            setIsSoldOutLive(false);
+          }
+
+          const inOurCart = useCartStore.getState().items.find((i) => i.id === product.id);
+          if (inOurCart && inOurCart.holdExpiresAt && inOurCart.holdExpiresAt > Date.now()) {
+            setIsReservedInCheckout(true);
+            setHeldByYou(true);
+            setReservationExpiresAt(new Date(inOurCart.holdExpiresAt).toISOString());
+            return;
+          }
+
           if (data.isReserved) {
             setIsReservedInCheckout(true);
             setHeldByYou(Boolean(data.heldByYou));
@@ -300,7 +326,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       draggable={false}
                       sizes="(max-width: 1023px) 100vw, 60vw"
                       className={`object-cover object-center pointer-events-none transition-all duration-300 ${
-                        product.isSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
+                        effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                       }`}
                     />
                   </motion.div>
@@ -311,17 +337,17 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 </div>
               )}
 
-              {/* Sold Out / Somebody Bought This Overlay in Main Gallery */}
-              {product.isSoldOut && (
+              {/* Sold Out / Already Gone Overlay in Main Gallery */}
+              {effectiveSoldOut && (
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center bg-black/45 backdrop-blur-[6px] select-none pointer-events-none">
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-black shadow-2xl">
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                     <span className="font-mono text-xs font-bold uppercase tracking-[0.16em]">
-                      Somebody bought this
+                      THIS PIECE IS ALREADY GONE
                     </span>
                   </div>
                   <p className="mt-2 text-[10px] sm:text-[11px] font-mono text-white/90 uppercase tracking-[0.16em] font-medium drop-shadow-sm">
-                    Out of stock · Unique 1 of 1 piece
+                    Sold Out · Single Original
                   </p>
                 </div>
               )}
@@ -487,11 +513,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   Authentic 1-of-1 Piece
                 </span>
                 <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-black/45">
-                  Single Original
+                  {effectiveSoldOut ? "Acquired" : "Single Original"}
                 </span>
               </div>
               <p className="text-[11px] text-black/60 leading-relaxed font-sans">
-                Only 1 piece exists in inventory. Once purchased, this item will never be restocked.
+                {effectiveSoldOut
+                  ? "This 1-of-1 piece has been claimed by another collector and will not be restocked."
+                  : "Only 1 piece exists in inventory. Once purchased, this item will never be restocked."}
               </p>
             </div>
 
@@ -536,20 +564,48 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             )}
 
             {/* CTA + Action area */}
-            {product.isSoldOut ? (
-              <div className="mt-6 space-y-4">
+            {effectiveSoldOut ? (
+              <div className="mt-6 space-y-3.5">
                 <div className="p-4 rounded-xl bg-black/[0.04] border border-black/10 text-center space-y-1.5">
                   <span className="inline-flex items-center gap-1.5 bg-black text-white text-[9.5px] font-mono font-bold uppercase tracking-[0.16em] px-3 py-1 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                    Somebody bought this
+                    THIS PIECE IS ALREADY GONE
                   </span>
                   <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-black pt-1">
-                    Out of stock · 1-of-1 Piece Sold
+                    Sold Out · 1-of-1 Archival Drop
                   </p>
                   <p className="text-[10px] font-mono text-black/50 leading-relaxed">
-                    This thrift piece was a unique single original and is no longer available.
+                    Another collector has acquired this unique piece. Every drop is a single original, so it will not be restocked.
                   </p>
                 </div>
+
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    disabled
+                    className="flex-1 rounded-full border border-black/15 bg-black/[0.05] text-black/40 px-5 py-3.5 text-[11px] font-mono font-bold uppercase tracking-[0.16em] flex items-center justify-center cursor-not-allowed select-none"
+                  >
+                    <span>PIECE ALREADY GONE · SOLD OUT</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleItem(id)}
+                    aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                    className="w-12 h-12 rounded-full border border-black/15 bg-white flex items-center justify-center hover:border-black transition-colors cursor-pointer shrink-0 shadow-2xs active:scale-95"
+                  >
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${wishlisted ? "fill-black text-black" : "text-black"}`}
+                    />
+                  </button>
+                </div>
+
+                <Link
+                  href="/products"
+                  className="block w-full text-center py-3 px-4 rounded-full bg-black text-white hover:bg-black/85 text-[11px] font-mono font-bold uppercase tracking-[0.14em] transition-colors"
+                >
+                  EXPLORE LIVE DROPS →
+                </Link>
+
                 <NotifyMeSection productId={product.id} />
               </div>
             ) : isHeld ? (

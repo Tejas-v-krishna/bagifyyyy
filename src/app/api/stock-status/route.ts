@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 import { getProductReservationStatus } from '@/lib/stockReservation';
 import { readHoldSession } from '@/lib/checkout';
 
@@ -14,11 +15,44 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing productId' }, { status: 400 });
   }
 
-  const status = await getProductReservationStatus(productId, sessionId);
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: {
+        isSoldOut: true,
+        isArchived: true,
+        variants: { select: { stock: true } },
+      },
+    });
 
-  return NextResponse.json({
-    success: true,
-    productId,
-    ...status,
-  });
+    const totalStock = product?.variants?.reduce((sum, v) => sum + v.stock, 0) ?? 0;
+    const isSoldOut =
+      !product ||
+      product.isArchived ||
+      product.isSoldOut ||
+      (product.variants.length > 0 && totalStock <= 0);
+
+    const status = await getProductReservationStatus(productId, sessionId);
+
+    return NextResponse.json({
+      success: true,
+      productId,
+      isSoldOut,
+      isAvailable: !isSoldOut,
+      totalStock,
+      ...status,
+    });
+  } catch (error) {
+    console.error('Error fetching stock status:', error);
+    return NextResponse.json({
+      success: true,
+      productId,
+      isSoldOut: false,
+      isAvailable: true,
+      isReserved: false,
+      heldByYou: false,
+      activeCount: 0,
+      expiresAt: null,
+    });
+  }
 }

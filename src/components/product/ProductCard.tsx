@@ -27,6 +27,9 @@ export interface Product {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
+  if (product.isSoldOut || (product as { isArchived?: boolean }).isArchived) {
+    return null;
+  }
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   return (

@@ -7,12 +7,12 @@ import { absoluteUrl, breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 import ProductDetailClient from "@/components/product/ProductDetailClient";
 
+import Link from "next/link";
+
 type Props = { params: Promise<{ id: string }> };
 
-// ISR: product pages revalidate in the background; repeat visits serve cached
-// HTML instead of paying fresh DB round trips. Stock truth is still enforced
-// live at cart/checkout, so a slightly stale page can never oversell.
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // Metadata + page both need the same product — share one DB hit per render
 // instead of querying twice.
@@ -71,9 +71,29 @@ export default async function ProductDetailPage({ params }: Props) {
   const { id } = await params;
   const product = await getProduct(id);
 
-  // Renders the sibling not-found.tsx, which keeps the storefront's own
-  // "PRODUCT NOT FOUND" screen and returns a real 404 status.
-  if (!product) notFound();
+  if (!product) {
+    return (
+      <main className="min-h-[70vh] flex flex-col items-center justify-center px-4 py-20 text-center font-sans">
+        <div className="max-w-md w-full border border-black/10 rounded-2xl bg-[#fafafa] p-8 sm:p-10 shadow-xs">
+          <span className="inline-block rounded-full bg-black/5 px-3 py-1 font-mono text-[10px] font-bold tracking-[0.16em] uppercase text-black/60 mb-4">
+            ARCHIVE NOTICE
+          </span>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight text-black mb-3">
+            THIS PIECE IS ALREADY GONE
+          </h1>
+          <p className="font-sans text-xs sm:text-sm text-black/60 leading-relaxed mb-6">
+            This 1-of-1 archival piece has been acquired or archived. Since every drop is a single original, it will not be restocked.
+          </p>
+          <Link
+            href="/products"
+            className="inline-flex items-center justify-center rounded-full bg-black text-white px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] hover:bg-black/85 transition-colors"
+          >
+            EXPLORE LIVE DROPS →
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   const crumbs = [
     { name: "Home", path: "/" },

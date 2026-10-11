@@ -20,6 +20,9 @@ const SORT_OPTIONS: DropdownOption[] = [
 ];
 
 function EditorialGridCard({ product }: { product: Product }) {
+  if (product.isSoldOut || (product as { isArchived?: boolean }).isArchived) {
+    return null;
+  }
   const [activeIdx, setActiveIdx] = useState(0);
   const timerRef = useRef<number | null>(null);
   const imageList = product.images && product.images.length > 0 ? product.images : [product.image];
@@ -300,7 +303,9 @@ export default function CategoryPageClient({
   }, [products]);
 
   const filteredAndSortedProducts = useMemo(() => {
-    let result = [...products];
+    let result = products.filter(
+      (p) => !p.isSoldOut && !(p as { isArchived?: boolean }).isArchived
+    );
 
     if (selectedMaxPrice < maxCatalogPrice) {
       result = result.filter((p) => p.price <= selectedMaxPrice);

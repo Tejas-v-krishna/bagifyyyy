@@ -31,6 +31,9 @@ export default function ShowcaseCard({
   product: ShowcaseCardProduct;
   tone?: "light" | "dark";
 }) {
+  if (product.isSoldOut || (product as { isArchived?: boolean }).isArchived) {
+    return null;
+  }
   const [activeIdx, setActiveIdx] = useState(0);
   const timerRef = useRef<number | null>(null);
   const dark = tone === "dark";

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { canonicalCategory } from '@/lib/categories';
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
 import { updateProductSubcategory } from '@/lib/subcategories';
+import { revalidatePath } from 'next/cache';
 
 type ProductPatchBody = {
   name?: unknown;
@@ -161,6 +162,12 @@ export async function PATCH(
       }
     }
 
+    try {
+      revalidatePath('/', 'layout');
+    } catch {
+      // Best-effort cache invalidation
+    }
+
     return NextResponse.json(product);
   } catch (error) {
     console.error('Error updating product:', error);
@@ -181,6 +188,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
     await prisma.product.delete({ where: { id } });
+
+    try {
+      revalidatePath('/', 'layout');
+    } catch {
+      // Best-effort cache invalidation
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting product:', error);
