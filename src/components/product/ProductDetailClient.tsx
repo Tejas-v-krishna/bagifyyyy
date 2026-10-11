@@ -257,10 +257,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         {/* ── Main Grid: Gallery (left) + Buy panel (right) ─────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,400px)] gap-10 xl:gap-16 items-start">
 
-          {/* ── LEFT: Gallery ─────────────────────────────────────────────── */}
-          <div className="min-w-0 pb-8">
+          {/* ── LEFT: Gallery (Image itself is the card) ───────────────────── */}
+          <div className="min-w-0 pb-8 p-1 sm:p-2">
             <div
-              className="relative h-[58vh] w-full overflow-hidden rounded-lg bg-[#F2F2F2] touch-pan-y select-none sm:h-[64vh] lg:h-[74vh]"
+              className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full overflow-hidden rounded-2xl bg-[#e9e9ec] touch-pan-y select-none shadow-xs"
               onTouchStart={(e) => {
                 touchStartX.current = e.touches[0]?.clientX ?? null;
               }}
@@ -278,10 +278,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 <AnimatePresence initial={false} mode="popLayout">
                   <motion.div
                     key={activeImageIndex}
-                    initial={{ opacity: 0, x: 48 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -48 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     className="absolute inset-0"
                     drag={productImages.length > 1 ? "x" : false}
                     dragConstraints={{ left: 0, right: 0 }}
@@ -299,7 +299,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       priority
                       draggable={false}
                       sizes="(max-width: 1023px) 100vw, 60vw"
-                      className={`object-contain object-center pointer-events-none transition-all ${
+                      className={`object-cover object-center pointer-events-none transition-all duration-300 ${
                         product.isSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                       }`}
                     />
