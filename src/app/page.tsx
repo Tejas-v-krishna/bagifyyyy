@@ -141,10 +141,13 @@ export default async function Home() {
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center contrast-[1.08]"
+              className="object-cover object-center contrast-[1.08] transition-transform duration-500 scale-[0.76] -translate-y-3 sm:scale-100 sm:translate-y-0"
             />
+            {/* Atmospheric vignette so scaled mobile photo edges seamlessly dissolve into black */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,black_95%)] opacity-80 sm:opacity-20 pointer-events-none" />
+
             {/* Soft atmospheric gradient fading down towards ticker */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
 
             {/* Hero shopping cue: first-time visitors learn this is a thrift
                 store and can buy right away. Copy editable via Sanity hero. */}
