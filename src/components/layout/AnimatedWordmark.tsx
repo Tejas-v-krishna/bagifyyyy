@@ -15,6 +15,7 @@ interface AnimatedWordmarkProps {
  */
 export default function AnimatedWordmark({ className = '', staticClassName = '' }: AnimatedWordmarkProps) {
   const [playing, setPlaying] = useState(false);
+  const [imgSrc, setImgSrc] = useState('/bagifyyyy-wordmark.webp');
   const [reducedMotion] = useState(
     () =>
       typeof window !== 'undefined' &&
@@ -25,17 +26,17 @@ export default function AnimatedWordmark({ className = '', staticClassName = '' 
     <span className={`relative inline-block align-middle ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/bagifyyyy-wordmark.webp"
-        alt=""
-        aria-hidden="true"
+        src={imgSrc}
+        alt="BAGIFYYYY"
         width={640}
         height={166}
         draggable={false}
-        className={`block h-auto w-full object-contain ${staticClassName}`}
+        onError={() => setImgSrc('/bagifyyyy-wordmark-black.png')}
+        className={`block h-auto w-full object-contain border-0 outline-none ${staticClassName}`}
       />
       {!reducedMotion && (
         <video
-          className={`wordmark-video-mask absolute inset-0 block h-full w-full object-contain transition-opacity duration-700 ${playing ? 'opacity-100' : 'opacity-0'}`}
+          className={`wordmark-video-mask absolute inset-0 block h-full w-full object-contain border-0 outline-none transition-opacity duration-700 ${playing ? 'opacity-100' : 'opacity-0'}`}
           src="/header-wordmark.mp4"
           aria-hidden="true"
           tabIndex={-1}

@@ -42,15 +42,20 @@ export async function POST(request: Request) {
     let finalBuffer = rawBuffer;
     let finalExt = IMAGE_EXTENSIONS[file.type] || '.jpg';
 
-    try {
-      finalBuffer = await sharp(rawBuffer)
-        .rotate()
-        .resize(400, 400, { fit: 'cover' })
-        .webp({ quality: 85 })
-        .toBuffer();
-      finalExt = '.webp';
-    } catch (sharpErr) {
-      console.warn('Avatar sharp compression fallback:', sharpErr);
+    if (file.type === 'image/gif') {
+      finalBuffer = rawBuffer;
+      finalExt = '.gif';
+    } else {
+      try {
+        finalBuffer = await sharp(rawBuffer)
+          .rotate()
+          .resize(400, 400, { fit: 'cover' })
+          .webp({ quality: 85 })
+          .toBuffer();
+        finalExt = '.webp';
+      } catch (sharpErr) {
+        console.warn('Avatar sharp compression fallback:', sharpErr);
+      }
     }
 
     const filename = `avatar_${user.id}_${Date.now()}_${crypto.randomBytes(6).toString('hex')}${finalExt}`;

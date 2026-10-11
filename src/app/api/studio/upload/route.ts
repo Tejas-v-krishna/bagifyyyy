@@ -10,6 +10,7 @@ const IMAGE_EXTENSIONS: Record<string, string> = {
   "image/png": ".png",
   "image/webp": ".webp",
   "image/avif": ".avif",
+  "image/gif": ".gif",
 };
 
 export async function POST(request: Request) {
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
 
     for (const file of filesToProcess) {
       if (!(file instanceof File) || !IMAGE_EXTENSIONS[file.type]) {
-        return NextResponse.json({ error: "Only JPEG, PNG, WebP, and AVIF images are allowed." }, { status: 400 });
+        return NextResponse.json({ error: "Only JPEG, PNG, WebP, AVIF, and GIF images are allowed." }, { status: 400 });
       }
       if (file.size > MAX_FILE_SIZE) {
         return NextResponse.json({ error: "Each image must be 10 MB or smaller." }, { status: 400 });
@@ -55,15 +56,20 @@ export async function POST(request: Request) {
       let buffer = Buffer.from(bytes);
       let ext = ".webp";
 
-      try {
-        buffer = await sharp(buffer)
-          .rotate()
-          .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-          .webp({ quality: 82, effort: 4 })
-          .toBuffer();
-      } catch (sharpErr) {
-        console.warn("Server sharp compression fallback:", sharpErr);
-        ext = IMAGE_EXTENSIONS[file.type] || ".jpg";
+      if (file.type === "image/gif") {
+        // Keep animated GIFs pristine without flattening frames
+        ext = ".gif";
+      } else {
+        try {
+          buffer = await sharp(buffer)
+            .rotate()
+            .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+            .webp({ quality: 82, effort: 4 })
+            .toBuffer();
+        } catch (sharpErr) {
+          console.warn("Server sharp compression fallback:", sharpErr);
+          ext = IMAGE_EXTENSIONS[file.type] || ".jpg";
+        }
       }
 
       // Clean filename

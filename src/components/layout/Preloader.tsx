@@ -95,10 +95,11 @@ export default function Preloader() {
               height={100}
               fetchPriority="high"
               draggable={false}
-              className="h-full w-full object-contain drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
+              onError={(e) => { e.currentTarget.src = '/bagifyyyy-wordmark-black.png'; }}
+              className="h-full w-full object-contain border-0 outline-none drop-shadow-[0_8px_24px_rgba(36,55,76,0.16)]"
             />
             <video
-              className="wordmark-video-mask absolute inset-0 block h-full w-full object-contain"
+              className="wordmark-video-mask absolute inset-0 block h-full w-full object-contain border-0 outline-none"
               src="/header-wordmark.mp4"
               aria-hidden="true"
               tabIndex={-1}

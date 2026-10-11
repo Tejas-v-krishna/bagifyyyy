@@ -15,8 +15,8 @@ const WEBP_QUALITY = 0.82;
  * with visually lossless 0.82 quality, ensuring instant loading even on slow 3G/4G.
  */
 async function compressImage(file: File): Promise<File> {
-  // If already an SVG, no bitmap compression needed
-  if (file.type === "image/svg+xml") return file;
+  // If already an SVG or animated GIF, keep untouched so animation and vector fidelity are preserved
+  if (file.type === "image/svg+xml" || file.type === "image/gif") return file;
 
   const renderToCompressedBlob = (
     source: CanvasImageSource,
