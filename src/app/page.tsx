@@ -108,7 +108,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-y2k-ice text-y2k-gunmetal font-sans w-full mx-auto overflow-x-clip">
       
       {/* 1. Editorial seasonal hero */}
-      <section className="flex h-auto min-h-0 sm:h-[calc(100svh-60px)] md:h-[calc(100svh-72px)] w-full flex-col overflow-hidden bg-[#f5f5f2] pt-3 md:pt-4">
+      <section className="flex h-[calc(100svh-60px)] w-full flex-col overflow-hidden bg-[#f5f5f2] pt-3 md:h-[calc(100svh-72px)] md:pt-4">
         <h1 className="sr-only">
            BAGIFYYYY (Bagify) - Y2K streetwear and one-off vintage pieces
         </h1>
@@ -134,7 +134,7 @@ export default async function Home() {
             </h2>
           </div>
 
-          <div className="relative min-h-[380px] h-[58svh] sm:h-auto sm:min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">
+          <div className="relative min-h-0 w-full flex-1 overflow-hidden bg-black" data-nav-theme="dark">
             <Image
               src={sanityImageUrl(sanityHero?.image, 2000) ?? "/hero-main.webp"}
               alt={sanityHero?.alt || "BAGIFYYYY 1-of-1 Thrift Archive"}
@@ -148,7 +148,7 @@ export default async function Home() {
 
             {/* Hero shopping cue: first-time visitors learn this is a thrift
                 store and can buy right away. Copy editable via Sanity hero. */}
-            <div className="absolute inset-x-4 bottom-[clamp(5.5rem,14vh,9rem)] sm:bottom-[clamp(7.5rem,19vh,12rem)] z-30 flex flex-col items-center text-center">
+            <div className="absolute inset-x-4 bottom-[clamp(7.5rem,19vh,12rem)] z-30 flex flex-col items-center text-center">
               <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
                 {sanityHero?.eyebrow || "Thrifted in India"}
               </p>
