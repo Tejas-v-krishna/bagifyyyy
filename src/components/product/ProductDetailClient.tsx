@@ -448,14 +448,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
           <aside className="min-w-0 lg:sticky lg:top-24">
-            {/* 1 of 1 unique piece pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/[0.04] border border-black/10 text-black mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
-              <span className="text-[9.5px] font-mono font-bold uppercase tracking-[0.16em] text-black/80">
-                1 of 1 Unique Piece · Only 1 Available
-              </span>
-            </div>
-
             <h1 className="text-[28px] sm:text-[34px] font-display font-bold leading-[1.08] tracking-[-0.03em] text-black uppercase">
               {product.name}
             </h1>
