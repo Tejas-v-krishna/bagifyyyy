@@ -449,70 +449,70 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
           <aside className="min-w-0 lg:sticky lg:top-24">
             {/* 1 of 1 unique piece pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/[0.04] border border-black/10 text-black mb-2.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9.5px] font-mono font-bold uppercase tracking-[0.16em]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/[0.04] border border-black/10 text-black mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
+              <span className="text-[9.5px] font-mono font-bold uppercase tracking-[0.16em] text-black/80">
                 1 of 1 Unique Piece · Only 1 Available
               </span>
             </div>
 
-            <h1 className="mt-1 text-[30px] sm:text-[36px] font-bold leading-[1.02] tracking-[-0.02em] text-y2k-gunmetal uppercase">
+            <h1 className="text-[28px] sm:text-[34px] font-display font-bold leading-[1.08] tracking-[-0.03em] text-black uppercase">
               {product.name}
             </h1>
 
             {/* Rating */}
-            <div className="mt-3 flex items-center gap-2">
+            <div className="mt-2.5 flex items-center gap-2">
               {hasRating ? (
                 <>
                   <RatingStars value={rating.average ?? 0} />
-                  <a href="#reviews" className="text-xs text-black/55 hover:text-black hover:underline transition-colors">
+                  <a href="#reviews" className="text-xs font-mono text-black/50 hover:text-black transition-colors">
                     {rating.average?.toFixed(1)} ({rating.count} {rating.count === 1 ? "review" : "reviews"})
                   </a>
                 </>
               ) : (
-                <a href="#reviews" className="text-xs text-black/55 hover:text-black hover:underline transition-colors">
-                  No reviews yet. Be the first
+                <a href="#reviews" className="text-xs text-black/45 hover:text-black transition-colors">
+                  No reviews yet. Be the first to review
                 </a>
               )}
             </div>
 
             {/* Price */}
-            <div className="mt-5 flex items-baseline gap-3">
-              <p className="text-[26px] font-bold tracking-[-0.02em] text-y2k-gunmetal">
+            <div className="mt-4 flex items-baseline gap-3">
+              <p className="text-[26px] sm:text-[28px] font-mono font-bold tracking-tight text-black">
                 ₹{product.price.toLocaleString("en-IN")}
               </p>
               {product.compareAtPrice != null && product.compareAtPrice > product.price && (
-                <p className="text-base text-black/35 line-through">
+                <p className="text-sm font-mono text-black/35 line-through">
                   ₹{product.compareAtPrice.toLocaleString("en-IN")}
                 </p>
               )}
             </div>
 
-            {/* 1 of 1 uniqueness guarantee note */}
-            <div className="mt-4 p-3.5 rounded-xl bg-[#f8f8f9] border border-black/[0.08] flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center shrink-0 text-base select-none">
-                ✨
+            {/* Authentic 1-of-1 Piece Guarantee Card (Minimalist editorial design) */}
+            <div className="mt-5 rounded-xl border border-black/10 bg-[#f7f7f5] p-4 text-black">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-black/8">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
+                  Authentic 1-of-1 Piece
+                </span>
+                <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-black/45">
+                  Single Original
+                </span>
               </div>
-              <div className="min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-tight text-black leading-snug">
-                  Authentic 1-of-1 Thrift Piece
-                </p>
-                <p className="text-[10px] font-mono text-black/60 tracking-[0.02em] mt-0.5 leading-relaxed">
-                  Only 1 piece in stock. Every item on BAGIFY is an authentic single-piece original. Once purchased, it will never be restocked.
-                </p>
-              </div>
+              <p className="text-[11px] text-black/60 leading-relaxed font-sans">
+                Only 1 piece exists in inventory. Once purchased, this item will never be restocked.
+              </p>
             </div>
 
             {selectionError && (
-              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-600" role="alert">
+              <p className="mt-4 text-[10px] font-mono font-bold uppercase tracking-[0.1em] text-red-600" role="alert">
                 {selectionError}
               </p>
             )}
 
             {/* Sizes: Only shown when 2 or more sizes are available */}
             {product.sizes.length > 1 && (
-              <div className="mt-7">
-                <div className="mb-3 flex items-center justify-between">
+              <div className="mt-6">
+                <div className="mb-2.5 flex items-center justify-between">
                   <p className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
                     Select size{selectedSize ? <span className="text-black/45">: {selectedSize}</span> : null}
                   </p>
@@ -527,12 +527,12 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         type="button"
                         onClick={() => handleSelectSize(size)}
                         aria-pressed={selected}
-                        className={`min-h-10 min-w-10 cursor-pointer border px-3 text-[11px] font-mono font-bold uppercase tracking-[0.08em] transition-colors ${
+                        className={`min-h-10 min-w-10 cursor-pointer rounded-lg border px-3 text-[11px] font-mono font-bold uppercase tracking-[0.08em] transition-colors ${
                           selected
                             ? "border-black bg-black text-white"
                             : live
                               ? "border-black/15 bg-white text-black hover:border-black"
-                              : "border-black/10 bg-transparent text-black/30 line-through"
+                              : "border-black/10 bg-transparent text-black/25 line-through"
                         }`}
                       >
                         {size}
@@ -543,10 +543,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
-            {/* Quantity + CTA */}
+            {/* CTA + Action area */}
             {product.isSoldOut ? (
-              <div className="mt-7 space-y-4">
-                <div className="p-4 rounded-xl bg-black/[0.04] border border-black/15 text-center space-y-1.5 backdrop-blur-xs">
+              <div className="mt-6 space-y-4">
+                <div className="p-4 rounded-xl bg-black/[0.04] border border-black/10 text-center space-y-1.5">
                   <span className="inline-flex items-center gap-1.5 bg-black text-white text-[9.5px] font-mono font-bold uppercase tracking-[0.16em] px-3 py-1 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                     Somebody bought this
@@ -561,12 +561,12 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 <NotifyMeSection productId={product.id} />
               </div>
             ) : isHeld ? (
-              <div className="mt-7 flex items-center gap-2">
+              <div className="mt-6 flex items-center gap-2.5">
                 {heldByYou ? (
                   <Button
                     onClick={openCart}
                     variant="dark"
-                    className="flex-1 text-[10.5px] uppercase tracking-[0.16em]"
+                    className="flex-1 text-[11px] uppercase tracking-[0.16em]"
                   >
                     <div className="flex items-center gap-2">
                       <Check className="w-3.5 h-3.5 text-white" />
@@ -578,7 +578,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   <button
                     type="button"
                     disabled
-                    className="flex-1 rounded-full border border-black/10 bg-black/[0.03] text-black/40 px-5 py-3 text-[10.5px] font-medium uppercase tracking-[0.16em] flex items-center justify-between cursor-not-allowed"
+                    className="flex-1 rounded-full border border-black/10 bg-black/[0.03] text-black/40 px-5 py-3 text-[10.5px] font-mono font-bold uppercase tracking-[0.16em] flex items-center justify-between cursor-not-allowed"
                   >
                     <div className="flex items-center gap-2">
                       <Clock className="w-3.5 h-3.5 text-black/35" />
@@ -591,39 +591,34 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   type="button"
                   onClick={() => toggleItem(id)}
                   aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                  className="w-12 h-12 rounded-full border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0"
+                  className="w-12 h-12 rounded-full border border-black/15 bg-white flex items-center justify-center hover:border-black transition-colors cursor-pointer shrink-0 shadow-2xs active:scale-95"
                 >
                   <Heart
-                    className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
+                    className={`w-4 h-4 transition-colors ${wishlisted ? "fill-black text-black" : "text-black"}`}
                   />
                 </button>
               </div>
             ) : (
-              <div className="mt-7 flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <motion.div whileTap={{ scale: 0.96 }} className="relative flex-1">
+              <div className="mt-6 flex flex-col gap-3">
+                <div className="flex items-center gap-2.5">
+                  <motion.div whileTap={{ scale: 0.97 }} className="relative flex-1">
                     <Button
                       onClick={(e) => handleAddToCart(e)}
                       disabled={!canAddSelectedVariant}
-                      className={`w-full text-[10.5px] uppercase tracking-[0.18em] transition-all duration-300 relative ${
-                        addedAnimation
-                          ? "!bg-black !text-white scale-[1.01]"
-                          : "active:scale-[0.98]"
-                      }`}
+                      variant="dark"
+                      className="w-full text-[11px] uppercase tracking-[0.16em]"
                     >
                       <AnimatePresence mode="wait">
                         {addedAnimation ? (
                           <motion.span
                             key="added"
-                            initial={{ opacity: 0, scale: 0.85 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.85 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
                             className="flex items-center gap-2"
                           >
-                            <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
                             <span>ADDED TO BAG</span>
-                            <Check className="h-4 w-4 text-white stroke-[3] animate-bounce" aria-hidden="true" />
+                            <Check className="h-4 w-4 text-white stroke-[2.5]" aria-hidden="true" />
                           </motion.span>
                         ) : (
                           <motion.span
@@ -644,10 +639,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     <AnimatePresence>
                       {addedAnimation && (
                         <motion.div
-                          initial={{ opacity: 0, y: 0, scale: 0.7 }}
-                          animate={{ opacity: 1, y: -36, scale: 1 }}
-                          exit={{ opacity: 0, y: -50, scale: 0.8 }}
-                          transition={{ duration: 0.7, ease: "easeOut" }}
+                          initial={{ opacity: 0, y: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, y: -34, scale: 1 }}
+                          exit={{ opacity: 0, y: -48, scale: 0.8 }}
+                          transition={{ duration: 0.6, ease: "easeOut" }}
                           className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-0 z-30 flex items-center gap-1 rounded-full bg-black text-white px-2.5 py-0.5 text-[9px] font-mono font-bold shadow-md uppercase tracking-wider border border-white/20"
                         >
                           <span>+1 IN YOUR BAG</span>
@@ -659,10 +654,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     type="button"
                     onClick={() => toggleItem(id)}
                     aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                    className="w-[44px] h-[44px] rounded-full border border-y2k-gunmetal/20 flex items-center justify-center hover:border-y2k-gunmetal transition-colors cursor-pointer shrink-0 active:scale-90"
+                    className="w-12 h-12 rounded-full border border-black/15 bg-white flex items-center justify-center hover:border-black transition-colors cursor-pointer shrink-0 shadow-2xs active:scale-95"
                   >
                     <Heart
-                      className={`w-4 h-4 ${wishlisted ? "fill-y2k-gunmetal text-y2k-gunmetal" : "text-y2k-gunmetal"}`}
+                      className={`w-4 h-4 transition-colors ${wishlisted ? "fill-black text-black" : "text-black"}`}
                     />
                   </button>
                 </div>
@@ -670,22 +665,22 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             )}
 
             {/* Trust badges */}
-            <div className="mt-6 grid grid-cols-3 gap-2 border-y border-black/8 py-3.5">
-              <div className="flex flex-col items-center gap-1.5 text-center">
-                <Package className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
-                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/60 leading-tight">
+            <div className="mt-6 grid grid-cols-3 gap-2 border-y border-black/10 py-3">
+              <div className="flex flex-col items-center gap-1 text-center">
+                <Package className="w-3.5 h-3.5 text-black/50" aria-hidden="true" />
+                <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/70 leading-tight">
                   {product.isSoldOut ? "Somebody bought this" : "1 of 1 · Single piece"}
                 </span>
               </div>
-              <div className="flex flex-col items-center gap-1.5 text-center">
-                <Truck className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
-                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/45 leading-tight">
+              <div className="flex flex-col items-center gap-1 text-center border-x border-black/8 px-1">
+                <Truck className="w-3.5 h-3.5 text-black/50" aria-hidden="true" />
+                <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/70 leading-tight">
                   Ships in 24–48 hrs
                 </span>
               </div>
-              <div className="flex flex-col items-center gap-1.5 text-center">
-                <ShieldCheck className="w-3.5 h-3.5 text-black/40" aria-hidden="true" />
-                <span className="text-[8.5px] font-mono uppercase tracking-[0.12em] text-black/45 leading-tight">
+              <div className="flex flex-col items-center gap-1 text-center">
+                <ShieldCheck className="w-3.5 h-3.5 text-black/50" aria-hidden="true" />
+                <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/70 leading-tight">
                   Secure checkout
                 </span>
               </div>
@@ -694,22 +689,21 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             {/* Accordions */}
             <div className="mt-1">
               <Accordion title="Details & fit" defaultOpen>
-                <ul className="space-y-1.5 pt-0.5">
+                <ul className="space-y-1.5 pt-1">
                   {detailBullets.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-2 uppercase tracking-[0.06em] text-[11px] font-mono text-black/60">
-                      <span className="shrink-0 text-black/30 select-none" aria-hidden="true">—</span>
+                    <li key={i} className="flex items-start gap-2.5 uppercase tracking-[0.06em] text-[11px] font-mono text-black/70">
+                      <span className="shrink-0 text-black/35 select-none" aria-hidden="true">—</span>
                       <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
               </Accordion>
               <Accordion title="Shipping & returns">
-                <p className="text-[12px] leading-relaxed text-black/60">
+                <p className="text-[12px] leading-relaxed text-black/60 pt-1 font-sans">
                   Dispatched within 24–48 hours. Standard delivery across India takes 3–5 business
-                  days. All sales are final. Many pieces are one-off vintage or small-run, so check
-                  the measurements and photos before ordering.
+                  days. All sales are final. Each piece is a one-off authentic vintage original, so please review measurements and details before ordering.
                 </p>
-                <p className="mt-2.5 text-[11px] font-mono uppercase tracking-[0.08em] text-black/50">
+                <p className="mt-2 text-[10.5px] font-mono uppercase tracking-[0.08em] text-black/50">
                   <Link href="/shipping" className="underline underline-offset-4 hover:text-black transition-colors">
                     Full delivery details
                   </Link>
@@ -825,15 +819,21 @@ function Accordion({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-black/8">
+    <div className="border-b border-black/8 last:border-b-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full cursor-pointer items-center justify-between py-3.5 text-left"
+        className="flex w-full cursor-pointer items-center justify-between py-3.5 text-left group"
       >
-        <span className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-black/90">{title}</span>
-        <Plus className={`h-3.5 w-3.5 text-black/45 transition-transform duration-300 ${open ? "rotate-45" : ""}`} aria-hidden="true" />
+        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.14em] text-black group-hover:text-black/70 transition-colors">{title}</span>
+        <span className="flex h-5 w-5 items-center justify-center rounded-full text-black/50 group-hover:text-black transition-colors">
+          {open ? (
+            <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+          ) : (
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+          )}
+        </span>
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -841,10 +841,10 @@ function Accordion({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="pb-4 text-[12px] leading-[1.65] text-black/60">{children}</div>
+            <div className="pb-4 text-[12px] leading-[1.65] text-black/60 font-sans">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
