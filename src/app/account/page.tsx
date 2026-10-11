@@ -460,39 +460,33 @@ export default function AccountPage() {
         <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
+            className="inline-flex items-center gap-2 text-[10.5px] font-mono font-bold uppercase tracking-[0.16em] text-black/60 transition-colors hover:text-black"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to shop
           </Link>
-          <span className="hidden font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/35 sm:block">
-            {memberId} / CHROME CLUB
+          <span className="font-mono text-[10px] uppercase tracking-wider text-black/40">
+            {tier} Member
           </span>
         </div>
 
         {/* ── Page header ────────────────────────────────────────────────── */}
-        <header className="mb-10 flex flex-col justify-between gap-6 border-b border-black/10 pb-8 md:flex-row md:items-end">
+        <header className="mb-8 flex flex-col justify-between gap-4 border-b border-black/10 pb-6 md:flex-row md:items-end">
           <div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.24em] text-black/45">
-              Member account
-            </p>
-            <h1 className="font-microgramma text-[clamp(2.5rem,7vw,6.5rem)] font-bold uppercase leading-[0.86] tracking-[-0.05em] text-black">
-              Your account
+            <h1 className="font-display text-[32px] sm:text-[44px] lg:text-[52px] font-bold uppercase leading-[0.95] tracking-tight text-black">
+              Your Account
             </h1>
-            <p className="mt-5 max-w-lg text-sm leading-relaxed text-black/55">
-              Orders, saved pieces, addresses, and points in one place.
+            <p className="mt-2 text-xs sm:text-sm text-black/60">
+              Orders, saved pieces, addresses, and member points.
             </p>
           </div>
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-black/35 md:pb-1">
-            Signed in / {tier}
-          </span>
         </header>
 
-        {/* ── Identity & loyalty ────────────────────────────────────────── */}
-        <div className="mb-10 grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_0.75fr]">
-          {/* Member Profile */}
-          <section className="flex flex-col justify-between rounded-xl border border-black/10 bg-white p-5 sm:p-7">
-            <div className="flex items-center justify-between gap-3">
+        {/* ── Identity & Loyalty Overview ── */}
+        <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+          {/* Member Profile Card */}
+          <section className="flex flex-col justify-between rounded-2xl border border-black/10 bg-white p-5 sm:p-6 shadow-2xs">
+            <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3.5 min-w-0">
                 {user?.avatar ? (
                   <Image
@@ -504,96 +498,99 @@ export default function AccountPage() {
                     className="h-12 w-12 shrink-0 rounded-full border border-black/10 object-cover"
                   />
                 ) : (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-base font-bold text-white">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-2xs">
                     {user?.name ? user.name[0].toUpperCase() : "U"}
                   </div>
                 )}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h2 className="truncate font-microgramma text-base font-bold uppercase tracking-tight text-black sm:text-lg">
-                      {user?.name || "MEMBER"}
+                    <h2 className="truncate font-sans text-base sm:text-lg font-bold uppercase tracking-tight text-black">
+                      {user?.name || "Member"}
                     </h2>
                     {isAdmin && (
-                      <span className="bg-black px-1.5 py-0.5 text-[8px] font-black uppercase text-white">
-                        ADMIN
+                      <span className="rounded-full bg-black px-2 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider text-white">
+                        Admin
                       </span>
                     )}
                   </div>
-                  <p className="truncate text-[11px] text-black/50">{user?.email}</p>
+                  <p className="truncate text-xs font-mono text-black/50 mt-0.5">{user?.email}</p>
                 </div>
               </div>
 
               <button
                 onClick={handleSignOut}
-                className="inline-flex shrink-0 items-center gap-1.5 border border-black/15 bg-[#f5f5f2] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-black/60 transition-colors hover:border-black hover:text-black"
+                className="btn-bagify btn-bagify-light shrink-0 text-[10px] uppercase tracking-[0.14em] py-2 px-3.5 cursor-pointer"
               >
-                <LogOut className="w-3 h-3" />
-                <span>Sign Out</span>
+                <div className="flex items-center gap-1.5">
+                  <LogOut className="w-3 h-3" />
+                  <span>Sign Out</span>
+                </div>
               </button>
             </div>
 
             {isAdmin && (
-              <div className="mt-8 flex items-center justify-between border-t border-black/10 pt-4 text-xs">
-                <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/50">Studio portal</span>
+              <div className="mt-6 flex items-center justify-between border-t border-black/8 pt-3.5">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-black/60">Studio Portal</span>
                 <Link
                   href="/studio"
-                  className="inline-flex items-center gap-1.5 bg-black px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-black/75"
+                  className="btn-bagify btn-bagify-dark text-[9.5px] uppercase tracking-[0.14em] py-1.5 px-3"
                 >
-                  <span>Open Studio</span>
-                  <ExternalLink className="w-2.5 h-2.5" />
+                  <div className="flex items-center gap-1.5">
+                    <span>Open Studio</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </div>
                 </Link>
               </div>
             )}
           </section>
 
-          {/* Loyalty status */}
-          <section className="relative flex flex-col justify-between overflow-hidden rounded-xl bg-black p-5 text-white sm:p-7">
-            <div className="pointer-events-none absolute inset-0 opacity-20" aria-hidden="true">
-              <div className="absolute inset-x-7 top-1/2 border-t border-white/30" />
-              <div className="absolute bottom-7 left-1/2 top-7 border-l border-white/30" />
-            </div>
-            <div className="relative">
-              <div className="mb-10 flex items-center justify-between">
-                <span className="text-[9px] font-black uppercase tracking-[0.22em] text-white/55">
+          {/* Loyalty status Card */}
+          <section className="flex flex-col justify-between rounded-2xl border border-black/10 bg-[#f7f7f5] p-5 sm:p-6 text-black shadow-2xs">
+            <div>
+              <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-black/8">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
                   Chrome Club
                 </span>
-                <span className="border border-white/25 px-2 py-1 text-[8px] font-black uppercase tracking-[0.16em] text-white">
-                  {tier}
+                <span className="rounded-full border border-black/10 bg-black/[0.04] px-2.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-black">
+                  {tier} Tier
                 </span>
               </div>
 
-              <div className="mb-5 flex items-end justify-between gap-4">
-                <p className="font-microgramma text-4xl font-bold leading-none tracking-[-0.04em] text-white sm:text-5xl">
-                  {points} <span className="font-sans text-[10px] font-normal tracking-[0.16em] text-white/50">POINTS</span>
-                </p>
-              <button
-                type="button"
-                onClick={() => setActiveTab("loyalty")}
-                className="cursor-pointer text-[9px] font-bold uppercase tracking-[0.16em] text-white/65 underline underline-offset-4 transition-colors hover:text-white"
-              >
-                View perks
-              </button>
+              <div className="flex items-baseline justify-between gap-4 mb-3">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-3xl sm:text-4xl font-bold tracking-tight text-black">
+                    {points}
+                  </span>
+                  <span className="font-mono text-xs text-black/50 uppercase tracking-wider">
+                    Points
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("loyalty")}
+                  className="cursor-pointer text-[10px] font-mono font-bold uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 transition-colors"
+                >
+                  View Perks
+                </button>
               </div>
 
-              <div className="mb-2 h-1 w-full overflow-hidden bg-white/15">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/10 mb-2">
                 <div
-                  className="h-full bg-white transition-all duration-300"
+                  className="h-full bg-black transition-all duration-300 rounded-full"
                   style={{ width: `${tierProgress}%` }}
                 />
               </div>
 
-              <p className="text-[9px] uppercase tracking-[0.14em] text-white/50">
-                {pointsToNext > 0 ? `${pointsToNext} points to ${tierInfo.nextName}` : "Top tier"}
+              <p className="text-[10.5px] font-mono text-black/50">
+                {pointsToNext > 0 ? `${pointsToNext} points to ${tierInfo.nextName}` : "Top Tier Unlocked"}
               </p>
             </div>
-            <p className="relative mt-10 border-t border-white/15 pt-4 font-mono text-[8px] uppercase tracking-[0.2em] text-white/35">
-               Rewards / Early access / New pieces
-            </p>
           </section>
         </div>
 
-        {/* ── Minimalist segmented tabs ─────────────────────────────────── */}
-        <div className="mb-6 flex items-center gap-1 overflow-x-auto border-b border-black/10 pb-0 select-none" role="tablist" aria-label="Account sections">
+        {/* ── Segmented Navigation Tabs ─────────────────────────────────── */}
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto border-b border-black/10 pb-0 select-none scrollbar-none" role="tablist" aria-label="Account sections">
           {[
             { id: "orders", label: "Orders", count: orders.length },
             { id: "wishlist", label: "Saved", count: wishlistIds.length },
@@ -611,16 +608,16 @@ export default function AccountPage() {
                 aria-selected={isActive}
                 aria-controls={`account-panel-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as AccountTab)}
-                className={`flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-[10px] font-bold uppercase tracking-[0.16em] transition-colors sm:text-[11px] ${
+                className={`flex shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap border-b-2 px-3.5 py-3 text-xs font-mono font-bold uppercase tracking-[0.14em] transition-all ${
                   isActive
-                    ? "border-black bg-white text-black"
+                    ? "border-black text-black"
                     : "border-transparent text-black/40 hover:text-black"
                 }`}
               >
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className={`text-[8px] px-1 py-0.2 font-mono ${
-                    isActive ? "bg-black text-white" : "bg-black/10 text-black/60"
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                    isActive ? "bg-black text-white" : "bg-black/5 text-black/50"
                   }`}>
                     {tab.count}
                   </span>
