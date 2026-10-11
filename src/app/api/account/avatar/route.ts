@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { writeFile, mkdir, unlink } from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
+import sharp from 'sharp';
 import { prisma } from '@/lib/prisma';
 import { getAuthedUser } from '@/lib/userSession';
 
@@ -37,8 +38,23 @@ export async function POST(request: Request) {
     const avatarsDir = path.join(process.cwd(), 'public', 'uploads', 'avatars');
     await mkdir(avatarsDir, { recursive: true });
 
-    const filename = `avatar_${user.id}_${Date.now()}_${crypto.randomBytes(6).toString('hex')}${IMAGE_EXTENSIONS[file.type]}`;
-    await writeFile(path.join(avatarsDir, filename), Buffer.from(await file.arrayBuffer()));
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+    let finalBuffer = rawBuffer;
+    let finalExt = IMAGE_EXTENSIONS[file.type] || '.jpg';
+
+    try {
+      finalBuffer = await sharp(rawBuffer)
+        .rotate()
+        .resize(400, 400, { fit: 'cover' })
+        .webp({ quality: 85 })
+        .toBuffer();
+      finalExt = '.webp';
+    } catch (sharpErr) {
+      console.warn('Avatar sharp compression fallback:', sharpErr);
+    }
+
+    const filename = `avatar_${user.id}_${Date.now()}_${crypto.randomBytes(6).toString('hex')}${finalExt}`;
+    await writeFile(path.join(avatarsDir, filename), finalBuffer);
     const url = `/uploads/avatars/${filename}`;
 
     // Best-effort cleanup of the previous uploaded avatar (never touch remote URLs).

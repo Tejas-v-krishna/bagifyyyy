@@ -24,11 +24,12 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
-    qualities: [75, 100],
-    // Serve modern formats and cache optimized variants for a month; uploaded
-    // files get unique names so content never changes behind a URL.
+    qualities: [70, 75, 80, 85, 100],
+    // Serve modern formats (AVIF then WebP) and cache optimized variants for 30 days
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 86400,
+    minimumCacheTTL: 2592000,
+    deviceSizes: [360, 480, 640, 750, 828, 1080, 1200, 1600],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.unsplash.com" },

@@ -23,8 +23,10 @@
 # misc
 .DS_Store
 *.pem
-load_test_report.html
-*_report.html
+__pycache__/
+*load_test*.html
+*_report*.html
+load_test_report*.html
 
 # debug
 npm-debug.log*

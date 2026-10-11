@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import sharp from "sharp";
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -51,10 +52,21 @@ export async function POST(request: Request) {
 
     for (const file of filesToProcess) {
       const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      let buffer = Buffer.from(bytes);
+      let ext = ".webp";
+
+      try {
+        buffer = await sharp(buffer)
+          .rotate()
+          .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+          .webp({ quality: 82, effort: 4 })
+          .toBuffer();
+      } catch (sharpErr) {
+        console.warn("Server sharp compression fallback:", sharpErr);
+        ext = IMAGE_EXTENSIONS[file.type] || ".jpg";
+      }
 
       // Clean filename
-      const ext = IMAGE_EXTENSIONS[file.type];
       const cleanBaseName = path.basename(file.name, path.extname(file.name)).replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
       const uniqueFilename = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanBaseName}${ext}`;
 
