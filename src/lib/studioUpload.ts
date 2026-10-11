@@ -119,10 +119,25 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
     throw new Error("Only JPEG, PNG, WebP, AVIF, and GIF images are allowed.");
   }
 
-  // Shrink before sending: keeps Blob usage ~10x lower with no visible loss.
+  // Shrink before sending: keeps payload tiny (~150KB-250KB) with no visible loss.
   const compressed = await Promise.all(valid.map(compressImage));
 
-  // Preferred path: direct-to-Blob (works on Vercel, no size bottleneck).
+  // Primary path: /api/studio/upload (streams compressed images directly to Cloudflare R2 with $0 egress)
+  try {
+    const formData = new FormData();
+    compressed.forEach((file) => formData.append("files", file));
+
+    const res = await fetch("/api/studio/upload", { method: "POST", body: formData });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      const urls: string[] = data.urls || (data.url ? [data.url] : []);
+      if (urls.length > 0) return urls;
+    }
+  } catch (err) {
+    console.warn("Direct R2 / studio upload failed, trying fallback:", err);
+  }
+
+  // Fallback: direct-to-Blob (if Vercel Blob is configured)
   try {
     const blobs = await Promise.all(
       compressed.map((file) =>
@@ -134,18 +149,6 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
     );
     return blobs.map((b) => b.url);
   } catch {
-    // Fall through to the legacy local route below.
+    throw new Error("Failed to upload image from device.");
   }
-
-  // Fallback: legacy server-side route (local dev filesystem).
-  const formData = new FormData();
-  compressed.forEach((file) => formData.append("files", file));
-
-  const res = await fetch("/api/studio/upload", { method: "POST", body: formData });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Failed to upload image from device.");
-
-  const urls: string[] = data.urls || (data.url ? [data.url] : []);
-  if (urls.length === 0) throw new Error("Failed to upload image from device.");
-  return urls;
 }

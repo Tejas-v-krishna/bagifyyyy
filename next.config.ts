@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
     "@prisma/client",
     "@prisma/adapter-libsql",
     "@libsql/client",
+    "@aws-sdk/client-s3",
   ],
   // Barrel imports (lucide-react = hundreds of icons) resolve to only
   // the icons actually used, shrinking both server and client bundles.
@@ -46,6 +47,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.amazonaws.com" },
       { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
       { protocol: "https", hostname: "cdn.sanity.io" },
+      { protocol: "https", hostname: "**.r2.dev" },
+      { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },
     ],
   },
   async headers() {

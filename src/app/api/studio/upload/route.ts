@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
+import { isR2Configured, uploadToR2 } from '@/lib/r2';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const IMAGE_EXTENSIONS: Record<string, string> = {
@@ -45,9 +46,11 @@ export async function POST(request: Request) {
       }
     }
 
-    // Ensure uploads directory exists
+    const useR2 = isR2Configured();
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
+    if (!useR2) {
+      await mkdir(uploadsDir, { recursive: true });
+    }
 
     const uploadedUrls: string[] = [];
 
@@ -55,10 +58,12 @@ export async function POST(request: Request) {
       const bytes = await file.arrayBuffer();
       let buffer = Buffer.from(bytes);
       let ext = ".webp";
+      let contentType = "image/webp";
 
       if (file.type === "image/gif") {
         // Keep animated GIFs pristine without flattening frames
         ext = ".gif";
+        contentType = "image/gif";
       } else {
         try {
           buffer = await sharp(buffer)
@@ -69,6 +74,7 @@ export async function POST(request: Request) {
         } catch (sharpErr) {
           console.warn("Server sharp compression fallback:", sharpErr);
           ext = IMAGE_EXTENSIONS[file.type] || ".jpg";
+          contentType = file.type || "image/jpeg";
         }
       }
 
@@ -76,11 +82,19 @@ export async function POST(request: Request) {
       const cleanBaseName = path.basename(file.name, path.extname(file.name)).replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
       const uniqueFilename = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanBaseName}${ext}`;
 
-      const filePath = path.join(uploadsDir, uniqueFilename);
-      await writeFile(filePath, buffer);
-
-      const publicUrl = `/uploads/${uniqueFilename}`;
-      uploadedUrls.push(publicUrl);
+      if (useR2) {
+        const r2Url = await uploadToR2({
+          buffer,
+          key: uniqueFilename,
+          contentType,
+        });
+        uploadedUrls.push(r2Url);
+      } else {
+        const filePath = path.join(uploadsDir, uniqueFilename);
+        await writeFile(filePath, buffer);
+        const publicUrl = `/uploads/${uniqueFilename}`;
+        uploadedUrls.push(publicUrl);
+      }
     }
 
     return NextResponse.json({
