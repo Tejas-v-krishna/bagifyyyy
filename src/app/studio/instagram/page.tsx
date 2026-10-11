@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,7 +12,10 @@ import {
   ExternalLink,
   CheckCircle2,
   AlertCircle,
+  Upload,
+  Loader2,
 } from "lucide-react";
+import { uploadDeviceImages } from "@/lib/studioUpload";
 
 interface InstagramPostItem {
   id: string;
@@ -89,12 +92,45 @@ export default function StudioInstagramPage() {
     loadData();
   }, []);
 
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null);
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   const handlePostChange = (index: number, field: keyof InstagramPostItem, value: string) => {
     setPosts((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
+  };
+
+  const handleFileUpload = async (index: number, fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    const file = fileList[0];
+    setUploadingIdx(index);
+    setMessage(null);
+
+    try {
+      const urls = await uploadDeviceImages([file]);
+      if (urls.length > 0) {
+        handlePostChange(index, "url", urls[0]);
+        setMessage({
+          type: "success",
+          text: `Photo for Post 0${index + 1} uploaded & compressed successfully!`,
+        });
+        setTimeout(() => setMessage(null), 4000);
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Failed to upload photo from device.",
+      });
+    } finally {
+      setUploadingIdx(null);
+      if (fileInputRefs.current[index]) {
+        fileInputRefs.current[index]!.value = "";
+      }
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -211,33 +247,83 @@ export default function StudioInstagramPage() {
 
               {/* Image Preview & URL */}
               <div className="flex gap-4 mb-4">
-                <div className="w-24 h-24 shrink-0 bg-y2k-ice relative border border-y2k-gunmetal/10 overflow-hidden">
+                <div
+                  onClick={() => fileInputRefs.current[idx]?.click()}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                      handleFileUpload(idx, e.dataTransfer.files);
+                    }
+                  }}
+                  className="w-24 h-24 shrink-0 bg-y2k-ice relative border border-y2k-gunmetal/15 overflow-hidden cursor-pointer group transition-all hover:border-black"
+                  title="Click or drop image to upload from device"
+                >
                   <Image
                     src={post.url}
                     alt="Preview"
                     fill
                     loader={passthroughLoader}
                     unoptimized
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "/placeholder.jpg";
                     }}
                   />
-                  <div className="absolute top-1 right-1 bg-white/90 border border-y2k-gunmetal/10 p-1 text-y2k-gunmetal">
+                  <div className="absolute top-1 right-1 bg-white/90 border border-y2k-gunmetal/10 p-1 text-y2k-gunmetal z-10">
                     {post.type === "reel" ? <Film className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                   </div>
+
+                  {uploadingIdx === idx ? (
+                    <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-white text-[8px] font-mono font-bold uppercase gap-1 z-20">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Uploading</span>
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[8px] font-bold uppercase tracking-wider gap-1 z-20">
+                      <Upload className="w-4 h-4" />
+                      <span>Change</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex-1 space-y-3">
                   <div>
-                    <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
-                      Image / Thumbnail URL *
-                    </label>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60">
+                        Image / Thumbnail URL *
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRefs.current[idx]?.click()}
+                        disabled={uploadingIdx === idx}
+                        className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal hover:text-white bg-[#f5f5f2] hover:bg-black px-2.5 py-1 border border-y2k-gunmetal/20 transition-all cursor-pointer disabled:opacity-50"
+                      >
+                        {uploadingIdx === idx ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Upload className="w-3 h-3" />
+                        )}
+                        <span>{uploadingIdx === idx ? "Uploading…" : "Add From Device"}</span>
+                      </button>
+                    </div>
+
+                    <input
+                      ref={(el) => {
+                        fileInputRefs.current[idx] = el;
+                      }}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                      className="hidden"
+                      aria-label={`Upload image for post ${idx + 1}`}
+                      onChange={(e) => handleFileUpload(idx, e.target.files)}
+                    />
+
                     <input
                       type="text"
                       value={post.url}
                       onChange={(e) => handlePostChange(idx, "url", e.target.value)}
-                      placeholder="/assets/..."
+                      placeholder="/assets/... or https://..."
                       className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 text-y2k-gunmetal text-[11px] px-2.5 py-2 outline-none focus:border-y2k-gunmetal font-mono"
                     />
                   </div>

@@ -2,7 +2,7 @@
 
 import { upload } from "@vercel/blob/client";
 
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"];
 
 /** Long edge cap for studio uploads — plenty for 3:4 product shots. */
 const MAX_DIMENSION = 1600;
@@ -116,7 +116,7 @@ async function compressImage(file: File): Promise<File> {
 export async function uploadDeviceImages(files: File[]): Promise<string[]> {
   const valid = files.filter((f) => f instanceof File && IMAGE_TYPES.includes(f.type));
   if (valid.length === 0) {
-    throw new Error("Only JPEG, PNG, WebP, and AVIF images are allowed.");
+    throw new Error("Only JPEG, PNG, WebP, AVIF, and GIF images are allowed.");
   }
 
   // Shrink before sending: keeps Blob usage ~10x lower with no visible loss.
