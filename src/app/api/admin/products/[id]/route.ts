@@ -135,6 +135,32 @@ export async function PATCH(
       },
     });
 
+    // If marked Sold Out, zero out variants so stock checks immediately fail/hide the piece.
+    // If marked In Stock, ensure at least 1 stock exists so the product can be purchased.
+    if (isSoldOut !== undefined) {
+      if (Boolean(isSoldOut)) {
+        await prisma.variant.updateMany({
+          where: { productId: id },
+          data: { stock: 0 },
+        });
+      } else {
+        const variants = await prisma.variant.findMany({ where: { productId: id } });
+        if (variants.length === 0) {
+          await prisma.variant.create({
+            data: { productId: id, color: "Default", size: "One Size", stock: 1 },
+          });
+        } else {
+          const hasPositiveStock = variants.some((v) => v.stock > 0);
+          if (!hasPositiveStock) {
+            await prisma.variant.update({
+              where: { id: variants[0].id },
+              data: { stock: 1 },
+            });
+          }
+        }
+      }
+    }
+
     if (subcategory !== undefined) {
       await updateProductSubcategory(
         id,
@@ -164,6 +190,13 @@ export async function PATCH(
 
     try {
       revalidatePath('/', 'layout');
+      revalidatePath('/products');
+      revalidatePath(`/product/${id}`);
+      revalidatePath('/new-arrivals');
+      revalidatePath('/curated-grails');
+      if (product.category) {
+        revalidatePath(`/${product.category}`);
+      }
     } catch {
       // Best-effort cache invalidation
     }

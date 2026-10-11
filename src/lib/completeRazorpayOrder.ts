@@ -154,6 +154,9 @@ export async function completeRazorpayOrder(input: {
 
   try {
     revalidatePath('/', 'layout');
+    revalidatePath('/products');
+    revalidatePath('/new-arrivals');
+    revalidatePath('/curated-grails');
   } catch (err) {
     console.warn('Failed to revalidate path after order completion:', err);
   }

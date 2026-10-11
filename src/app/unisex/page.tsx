@@ -5,9 +5,8 @@ import CategoryPageSkeleton from "@/components/product/CategoryPageSkeleton";
 import { collectionMetadata } from "@/lib/seo";
 import { queryProducts } from "@/lib/products";
 
-// Static shell + 30s ISR: navbar clicks land on cached HTML instantly instead
-// of waiting on a fresh remote DB query every time.
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = collectionMetadata({
   title: "Unisex",

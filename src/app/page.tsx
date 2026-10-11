@@ -11,9 +11,8 @@ import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
 import VintageArchiveSection from "@/components/ui/VintageArchiveSection";
 import DropCountdown from "@/components/ui/DropCountdown";
 import Footer from "@/components/layout/Footer";
-// Cached HTML keeps first loads instant in production; sections refresh at
-// most 30s behind it. Stock truth is enforced at cart/checkout anyway.
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const productInclude = { images: { orderBy: { position: 'asc' } }, variants: true } as const;
 

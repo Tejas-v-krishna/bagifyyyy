@@ -75,6 +75,19 @@ export async function POST(request: Request) {
       await updateProductSubcategory(product.id, String(subcategory));
     }
 
+    try {
+      const { revalidatePath } = await import('next/cache');
+      revalidatePath('/', 'layout');
+      revalidatePath('/products');
+      revalidatePath('/new-arrivals');
+      revalidatePath('/curated-grails');
+      if (product.category) {
+        revalidatePath(`/${product.category}`);
+      }
+    } catch {
+      // Best-effort cache invalidation
+    }
+
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error('Error creating product:', error);

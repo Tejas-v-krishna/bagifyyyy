@@ -5,8 +5,8 @@ import CategoryPageSkeleton from "@/components/product/CategoryPageSkeleton";
 import { collectionMetadata } from "@/lib/seo";
 import { queryProducts } from "@/lib/products";
 
-// Static shell + 30s ISR: cached HTML instead of a fresh remote DB query.
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = collectionMetadata({
   title: "Hard-to-find pieces",
