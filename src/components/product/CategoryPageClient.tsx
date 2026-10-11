@@ -383,8 +383,6 @@ export default function CategoryPageClient({
   };
 
   const hasActiveFilters = Boolean(
-    sizeFilter ||
-    colorFilter ||
     categoryFilter ||
     subcategoryFilter ||
     selectedMaxPrice < maxCatalogPrice ||
@@ -504,12 +502,12 @@ export default function CategoryPageClient({
                 isOpen={isFilterOpen}
                 onToggle={() => setIsFilterOpen((prev) => !prev)}
                 onClose={() => setIsFilterOpen(false)}
-                availableColors={DEFAULT_COLOR_SWATCHES}
-                selectedColor={colorFilter}
-                onColorChange={setColorFilter}
-                availableSizes={contextualSizes}
-                selectedSize={sizeFilter}
-                onSizeChange={setSizeFilter}
+                availableColors={[]}
+                selectedColor=""
+                onColorChange={() => {}}
+                availableSizes={[]}
+                selectedSize=""
+                onSizeChange={() => {}}
                 minPrice={0}
                 maxPrice={maxCatalogPrice}
                 selectedMaxPrice={selectedMaxPrice}

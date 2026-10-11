@@ -237,88 +237,10 @@ export default function FilterPopover({
 
               {/* Scrollable Filter Body */}
               <div className="p-5 overflow-y-auto space-y-6 text-[13px] overscroll-contain">
-              {/* ── Section 1: Color ── */}
-              {availableColors.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[10.5px] font-semibold tracking-[0.14em] uppercase text-black/50">
-                    <span>01 // COLOR</span>
-                    <span className="text-black/75 normal-case font-medium text-[11px] tracking-normal">
-                      {selectedColorObj ? selectedColorObj.name : "All Tones"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2.5 flex-wrap pt-0.5">
-                    {availableColors.map((color) => {
-                      const isSelected = selectedColor.toLowerCase() === color.id.toLowerCase();
-                      const isLight =
-                        color.id === "white" ||
-                        color.id === "bone" ||
-                        color.hex.toLowerCase() === "#ffffff" ||
-                        color.hex.toLowerCase() === "#e8e5dc";
-
-                      return (
-                        <button
-                          key={color.id}
-                          type="button"
-                          onClick={() => onColorChange(isSelected ? "" : color.id)}
-                          title={`${color.name}${isSelected ? " (selected)" : ""}`}
-                          aria-label={`Filter by color: ${color.name}`}
-                          aria-pressed={isSelected}
-                          className={`relative w-6 h-6 sm:w-6.5 sm:h-6.5 rounded-full border transition-all duration-150 cursor-pointer flex items-center justify-center ${
-                            isSelected
-                              ? "ring-2 ring-black ring-offset-2 ring-offset-[#f5f5f2] border-black scale-110 shadow-xs"
-                              : "border-black/20 hover:border-black/50 hover:scale-105"
-                          }`}
-                          style={{ backgroundColor: color.hex }}
-                        >
-                          {isSelected && (
-                            <Check
-                              className={`w-3 h-3 ${isLight ? "text-black" : "text-white"}`}
-                              aria-hidden="true"
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Section 2: Size ── */}
-              {availableSizes.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[10.5px] font-semibold tracking-[0.14em] uppercase text-black/50">
-                    <span>02 // SIZE</span>
-                    <span className="text-black/75 normal-case font-medium text-[11px] tracking-normal">
-                      {selectedSize ? `Size: ${selectedSize}` : "All Sizes"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                    {availableSizes.map((size) => {
-                      const isSelected = selectedSize.toLowerCase() === size.toLowerCase();
-                      return (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => onSizeChange(isSelected ? "" : size)}
-                          aria-pressed={isSelected}
-                          className={`min-w-[38px] px-2.5 py-1.5 text-[11.5px] tracking-tight rounded-lg border transition-all duration-150 cursor-pointer text-center ${
-                            isSelected
-                              ? "bg-black text-white border-black font-semibold shadow-xs scale-[1.02]"
-                              : "bg-white/70 text-black/80 border-black/12 hover:border-black/35 hover:bg-white hover:text-black font-medium"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Section 3: Shop by price ── */}
+              {/* ── Section 1: Shop by price ── */}
               <div className="space-y-2.5 pt-0.5">
                 <div className="flex items-center justify-between text-[10.5px] font-semibold tracking-[0.14em] uppercase text-black/50">
-                  <span>03 // PRICE LIMIT</span>
+                  <span>01 // PRICE LIMIT</span>
                   <span className="font-mono text-black text-[11.5px] font-medium tracking-tight">
                     {selectedMaxPrice < maxPrice
                       ? `Up to ₹${selectedMaxPrice.toLocaleString("en-IN")}`
@@ -343,11 +265,11 @@ export default function FilterPopover({
                 </div>
               </div>
 
-              {/* ── Section 4: Category ── */}
+              {/* ── Section 2: Category ── */}
               {availableCategories.length > 0 && (
                 <div className="space-y-2 pt-0.5">
                   <div className="flex items-center justify-between text-[10.5px] font-semibold tracking-[0.14em] uppercase text-black/50">
-                    <span>04 // CATEGORY</span>
+                    <span>02 // CATEGORY</span>
                     <span className="text-black/75 normal-case font-medium text-[11px] tracking-normal">
                       {selectedCategoryObj ? selectedCategoryObj.label : "All"}
                     </span>
