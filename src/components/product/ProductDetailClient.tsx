@@ -184,7 +184,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
       const now = Date.now();
       const target = new Date(reservationExpiresAt).getTime();
       if (target - now <= 0) {
-        // 5-minute hold expired! Return piece back to the shop
+        // 2-minute hold expired! Return piece back to the shop
         setIsReservedInCheckout(false);
         setHeldByYou(false);
         setReservationExpiresAt(null);
@@ -221,7 +221,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     // Trigger joyful Piñata confetti burst right at the user's click location!
     triggerPinataBurst(e);
 
-    const expiryTime = Date.now() + 5 * 60 * 1000;
+    const expiryTime = Date.now() + 2 * 60 * 1000;
     addItem({
       id: product.id,
       name: product.name,
@@ -234,7 +234,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
       addedAt: Date.now(),
       holdExpiresAt: expiryTime,
     });
-    // Immediately trigger the 5-minute hold and live countdown right when user clicks
+    // Immediately trigger the 2-minute hold and live countdown right when user clicks
     setIdleExpired(false);
     setIsReservedInCheckout(true);
     setHeldByYou(true);
@@ -417,7 +417,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
-            {/* Live 5-Minute Hold Countdown Banner under the images */}
+            {/* Live 2-Minute Hold Countdown Banner under the images */}
             {isReservedInCheckout && !product.isSoldOut && (
               <div className="mt-4 w-full rounded-xl border border-[#e4dec8] bg-[#fbf9f4] p-3.5 sm:p-4 text-black shadow-2xs">
                 <div className="flex items-center justify-between gap-3">
@@ -432,13 +432,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       </h4>
                       <p className="text-[10.5px] text-black/55 font-normal leading-tight mt-0.5">
                         {heldByYou
-                          ? "Held for 5 minutes · Complete checkout before 00:00"
-                          : "Held for 5 minutes · Returns to store if session expires"}
+                          ? "Held for 2 minutes · Complete checkout before 00:00"
+                          : "Held for 2 minutes · Returns to store if session expires"}
                       </p>
                     </div>
                   </div>
 
-                  {/* Digital Clock Box: 05:00 */}
+                  {/* Digital Clock Box: 02:00 */}
                   <div className="flex items-center font-mono font-bold text-xs sm:text-sm bg-black/[0.04] border border-black/10 text-black px-3 py-1 rounded-md tracking-widest shadow-2xs shrink-0 select-none">
                     <span>{countdownStr}</span>
                   </div>
@@ -449,7 +449,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   <div
                     className="bg-[#cda434]/70 h-full transition-all duration-1000 ease-linear rounded-full"
                     style={{
-                      width: `${Math.min(100, Math.max(0, (msLeft / (5 * 60 * 1000)) * 100))}%`,
+                      width: `${Math.min(100, Math.max(0, (msLeft / (2 * 60 * 1000)) * 100))}%`,
                     }}
                   />
                 </div>
@@ -467,7 +467,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         Reservation Expired (Idle) · Piece Back In Store
                       </p>
                       <p className="text-[10.5px] text-black/55 mt-0.5 leading-snug">
-                        Since the 5-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
+                        Since the 2-minute hold reached 00:00 without checkout, this 1-of-1 piece has returned to store stock and is available to add again.
                       </p>
                     </div>
                   </div>

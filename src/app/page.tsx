@@ -181,7 +181,7 @@ export default async function Home() {
                         "AUTHENTIC SINGLE PIECES",
                         "NO RESTOCKS · ONCE GONE IT'S GONE",
                         "CURATED THRIFT ARCHIVE",
-                        "5-MINUTE BAG RESERVATION",
+                        "2-MINUTE BAG RESERVATION",
                         "GENUINE 1-OF-1 STREETWEAR",
                         "USE CODE FREESHIP FOR FREE DELIVERY",
                       ].map((text, idx) => (

@@ -15,8 +15,8 @@ const ACTIVITY_EVENTS: (keyof WindowEventMap)[] = ["pointerdown", "keydown", "to
 
 /**
  * Keeps the shopper's stock holds honest:
- * - 5-minute hold countdown tracked per piece
- * - when 5 minutes expire without buying, the piece returns to the shop
+ * - 2-minute hold countdown tracked per piece
+ * - when 2 minutes expire without buying, the piece returns to the shop
  * - 3 minutes without any interaction releases pieces back to the shop
  * - checkout flow is exempt while actively paying
  */
@@ -69,10 +69,10 @@ export default function CartHoldSync() {
       // Never release while the shopper is paying.
       const onCheckout = pathnameRef.current?.startsWith("/checkout") ?? false;
       if (!onCheckout) {
-        // 1. Check if any piece reached its 5-minute hold expiry
+        // 1. Check if any piece reached its 2-minute hold expiry
         const expired = useCartStore.getState().removeExpiredItems();
         if (expired) {
-          showToast("5-minute hold expired · piece returned to the shop");
+          showToast("2-minute hold expired · piece returned to the shop");
           return;
         }
 

@@ -48,7 +48,7 @@ const loyaltyTiers: Record<LoyaltyTier, { minimum: number; next: number | null; 
     multiplier: "1.0x",
     perks: [
       "Early drop access on all new vintage releases",
-      "5-minute bag reservation lock at checkout",
+      "2-minute bag reservation lock at checkout",
       "Standard points accumulation (10 PTS per ₹100)",
       "Digital order tracking & archive receipt storage",
     ],

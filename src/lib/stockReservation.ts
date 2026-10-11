@@ -4,7 +4,7 @@ export const RESERVATION_HOLD_MINUTES = 7;
 export const RESERVATION_HOLD_MS = RESERVATION_HOLD_MINUTES * 60 * 1000;
 
 /** How long a piece stays held for whoever put it in their bag. */
-export const CART_HOLD_MINUTES = 5;
+export const CART_HOLD_MINUTES = 2;
 
 export type CartHoldStatus = 'held' | 'blocked' | 'unavailable';
 
@@ -36,7 +36,7 @@ export async function syncCartReservations(params: {
       await tx.stockReservation.deleteMany({ where: { expiresAt: { lte: now } } });
 
       // Preserve existing unexpired hold expiry times for this session so the
-      // 5-minute countdown doesn't get continually reset on every background tick.
+      // 2-minute countdown doesn't get continually reset on every background tick.
       const existingHolds = await tx.stockReservation.findMany({
         where: { sessionId, expiresAt: { gt: now } },
       });
@@ -95,7 +95,7 @@ export async function syncCartReservations(params: {
           continue;
         }
 
-        // Use preserved expiry if already held, otherwise start a fresh 5-minute hold
+        // Use preserved expiry if already held, otherwise start a fresh 2-minute hold
         const itemExpiresAt = existingExpiryByVariant.get(variant.id) || expiresAt;
 
         await tx.stockReservation.create({

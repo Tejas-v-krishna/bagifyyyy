@@ -31,7 +31,7 @@ export type CartItem = {
   bundleSize?: number;
   /** Timestamp when this piece was added to the bag. */
   addedAt?: number;
-  /** When the 5-minute hold expires (ms epoch). */
+  /** When the 2-minute hold expires (ms epoch). */
   holdExpiresAt?: number;
   /** Whether the product is sold out / bought by someone else. */
   isSoldOut?: boolean;
@@ -155,7 +155,7 @@ export const useCartStore = create<CartStore>()(
           const safeQty = Math.max(1, Math.min(MAX_QTY, Math.round(item.quantity) || 1));
           const itemKey = getItemKey(item);
           const now = Date.now();
-          const holdExpiry = item.holdExpiresAt || (now + 5 * 60 * 1000);
+          const holdExpiry = item.holdExpiresAt || (now + 2 * 60 * 1000);
           const fullItem: CartItem = {
             ...item,
             quantity: safeQty,
