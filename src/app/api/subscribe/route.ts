@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       console.warn('Welcome email warning:', emailErr);
     }
 
-    return NextResponse.json({ success: true, subscriber, message: 'Subscribed! Check your inbox for 10% coupon.' }, { status: 201 });
+    return NextResponse.json({ success: true, subscriber, message: 'Subscribed! Check your inbox for free shipping coupon.' }, { status: 201 });
   } catch (error) {
     console.error('Error creating subscriber:', error);
     if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2002') {

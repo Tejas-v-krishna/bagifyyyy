@@ -213,13 +213,13 @@ export function generateDropAnnouncementEmailHtml(options: DropCampaignOptions):
                   ✦ SUBSCRIBER EXCLUSIVE ✦
                 </p>
                 <h3 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 900; text-transform: uppercase;">
-                  GET EXTRA 10% OFF YOUR ORDER
+                  FREE SHIPPING ON YOUR ORDER
                 </h3>
                 <p style="margin: 0 0 16px 0; font-size: 13px; color: #cbd5e1;">
-                  Use code <b style="background-color: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; color: #ffffff; letter-spacing: 1px;">BAGIFY10</b> at checkout
+                  Use code <b style="background-color: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; color: #ffffff; letter-spacing: 1px;">FREESHIP</b> at checkout
                 </p>
                 <a href="${appUrl}/products" style="display: inline-block; background-color: #facc15; color: #0C2340; text-decoration: none; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 12px 24px; border-radius: 4px;">
-                  CLAIM YOUR DISCOUNT →
+                  CLAIM FREE SHIPPING →
                 </a>
               </td>
             </tr>
@@ -361,14 +361,14 @@ export function generateWelcomeEmailHtml(
       <tr>
         <td style="padding: 32px 24px; text-align: center;">
           <h2 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 800; color: #0C2340; text-transform: uppercase;">
-            HERE IS 10% OFF YOUR FIRST DROP
+            HERE IS FREE SHIPPING ON YOUR FIRST DROP
           </h2>
           <p style="margin: 0 0 20px 0; font-size: 13px; color: #64748b;">
-            Use this code at checkout to claim your member welcome discount:
+            Use this code at checkout to claim free shipping on your first order:
           </p>
 
           <div style="display: inline-block; background-color: #f8fafc; border: 2px dashed #0C2340; padding: 12px 24px; border-radius: 6px; margin-bottom: 24px;">
-            <span style="font-size: 20px; font-weight: 900; letter-spacing: 3px; color: #0C2340;">BAGIFY10</span>
+            <span style="font-size: 20px; font-weight: 900; letter-spacing: 3px; color: #0C2340;">FREESHIP</span>
           </div>
 
           <div>

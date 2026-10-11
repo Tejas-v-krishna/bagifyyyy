@@ -80,7 +80,7 @@ export default function AuthModal() {
 
   const handleCopyCode = async () => {
     try {
-      await navigator.clipboard.writeText("BAGIFY10");
+      await navigator.clipboard.writeText("FREESHIP");
       setCopied(true);
       // Clear on unmount so a dismissed modal never setStates after teardown.
       if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current);
@@ -157,14 +157,14 @@ export default function AuthModal() {
                 </h2>
 
                 <p className="mb-5 text-sm font-normal leading-relaxed text-black/65">
-                  Take <strong className="font-bold text-black">10% off</strong> your first order with{" "}
+                  Get <strong className="font-bold text-black">FREE SHIPPING</strong> on your first order with{" "}
                   <button
                     type="button"
                     onClick={handleCopyCode}
                     title="Click to copy"
                     className="inline-flex cursor-pointer items-center gap-1 rounded border border-black/10 bg-[#f2f2f2] px-1.5 py-0.5 font-mono text-[12px] font-bold text-black transition-colors hover:border-black/30"
                   >
-                    BAGIFY10
+                    FREESHIP
                     {copied ? (
                       <Check className="h-3 w-3 text-green-600" />
                     ) : null}
@@ -210,7 +210,7 @@ export default function AuthModal() {
             {/* Right Column: Editorial Photo */}
             <div className="relative order-first h-52 w-full bg-neutral-300 sm:order-none sm:h-auto sm:min-h-[520px]">
               <Image
-                src="/hero-1-new.jpg"
+                src="/welcome-modal.jpg"
                 alt="BAGIFYYYY Archive"
                 fill
                 sizes="(max-width: 639px) 100vw, 440px"

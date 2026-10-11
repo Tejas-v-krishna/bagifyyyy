@@ -86,7 +86,7 @@ export default function Footer() {
 
       if (response.ok) {
         setStatus("success");
-        setMessage("You are in. Use code BAGIFY10 for 10% off.");
+        setMessage("You are in. Use code FREESHIP for free shipping.");
         setName("");
         setEmail("");
         setPhone("");

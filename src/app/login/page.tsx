@@ -516,8 +516,8 @@ function LoginContent() {
                 <div className="flex items-start gap-4">
                   <span className="font-mono text-[10px] text-white/35">02</span>
                   <div>
-                    <p className="font-bold uppercase tracking-[0.12em] text-white">10% to start</p>
-                    <p className="mt-1 text-[11px] leading-relaxed text-white/45">Use BAGIFY10 on your first archive purchase.</p>
+                    <p className="font-bold uppercase tracking-[0.12em] text-white">Free shipping to start</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-white/45">Use FREESHIP on your first archive purchase.</p>
                   </div>
                 </div>
 
