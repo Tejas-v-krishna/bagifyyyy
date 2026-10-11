@@ -492,7 +492,6 @@ export default function AccountPage() {
     );
   }
 
-  const memberId = user?.id ? `BGF-${user.id.slice(0, 8).toUpperCase()}` : "BGF-MEMBER";
   const points = Number(loyaltyData?.points) || 0;
   const tier = getLoyaltyTier(points, loyaltyData?.tier);
   const tierInfo = loyaltyTiers[tier];
@@ -508,31 +507,18 @@ export default function AccountPage() {
         <div className="mb-6 sm:mb-8 flex items-center justify-between border-b border-black/10 pb-3">
           <Link
             href="/"
-            className="group inline-flex items-center gap-2 text-[10.5px] font-mono font-bold uppercase tracking-[0.16em] text-black/60 transition-colors hover:text-black"
+            className="group inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-black/60 transition-colors hover:text-black"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
-            <span>Shop Archive</span>
+            <span>Shop</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] px-2.5 py-0.5 rounded-full bg-black/[0.04] border border-black/8 text-black/60">
-              ID // {memberId}
-            </span>
-          </div>
         </div>
 
         {/* ── Page Header ── */}
-        <header className="mb-8 flex flex-col justify-between gap-3 border-b border-black/10 pb-6 md:flex-row md:items-end">
-          <div>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.24em] text-black/45 block mb-1">
-              Member Archive // 001
-            </span>
-            <h1 className="font-microgramma text-[32px] sm:text-[44px] lg:text-[50px] font-bold uppercase leading-[0.92] tracking-tight text-black">
-              Your Account
-            </h1>
-            <p className="mt-2 text-xs sm:text-sm text-black/60 max-w-lg">
-              Manage your orders, saved pieces, delivery destinations, and Chrome Club VIP privileges.
-            </p>
-          </div>
+        <header className="mb-8 border-b border-black/10 pb-6">
+          <h1 className="font-microgramma text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-black">
+            Your Account
+          </h1>
         </header>
 
         {/* ── Identity & Loyalty Overview (Luxury Dual Cards) ── */}
@@ -557,7 +543,6 @@ export default function AccountPage() {
                         {user?.name ? user.name[0].toUpperCase() : "U"}
                       </div>
                     )}
-                    <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" title="Active Session" />
                   </div>
 
                   <div className="min-w-0">
@@ -584,17 +569,6 @@ export default function AccountPage() {
                   <LogOut className="w-3 h-3" />
                   <span className="hidden sm:inline">Sign Out</span>
                 </button>
-              </div>
-
-              <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-black/8 text-[10px] font-mono text-black/60">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/[0.04]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-black/60" />
-                  <span>Authenticated Account</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/[0.04]">
-                  <Award className="w-3.5 h-3.5 text-black/60" />
-                  <span>{tier} Member Tier</span>
-                </span>
               </div>
             </div>
 
@@ -627,12 +601,12 @@ export default function AccountPage() {
               <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 text-white/80" />
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-white/70">
-                    Chrome Club // VIP
+                  <span className="text-xs font-mono font-bold uppercase tracking-widest text-white/80">
+                    Chrome Club
                   </span>
                 </div>
                 <span className="rounded-full border border-white/20 bg-white/10 px-3 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-white backdrop-blur-sm">
-                  ✦ {tier} STATUS
+                  {tier}
                 </span>
               </div>
 
@@ -647,15 +621,12 @@ export default function AccountPage() {
                       Points
                     </span>
                   </div>
-                  <p className="mt-1.5 text-[10.5px] font-mono text-white/45 uppercase tracking-wider">
-                    {tierInfo.multiplier} points multiplier active
-                  </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab("loyalty")}
-                  className="cursor-pointer text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-white/70 hover:text-white underline underline-offset-4 transition-colors shrink-0"
+                  className="cursor-pointer text-[10px] font-mono font-bold uppercase tracking-wider text-white/70 hover:text-white underline underline-offset-4 transition-colors shrink-0"
                 >
                   View Perks →
                 </button>
@@ -666,18 +637,17 @@ export default function AccountPage() {
             <div className="relative z-10 mt-6 pt-4 border-t border-white/10">
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15 mb-2.5">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-white/70 via-white to-white transition-all duration-700 shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                  className="h-full rounded-full bg-white transition-all duration-700 shadow-[0_0_8px_rgba(255,255,255,0.5)]"
                   style={{ width: `${tierProgress}%` }}
                 />
               </div>
 
-              <div className="flex items-center justify-between text-[10px] font-mono">
-                <span className="text-white/60 tracking-wider">
+              <div className="text-[10px] font-mono text-white/60">
+                <span>
                   {tierInfo.next
-                    ? `${pointsToNext.toLocaleString("en-IN")} PTS TO ${tierInfo.nextName} TIER`
-                    : "✦ TOP TIER ACTIVE // UNLIMITED PRIVILEGES"}
+                    ? `${pointsToNext.toLocaleString("en-IN")} pts to ${tierInfo.nextName}`
+                    : "Top Tier Unlocked"}
                 </span>
-                <span className="text-white/40 font-bold">{tierProgress}%</span>
               </div>
             </div>
           </section>
@@ -956,14 +926,8 @@ export default function AccountPage() {
             <div id="account-panel-addresses" role="tabpanel" aria-labelledby="account-tab-addresses" className="space-y-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <MapPin className="w-4 h-4 text-black" />
-                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                      Delivery Address Book
-                    </p>
-                  </div>
                   <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
-                    Saved Destinations <span className="font-mono text-sm text-black/40">({addresses.length})</span>
+                    Addresses <span className="font-mono text-sm text-black/40">({addresses.length})</span>
                   </h3>
                 </div>
                 <button
@@ -979,7 +943,7 @@ export default function AccountPage() {
                   className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer shadow-xs"
                 >
                   <Plus className={`w-3.5 h-3.5 transition-transform duration-200 ${showAddressForm ? "rotate-45" : ""}`} />
-                  <span>{showAddressForm ? "Close Form" : "Add Destination"}</span>
+                  <span>{showAddressForm ? "Close Form" : "Add Address"}</span>
                 </button>
               </div>
 
@@ -995,11 +959,8 @@ export default function AccountPage() {
                     className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs overflow-hidden space-y-4"
                   >
                     <div className="border-b border-black/8 pb-4">
-                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                        {editingAddressId ? "Modify Destination" : "New Delivery Destination"}
-                      </p>
-                      <h4 className="font-microgramma text-lg font-bold uppercase tracking-tight text-black mt-1">
-                        {editingAddressId ? "Edit Address Details" : "Enter Shipping Coordinates"}
+                      <h4 className="font-microgramma text-lg font-bold uppercase tracking-tight text-black">
+                        {editingAddressId ? "Edit Address" : "New Address"}
                       </h4>
                     </div>
 
@@ -1185,14 +1146,8 @@ export default function AccountPage() {
               <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
                 <div className="flex flex-col gap-2 border-b border-black/8 pb-6 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Sparkles className="w-4 h-4 text-black" />
-                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                        Chrome Club Rewards
-                      </p>
-                    </div>
                     <h2 className="font-microgramma text-2xl sm:text-3xl font-bold uppercase tracking-tight text-black">
-                      Member Benefits
+                      Member Tiers
                     </h2>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1224,16 +1179,16 @@ export default function AccountPage() {
                             </span>
                             {isCurrent ? (
                               <span className="rounded-full bg-black px-2.5 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider text-white">
-                                ✦ ACTIVE TIER
+                                ACTIVE TIER
                               </span>
                             ) : null}
                           </div>
 
                           <h3 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black">
-                            {tierKey} TIER
+                            {tierKey}
                           </h3>
                           <p className="mt-1 text-[11px] font-mono font-bold uppercase tracking-wider text-black/60">
-                            {info.multiplier} Points Multiplier
+                            {info.multiplier} Multiplier
                           </p>
 
                           <ul className="mt-5 space-y-2.5 border-t border-black/8 pt-4">
@@ -1245,14 +1200,6 @@ export default function AccountPage() {
                             ))}
                           </ul>
                         </div>
-
-                        <div className="mt-6 pt-4 border-t border-black/8 text-[10px] font-mono text-black/45">
-                          {isCurrent
-                            ? "Currently enjoying full tier privileges."
-                            : points >= info.minimum
-                            ? "Tier unlocked."
-                            : `Need ${(info.minimum - points).toLocaleString("en-IN")} more points.`}
-                        </div>
                       </div>
                     );
                   })}
@@ -1263,10 +1210,7 @@ export default function AccountPage() {
               <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
                 <div className="flex items-center justify-between mb-5 pb-3 border-b border-black/8">
                   <div>
-                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-black/45">
-                      Transaction Ledger
-                    </p>
-                    <h3 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black mt-1">
+                    <h3 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black">
                       Points Activity
                     </h3>
                   </div>
@@ -1316,19 +1260,10 @@ export default function AccountPage() {
             <div id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" className="space-y-6">
               {/* Profile Card */}
               <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
-                <div className="border-b border-black/8 pb-5 mb-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sliders className="w-4 h-4 text-black" />
-                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                      Identity Configuration
-                    </p>
-                  </div>
+                <div className="border-b border-black/8 pb-4 mb-6">
                   <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
-                    Profile Details
+                    Profile
                   </h3>
-                  <p className="mt-1 text-xs text-black/55">
-                    Your public alias and avatar preview displayed across your Bagifyyyy pass and orders.
-                  </p>
                 </div>
 
                 <form onSubmit={handleSaveProfile} className="flex flex-col gap-5">
@@ -1388,11 +1323,8 @@ export default function AccountPage() {
                       className="inline-flex items-center gap-2 rounded-full border border-black/12 bg-[#f5f5f2] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black transition-all hover:border-black hover:bg-white cursor-pointer disabled:opacity-50"
                     >
                       <Upload className="w-3.5 h-3.5" />
-                      <span>{uploadingAvatar ? "Uploading Media…" : "Upload From Device"}</span>
+                      <span>{uploadingAvatar ? "Uploading…" : "Upload From Device"}</span>
                     </button>
-                    <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-black/40">
-                      JPG · PNG · WebP · Max 2MB
-                    </span>
                   </div>
 
                   {avatarMsg && (
@@ -1434,18 +1366,12 @@ export default function AccountPage() {
 
               {/* Email Credentials */}
               <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
-                <div className="border-b border-black/8 pb-5 mb-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Mail className="w-4 h-4 text-black" />
-                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                      Account Communications
-                    </p>
-                  </div>
+                <div className="border-b border-black/8 pb-4 mb-6">
                   <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
                     Email Address
                   </h3>
-                  <p className="mt-1 text-xs text-black/55">
-                    Currently linked to <b className="font-mono text-black">{user?.email}</b>. All order receipts & loyalty points stay tied to this address.
+                  <p className="mt-1 text-xs text-black/50 font-mono">
+                    {user?.email}
                   </p>
                 </div>
 
@@ -1500,21 +1426,10 @@ export default function AccountPage() {
 
               {/* Password & Security */}
               <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
-                <div className="border-b border-black/8 pb-5 mb-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Key className="w-4 h-4 text-black" />
-                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                      Access Credentials
-                    </p>
-                  </div>
+                <div className="border-b border-black/8 pb-4 mb-6">
                   <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
-                    Security & Password
+                    Password
                   </h3>
-                  <p className="mt-1 text-xs text-black/55">
-                    {user?.hasPassword
-                      ? "Change the password used with your direct email sign-in."
-                      : "No password currently configured (Google sign-in). Create a password to enable direct email sign-in."}
-                  </p>
                 </div>
 
                 <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
@@ -1585,10 +1500,10 @@ export default function AccountPage() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h4 className="font-mono text-xs font-bold uppercase text-black">
-                        Forgot your current credentials?
+                        Forgot your password?
                       </h4>
                       <p className="text-[11px] text-black/55 mt-0.5">
-                        We will send a magic password reset link directly to your registered inbox.
+                        We will send a reset link to your registered email.
                       </p>
                     </div>
                     <button
@@ -1598,7 +1513,7 @@ export default function AccountPage() {
                       className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/12 bg-[#f5f5f2] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black transition-all hover:border-black hover:bg-white cursor-pointer disabled:opacity-50"
                     >
                       <Mail className="w-3.5 h-3.5" />
-                      <span>{sendingResetLink ? "Dispatching…" : "Send Reset Link"}</span>
+                      <span>{sendingResetLink ? "Sending…" : "Send Reset Link"}</span>
                     </button>
                   </div>
 
@@ -1614,19 +1529,9 @@ export default function AccountPage() {
               <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <ShieldCheck className="w-4 h-4 text-black" />
-                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
-                        Active Authorization
-                      </p>
-                    </div>
                     <h3 className="font-microgramma text-lg font-bold uppercase tracking-tight text-black">
-                      {user?.googleId ? "Google OAuth 2.0" : "Direct Email & Password"}
-                      {user?.googleId && user?.hasPassword ? " + Password" : ""}
+                      {user?.googleId ? "Google Account" : "Email & Password"}
                     </h3>
-                    <p className="mt-1 font-mono text-xs text-black/50">
-                      Authenticated Session ID: <span className="font-bold text-black">{user?.id?.slice(0, 12)}...</span>
-                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/70 border border-emerald-200 px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-[0.12em] text-emerald-800">
