@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Copy, Share2, X, MessageCircle } from "lucide-react";
@@ -23,8 +24,13 @@ export default function ProductShareModal({
   onClose,
   product,
 }: ProductShareModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const shortPath = getShortProductPath(product.id);
   const fullSlugPath = getProductPath(product);
@@ -44,6 +50,16 @@ export default function ProductShareModal({
       setCanNativeShare(true);
     }
   }, []);
+
+  // Lock body scroll while modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = origOverflow;
+    };
+  }, [isOpen]);
 
   // Close on Escape
   useEffect(() => {
@@ -101,10 +117,12 @@ export default function ProductShareModal({
   const displayImage =
     (product.images && product.images[0]) || product.image || "/placeholder.jpg";
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -114,13 +132,14 @@ export default function ProductShareModal({
             className="fixed inset-0 bg-black/60 backdrop-blur-sm"
           />
 
-          {/* Modal Container */}
+          {/* Modal Container: centered in screen viewport */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 12 }}
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 12 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-2xl z-10"
+            exit={{ opacity: 0, scale: 0.95, y: 12 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative z-10 w-full max-w-md my-auto overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-black/10">
@@ -253,6 +272,7 @@ export default function ProductShareModal({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
