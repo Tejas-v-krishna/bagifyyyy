@@ -128,9 +128,19 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const hasRating = Boolean(rating && rating.count > 0);
 
   useEffect(() => {
+    // If already known as sold out, don't poll
+    if (product.isSoldOut) {
+      setIsSoldOutLive(true);
+      return;
+    }
+
     let cancelled = false;
+    let timerId: number | null = null;
 
     const checkStockReservation = async () => {
+      // Don't poll in the background if the user switched tabs
+      if (typeof document !== "undefined" && document.hidden) return;
+
       try {
         const response = await fetch(`/api/stock-status?productId=${product.id}`);
         if (response.ok && !cancelled) {
@@ -141,6 +151,11 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             setHeldByYou(false);
             setReservationExpiresAt(null);
             useCartStore.getState().removeItem(product.id);
+            // Stop polling permanently once sold out
+            if (timerId !== null) {
+              window.clearInterval(timerId);
+              timerId = null;
+            }
             return;
           } else {
             setIsSoldOutLive(false);
@@ -169,13 +184,26 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
       }
     };
 
+    // Initial check on mount
     checkStockReservation();
-    const interval = window.setInterval(checkStockReservation, 4000);
+
+    // Poll every 15s instead of 4s (cuts polling requests by 75%)
+    timerId = window.setInterval(checkStockReservation, 15000);
+
+    // Immediately refresh when the shopper switches back to this tab
+    const handleVisibilityChange = () => {
+      if (!document.hidden && !cancelled) {
+        checkStockReservation();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
       cancelled = true;
-      window.clearInterval(interval);
+      if (timerId !== null) window.clearInterval(timerId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [product.id]);
+  }, [product.id, product.isSoldOut]);
 
   // Live second-by-second countdown timer. When 0:00 is reached, release back to page!
   useEffect(() => {

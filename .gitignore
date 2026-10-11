@@ -60,3 +60,8 @@ public/uploads/
 .claude/
 .windsurf/
 skills-lock.json
+
+# Local safety backups
+backup_*
+backup_images/
+backup_database.json
