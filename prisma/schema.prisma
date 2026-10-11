@@ -39,6 +39,7 @@ model Product {
   isNew         Boolean  @default(false)
   isBestSeller  Boolean  @default(false)
   isSoldOut     Boolean  @default(false)
+  isArchived    Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

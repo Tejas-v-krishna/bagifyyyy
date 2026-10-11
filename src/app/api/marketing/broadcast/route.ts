@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       : [];
 
     const dbProducts = await prisma.product.findMany({
-      where: selectedProductIds.length ? { id: { in: selectedProductIds } } : undefined,
+      where: selectedProductIds.length ? { id: { in: selectedProductIds } } : { isArchived: false },
       take: selectedProductIds.length ? undefined : 6,
       include: { images: { orderBy: { position: 'asc' } } },
       orderBy: { createdAt: 'desc' },

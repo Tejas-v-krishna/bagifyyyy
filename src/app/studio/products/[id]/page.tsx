@@ -28,6 +28,8 @@ import {
   Star,
   Heart,
   Ruler,
+  Archive,
+  ArchiveRestore,
 } from "lucide-react";
 
 interface ProductImage {
@@ -45,6 +47,7 @@ interface Product {
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
+  isArchived?: boolean;
   images: ProductImage[];
 }
 
@@ -131,13 +134,15 @@ export default function StudioEditProduct() {
     isNew: false,
     isSoldOut: false,
     isBestSeller: false,
+    isArchived: false,
   });
 
   const [availableSubcategories, setAvailableSubcategories] = useState<{ id: string; name: string; slug: string }[]>([]);
 
   const fetchProduct = useCallback(async () => {
     try {
-      const res = await fetch(`/api/products/${id}`);
+      // Use admin product endpoint so archived products are fully accessible for editing
+      const res = await fetch(`/api/admin/products/${id}`);
       const data = await res.json();
       if (!data.error) {
         setProduct(data);
@@ -156,6 +161,7 @@ export default function StudioEditProduct() {
           isNew: Boolean(data.isNew),
           isSoldOut: Boolean(data.isSoldOut),
           isBestSeller: Boolean(data.isBestSeller),
+          isArchived: Boolean(data.isArchived),
         });
 
         const rawRes = await fetch(`/api/admin/products/${id}/images`);
@@ -1023,6 +1029,37 @@ export default function StudioEditProduct() {
                     </p>
                   </div>
                   <Star className={`w-5 h-5 ${form.isBestSeller ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
+                </div>
+
+                {/* Archive Status Toggle */}
+                <div
+                  onClick={() => setForm((prev) => ({ ...prev, isArchived: !prev.isArchived }))}
+                  className={`flex items-center justify-between p-3.5 border cursor-pointer transition-colors shadow-2xs ${
+                    form.isArchived
+                      ? "bg-amber-50/70 border-amber-300 hover:bg-amber-100/70"
+                      : "bg-white border-y2k-gunmetal/15 hover:bg-y2k-ice/60"
+                  }`}
+                >
+                  <div>
+                    <p className="text-xs font-bold uppercase text-y2k-gunmetal flex items-center gap-1.5">
+                      <span>Archive Status</span>
+                      {form.isArchived && (
+                        <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 bg-amber-200 text-amber-800">
+                          Archived
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-[9px] text-y2k-slate mt-0.5">
+                      {form.isArchived
+                        ? "Archived: hidden from storefront & catalogue listings"
+                        : "Active: publicly visible and searchable on store"}
+                    </p>
+                  </div>
+                  {form.isArchived ? (
+                    <ArchiveRestore className="w-5 h-5 text-amber-700" />
+                  ) : (
+                    <Archive className="w-5 h-5 text-y2k-slate" />
+                  )}
                 </div>
               </div>
 

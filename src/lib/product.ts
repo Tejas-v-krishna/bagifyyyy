@@ -22,6 +22,7 @@ export type DisplayProduct = {
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
+  isArchived: boolean;
   /** First image, or the placeholder the storefront has always fallen back to. */
   image: string;
   images: string[];
@@ -77,7 +78,7 @@ export async function getProductForDisplay(
     },
   });
 
-  if (!product) return null;
+  if (!product || product.isArchived) return null;
 
   const colors = Array.from(new Set(product.variants.map((v) => v.color)));
   const sizes = Array.from(new Set(product.variants.map((v) => v.size)));
@@ -94,6 +95,7 @@ export async function getProductForDisplay(
       where: {
         category: product.category,
         id: { not: product.id },
+        isArchived: false,
       },
       take: 4,
       include: { images: { orderBy: { position: 'asc' } } },
@@ -120,6 +122,7 @@ export async function getProductForDisplay(
     isNew: product.isNew,
     isSoldOut: product.isSoldOut || (variants.length > 0 && totalStock <= 0),
     isBestSeller: product.isBestSeller,
+    isArchived: product.isArchived,
     image: product.images[0]?.url || '/placeholder.jpg',
     images: product.images.map((img) => img.url),
     colors,

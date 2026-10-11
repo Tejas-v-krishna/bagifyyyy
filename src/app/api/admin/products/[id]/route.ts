@@ -15,6 +15,7 @@ type ProductPatchBody = {
   isNew?: unknown;
   isSoldOut?: unknown;
   isBestSeller?: unknown;
+  isArchived?: unknown;
   category?: unknown;
   subcategory?: unknown;
 };
@@ -22,6 +23,38 @@ type ProductPatchBody = {
 function isSafeImageUrl(value: string): boolean {
   if (value.startsWith('/') && !value.startsWith('//')) return true;
   return /^https:\/\//i.test(value);
+}
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const unauthorized = await requireStudioAuth();
+  if (unauthorized) return unauthorized;
+
+  try {
+    const { id } = await params;
+    if (!id) {
+      return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        images: { orderBy: { position: 'asc' } },
+        variants: true,
+      },
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error('Error fetching admin product:', error);
+    return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
+  }
 }
 
 export async function PATCH(
@@ -42,7 +75,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    const { name, description, price, compareAtPrice, comparePrice, image, collectionTag, isNew, isSoldOut, isBestSeller, category, subcategory } = body;
+    const { name, description, price, compareAtPrice, comparePrice, image, collectionTag, isNew, isSoldOut, isBestSeller, isArchived, category, subcategory } = body;
 
     if (name !== undefined && (typeof name !== 'string' || !name.trim())) {
       return NextResponse.json({ error: 'Product name is required' }, { status: 400 });
@@ -97,6 +130,7 @@ export async function PATCH(
         ...(isNew !== undefined && { isNew: Boolean(isNew) }),
         ...(isSoldOut !== undefined && { isSoldOut: Boolean(isSoldOut) }),
         ...(isBestSeller !== undefined && { isBestSeller: Boolean(isBestSeller) }),
+        ...(isArchived !== undefined && { isArchived: Boolean(isArchived) }),
       },
     });
 

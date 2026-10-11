@@ -16,6 +16,7 @@ export async function GET(request: Request) {
     // We'll normalize to lower and use contains - sqlite LIKE is case-insensitive for ASCII.
     const products = await prisma.product.findMany({
       where: {
+        isArchived: false,
         isSoldOut: false,
         OR: [
           { name: { contains: q } },

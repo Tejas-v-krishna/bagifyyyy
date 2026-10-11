@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     // If no products chosen, get first 4 active products as default
     if (products.length === 0) {
       const defaultProducts = await prisma.product.findMany({
+        where: { isArchived: false },
         take: 4,
         include: { images: { orderBy: { position: 'asc' } } },
         orderBy: { createdAt: 'desc' },

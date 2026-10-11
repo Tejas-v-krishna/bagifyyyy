@@ -26,6 +26,7 @@ export type CatalogProduct = {
  * stock) it drops out of the listings automatically.
  */
 export const availableProductWhere: Prisma.ProductWhereInput = {
+  isArchived: false,
   isSoldOut: false,
   variants: { some: { stock: { gt: 0 } } },
 };
@@ -72,7 +73,9 @@ export async function queryProducts({
   take?: number;
 } = {}): Promise<CatalogProduct[]> {
   try {
-    const whereClause: Prisma.ProductWhereInput = {};
+    const whereClause: Prisma.ProductWhereInput = {
+      isArchived: false,
+    };
 
     if (ids && ids.length > 0) {
       whereClause.id = { in: ids };

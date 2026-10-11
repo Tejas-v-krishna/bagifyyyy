@@ -14,7 +14,10 @@ import {
   Sparkles, 
   Package, 
   AlertCircle, 
-  RefreshCw
+  RefreshCw,
+  Archive,
+  ArchiveRestore,
+  EyeOff
 } from "lucide-react";
 import Image from "next/image";
 
@@ -30,6 +33,7 @@ interface Product {
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
+  isArchived?: boolean;
   images: ProductImage[];
 }
 
@@ -130,7 +134,7 @@ export default function StudioProductsCatalogPage() {
 
   const handleToggle = async (
     product: Product,
-    field: "isSoldOut" | "isNew"
+    field: "isSoldOut" | "isNew" | "isArchived"
   ) => {
     setToggling(product.id + field);
     try {
@@ -158,9 +162,11 @@ export default function StudioProductsCatalogPage() {
       // Stock status filter
       const matchesStock =
         stockFilter === "ALL" ||
-        (stockFilter === "IN_STOCK" && !p.isSoldOut) ||
-        (stockFilter === "SOLD_OUT" && p.isSoldOut) ||
-        (stockFilter === "NEW_DROP" && p.isNew);
+        (stockFilter === "ACTIVE" && !p.isArchived) ||
+        (stockFilter === "IN_STOCK" && !p.isSoldOut && !p.isArchived) ||
+        (stockFilter === "SOLD_OUT" && p.isSoldOut && !p.isArchived) ||
+        (stockFilter === "NEW_DROP" && p.isNew && !p.isArchived) ||
+        (stockFilter === "ARCHIVED" && Boolean(p.isArchived));
 
       // Search term filter
       const q = search.toLowerCase().trim();
@@ -175,9 +181,11 @@ export default function StudioProductsCatalogPage() {
   }, [products, selectedCategory, stockFilter, search]);
 
   const totalProducts = products.length;
-  const inStockCount = products.filter((p) => !p.isSoldOut).length;
-  const soldOutCount = products.filter((p) => p.isSoldOut).length;
-  const newDropCount = products.filter((p) => p.isNew).length;
+  const activeCount = products.filter((p) => !p.isArchived).length;
+  const archivedCount = products.filter((p) => Boolean(p.isArchived)).length;
+  const inStockCount = products.filter((p) => !p.isSoldOut && !p.isArchived).length;
+  const soldOutCount = products.filter((p) => p.isSoldOut && !p.isArchived).length;
+  const newDropCount = products.filter((p) => p.isNew && !p.isArchived).length;
 
   return (
     <div className="space-y-6 font-sans">
@@ -215,10 +223,14 @@ export default function StudioProductsCatalogPage() {
       </div>
 
       {/* ── Summary Metric Badges ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">Total Products</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">Total Items</p>
           <p className="font-display text-2xl font-bold text-y2k-gunmetal">{totalProducts}</p>
+        </div>
+        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Live On Store</p>
+          <p className="font-display text-2xl font-bold text-emerald-700">{activeCount}</p>
         </div>
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
           <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">In Stock</p>
@@ -229,8 +241,8 @@ export default function StudioProductsCatalogPage() {
           <p className="font-display text-2xl font-bold text-red-600">{soldOutCount}</p>
         </div>
         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">New Badges</p>
-          <p className="font-display text-2xl font-bold text-y2k-gunmetal">{newDropCount}</p>
+          <p className="text-[9px] font-bold uppercase tracking-wider text-amber-700 mb-1">Archived</p>
+          <p className="font-display text-2xl font-bold text-amber-700">{archivedCount}</p>
         </div>
       </div>
 
@@ -271,10 +283,12 @@ export default function StudioProductsCatalogPage() {
               onChange={(e) => setStockFilter(e.target.value)}
               className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
             >
-              <option value="ALL">All Statuses</option>
-              <option value="IN_STOCK">In Stock Only</option>
-              <option value="SOLD_OUT">Sold Out Only</option>
-              <option value="NEW_DROP">New Tagged Only</option>
+              <option value="ALL">All Items ({totalProducts})</option>
+              <option value="ACTIVE">Live Store ({activeCount})</option>
+              <option value="IN_STOCK">In Stock Only ({inStockCount})</option>
+              <option value="SOLD_OUT">Sold Out Only ({soldOutCount})</option>
+              <option value="NEW_DROP">New Tagged Only ({newDropCount})</option>
+              <option value="ARCHIVED">Archived Items ({archivedCount})</option>
             </select>
           </div>
         </div>
@@ -313,7 +327,9 @@ export default function StudioProductsCatalogPage() {
               return (
                 <div
                   key={product.id}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-y2k-ice/30 transition-colors group"
+                  className={`flex items-center gap-4 px-6 py-4 transition-colors group ${
+                    product.isArchived ? "bg-amber-50/20 hover:bg-amber-50/40" : "hover:bg-y2k-ice/30"
+                  }`}
                 >
                 {/* Thumbnail */}
                 <Link
@@ -356,18 +372,22 @@ export default function StudioProductsCatalogPage() {
                 </div>
 
                 {/* Status Badges */}
-                <div className="flex gap-2 w-36 shrink-0 justify-center">
-                  {product.isSoldOut ? (
-                    <span className="text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 bg-red-50 text-red-600 border border-red-200">
+                <div className="flex flex-wrap gap-1.5 w-36 shrink-0 justify-center items-center">
+                  {product.isArchived ? (
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-300">
+                      Archived
+                    </span>
+                  ) : product.isSoldOut ? (
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-red-50 text-red-600 border border-red-200">
                       Sold Out
                     </span>
                   ) : (
-                    <span className="text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/10">
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-y2k-ice text-y2k-gunmetal border border-y2k-gunmetal/10">
                       In Stock
                     </span>
                   )}
-                  {product.isNew && (
-                    <span className="text-[8px] font-bold uppercase tracking-wider px-2.5 py-1 bg-y2k-gunmetal text-white border border-y2k-gunmetal">
+                  {!product.isArchived && product.isNew && (
+                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-y2k-gunmetal text-white border border-y2k-gunmetal">
                       New Tag
                     </span>
                   )}
@@ -406,17 +426,49 @@ export default function StudioProductsCatalogPage() {
 
                 {/* Action Buttons with Hover Tooltips */}
                 <div className="flex items-center gap-2 shrink-0">
-                  <Link
-                    href={`/product/${product.id}`}
-                    target="_blank"
-                    className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors relative group/tooltip"
-                    title="View on store website"
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                      View on Store
+                  {product.isArchived ? (
+                    <span
+                      className="p-2 border border-y2k-gunmetal/10 text-y2k-slate/40 cursor-not-allowed relative group/tooltip"
+                      title="Archived - Hidden from store website"
+                    >
+                      <EyeOff className="w-4 h-4" />
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                        Hidden From Store
+                      </span>
                     </span>
-                  </Link>
+                  ) : (
+                    <Link
+                      href={`/product/${product.id}`}
+                      target="_blank"
+                      className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors relative group/tooltip"
+                      title="View on store website"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                        View on Store
+                      </span>
+                    </Link>
+                  )}
+
+                  <button
+                    onClick={() => handleToggle(product, "isArchived")}
+                    disabled={toggling === product.id + "isArchived"}
+                    title={product.isArchived ? "Unarchive Product (Make visible on storefront)" : "Archive Product (Hide from storefront)"}
+                    className={`p-2 border transition-colors cursor-pointer relative group/tooltip ${
+                      product.isArchived
+                        ? "border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                        : "border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal"
+                    }`}
+                  >
+                    {product.isArchived ? (
+                      <ArchiveRestore className="w-4 h-4 text-amber-700" />
+                    ) : (
+                      <Archive className="w-4 h-4" />
+                    )}
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
+                      {product.isArchived ? "Unarchive (Publish)" : "Archive (Hide)"}
+                    </span>
+                  </button>
 
                   <Link
                     href={`/studio/products/${product.id}`}

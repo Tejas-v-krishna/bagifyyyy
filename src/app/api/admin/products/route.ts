@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     if (!body || typeof body !== 'object') {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
-    const { name, price, category, description, isNew, isSoldOut, isBestSeller, image, collectionTag, compareAtPrice, comparePrice, subcategory } = body as Record<string, unknown>;
+    const { name, price, category, description, isNew, isSoldOut, isBestSeller, isArchived, image, collectionTag, compareAtPrice, comparePrice, subcategory } = body as Record<string, unknown>;
     const parsedPrice = Number(price);
     if (typeof name !== 'string' || !name.trim() || !Number.isFinite(parsedPrice) || parsedPrice <= 0 ||
         typeof category !== 'string' || !canonicalCategory(category) || typeof description !== 'string' || !description.trim() ||
@@ -57,6 +57,7 @@ export async function POST(request: Request) {
         isNew: Boolean(isNew),
         isSoldOut: Boolean(isSoldOut),
         isBestSeller: Boolean(isBestSeller),
+        isArchived: Boolean(isArchived),
         brand: typeof collectionTag === 'string' && collectionTag.trim() ? collectionTag.trim() : "BAGIFYYYY",
         images: {
           create: [{ url: image.trim(), position: 0 }]
