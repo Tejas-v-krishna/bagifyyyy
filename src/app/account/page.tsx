@@ -18,7 +18,19 @@ import {
   ArrowLeft,
   ArrowRight,
   ShoppingBag,
-  ExternalLink
+  ExternalLink,
+  Sparkles,
+  Package,
+  Sliders,
+  Check,
+  CheckCircle2,
+  ShieldCheck,
+  Award,
+  ChevronRight,
+  Mail,
+  Key,
+  Shield,
+  Upload,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,14 +40,50 @@ type AccountTab = "orders" | "wishlist" | "addresses" | "loyalty" | "settings";
 
 type LoyaltyTier = "CHROME" | "STEEL" | "GOLD";
 
-const loyaltyTiers: Record<LoyaltyTier, { minimum: number; next: number | null; nextName: string | null }> = {
-  CHROME: { minimum: 0, next: 500, nextName: "STEEL" },
-  STEEL: { minimum: 500, next: 2000, nextName: "GOLD" },
-  GOLD: { minimum: 2000, next: null, nextName: null },
+const loyaltyTiers: Record<LoyaltyTier, { minimum: number; next: number | null; nextName: string | null; multiplier: string; perks: string[] }> = {
+  CHROME: {
+    minimum: 0,
+    next: 500,
+    nextName: "STEEL",
+    multiplier: "1.0x",
+    perks: [
+      "Early drop access on all new vintage releases",
+      "5-minute bag reservation lock at checkout",
+      "Standard points accumulation (10 PTS per ₹100)",
+      "Digital order tracking & archive receipt storage",
+    ],
+  },
+  STEEL: {
+    minimum: 500,
+    next: 2000,
+    nextName: "GOLD",
+    multiplier: "1.5x",
+    perks: [
+      "Priority order dispatch within 24 hours",
+      "1.5x points multiplier on all orders",
+      "Secret drop previews & archive password access",
+      "Exclusive community member promotions",
+    ],
+  },
+  GOLD: {
+    minimum: 2000,
+    next: null,
+    nextName: null,
+    multiplier: "2.0x",
+    perks: [
+      "2x points multiplier on all purchases",
+      "First priority concierge fulfillment on every drop",
+      "Direct 1-of-1 archive requests & vintage sourcing",
+      "Zero delivery fee on all domestic drop orders",
+    ],
+  },
 };
 
-function normalizeTier(value: unknown): LoyaltyTier {
-  return value === "STEEL" || value === "GOLD" ? value : "CHROME";
+function getLoyaltyTier(points: number, rawTier?: unknown): LoyaltyTier {
+  if (points >= 2000) return "GOLD";
+  if (points >= 500) return "STEEL";
+  if (rawTier === "GOLD" || rawTier === "STEEL") return rawTier as LoyaltyTier;
+  return "CHROME";
 }
 
 export default function AccountPage() {
@@ -446,7 +494,7 @@ export default function AccountPage() {
 
   const memberId = user?.id ? `BGF-${user.id.slice(0, 8).toUpperCase()}` : "BGF-MEMBER";
   const points = Number(loyaltyData?.points) || 0;
-  const tier = normalizeTier(loyaltyData?.tier);
+  const tier = getLoyaltyTier(points, loyaltyData?.tier);
   const tierInfo = loyaltyTiers[tier];
   const pointsToNext = tierInfo.next === null ? 0 : Math.max(0, tierInfo.next - points);
   const tierProgress = tierInfo.next === null
@@ -454,83 +502,107 @@ export default function AccountPage() {
     : Math.min(100, Math.max(0, Math.round(((points - tierInfo.minimum) / (tierInfo.next - tierInfo.minimum)) * 100)));
 
   return (
-    <div className="editorial-page min-h-screen bg-[#f5f5f2] px-4 py-8 font-sans text-black sm:px-6 sm:py-12 lg:px-10">
-      <div className="mx-auto w-full max-w-[1280px]">
-        {/* ── Account navigation ─────────────────────────────────────────── */}
-        <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-3">
+    <div className="editorial-page min-h-screen bg-[#f5f5f2] px-4 py-8 font-sans text-black sm:px-6 sm:py-12 lg:px-10 selection:bg-black selection:text-white">
+      <div className="mx-auto w-full max-w-[1320px]">
+        {/* ── Top Bar Breadcrumb ── */}
+        <div className="mb-6 sm:mb-8 flex items-center justify-between border-b border-black/10 pb-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[10.5px] font-mono font-bold uppercase tracking-[0.16em] text-black/60 transition-colors hover:text-black"
+            className="group inline-flex items-center gap-2 text-[10.5px] font-mono font-bold uppercase tracking-[0.16em] text-black/60 transition-colors hover:text-black"
           >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            Back to shop
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
+            <span>Shop Archive</span>
           </Link>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-black/40">
-            {tier} Member
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] px-2.5 py-0.5 rounded-full bg-black/[0.04] border border-black/8 text-black/60">
+              ID // {memberId}
+            </span>
+          </div>
         </div>
 
-        {/* ── Page header ────────────────────────────────────────────────── */}
-        <header className="mb-8 flex flex-col justify-between gap-4 border-b border-black/10 pb-6 md:flex-row md:items-end">
+        {/* ── Page Header ── */}
+        <header className="mb-8 flex flex-col justify-between gap-3 border-b border-black/10 pb-6 md:flex-row md:items-end">
           <div>
-            <h1 className="font-display text-[32px] sm:text-[44px] lg:text-[52px] font-bold uppercase leading-[0.95] tracking-tight text-black">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.24em] text-black/45 block mb-1">
+              Member Archive // 001
+            </span>
+            <h1 className="font-microgramma text-[32px] sm:text-[44px] lg:text-[50px] font-bold uppercase leading-[0.92] tracking-tight text-black">
               Your Account
             </h1>
-            <p className="mt-2 text-xs sm:text-sm text-black/60">
-              Orders, saved pieces, addresses, and member points.
+            <p className="mt-2 text-xs sm:text-sm text-black/60 max-w-lg">
+              Manage your orders, saved pieces, delivery destinations, and Chrome Club VIP privileges.
             </p>
           </div>
         </header>
 
-        {/* ── Identity & Loyalty Overview ── */}
-        <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-          {/* Member Profile Card */}
-          <section className="flex flex-col justify-between rounded-2xl border border-black/10 bg-white p-5 sm:p-6 shadow-2xs">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5 min-w-0">
-                {user?.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt="Avatar"
-                    width={48}
-                    height={48}
-                    unoptimized
-                    className="h-12 w-12 shrink-0 rounded-full border border-black/10 object-cover"
-                  />
-                ) : (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-2xs">
-                    {user?.name ? user.name[0].toUpperCase() : "U"}
-                  </div>
-                )}
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h2 className="truncate font-sans text-base sm:text-lg font-bold uppercase tracking-tight text-black">
-                      {user?.name || "Member"}
-                    </h2>
-                    {isAdmin && (
-                      <span className="rounded-full bg-black px-2 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider text-white">
-                        Admin
-                      </span>
+        {/* ── Identity & Loyalty Overview (Luxury Dual Cards) ── */}
+        <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:gap-5">
+          {/* 1. Member Profile Identity Card */}
+          <section className="relative rounded-3xl border border-black/8 bg-white/90 p-6 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.03)] backdrop-blur-md flex flex-col justify-between">
+            <div>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="relative">
+                    {user?.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt="Avatar"
+                        width={56}
+                        height={56}
+                        unoptimized
+                        className="h-14 w-14 shrink-0 rounded-full border-2 border-black/10 object-cover shadow-xs"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#0c0c0e] font-microgramma text-base font-bold text-white shadow-xs">
+                        {user?.name ? user.name[0].toUpperCase() : "U"}
+                      </div>
                     )}
+                    <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" title="Active Session" />
                   </div>
-                  <p className="truncate text-xs font-mono text-black/50 mt-0.5">{user?.email}</p>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="truncate font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black">
+                        {user?.name || "Member"}
+                      </h2>
+                      {isAdmin && (
+                        <span className="rounded-full bg-black px-2.5 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider text-white">
+                          Studio Admin
+                        </span>
+                      )}
+                    </div>
+                    <p className="truncate text-xs font-mono text-black/50 mt-1">{user?.email}</p>
+                  </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-black/[0.03] px-3.5 py-1.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/70 hover:bg-black hover:text-white transition-all cursor-pointer shrink-0"
+                  title="Sign out of account"
+                >
+                  <LogOut className="w-3 h-3" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </button>
               </div>
 
-              <button
-                onClick={handleSignOut}
-                className="btn-bagify btn-bagify-light shrink-0 text-[10px] uppercase tracking-[0.14em] py-2 px-3.5 cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5">
-                  <LogOut className="w-3 h-3" />
-                  <span>Sign Out</span>
-                </div>
-              </button>
+              <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-black/8 text-[10px] font-mono text-black/60">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/[0.04]">
+                  <ShieldCheck className="w-3.5 h-3.5 text-black/60" />
+                  <span>Authenticated Account</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/[0.04]">
+                  <Award className="w-3.5 h-3.5 text-black/60" />
+                  <span>{tier} Member Tier</span>
+                </span>
+              </div>
             </div>
 
             {isAdmin && (
-              <div className="mt-6 flex items-center justify-between border-t border-black/8 pt-3.5">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-black/60">Studio Portal</span>
+              <div className="mt-5 flex items-center justify-between rounded-xl bg-black/[0.03] border border-black/8 p-3">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-black/70">
+                  Store Administration
+                </span>
                 <Link
                   href="/studio"
                   className="btn-bagify btn-bagify-dark text-[9.5px] uppercase tracking-[0.14em] py-1.5 px-3"
@@ -544,61 +616,88 @@ export default function AccountPage() {
             )}
           </section>
 
-          {/* Loyalty status Card */}
-          <section className="flex flex-col justify-between rounded-2xl border border-black/10 bg-[#f7f7f5] p-5 sm:p-6 text-black shadow-2xs">
-            <div>
-              <div className="flex items-center justify-between mb-4 pb-2.5 border-b border-black/8">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
-                  Chrome Club
-                </span>
-                <span className="rounded-full border border-black/10 bg-black/[0.04] px-2.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-black">
-                  {tier} Tier
+          {/* 2. Chrome Club VIP Pass Card */}
+          <section className="relative rounded-3xl bg-[#0c0c0e] text-white p-6 sm:p-7 shadow-[0_16px_40px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col justify-between">
+            {/* Ambient luxury metallic gradient */}
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.14),_transparent_65%)]" aria-hidden="true" />
+            <div className="pointer-events-none absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-white/[0.03] blur-2xl" aria-hidden="true" />
+
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-white/80" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-[0.22em] text-white/70">
+                    Chrome Club // VIP
+                  </span>
+                </div>
+                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                  ✦ {tier} STATUS
                 </span>
               </div>
 
-              <div className="flex items-baseline justify-between gap-4 mb-3">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-mono text-3xl sm:text-4xl font-bold tracking-tight text-black">
-                    {points}
-                  </span>
-                  <span className="font-mono text-xs text-black/50 uppercase tracking-wider">
-                    Points
-                  </span>
+              {/* Balance */}
+              <div className="mt-4 flex items-baseline justify-between gap-3">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-microgramma text-4xl sm:text-5xl font-bold tracking-tight text-white leading-none">
+                      {points.toLocaleString("en-IN")}
+                    </span>
+                    <span className="font-mono text-xs uppercase tracking-widest text-white/50">
+                      Points
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-[10.5px] font-mono text-white/45 uppercase tracking-wider">
+                    {tierInfo.multiplier} points multiplier active
+                  </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab("loyalty")}
-                  className="cursor-pointer text-[10px] font-mono font-bold uppercase tracking-wider text-black/70 hover:text-black underline underline-offset-4 transition-colors"
+                  className="cursor-pointer text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-white/70 hover:text-white underline underline-offset-4 transition-colors shrink-0"
                 >
-                  View Perks
+                  View Perks →
                 </button>
               </div>
+            </div>
 
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-black/10 mb-2">
+            {/* Progress bar */}
+            <div className="relative z-10 mt-6 pt-4 border-t border-white/10">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/15 mb-2.5">
                 <div
-                  className="h-full bg-black transition-all duration-300 rounded-full"
+                  className="h-full rounded-full bg-gradient-to-r from-white/70 via-white to-white transition-all duration-700 shadow-[0_0_8px_rgba(255,255,255,0.5)]"
                   style={{ width: `${tierProgress}%` }}
                 />
               </div>
 
-              <p className="text-[10.5px] font-mono text-black/50">
-                {pointsToNext > 0 ? `${pointsToNext} points to ${tierInfo.nextName}` : "Top Tier Unlocked"}
-              </p>
+              <div className="flex items-center justify-between text-[10px] font-mono">
+                <span className="text-white/60 tracking-wider">
+                  {tierInfo.next
+                    ? `${pointsToNext.toLocaleString("en-IN")} PTS TO ${tierInfo.nextName} TIER`
+                    : "✦ TOP TIER ACTIVE // UNLIMITED PRIVILEGES"}
+                </span>
+                <span className="text-white/40 font-bold">{tierProgress}%</span>
+              </div>
             </div>
           </section>
         </div>
 
-        {/* ── Segmented Navigation Tabs ─────────────────────────────────── */}
-        <div className="mb-6 flex items-center gap-2 overflow-x-auto border-b border-black/10 pb-0 select-none scrollbar-none" role="tablist" aria-label="Account sections">
+        {/* ── Segmented Navigation Tabs (Pill Controls) ── */}
+        <nav
+          className="mb-8 flex items-center gap-1.5 sm:gap-2 overflow-x-auto rounded-2xl border border-black/8 bg-white/70 p-1.5 backdrop-blur-md select-none scrollbar-none shadow-xs"
+          role="tablist"
+          aria-label="Account sections"
+        >
           {[
-            { id: "orders", label: "Orders", count: orders.length },
-            { id: "wishlist", label: "Saved", count: wishlistIds.length },
-            { id: "addresses", label: "Addresses", count: addresses.length },
-            { id: "loyalty", label: "VIP Perks" },
-            { id: "settings", label: "Settings" },
+            { id: "orders", label: "Orders", icon: Package, count: orders.length },
+            { id: "wishlist", label: "Saved", icon: Heart, count: wishlistIds.length },
+            { id: "addresses", label: "Addresses", icon: MapPin, count: addresses.length },
+            { id: "loyalty", label: "VIP Perks", icon: Sparkles },
+            { id: "settings", label: "Settings", icon: Sliders },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
+            const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
@@ -608,78 +707,91 @@ export default function AccountPage() {
                 aria-selected={isActive}
                 aria-controls={`account-panel-${tab.id}`}
                 onClick={() => setActiveTab(tab.id as AccountTab)}
-                className={`flex shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap border-b-2 px-3.5 py-3 text-xs font-mono font-bold uppercase tracking-[0.14em] transition-all ${
+                className={`flex shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-[0.14em] transition-all duration-200 ${
                   isActive
-                    ? "border-black text-black"
-                    : "border-transparent text-black/40 hover:text-black"
+                    ? "bg-black text-white shadow-xs"
+                    : "text-black/55 hover:text-black hover:bg-black/[0.04]"
                 }`}
               >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-black/50"}`} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
-                    isActive ? "bg-black text-white" : "bg-black/5 text-black/50"
-                  }`}>
+                  <span
+                    className={`text-[9.5px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                      isActive ? "bg-white/20 text-white" : "bg-black/[0.06] text-black/60"
+                    }`}
+                  >
                     {tab.count}
                   </span>
                 )}
               </button>
             );
           })}
-        </div>
+        </nav>
 
         {/* ── Main Tab Panels ─────────────────────────────────────────────── */}
         <div>
           {/* 1. ORDERS TAB */}
           {activeTab === "orders" && (
-            <div id="account-panel-orders" role="tabpanel" aria-labelledby="account-tab-orders" className="space-y-3">
+            <div id="account-panel-orders" role="tabpanel" aria-labelledby="account-tab-orders" className="space-y-4">
               {loadingOrders ? (
-                <div className="rounded-xl border border-black/10 bg-white p-8 text-center text-xs font-bold uppercase tracking-[0.16em] text-black/45">
+                <div className="rounded-2xl border border-black/8 bg-white p-12 text-center text-xs font-mono font-bold uppercase tracking-[0.16em] text-black/45 shadow-xs">
                   Loading orders…
                 </div>
               ) : orders.length === 0 ? (
-                <div className="rounded-xl border border-black/10 bg-white p-8 text-center">
-                  <ShoppingBag className="mx-auto mb-4 h-8 w-8 text-black/25" />
-                  <p className="mb-1 font-microgramma text-xs font-bold uppercase tracking-tight text-black sm:text-sm">
-                    NO ORDERS YET
+                <div className="rounded-3xl border border-black/8 bg-white p-12 text-center shadow-xs">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-black/[0.03] border border-black/8">
+                    <ShoppingBag className="h-6 w-6 text-black/40" />
+                  </div>
+                  <h3 className="font-microgramma text-base sm:text-lg font-bold uppercase tracking-tight text-black mb-1.5">
+                    No Orders Recorded Yet
+                  </h3>
+                  <p className="text-xs text-black/55 max-w-sm mx-auto mb-5 leading-relaxed">
+                    Pieces you purchase will show up here along with live dispatch tracking and receipts.
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify btn-bagify-dark mt-4 inline-flex items-center gap-1.5 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.16em]"
+                    className="btn-bagify btn-bagify-dark inline-flex items-center gap-2 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em]"
                   >
-                     <span>SHOP PIECES</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <span>Shop Available Drops</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-3 px-1">
                     {clearMsg ? (
                       <p role={clearMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${clearMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
                         {clearMsg.text}
                       </p>
                     ) : (
-                      <span className="text-[10px] uppercase tracking-[0.12em] text-black/40">{orders.length} {orders.length === 1 ? "order" : "orders"}</span>
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-[0.14em] text-black/50">
+                        {orders.length} {orders.length === 1 ? "Order" : "Orders"} Recorded
+                      </span>
                     )}
                     <button
                       type="button"
                       onClick={handleClearHistory}
                       disabled={clearingHistory || orders.length === 0}
-                      className="shrink-0 cursor-pointer border border-black/15 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-black/60 transition-colors hover:border-black hover:text-black disabled:opacity-40"
+                      className="cursor-pointer text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/50 hover:text-black underline underline-offset-4 transition-colors disabled:opacity-40"
                     >
-                      {clearingHistory ? "Clearing…" : "Clear History"}
+                      {clearingHistory ? "Clearing…" : "Clear View History"}
                     </button>
                   </div>
+
                   {orders.map((ord) => (
                     <div
                       key={ord.id}
-                      className="rounded-xl border border-black/10 bg-white p-4 sm:p-6"
+                      className="rounded-2xl border border-black/8 bg-white p-5 sm:p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)] hover:border-black/20 transition-all duration-300"
                     >
-                      {/* Header */}
-                      <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-black/10 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-sm font-bold tracking-tight text-black">#{ord.orderNumber}</span>
-                          <span className="text-[10px] text-black/30">/</span>
-                          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-black/50">
+                      {/* Order Header */}
+                      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-black/8 pb-3.5">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-sm font-bold tracking-tight text-black">
+                            #{ord.orderNumber}
+                          </span>
+                          <span className="text-black/20">/</span>
+                          <span className="font-mono text-[11px] uppercase tracking-wider text-black/50">
                             {new Date(ord.createdAt).toLocaleDateString("en-IN", {
                               day: "numeric",
                               month: "short",
@@ -689,60 +801,65 @@ export default function AccountPage() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="border border-black/15 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
+                          <span className="rounded-full border border-black/10 bg-black/[0.04] px-3 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-black">
                             {orderStatusLabel(ord.orderStatus)}
                           </span>
 
                           {ord.trackingId && (
                             <button
                               onClick={() => handleCopyTracking(ord.trackingId)}
-                              className="flex cursor-pointer items-center gap-1 border border-black/10 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-black transition-colors hover:bg-white"
-                              title="Copy tracking"
+                              className="flex cursor-pointer items-center gap-1.5 rounded-full border border-black/10 bg-[#f5f5f2] px-3 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-black transition-colors hover:bg-white"
+                              title="Copy tracking number"
                             >
-                              <Truck className="w-2.5 h-2.5 text-y2k-gunmetal" />
+                              <Truck className="w-2.5 h-2.5 text-black/70" />
                               <span>{copiedTrackingId === ord.trackingId ? "Copied" : ord.trackingId}</span>
-                              <Copy className="w-2 h-2 opacity-60" />
+                              <Copy className="w-2 h-2 opacity-50" />
                             </button>
                           )}
                         </div>
                       </div>
 
-                      {/* Items */}
-                      <div className="mb-3 divide-y divide-black/5">
+                      {/* Items List */}
+                      <div className="mb-4 divide-y divide-black/5">
                         {ord.items?.map((it: any) => (
-                          <div key={it.id} className="py-2 flex items-center justify-between gap-2 text-xs">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="relative h-12 w-10 shrink-0 overflow-hidden border border-black/10 bg-[#f2f2f0]">
+                          <div key={it.id} className="py-2.5 flex items-center justify-between gap-3 text-xs">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="relative h-14 w-12 shrink-0 overflow-hidden rounded-xl border border-black/8 bg-[#e9e9ec]">
                                 <Image
                                   src={it.image || "/placeholder.jpg"}
                                   alt={it.name}
                                   fill
                                   className="object-cover"
-                                  sizes="36px"
+                                  sizes="48px"
                                 />
                               </div>
                               <div className="min-w-0">
-                                <p className="truncate text-xs font-bold uppercase text-black">{it.name}</p>
-                                <p className="text-[9px] uppercase tracking-[0.08em] text-black/50">
-                                  {it.quantity}x · {it.size} · {it.color}
+                                <p className="truncate font-microgramma text-xs font-bold uppercase tracking-tight text-black">
+                                  {it.name}
+                                </p>
+                                <p className="text-[10px] font-mono text-black/50 uppercase tracking-wider mt-0.5">
+                                  {it.quantity}x · {it.size || "One Size"} · {it.color || "Default"}
                                 </p>
                               </div>
                             </div>
-                            <span className="shrink-0 text-xs font-bold text-black">
+                            <span className="shrink-0 font-mono text-xs font-bold text-black">
                               ₹{(it.price * it.quantity).toLocaleString("en-IN")}
                             </span>
                           </div>
                         ))}
                       </div>
 
-                      {/* Total */}
-                      <div className="flex items-center justify-between gap-4 border-t border-black/10 pt-3 text-xs">
-                        <span className="truncate text-[10px] uppercase tracking-[0.08em] text-black/50">
-                          {ord.shippingAddress?.fullName} ({ord.shippingAddress?.city})
+                      {/* Footer Row */}
+                      <div className="flex items-center justify-between gap-4 border-t border-black/8 pt-3.5 text-xs">
+                        <span className="truncate text-[10.5px] font-mono uppercase tracking-wider text-black/50">
+                          Ship to: {ord.shippingAddress?.fullName} ({ord.shippingAddress?.city})
                         </span>
-                        <span className="font-mono text-sm font-bold text-black">
-                          Total: ₹{ord.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                        </span>
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-black/50">Total</span>
+                          <span className="font-microgramma text-base font-bold text-black">
+                            ₹{ord.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -753,46 +870,56 @@ export default function AccountPage() {
 
           {/* 2. SAVED PIECES TAB */}
           {activeTab === "wishlist" && (
-            <div id="account-panel-wishlist" role="tabpanel" aria-labelledby="account-tab-wishlist" className="space-y-3">
+            <div id="account-panel-wishlist" role="tabpanel" aria-labelledby="account-tab-wishlist" className="space-y-4">
               {loadingWishlist ? (
-                <div className="rounded-xl border border-black/10 bg-white p-8 text-center text-xs font-bold uppercase tracking-[0.16em] text-black/45">
-                  Loading saved…
+                <div className="rounded-2xl border border-black/8 bg-white p-12 text-center text-xs font-mono font-bold uppercase tracking-[0.16em] text-black/45 shadow-xs">
+                  Loading saved pieces…
                 </div>
               ) : wishlistProducts.length === 0 ? (
-                <div className="rounded-xl border border-black/10 bg-white p-8 text-center">
-                  <Heart className="mx-auto mb-4 h-8 w-8 text-black/25" />
-                  <p className="mb-2 font-microgramma text-xs font-bold uppercase tracking-tight text-black sm:text-sm">
-                    WISHLIST EMPTY
+                <div className="rounded-3xl border border-black/8 bg-white p-12 text-center shadow-xs">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-black/[0.03] border border-black/8">
+                    <Heart className="h-6 w-6 text-black/40" />
+                  </div>
+                  <h3 className="font-microgramma text-base sm:text-lg font-bold uppercase tracking-tight text-black mb-1.5">
+                    Your Wishlist Is Empty
+                  </h3>
+                  <p className="text-xs text-black/55 max-w-sm mx-auto mb-5 leading-relaxed">
+                    Heart any 1-of-1 archive find while browsing to save it to your personal curation here.
                   </p>
                   <Link
                     href="/products"
-                    className="btn-bagify btn-bagify-dark inline-block px-5 py-2 text-[10px] font-bold uppercase tracking-[0.16em]"
+                    className="btn-bagify btn-bagify-dark inline-flex items-center gap-2 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em]"
                   >
-                     Shop Pieces
+                    <span>Browse New Arrivals</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 sm:gap-5">
                   {wishlistProducts.map((p) => (
                     <div
                       key={p.id}
-                      className="group flex flex-col justify-between rounded-xl border border-black/10 bg-white p-2.5"
+                      className="group flex flex-col justify-between rounded-2xl border border-black/8 bg-white p-3 shadow-xs hover:border-black/20 hover:shadow-md transition-all duration-300"
                     >
                       <Link href={`/product/${p.id}`} className="block">
-                        <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-lg bg-[#ededeb]">
+                        <div className="relative mb-3 aspect-[4/5] overflow-hidden rounded-xl bg-[#ededeb]">
                           <Image
                             src={p.images?.[0]?.url || p.images?.[0] || "/placeholder.jpg"}
                             alt={p.name}
                             fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                             sizes="(max-width: 768px) 50vw, 25vw"
                           />
                         </div>
-                        <h4 className="truncate text-xs font-bold uppercase text-black">{p.name}</h4>
-                        <p className="mt-1 text-xs font-bold text-black">₹{p.price.toLocaleString("en-IN")}</p>
+                        <h4 className="truncate font-microgramma text-xs font-bold uppercase tracking-tight text-black">
+                          {p.name}
+                        </h4>
+                        <p className="mt-1 font-mono text-xs font-bold text-black">
+                          ₹{p.price.toLocaleString("en-IN")}
+                        </p>
                       </Link>
 
-                      <div className="mt-3 flex items-center gap-1.5 border-t border-black/10 pt-3">
+                      <div className="mt-3 flex items-center gap-1.5 border-t border-black/8 pt-3">
                         <button
                           onClick={() => {
                             addItem({
@@ -805,16 +932,16 @@ export default function AccountPage() {
                               color: p.colors?.[0] || "Default",
                             });
                           }}
-                          className="btn-bagify flex-1 cursor-pointer py-2 text-center text-[8px] font-bold uppercase tracking-[0.12em]"
+                          className="btn-bagify btn-bagify-dark flex-1 cursor-pointer py-2 text-center text-[9px] font-bold uppercase tracking-[0.12em]"
                         >
                           Add to Bag
                         </button>
                         <button
                           onClick={() => toggleItem(p.id)}
-                          className="cursor-pointer border border-black/10 p-2 text-black/55 transition-colors hover:border-black hover:text-black"
-                          title="Remove"
+                          className="cursor-pointer rounded-lg border border-black/10 p-2 text-black/50 transition-colors hover:border-black hover:text-black hover:bg-black/5"
+                          title="Remove from saved"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -826,15 +953,18 @@ export default function AccountPage() {
 
           {/* 3. SAVED ADDRESSES TAB */}
           {activeTab === "addresses" && (
-            <div id="account-panel-addresses" role="tabpanel" aria-labelledby="account-tab-addresses" className="space-y-4">
-              <div className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div id="account-panel-addresses" role="tabpanel" aria-labelledby="account-tab-addresses" className="space-y-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">
-                    Saved destinations
-                  </p>
-                  <span className="mt-1 block text-xs text-black/50">
-                    Destinations ({addresses.length})
-                  </span>
+                  <div className="flex items-center gap-2 mb-1">
+                    <MapPin className="w-4 h-4 text-black" />
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                      Delivery Address Book
+                    </p>
+                  </div>
+                  <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
+                    Saved Destinations <span className="font-mono text-sm text-black/40">({addresses.length})</span>
+                  </h3>
                 </div>
                 <button
                   type="button"
@@ -846,10 +976,10 @@ export default function AccountPage() {
                       setShowAddressForm(true);
                     }
                   }}
-                  className="btn-bagify cursor-pointer text-[9px] uppercase tracking-[0.14em]"
+                  className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer shadow-xs"
                 >
-                  <span>{showAddressForm ? "Cancel" : "Add Address"}</span>
-                  <Plus className="w-3 h-3" />
+                  <Plus className={`w-3.5 h-3.5 transition-transform duration-200 ${showAddressForm ? "rotate-45" : ""}`} />
+                  <span>{showAddressForm ? "Close Form" : "Add Destination"}</span>
                 </button>
               </div>
 
@@ -857,56 +987,66 @@ export default function AccountPage() {
               <AnimatePresence>
                 {showAddressForm && (
                   <motion.form
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
+                    initial={{ opacity: 0, y: -8, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -8, height: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                     onSubmit={handleAddAddress}
-                    className="rounded-xl border border-black bg-white p-4 sm:p-6 flex flex-col gap-3 overflow-hidden"
+                    className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs overflow-hidden space-y-4"
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="border-b border-black/8 pb-4">
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                        {editingAddressId ? "Modify Destination" : "New Delivery Destination"}
+                      </p>
+                      <h4 className="font-microgramma text-lg font-bold uppercase tracking-tight text-black mt-1">
+                        {editingAddressId ? "Edit Address Details" : "Enter Shipping Coordinates"}
+                      </h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                          Full Name *
+                        <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                          Recipient Full Name *
                         </label>
                         <input
                           required
                           value={addressForm.fullName}
                           onChange={(e) => setAddressForm((p) => ({ ...p, fullName: e.target.value }))}
-                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                          className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                           placeholder="Alex Vance"
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                          Phone (+91) *
+                        <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                          Contact Phone (+91) *
                         </label>
                         <input
                           required
                           type="tel"
                           value={addressForm.phone}
                           onChange={(e) => setAddressForm((p) => ({ ...p, phone: e.target.value }))}
-                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                          className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 font-mono text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                           placeholder="9876543210"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                        Street Address *
+                      <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                        Street Address & Landmark *
                       </label>
                       <input
                         required
                         value={addressForm.street}
                         onChange={(e) => setAddressForm((p) => ({ ...p, street: e.target.value }))}
-                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                        className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                         placeholder="Flat 402, Lotus Heights, MG Road"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
                           Pincode *
                         </label>
                         <input
@@ -914,56 +1054,56 @@ export default function AccountPage() {
                           maxLength={6}
                           value={addressForm.pincode}
                           onChange={(e) => setAddressForm((p) => ({ ...p, pincode: e.target.value }))}
-                          className="w-full border border-black/15 bg-white px-3 py-2 font-mono text-xs outline-none focus:border-black"
+                          className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 font-mono text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                           placeholder="400001"
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
                           City *
                         </label>
                         <input
                           required
                           value={addressForm.city}
                           onChange={(e) => setAddressForm((p) => ({ ...p, city: e.target.value }))}
-                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                          className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                           placeholder="Mumbai"
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
+                        <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
                           State *
                         </label>
                         <input
                           required
                           value={addressForm.state}
                           onChange={(e) => setAddressForm((p) => ({ ...p, state: e.target.value }))}
-                          className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                          className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                           placeholder="Maharashtra"
                         />
                       </div>
                     </div>
 
                     {addressError && (
-                      <p className="border border-black/15 bg-[#f2f2f0] p-2 text-xs font-bold text-black" role="alert">
+                      <div className="rounded-2xl border border-red-200 bg-red-50/70 p-3 text-xs font-mono font-bold text-red-600" role="alert">
                         {addressError}
-                      </p>
+                      </div>
                     )}
 
-                    <div className="flex justify-end gap-2 pt-1">
+                    <div className="flex items-center justify-end gap-3 pt-2">
                       <button
                         type="button"
                         onClick={cancelAddressForm}
-                        className="cursor-pointer border border-black/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em]"
+                        className="rounded-full border border-black/12 px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/70 transition-all hover:border-black hover:text-black cursor-pointer"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={savingAddress}
-                        className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                        className="rounded-full bg-black px-6 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer disabled:opacity-50"
                       >
-                        {savingAddress ? "Saving…" : editingAddressId ? "Save Changes" : "Save"}
+                        {savingAddress ? "Saving…" : editingAddressId ? "Save Changes" : "Save Destination"}
                       </button>
                     </div>
                   </motion.form>
@@ -972,19 +1112,27 @@ export default function AccountPage() {
 
               {/* Grid */}
               {loadingAddresses ? (
-                <div className="rounded-xl border border-black/10 bg-white p-8 text-center text-xs font-bold uppercase tracking-[0.16em] text-black/45">
-                  Loading addresses…
+                <div className="rounded-3xl border border-black/8 bg-white p-12 text-center text-xs font-mono font-bold uppercase tracking-[0.16em] text-black/45">
+                  Accessing address archive…
                 </div>
               ) : addresses.length === 0 ? (
-                <div className="rounded-xl border border-black/10 bg-white p-8 text-center">
-                  <MapPin className="mx-auto mb-3 h-7 w-7 text-black/25" />
-                  <p className="mb-3 text-xs text-black/55">No saved addresses.</p>
+                <div className="rounded-3xl border border-black/8 bg-white p-12 text-center shadow-xs">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f5f5f2] border border-black/8 text-black/40">
+                    <MapPin className="h-6 w-6" />
+                  </div>
+                  <h4 className="font-microgramma text-lg font-bold uppercase tracking-tight text-black">
+                    No Saved Destinations
+                  </h4>
+                  <p className="mt-1.5 mb-5 text-xs text-black/55 max-w-sm mx-auto">
+                    Save your primary dispatch addresses for instant 1-click checkout on upcoming drops.
+                  </p>
                   <button
                     type="button"
                     onClick={() => setShowAddressForm(true)}
-                    className="btn-bagify px-4 py-2 text-[9px] font-bold uppercase tracking-wider inline-block cursor-pointer"
+                    className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-3 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer"
                   >
-                    + Add Address
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add New Destination</span>
                   </button>
                 </div>
               ) : (
@@ -992,36 +1140,37 @@ export default function AccountPage() {
                   {addresses.map((addr: any, idx: number) => (
                     <div
                       key={addr.id}
-                      className="rounded-xl border border-black/10 bg-white p-5"
+                      className="group relative rounded-3xl border border-black/8 bg-white p-6 transition-all hover:border-black/20 hover:shadow-md"
                     >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="border border-black/15 bg-[#f5f5f2] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-black">
-                            {idx === 0 ? "PRIMARY" : `SAVED #${idx + 1}`}
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => startEditAddress(addr)}
-                              className="cursor-pointer text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 underline underline-offset-4 transition-colors hover:text-black"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteAddress(addr.id)}
-                              className="flex cursor-pointer items-center gap-1 text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 transition-colors hover:text-black"
-                            >
-                              <Trash2 className="w-3 h-3" /> Remove
-                            </button>
-                          </div>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-[0.12em] ${idx === 0 ? "bg-black text-white" : "bg-black/5 text-black/70"}`}>
+                          {idx === 0 && <CheckCircle2 className="w-2.5 h-2.5" />}
+                          {idx === 0 ? "Primary Destination" : `Destination #${idx + 1}`}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => startEditAddress(addr)}
+                            className="rounded-full border border-black/10 px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-wider text-black/60 transition-all hover:border-black hover:text-black cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAddress(addr.id)}
+                            className="rounded-full border border-red-200/60 p-1.5 text-red-500 transition-all hover:bg-red-50 hover:border-red-400 cursor-pointer"
+                            title="Remove"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                        <p className="mt-5 text-xs font-bold text-black">{addr.fullName}</p>
-                        <p className="mt-1 font-mono text-[10px] text-black/50">{addr.phone}</p>
-                        <p className="mt-2 text-xs leading-snug text-black/65">
-                          {addr.street}, {addr.city}, {addr.state} / <b className="font-mono">{addr.pincode}</b>
-                        </p>
                       </div>
+                      <p className="font-microgramma text-base font-bold uppercase tracking-tight text-black">{addr.fullName}</p>
+                      <p className="mt-1 font-mono text-[11px] text-black/50">{addr.phone}</p>
+                      <p className="mt-3 text-xs leading-relaxed text-black/70">
+                        {addr.street}<br />
+                        {addr.city}, {addr.state} — <span className="font-mono font-bold text-black">{addr.pincode}</span>
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -1031,45 +1180,132 @@ export default function AccountPage() {
 
           {/* 4. VIP PERKS TAB */}
           {activeTab === "loyalty" && (
-            <div id="account-panel-loyalty" role="tabpanel" aria-labelledby="account-tab-loyalty" className="space-y-4">
-              <section className="rounded-xl border border-black/10 bg-white p-5 sm:p-7">
-                <div className="mb-6 flex flex-col gap-2 border-b border-black/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
+            <div id="account-panel-loyalty" role="tabpanel" aria-labelledby="account-tab-loyalty" className="space-y-6">
+              {/* Header Box */}
+              <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="flex flex-col gap-2 border-b border-black/8 pb-6 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Chrome Club</p>
-                    <h2 className="mt-2 font-microgramma text-xl font-bold uppercase tracking-tight text-black">Member benefits</h2>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Sparkles className="w-4 h-4 text-black" />
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                        Chrome Club Rewards
+                      </p>
+                    </div>
+                    <h2 className="font-microgramma text-2xl sm:text-3xl font-bold uppercase tracking-tight text-black">
+                      Member Benefits
+                    </h2>
                   </div>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-black/40">{points} points earned</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-black text-white">
+                      {points.toLocaleString("en-IN")} Total Points
+                    </span>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-3">
-                  <div className={`border p-4 ${tier === "CHROME" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Chrome / 0-499</p>
-                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Early drop access and exclusive member privileges.</p>
-                  </div>
-                  <div className={`border p-4 ${tier === "STEEL" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Steel / 500-1999</p>
-                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">Priority order dispatch and a 1.5x points multiplier.</p>
-                  </div>
-                  <div className={`border p-4 ${tier === "GOLD" ? "border-black bg-[#f5f5f2]" : "border-black/10 bg-white"}`}>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black">Gold / 2000+</p>
-                    <p className="mt-3 text-[10px] leading-relaxed text-black/55">2x points and priority fulfillment for every drop.</p>
-                  </div>
+                {/* 3 Tier Cards */}
+                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  {(["CHROME", "STEEL", "GOLD"] as LoyaltyTier[]).map((tierKey) => {
+                    const info = loyaltyTiers[tierKey];
+                    const isCurrent = tier === tierKey;
+                    const tierLabel = tierKey === "CHROME" ? "0 - 499 PTS" : tierKey === "STEEL" ? "500 - 1,999 PTS" : "2,000+ PTS";
+                    return (
+                      <div
+                        key={tierKey}
+                        className={`relative rounded-2xl p-6 transition-all duration-300 flex flex-col justify-between ${
+                          isCurrent
+                            ? "border-2 border-black bg-[#f5f5f2] shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+                            : "border border-black/10 bg-white/80 hover:bg-white hover:border-black/20"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black/50">
+                              {tierLabel}
+                            </span>
+                            {isCurrent ? (
+                              <span className="rounded-full bg-black px-2.5 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider text-white">
+                                ✦ ACTIVE TIER
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <h3 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black">
+                            {tierKey} TIER
+                          </h3>
+                          <p className="mt-1 text-[11px] font-mono font-bold uppercase tracking-wider text-black/60">
+                            {info.multiplier} Points Multiplier
+                          </p>
+
+                          <ul className="mt-5 space-y-2.5 border-t border-black/8 pt-4">
+                            {info.perks.map((perk, idx) => (
+                              <li key={idx} className="flex items-start gap-2 text-xs text-black/75 leading-snug">
+                                <span className="text-black font-bold text-[10px] shrink-0 mt-0.5">✦</span>
+                                <span>{perk}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-black/8 text-[10px] font-mono text-black/45">
+                          {isCurrent
+                            ? "Currently enjoying full tier privileges."
+                            : points >= info.minimum
+                            ? "Tier unlocked."
+                            : `Need ${(info.minimum - points).toLocaleString("en-IN")} more points.`}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
 
-              <section className="rounded-xl border border-black/10 bg-white p-5 sm:p-7">
-                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Points activity</p>
+              {/* Points Activity Ledger */}
+              <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="flex items-center justify-between mb-5 pb-3 border-b border-black/8">
+                  <div>
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-black/45">
+                      Transaction Ledger
+                    </p>
+                    <h3 className="font-microgramma text-lg sm:text-xl font-bold uppercase tracking-tight text-black mt-1">
+                      Points Activity
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-black/50">
+                    10 PTS = ₹100 SPENT
+                  </span>
+                </div>
+
                 {loyaltyData?.history && loyaltyData.history.length > 0 ? (
-                  <div className="divide-y divide-black/10">
+                  <div className="divide-y divide-black/8">
                     {loyaltyData.history.map((h: any) => (
-                      <div key={h.id} className="flex items-center justify-between gap-4 py-3 text-xs">
-                        <span className="font-bold text-black">{h.reason}</span>
-                        <span className="shrink-0 font-mono text-xs font-bold text-black">+{h.points} PTS</span>
+                      <div key={h.id} className="flex items-center justify-between gap-4 py-3.5 text-xs">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                          <div>
+                            <span className="font-bold text-black uppercase tracking-tight block">
+                              {h.reason}
+                            </span>
+                            <span className="text-[10px] font-mono text-black/40">
+                              {new Date(h.createdAt || Date.now()).toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="shrink-0 font-mono text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/60 px-3 py-1 rounded-full">
+                          +{h.points} PTS
+                        </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs leading-relaxed text-black/55">Earn 10 points per ₹100 spent on eligible orders.</p>
+                  <div className="py-8 text-center">
+                    <p className="text-xs text-black/50">
+                      No points activity recorded yet. Earn 10 points for every ₹100 spent on completed orders.
+                    </p>
+                  </div>
                 )}
               </section>
             </div>
@@ -1077,51 +1313,65 @@ export default function AccountPage() {
 
           {/* 5. SETTINGS TAB */}
           {activeTab === "settings" && (
-            <div id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" className="space-y-4">
-              {/* Profile */}
-              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
-                <div className="mb-4 border-b border-black/10 pb-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Profile</p>
-                  <p className="mt-2 text-xs leading-relaxed text-black/55">Name and avatar shown across the store.</p>
+            <div id="account-panel-settings" role="tabpanel" aria-labelledby="account-tab-settings" className="space-y-6">
+              {/* Profile Card */}
+              <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="border-b border-black/8 pb-5 mb-6">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sliders className="w-4 h-4 text-black" />
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                      Identity Configuration
+                    </p>
+                  </div>
+                  <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
+                    Profile Details
+                  </h3>
+                  <p className="mt-1 text-xs text-black/55">
+                    Your public alias and avatar preview displayed across your Bagifyyyy pass and orders.
+                  </p>
                 </div>
-                <form onSubmit={handleSaveProfile} className="flex flex-col gap-3">
-                  <div className="flex items-center gap-4">
+
+                <form onSubmit={handleSaveProfile} className="flex flex-col gap-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-5 p-4 rounded-2xl bg-[#fbfbf9] border border-black/5">
                     {(profileAvatar ?? user?.avatar) ? (
                       <Image
                         src={profileAvatar ?? user?.avatar ?? "/placeholder.jpg"}
                         alt="Avatar preview"
-                        width={56}
-                        height={56}
+                        width={64}
+                        height={64}
                         unoptimized
-                        className="h-14 w-14 shrink-0 rounded-full border border-black/10 object-cover"
+                        className="h-16 w-16 shrink-0 rounded-2xl border border-black/10 object-cover shadow-xs"
                       />
                     ) : (
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-black text-lg font-bold text-white">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-black font-microgramma text-xl font-bold text-white shadow-xs">
                         {(profileName ?? user?.name ?? "U")[0]?.toUpperCase() || "U"}
                       </div>
                     )}
-                    <div className="min-w-0 flex-1">
-                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                        Avatar image URL
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <label className="block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                        Custom Avatar Image URL
                       </label>
-                      <input
-                        type="url"
-                        value={profileAvatar ?? user?.avatar ?? ""}
-                        onChange={(e) => { setProfileAvatar(e.target.value); setProfileMsg(null); }}
-                        placeholder="https://…"
-                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
-                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="url"
+                          value={profileAvatar ?? user?.avatar ?? ""}
+                          onChange={(e) => { setProfileAvatar(e.target.value); setProfileMsg(null); }}
+                          placeholder="https://..."
+                          className="w-full rounded-xl border border-black/10 bg-white px-3.5 py-2.5 text-xs outline-none transition-all focus:border-black focus:ring-1 focus:ring-black"
+                        />
+                        {(profileAvatar ?? user?.avatar) ? (
+                          <button
+                            type="button"
+                            onClick={() => { setProfileAvatar(""); setProfileMsg(null); }}
+                            className="shrink-0 rounded-xl border border-black/10 px-3 py-2 text-[10px] font-mono font-bold uppercase tracking-wider text-black/50 transition-all hover:border-black hover:text-black cursor-pointer"
+                          >
+                            Clear
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
-                    {(profileAvatar ?? user?.avatar) ? (
-                      <button
-                        type="button"
-                        onClick={() => { setProfileAvatar(""); setProfileMsg(null); }}
-                        className="shrink-0 cursor-pointer text-[9px] font-bold uppercase tracking-[0.14em] text-black/45 underline underline-offset-4 transition-colors hover:text-black"
-                      >
-                        Remove
-                      </button>
-                    ) : null}
                   </div>
+
                   <div className="flex flex-wrap items-center gap-3">
                     <input
                       ref={avatarInputRef}
@@ -1135,58 +1385,74 @@ export default function AccountPage() {
                       type="button"
                       onClick={() => avatarInputRef.current?.click()}
                       disabled={uploadingAvatar}
-                      className="cursor-pointer border border-black/15 bg-[#f5f5f2] px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-black transition-colors hover:border-black disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-full border border-black/12 bg-[#f5f5f2] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black transition-all hover:border-black hover:bg-white cursor-pointer disabled:opacity-50"
                     >
-                      {uploadingAvatar ? "Uploading…" : "Upload From Gallery"}
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{uploadingAvatar ? "Uploading Media…" : "Upload From Device"}</span>
                     </button>
-                    <span className="text-[9px] uppercase tracking-[0.12em] text-black/40">JPG · PNG · WebP · Max 2MB</span>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.12em] text-black/40">
+                      JPG · PNG · WebP · Max 2MB
+                    </span>
                   </div>
+
                   {avatarMsg && (
-                    <p role={avatarMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${avatarMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                    <div role={avatarMsg.type === "error" ? "alert" : "status"} className={`rounded-2xl p-3 text-xs font-mono font-bold ${avatarMsg.type === "error" ? "border border-red-200 bg-red-50 text-red-600" : "border border-emerald-200 bg-emerald-50 text-emerald-800"}`}>
                       {avatarMsg.text}
-                    </p>
+                    </div>
                   )}
+
                   <div>
-                    <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                      Display name
+                    <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                      Display Name
                     </label>
                     <input
                       value={profileName ?? user?.name ?? ""}
                       onChange={(e) => { setProfileName(e.target.value); setProfileMsg(null); }}
                       maxLength={60}
                       placeholder="Your name"
-                      className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                     />
                   </div>
+
                   {profileMsg && (
-                    <p role={profileMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${profileMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                    <div role={profileMsg.type === "error" ? "alert" : "status"} className={`rounded-2xl p-3 text-xs font-mono font-bold ${profileMsg.type === "error" ? "border border-red-200 bg-red-50 text-red-600" : "border border-emerald-200 bg-emerald-50 text-emerald-800"}`}>
                       {profileMsg.text}
-                    </p>
+                    </div>
                   )}
-                  <div className="flex justify-end pt-1">
+
+                  <div className="flex justify-end pt-2">
                     <button
                       type="submit"
                       disabled={savingProfile}
-                      className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                      className="rounded-full bg-black px-6 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer disabled:opacity-50"
                     >
-                      {savingProfile ? "Saving…" : "Save Profile"}
+                      {savingProfile ? "Saving…" : "Save Profile Details"}
                     </button>
                   </div>
                 </form>
               </section>
 
-              {/* Email */}
-              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
-                <div className="mb-4 border-b border-black/10 pb-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Email address</p>
-                  <p className="mt-2 text-xs leading-relaxed text-black/55">
-                    Currently <b>{user?.email}</b>. Loyalty points move with it.
+              {/* Email Credentials */}
+              <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="border-b border-black/8 pb-5 mb-6">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Mail className="w-4 h-4 text-black" />
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                      Account Communications
+                    </p>
+                  </div>
+                  <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
+                    Email Address
+                  </h3>
+                  <p className="mt-1 text-xs text-black/55">
+                    Currently linked to <b className="font-mono text-black">{user?.email}</b>. All order receipts & loyalty points stay tied to this address.
                   </p>
                 </div>
-                <form onSubmit={handleChangeEmail} className="flex flex-col gap-3">
+
+                <form onSubmit={handleChangeEmail} className="flex flex-col gap-4">
                   <div>
-                    <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                      New email *
+                    <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                      New Email Address *
                     </label>
                     <input
                       required
@@ -1194,13 +1460,14 @@ export default function AccountPage() {
                       value={newEmail}
                       onChange={(e) => { setNewEmail(e.target.value); setEmailMsg(null); }}
                       placeholder="you@example.com"
-                      className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                      className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                     />
                   </div>
+
                   {user?.hasPassword ? (
                     <div>
-                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                        Current password *
+                      <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                        Current Account Password *
                       </label>
                       <input
                         required
@@ -1208,42 +1475,53 @@ export default function AccountPage() {
                         value={emailPassword}
                         onChange={(e) => { setEmailPassword(e.target.value); setEmailMsg(null); }}
                         placeholder="••••••••"
-                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                        className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                       />
                     </div>
                   ) : null}
+
                   {emailMsg && (
-                    <p role={emailMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${emailMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                    <div role={emailMsg.type === "error" ? "alert" : "status"} className={`rounded-2xl p-3 text-xs font-mono font-bold ${emailMsg.type === "error" ? "border border-red-200 bg-red-50 text-red-600" : "border border-emerald-200 bg-emerald-50 text-emerald-800"}`}>
                       {emailMsg.text}
-                    </p>
+                    </div>
                   )}
-                  <div className="flex justify-end pt-1">
+
+                  <div className="flex justify-end pt-2">
                     <button
                       type="submit"
                       disabled={savingEmail}
-                      className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                      className="rounded-full bg-black px-6 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer disabled:opacity-50"
                     >
-                      {savingEmail ? "Saving…" : "Change Email"}
+                      {savingEmail ? "Saving…" : "Update Email"}
                     </button>
                   </div>
                 </form>
               </section>
 
-              {/* Password */}
-              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
-                <div className="mb-4 border-b border-black/10 pb-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/45">Password</p>
-                  <p className="mt-2 text-xs leading-relaxed text-black/55">
+              {/* Password & Security */}
+              <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="border-b border-black/8 pb-5 mb-6">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Key className="w-4 h-4 text-black" />
+                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                      Access Credentials
+                    </p>
+                  </div>
+                  <h3 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
+                    Security & Password
+                  </h3>
+                  <p className="mt-1 text-xs text-black/55">
                     {user?.hasPassword
-                      ? "Change the password used with email sign-in."
-                      : "No password set (Google sign-in). Set one to enable email sign-in."}
+                      ? "Change the password used with your direct email sign-in."
+                      : "No password currently configured (Google sign-in). Create a password to enable direct email sign-in."}
                   </p>
                 </div>
-                <form onSubmit={handleChangePassword} className="flex flex-col gap-3">
+
+                <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
                   {user?.hasPassword ? (
                     <div>
-                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                        Current password *
+                      <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                        Current Password *
                       </label>
                       <input
                         required
@@ -1251,14 +1529,15 @@ export default function AccountPage() {
                         value={currentPassword}
                         onChange={(e) => { setCurrentPassword(e.target.value); setPasswordMsg(null); }}
                         placeholder="••••••••"
-                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                        className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                       />
                     </div>
                   ) : null}
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                        New password (8+ chars) *
+                      <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                        New Password (8+ characters) *
                       </label>
                       <input
                         required
@@ -1267,12 +1546,12 @@ export default function AccountPage() {
                         value={newPassword}
                         onChange={(e) => { setNewPassword(e.target.value); setPasswordMsg(null); }}
                         placeholder="••••••••"
-                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                        className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[9px] font-bold uppercase tracking-[0.14em] text-black/55">
-                        Confirm new password *
+                      <label className="mb-1.5 block text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black/60">
+                        Confirm New Password *
                       </label>
                       <input
                         required
@@ -1280,68 +1559,89 @@ export default function AccountPage() {
                         value={confirmPassword}
                         onChange={(e) => { setConfirmPassword(e.target.value); setPasswordMsg(null); }}
                         placeholder="••••••••"
-                        className="w-full border border-black/15 bg-white px-3 py-2 text-xs outline-none focus:border-black"
+                        className="w-full rounded-2xl border border-black/10 bg-[#fafafa] px-4 py-3 text-xs outline-none transition-all focus:bg-white focus:border-black focus:ring-1 focus:ring-black"
                       />
                     </div>
                   </div>
+
                   {passwordMsg && (
-                    <p role={passwordMsg.type === "error" ? "alert" : "status"} className={`text-[11px] font-bold uppercase tracking-[0.1em] ${passwordMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                    <div role={passwordMsg.type === "error" ? "alert" : "status"} className={`rounded-2xl p-3 text-xs font-mono font-bold ${passwordMsg.type === "error" ? "border border-red-200 bg-red-50 text-red-600" : "border border-emerald-200 bg-emerald-50 text-emerald-800"}`}>
                       {passwordMsg.text}
-                    </p>
+                    </div>
                   )}
-                  <div className="flex justify-end pt-1">
+
+                  <div className="flex justify-end pt-2">
                     <button
                       type="submit"
                       disabled={savingPassword}
-                      className="btn-bagify cursor-pointer px-5 py-2 text-[10px] font-bold uppercase tracking-[0.14em] disabled:opacity-50"
+                      className="rounded-full bg-black px-6 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-white transition-all hover:bg-black/85 cursor-pointer disabled:opacity-50"
                     >
                       {savingPassword ? "Saving…" : user?.hasPassword ? "Change Password" : "Set Password"}
                     </button>
                   </div>
                 </form>
-                <div className="mt-4 border-t border-black/10 pt-4">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-[11px] leading-relaxed text-black/55">
-                      Prefer email? We&apos;ll send a reset link to your Gmail. It opens a page to set a new password.
-                    </p>
+
+                <div className="mt-8 border-t border-black/8 pt-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h4 className="font-mono text-xs font-bold uppercase text-black">
+                        Forgot your current credentials?
+                      </h4>
+                      <p className="text-[11px] text-black/55 mt-0.5">
+                        We will send a magic password reset link directly to your registered inbox.
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={handleSendResetLink}
                       disabled={sendingResetLink}
-                      className="shrink-0 cursor-pointer border border-black/15 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-black transition-colors hover:border-black disabled:opacity-50"
+                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/12 bg-[#f5f5f2] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black transition-all hover:border-black hover:bg-white cursor-pointer disabled:opacity-50"
                     >
-                      {sendingResetLink ? "Sending…" : "Email Reset Link"}
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>{sendingResetLink ? "Dispatching…" : "Send Reset Link"}</span>
                     </button>
                   </div>
+
                   {resetLinkMsg && (
-                    <p role={resetLinkMsg.type === "error" ? "alert" : "status"} className={`mt-3 text-[11px] font-bold uppercase tracking-[0.1em] ${resetLinkMsg.type === "error" ? "text-red-600" : "text-emerald-700"}`}>
+                    <div role={resetLinkMsg.type === "error" ? "alert" : "status"} className={`mt-3 rounded-2xl p-3 text-xs font-mono font-bold ${resetLinkMsg.type === "error" ? "border border-red-200 bg-red-50 text-red-600" : "border border-emerald-200 bg-emerald-50 text-emerald-800"}`}>
                       {resetLinkMsg.text}
-                    </p>
+                    </div>
                   )}
                 </div>
               </section>
 
-              {/* Session */}
-              <section className="rounded-xl border border-black/10 bg-white p-5 text-xs sm:p-7">
-                <div className="flex items-center justify-between gap-4">
+              {/* Authentication & Session Info */}
+              <section className="rounded-3xl border border-black/8 bg-white p-6 sm:p-8 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-black/45">Sign-in method</span>
-                    <p className="mt-2 text-xs font-bold text-black">
-                      {user?.googleId ? "Google OAuth" : "Email & Password"}
+                    <div className="flex items-center gap-2 mb-1">
+                      <ShieldCheck className="w-4 h-4 text-black" />
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-black/45">
+                        Active Authorization
+                      </p>
+                    </div>
+                    <h3 className="font-microgramma text-lg font-bold uppercase tracking-tight text-black">
+                      {user?.googleId ? "Google OAuth 2.0" : "Direct Email & Password"}
                       {user?.googleId && user?.hasPassword ? " + Password" : ""}
+                    </h3>
+                    <p className="mt-1 font-mono text-xs text-black/50">
+                      Authenticated Session ID: <span className="font-bold text-black">{user?.id?.slice(0, 12)}...</span>
                     </p>
                   </div>
-                  <span className="bg-black px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white">Verified</span>
-                </div>
-                <div className="mt-4 flex items-center justify-between border-t border-black/10 pt-4">
-                  <span className="text-[10px] uppercase tracking-[0.12em] text-black/45">Active session</span>
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    className="cursor-pointer text-[10px] font-bold uppercase tracking-[0.14em] text-black underline underline-offset-4 transition-opacity hover:opacity-55"
-                  >
-                    Sign out
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/70 border border-emerald-200 px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-[0.12em] text-emerald-800">
+                      <Check className="w-2.5 h-2.5" />
+                      Active Session
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="inline-flex items-center gap-2 rounded-full border border-black/12 px-4 py-2 text-[10px] font-mono font-bold uppercase tracking-[0.14em] text-black transition-all hover:border-black hover:bg-black hover:text-white cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
                 </div>
               </section>
             </div>
