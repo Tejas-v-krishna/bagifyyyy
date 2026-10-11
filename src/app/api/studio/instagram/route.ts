@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { prisma } from "@/lib/prisma";
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
 
 const CONFIG_FILE = path.join(process.cwd(), "src", "data", "instagram_feed.json");
 
-// Helper to read curated config
+// Helper to read curated config from file
 function getFeedConfig() {
   try {
     if (fs.existsSync(CONFIG_FILE)) {
@@ -18,19 +19,37 @@ function getFeedConfig() {
   return null;
 }
 
-// Helper to save config
+// Helper to save config to file (local dev only)
 function saveFeedConfig(data: unknown) {
-  const dir = path.dirname(CONFIG_FILE);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  try {
+    const dir = path.dirname(CONFIG_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch {
+    // Read-only filesystem in serverless environments (e.g. Vercel)
   }
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(data, null, 2), "utf-8");
 }
 
 export async function GET() {
   const unauthorized = await requireStudioAuth();
   if (unauthorized) return unauthorized;
 
+  // 1. Try DB first (persisted on Vercel)
+  try {
+    const dbRow = await prisma.siteSetting.findUnique({ where: { key: "instagram_feed" } });
+    if (dbRow?.value) {
+      const parsed = JSON.parse(dbRow.value);
+      if (parsed) {
+        return NextResponse.json({ success: true, ...parsed });
+      }
+    }
+  } catch (err) {
+    console.warn("Could not read db instagram feed:", err);
+  }
+
+  // 2. Fallback to local config file
   const config = getFeedConfig();
   if (config) {
     return NextResponse.json({ success: true, ...config });
@@ -103,10 +122,22 @@ export async function POST(request: Request) {
       updatedAt: new Date().toISOString(),
     };
 
+    // 1. Save to database (works on Vercel)
+    await prisma.siteSetting.upsert({
+      where: { key: "instagram_feed" },
+      update: { value: JSON.stringify(payload) },
+      create: { key: "instagram_feed", value: JSON.stringify(payload) },
+    });
+
+    // 2. Best-effort write to local file (local dev only)
     saveFeedConfig(payload);
+
     return NextResponse.json({ success: true, data: payload });
   } catch (error) {
     console.error("Error saving instagram feed:", error);
-    return NextResponse.json({ error: "Failed to update feed" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to update feed" },
+      { status: 500 }
+    );
   }
 }

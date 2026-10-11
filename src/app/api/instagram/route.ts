@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,20 @@ type InstagramPost = {
 type InstagramFeed = { posts?: InstagramPost[]; data?: InstagramPost[] };
 
 export async function GET() {
-  // 1. Check if custom curated Instagram feed is set by Admin
+  // 1. Check if custom curated Instagram feed is set in DB (persisted on Vercel)
+  try {
+    const dbRow = await prisma.siteSetting.findUnique({ where: { key: "instagram_feed" } });
+    if (dbRow?.value) {
+      const parsed = JSON.parse(dbRow.value);
+      if (parsed.posts && Array.isArray(parsed.posts) && parsed.posts.length > 0) {
+        return NextResponse.json({ success: true, source: "curated_admin", ...parsed });
+      }
+    }
+  } catch (dbErr) {
+    console.warn("Could not read db curated instagram feed:", dbErr);
+  }
+
+  // 2. Check local curated Instagram feed file (local dev fallback)
   try {
     if (fs.existsSync(CONFIG_FILE)) {
       const content = fs.readFileSync(CONFIG_FILE, "utf-8");
