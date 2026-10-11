@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AddToBagButton from "@/components/ui/AddToBagButton";
+import { getProductPath } from "@/lib/productSlug";
 
 export type ShowcaseCardProduct = {
   id: string;
@@ -63,7 +64,7 @@ export default function ShowcaseCard({
   return (
     <article className="group">
       <Link
-        href={`/product/${product.id}`}
+        href={getProductPath(product)}
         aria-label={product.name}
         className="relative block aspect-[4/5] w-full overflow-hidden rounded-[10px] bg-[#e9e9ec] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
         onMouseEnter={start}

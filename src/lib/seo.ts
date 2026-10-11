@@ -16,6 +16,8 @@ export const SITE_URL = (
 
 export const SITE_NAME = 'BAGIFYYYY';
 
+import { getProductPath } from '@/lib/productSlug';
+
 /** Profiles we actually run. Used for Organization.sameAs. */
 export const SOCIAL_PROFILES = ['https://www.instagram.com/bagifyyyy'];
 
@@ -65,7 +67,7 @@ export function productJsonLd(product: ProductLdInput) {
     },
     offers: {
       '@type': 'Offer',
-      url: absoluteUrl(`/product/${product.id}`),
+      url: absoluteUrl(getProductPath(product)),
       priceCurrency: 'INR',
       price: product.price,
       itemCondition: 'https://schema.org/NewCondition',

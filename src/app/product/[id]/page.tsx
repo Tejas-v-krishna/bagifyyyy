@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getProductForDisplay } from "@/lib/product";
+import { getProductPath } from "@/lib/productSlug";
 import { categoryHref, categoryLabel } from "@/lib/categories";
 import { absoluteUrl, breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       `${product.name} from BAGIFYYYY. ₹${product.price.toLocaleString("en-IN")}. Limited quantity, no restocks.`
   );
   const image = absoluteUrl(product.images[0] || product.image);
-  const canonical = `/product/${product.id}`;
+  const canonical = getProductPath(product);
 
   return {
     title,
@@ -99,7 +100,7 @@ export default async function ProductDetailPage({ params }: Props) {
     { name: "Home", path: "/" },
     { name: "Drops", path: "/products" },
     { name: categoryLabel(product.category), path: categoryHref(product.category) },
-    { name: product.name, path: `/product/${product.id}` },
+    { name: product.name, path: getProductPath(product) },
   ];
 
   return (

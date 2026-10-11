@@ -70,13 +70,36 @@ export type ProductForDisplay = DisplayProduct & {
 export async function getProductForDisplay(
   id: string
 ): Promise<ProductForDisplay | null> {
-  const product = await prisma.product.findUnique({
-    where: { id },
-    include: {
-      images: { orderBy: { position: 'asc' } },
-      variants: true,
-    },
-  });
+  let product = null;
+
+  // 1. Try exact match (handles full UUID)
+  try {
+    product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        images: { orderBy: { position: 'asc' } },
+        variants: true,
+      },
+    });
+  } catch {
+    product = null;
+  }
+
+  // 2. If not found, extract 8-hex identifier from end of slug or direct short ID
+  if (!product) {
+    const hexMatch = id.match(/[a-f0-9]{8}$/i) || id.match(/^[a-f0-9]{8}/i);
+    if (hexMatch) {
+      product = await prisma.product.findFirst({
+        where: {
+          id: { startsWith: hexMatch[0] },
+        },
+        include: {
+          images: { orderBy: { position: 'asc' } },
+          variants: true,
+        },
+      });
+    }
+  }
 
   if (!product || product.isArchived) return null;
 
@@ -103,7 +126,7 @@ export async function getProductForDisplay(
       include: { images: { orderBy: { position: 'asc' } } },
     }),
     prisma.review.aggregate({
-      where: { productId: id },
+      where: { productId: product.id },
       _avg: { rating: true },
       _count: { rating: true },
     }),

@@ -10,6 +10,7 @@ import { LayoutGrid, List, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } fr
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
+import { getProductPath } from "@/lib/productSlug";
 
 const NO_PRODUCTS: Product[] = [];
 
@@ -51,7 +52,7 @@ function EditorialGridCard({ product }: { product: Product }) {
   return (
     <article className="group" role="listitem" data-animate="scroll-reveal">
       <Link
-        href={`/product/${product.id}`}
+        href={getProductPath(product)}
         aria-label={product.name}
         className="relative block aspect-[4/5] w-full overflow-hidden rounded-[10px] bg-[#e9e9ec] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2"
         onMouseEnter={start}
@@ -116,7 +117,7 @@ function EditorialGridCard({ product }: { product: Product }) {
       </Link>
 
       <div className="flex items-baseline gap-2 px-0.5 pt-3">
-        <Link href={`/product/${product.id}`} className="block min-w-0 flex-1">
+        <Link href={getProductPath(product)} className="block min-w-0 flex-1">
           <h3 className="truncate text-[12px] font-semibold leading-tight tracking-tight sm:text-[13px] text-black transition-opacity group-hover:opacity-60" title={product.name}>
             {product.name}
           </h3>
@@ -648,7 +649,7 @@ export default function CategoryPageClient({
                             <Link
                               key={product.id}
                               role="listitem"
-                              href={`/product/${product.id}`}
+                              href={getProductPath(product)}
                               className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-b border-black/10 py-4 transition-colors hover:bg-black/[0.02] sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:gap-6 sm:px-2"
                             >
                               <span className="relative block h-20 w-16 shrink-0 overflow-hidden rounded-[12px] bg-[#e9e9ec] sm:h-24 sm:w-[4.75rem]">

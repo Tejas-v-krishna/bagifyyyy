@@ -13,10 +13,11 @@ import ReviewSection from "@/components/product/ReviewSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import { categoryHref, categoryLabel } from "@/lib/categories";
 import { useRouter } from "next/navigation";
-import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package, Check, ArrowRight, ArrowLeft } from "lucide-react";
+import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package, Check, ArrowRight, ArrowLeft, Share2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { triggerPinataBurst } from "@/lib/confetti";
 import type { ProductForDisplay } from "@/lib/product";
+import ProductShareModal from "@/components/product/ProductShareModal";
 
 /**
  * Reference-style product detail page:
@@ -65,6 +66,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const [nowTick, setNowTick] = useState(() => Date.now());
   const [idleExpired, setIdleExpired] = useState(false);
   const [isSoldOutLive, setIsSoldOutLive] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   const effectiveSoldOut =
     product.isSoldOut ||
@@ -265,8 +267,8 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     <div className="w-full bg-white text-y2k-gunmetal min-h-screen pb-24">
       <div className="max-w-[1480px] mx-auto px-6 sm:px-10 lg:px-16 pt-6 lg:pt-8">
 
-        {/* Back Button */}
-        <div className="mb-6">
+        {/* Back Button & Share Pill */}
+        <div className="mb-6 flex items-center justify-between">
           <button
             type="button"
             onClick={handleBack}
@@ -277,6 +279,16 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
             </span>
             <span>BACK</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsShareOpen(true)}
+            className="group inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.03] hover:bg-black hover:text-white px-3.5 py-1.5 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-black/70 transition-all cursor-pointer shadow-2xs"
+            aria-label="Share this piece"
+          >
+            <Share2 className="h-3.5 w-3.5 text-black group-hover:text-white transition-colors" />
+            <span>SHARE</span>
           </button>
         </div>
 
@@ -597,6 +609,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       className={`w-4 h-4 transition-colors ${wishlisted ? "fill-black text-black" : "text-black"}`}
                     />
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsShareOpen(true)}
+                    aria-label="Share product"
+                    className="w-12 h-12 rounded-full border border-black/15 bg-white flex items-center justify-center hover:border-black transition-colors cursor-pointer shrink-0 shadow-2xs active:scale-95"
+                  >
+                    <Share2 className="w-4 h-4 text-black" />
+                  </button>
                 </div>
 
                 <Link
@@ -644,6 +664,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                   <Heart
                     className={`w-4 h-4 transition-colors ${wishlisted ? "fill-black text-black" : "text-black"}`}
                   />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsShareOpen(true)}
+                  aria-label="Share product"
+                  className="w-12 h-12 rounded-full border border-black/15 bg-white flex items-center justify-center hover:border-black transition-colors cursor-pointer shrink-0 shadow-2xs active:scale-95"
+                >
+                  <Share2 className="w-4 h-4 text-black" />
                 </button>
               </div>
             ) : (
@@ -707,6 +735,14 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     <Heart
                       className={`w-4 h-4 transition-colors ${wishlisted ? "fill-black text-black" : "text-black"}`}
                     />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsShareOpen(true)}
+                    aria-label="Share product"
+                    className="w-12 h-12 rounded-full border border-black/15 bg-white flex items-center justify-center hover:border-black transition-colors cursor-pointer shrink-0 shadow-2xs active:scale-95"
+                  >
+                    <Share2 className="w-4 h-4 text-black" />
                   </button>
                 </div>
               </div>
@@ -838,6 +874,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         </div>,
         document.body
       )}
+
+      {/* Share Modal */}
+      <ProductShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        product={product}
+      />
     </div>
   );
 }

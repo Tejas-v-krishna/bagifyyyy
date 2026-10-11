@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AddToBagButton from "@/components/ui/AddToBagButton";
 import ProductMetaRow from "@/components/product/ProductMetaRow";
+import { getProductPath } from "@/lib/productSlug";
 
 export interface Product {
   id: string;
@@ -34,7 +35,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link
-      href={`/product/${product.id}`}
+      href={getProductPath(product)}
       className="group product-card flex flex-col w-full h-full bg-transparent relative overflow-hidden font-sans border-0 cursor-pointer select-none"
     >
       {/* ── Image is the card, full-bleed aspect-[4/5] matching New In ShowcaseCard ── */}

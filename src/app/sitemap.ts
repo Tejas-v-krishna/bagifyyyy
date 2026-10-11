@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/seo";
+import { getProductPath } from "@/lib/productSlug";
 
 /**
  * Only canonical, self-resolving URLs belong here. Routes that just `redirect()`
@@ -50,12 +51,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const products = await prisma.product.findMany({
       where: { isArchived: false },
-      select: { id: true, updatedAt: true },
+      select: { id: true, name: true, updatedAt: true },
       take: 2000,
     });
 
     const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
-      url: `${baseUrl}/product/${product.id}`,
+      url: `${baseUrl}${getProductPath(product)}`,
       lastModified: product.updatedAt || new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
