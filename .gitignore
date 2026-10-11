@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+load_test_report.html
+*_report.html
 
 # debug
 npm-debug.log*
