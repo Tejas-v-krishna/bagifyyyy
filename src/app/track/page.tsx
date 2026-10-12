@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { Search, Package, Truck, CheckCircle2, Clock, Copy } from "lucide-react";
+import { Search, Package, Truck, CheckCircle2, Clock, Copy, ArrowRight } from "lucide-react";
 import { orderStatusLabel } from "@/lib/orderStatus";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getRecaptchaToken } from "@/lib/recaptcha";
+import { getGuestOrders, SavedOrderSummary } from "@/lib/guestOrders";
 import EditorialPageShell from "@/components/layout/EditorialPageShell";
 
 interface TrackedOrderItem {
@@ -35,32 +37,38 @@ interface TrackedOrder {
   items: TrackedOrderItem[];
 }
 
-export default function TrackOrderPage() {
+function TrackOrderContent() {
   const { user } = useAuthStore();
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("query") || searchParams.get("order") || "";
+
+  const [searchQuery, setSearchQuery] = useState(queryParam);
   const [contact, setContact] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<TrackedOrder | null>(null);
   const [error, setError] = useState("");
   const [copiedTracking, setCopiedTracking] = useState(false);
+  const [guestOrders, setGuestOrders] = useState<SavedOrderSummary[]>([]);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
+  useEffect(() => {
+    const list = getGuestOrders();
+    setGuestOrders(list);
+  }, []);
+
+  const executeTrack = async (targetQuery: string, targetContact: string) => {
+    if (!targetQuery.trim()) return;
 
     setError("");
     setOrder(null);
     setLoading(true);
-
-    const effectiveContact = contact.trim() || user?.email || "";
 
     try {
       const recaptchaToken = await getRecaptchaToken("track");
       const res = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: searchQuery, contact: effectiveContact, honeypot, recaptchaToken }),
+        body: JSON.stringify({ query: targetQuery, contact: targetContact, honeypot, recaptchaToken }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -73,6 +81,34 @@ export default function TrackOrderPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const effectiveContact = contact.trim() || user?.email || "";
+    await executeTrack(searchQuery, effectiveContact);
+  };
+
+  // If queryParam is in URL, auto-fill contact if found in local guest orders or user account and execute track
+  useEffect(() => {
+    if (queryParam) {
+      setSearchQuery(queryParam);
+      const matched = getGuestOrders().find(
+        (o) => o.orderNumber.toLowerCase() === queryParam.toLowerCase() || (o.trackingId && o.trackingId.toLowerCase() === queryParam.toLowerCase())
+      );
+      const effectiveContact = matched?.customerEmail || matched?.customerPhone || user?.email || contact.trim();
+      if (effectiveContact) {
+        setContact(effectiveContact);
+        executeTrack(queryParam, effectiveContact);
+      }
+    }
+  }, [queryParam, user?.email]);
+
+  const handleSelectSavedOrder = (saved: SavedOrderSummary) => {
+    setSearchQuery(saved.orderNumber);
+    const chosenContact = saved.customerEmail || saved.customerPhone || user?.email || "";
+    setContact(chosenContact);
+    executeTrack(saved.orderNumber, chosenContact);
   };
 
   const handleCopy = (text: string) => {
@@ -93,8 +129,6 @@ export default function TrackOrderPage() {
     if (s === "DELIVERED") return 3;
     if (s === "SHIPPED") return 2;
     if (s === "PROCESSING") return 1;
-    // Anything else (cancelled, awaiting payment) has not reached the hub, so
-    // no step past CONFIRMED is lit. This used to fall through to PROCESSING.
     return 0;
   };
 
@@ -105,6 +139,31 @@ export default function TrackOrderPage() {
       description="Enter your order number or tracking ID, plus the email address or phone number used at checkout."
     >
       <div className="w-full">
+        {/* Saved orders quick pills if available */}
+        {guestOrders.length > 0 && !order && (
+          <div className="mb-6 rounded-2xl border border-black/8 bg-[#eaeaea]/60 p-4 sm:p-5">
+            <span className="mb-2.5 block font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-black/50">
+              Recent Orders on this Device
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {guestOrders.slice(0, 4).map((g) => (
+                <button
+                  key={g.id}
+                  type="button"
+                  onClick={() => handleSelectSavedOrder(g)}
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-black/10 bg-white px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider text-black transition-colors hover:bg-black hover:text-white"
+                >
+                  <span>#{g.orderNumber}</span>
+                  <span className="text-[10px] opacity-60">
+                    ₹{g.totalAmount.toLocaleString("en-IN")}
+                  </span>
+                  <ArrowRight className="h-3 w-3 opacity-40" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="rounded-2xl bg-white border border-black/10 p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.02)] mb-8 text-center">
           <div className="w-12 h-12 rounded-full bg-[#f2f2f2] flex items-center justify-center mx-auto mb-4">
             <Truck className="w-6 h-6 text-black" />
@@ -276,5 +335,27 @@ export default function TrackOrderPage() {
         )}
       </div>
     </EditorialPageShell>
+  );
+}
+
+export default function TrackOrderPage() {
+  return (
+    <Suspense
+      fallback={
+        <EditorialPageShell
+          eyebrow="Orders / Tracking"
+          title="Track your order"
+          description="Enter your order number or tracking ID, plus the email address or phone number used at checkout."
+        >
+          <div className="w-full flex justify-center py-20">
+            <div className="text-xs font-mono font-bold uppercase tracking-wider text-black/50">
+              Loading tracking portal…
+            </div>
+          </div>
+        </EditorialPageShell>
+      }
+    >
+      <TrackOrderContent />
+    </Suspense>
   );
 }

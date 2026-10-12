@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { Check, Truck, Package, ArrowRight, ArrowLeft, Sparkles, MapPin, Loader2, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { isAwaitingPayment, orderStatusLabel } from "@/lib/orderStatus";
+import { saveGuestOrder } from "@/lib/guestOrders";
 
 type OrderItem = {
   id: string;
@@ -73,7 +74,31 @@ function SuccessContent() {
         if (res.ok && data.order) {
           setOrder(data.order);
           setStatus("loaded");
-          if (!isAwaitingPayment(data.order)) clearCart();
+          if (!isAwaitingPayment(data.order)) {
+            clearCart();
+            saveGuestOrder({
+              id: data.order.id,
+              orderNumber: data.order.orderNumber,
+              createdAt: data.order.createdAt,
+              totalAmount: data.order.totalAmount,
+              orderStatus: data.order.orderStatus,
+              paymentStatus: data.order.paymentStatus,
+              paymentMethod: data.order.paymentMethod,
+              trackingId: data.order.trackingId || null,
+              customerEmail: data.order.customerEmail,
+              customerPhone: data.order.customerPhone,
+              shippingAddress: data.order.shippingAddress,
+              items: data.order.items.map((it: any) => ({
+                id: it.id,
+                name: it.name,
+                price: it.price,
+                quantity: it.quantity,
+                size: it.size,
+                color: it.color,
+                image: it.image,
+              })),
+            });
+          }
         } else {
           setStatus(res.status === 404 ? "missing" : "failed");
         }

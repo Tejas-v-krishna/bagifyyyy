@@ -35,6 +35,7 @@ import {
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { orderStatusLabel } from "@/lib/orderStatus";
+import { getGuestOrders, SavedOrderSummary, removeGuestOrder } from "@/lib/guestOrders";
 
 type AccountTab = "orders" | "wishlist" | "addresses" | "loyalty" | "settings";
 
@@ -142,6 +143,11 @@ export default function AccountPage() {
   const [clearMsg, setClearMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [sendingResetLink, setSendingResetLink] = useState(false);
   const [resetLinkMsg, setResetLinkMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [guestOrders, setGuestOrders] = useState<SavedOrderSummary[]>([]);
+
+  useEffect(() => {
+    setGuestOrders(getGuestOrders());
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -157,7 +163,13 @@ export default function AccountPage() {
     fetch("/api/orders")
       .then((res) => res.json())
       .then((data) => {
-        if (data.orders) setOrders(data.orders);
+        const serverOrders = Array.isArray(data.orders) ? data.orders : [];
+        // Also check if there are any locally saved orders from this device
+        const local = getGuestOrders();
+        // Merge: keep all server orders, plus any local orders not already in serverOrders (by orderNumber or id)
+        const existingKeys = new Set(serverOrders.map((o: any) => o.orderNumber || o.id));
+        const extraLocal = local.filter((lo) => !existingKeys.has(lo.orderNumber) && !existingKeys.has(lo.id));
+        setOrders([...serverOrders, ...extraLocal]);
       })
       .catch(console.error)
       .finally(() => setLoadingOrders(false));
@@ -487,6 +499,128 @@ export default function AccountPage() {
               </p>
             </aside>
           </div>
+
+          {/* Guest Orders Section from Local Storage */}
+          {guestOrders.length > 0 && (
+            <div className="mt-10">
+              <div className="mb-4 flex items-center justify-between border-b border-black/10 pb-3">
+                <div>
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-black/45 block">
+                    Device Archive
+                  </span>
+                  <h2 className="font-microgramma text-xl font-bold uppercase tracking-tight text-black mt-0.5">
+                    Orders Placed on This Device ({guestOrders.length})
+                  </h2>
+                </div>
+                <Link
+                  href="/track"
+                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-[0.14em] text-black hover:underline underline-offset-4"
+                >
+                  <Truck className="w-3.5 h-3.5" />
+                  <span>Track An Order</span>
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                {guestOrders.map((ord) => (
+                  <div
+                    key={ord.id}
+                    className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6 shadow-[0_2px_16px_rgba(0,0,0,0.03)]"
+                  >
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-black/8 pb-3.5">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-sm font-bold tracking-tight text-black">
+                          #{ord.orderNumber}
+                        </span>
+                        <span className="text-black/20">/</span>
+                        <span className="font-mono text-[11px] uppercase tracking-wider text-black/50">
+                          {new Date(ord.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-black/10 bg-black/[0.04] px-3 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-black">
+                          {orderStatusLabel(ord.orderStatus)}
+                        </span>
+
+                        {ord.trackingId && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopyTracking(ord.trackingId!)}
+                            className="flex cursor-pointer items-center gap-1.5 rounded-full border border-black/10 bg-[#f5f5f2] px-3 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider text-black transition-colors hover:bg-white"
+                            title="Copy tracking number"
+                          >
+                            <Truck className="w-2.5 h-2.5 text-black/70" />
+                            <span>{copiedTrackingId === ord.trackingId ? "Copied" : ord.trackingId}</span>
+                            <Copy className="w-2 h-2 opacity-50" />
+                          </button>
+                        )}
+
+                        <Link
+                          href={`/track?query=${encodeURIComponent(ord.orderNumber)}`}
+                          className="btn-bagify btn-bagify-dark inline-flex items-center gap-1.5 px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-wider"
+                        >
+                          <Truck className="w-2.5 h-2.5" />
+                          <span>Track Live</span>
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="mb-4 divide-y divide-black/5">
+                      {ord.items?.map((it) => (
+                        <div key={it.id} className="py-2.5 flex items-center justify-between gap-3 text-xs">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="relative h-14 w-12 shrink-0 overflow-hidden rounded-xl border border-black/8 bg-[#e9e9ec]">
+                              <Image
+                                src={it.image || "/placeholder.jpg"}
+                                alt={it.name}
+                                fill
+                                className="object-cover"
+                                sizes="48px"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="truncate font-microgramma text-xs font-bold uppercase tracking-tight text-black">
+                                {it.name}
+                              </p>
+                              <p className="text-[10px] font-mono text-black/50 uppercase tracking-wider mt-0.5">
+                                {it.quantity}x · {it.size || "One Size"} · {it.color || "Default"}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="shrink-0 font-mono text-xs font-bold text-black">
+                            ₹{(it.price * it.quantity).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/8 pt-3.5 text-xs">
+                      <div className="text-[10.5px] font-mono uppercase tracking-wider text-black/50">
+                        {ord.shippingAddress ? (
+                          <span>Ship to: {ord.shippingAddress.fullName} ({ord.shippingAddress.city})</span>
+                        ) : ord.customerEmail ? (
+                          <span>Ordered with: {ord.customerEmail}</span>
+                        ) : (
+                          <span>Guest Checkout Receipt</span>
+                        )}
+                      </div>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-black/50">Total</span>
+                        <span className="font-microgramma text-base font-bold text-black">
+                          ₹{ord.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -786,6 +920,14 @@ export default function AccountPage() {
                               <Copy className="w-2 h-2 opacity-50" />
                             </button>
                           )}
+
+                          <Link
+                            href={`/track?query=${encodeURIComponent(ord.orderNumber)}`}
+                            className="btn-bagify btn-bagify-dark inline-flex items-center gap-1.5 px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-wider"
+                          >
+                            <Truck className="w-2.5 h-2.5" />
+                            <span>Track Live</span>
+                          </Link>
                         </div>
                       </div>
 
