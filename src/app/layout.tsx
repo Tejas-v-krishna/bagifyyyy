@@ -96,6 +96,7 @@ import JsonLd from "@/components/seo/JsonLd";
 import { organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { PostHogProvider } from "@/components/analytics/PostHogProvider";
 
 export default function RootLayout({
   children,
@@ -119,26 +120,28 @@ export default function RootLayout({
       >
         <InteractionGuard />
         <SmoothCursor />
-        <GoogleAuthProvider>
-          <LenisProvider>
-            <PageTransitionLoader />
-            <SvgPathTransitionProvider>
-            <GlobalAnimator />
-            <GsapScrollAnimations />
-            <Preloader />
-            <AuthModal />
-            <BugReportModal />
-            <Header />
-            <main className="flex-1 flex flex-col">
-              <PageTransitionProvider>{children}</PageTransitionProvider>
-            </main>
-            <CartDrawer />
-            <CartHoldSync />
-            </SvgPathTransitionProvider>
-            <Analytics />
-            <SpeedInsights />
-          </LenisProvider>
-        </GoogleAuthProvider>
+        <PostHogProvider>
+          <GoogleAuthProvider>
+            <LenisProvider>
+              <PageTransitionLoader />
+              <SvgPathTransitionProvider>
+              <GlobalAnimator />
+              <GsapScrollAnimations />
+              <Preloader />
+              <AuthModal />
+              <BugReportModal />
+              <Header />
+              <main className="flex-1 flex flex-col">
+                <PageTransitionProvider>{children}</PageTransitionProvider>
+              </main>
+              <CartDrawer />
+              <CartHoldSync />
+              </SvgPathTransitionProvider>
+              <Analytics />
+              <SpeedInsights />
+            </LenisProvider>
+          </GoogleAuthProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
