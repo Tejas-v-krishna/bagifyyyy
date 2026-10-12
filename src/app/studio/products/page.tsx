@@ -344,8 +344,9 @@ export default function StudioProductsCatalogPage() {
           </div>
         ) : (
           <div className="divide-y divide-y2k-gunmetal/10">
-            {filteredProducts.map((product) => {
+            {filteredProducts.map((product, index) => {
               const imageUrl = getProductImageUrl(product.images?.[0]);
+              const itemNumber = index + 1;
 
               return (
                 <div
@@ -354,22 +355,29 @@ export default function StudioProductsCatalogPage() {
                     product.isArchived ? "bg-amber-50/20 hover:bg-amber-50/40" : "hover:bg-y2k-ice/30"
                   }`}
                 >
-                {/* Thumbnail */}
-                <Link
-                  href={`/studio/products/${product.id}`}
-                  className="w-14 h-16 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
-                >
-                  {imageUrl && (
-                    <Image
-                      src={imageUrl}
-                      alt={product.name}
-                      fill
-                      loader={({ src }) => src}
-                      unoptimized
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </Link>
+                  {/* Item Number (#01 .. #50) */}
+                  <div className="w-8 shrink-0 text-center font-mono text-xs font-bold text-y2k-slate/70 group-hover:text-y2k-gunmetal transition-colors">
+                    <span className="text-[10px] bg-y2k-ice px-1.5 py-0.5 border border-y2k-gunmetal/10 font-bold">
+                      #{itemNumber < 10 ? `0${itemNumber}` : itemNumber}
+                    </span>
+                  </div>
+
+                  {/* Thumbnail */}
+                  <Link
+                    href={`/studio/products/${product.id}`}
+                    className="w-14 h-16 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
+                  >
+                    {imageUrl && (
+                      <Image
+                        src={imageUrl}
+                        alt={product.name}
+                        fill
+                        loader={({ src }) => src}
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </Link>
 
                 {/* Product Info */}
                 <div className="flex-1 min-w-0">

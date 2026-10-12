@@ -606,30 +606,38 @@ export default function StudioDashboard() {
           </div>
         ) : (
           <div className="divide-y divide-black/10">
-            {products.map((product) => {
+            {products.map((product, index) => {
               const imageUrl = getProductImageUrl(product.images?.[0]);
+              const itemNumber = index + 1;
 
               return (
                 <div
                   key={product.id}
                   className="flex items-center gap-4 px-6 py-3.5 hover:bg-black/[0.03] transition-colors group"
                 >
-                {/* Thumbnail */}
-                <Link
-                  href={`/studio/products/${product.id}`}
-                  className="w-12 h-14 bg-[#f2f2f2] border border-black/10 rounded-md shrink-0 relative overflow-hidden block"
-                >
-                  {imageUrl && (
-                    <Image
-                      src={imageUrl}
-                      alt={product.name}
-                      fill
-                      loader={({ src }) => src}
-                      unoptimized
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </Link>
+                  {/* Item Number */}
+                  <div className="w-8 shrink-0 text-center font-mono text-xs font-bold text-black/50 group-hover:text-black transition-colors">
+                    <span className="text-[10px] bg-black/5 px-1.5 py-0.5 rounded font-bold">
+                      #{itemNumber < 10 ? `0${itemNumber}` : itemNumber}
+                    </span>
+                  </div>
+
+                  {/* Thumbnail */}
+                  <Link
+                    href={`/studio/products/${product.id}`}
+                    className="w-12 h-14 bg-[#f2f2f2] border border-black/10 rounded-md shrink-0 relative overflow-hidden block"
+                  >
+                    {imageUrl && (
+                      <Image
+                        src={imageUrl}
+                        alt={product.name}
+                        fill
+                        loader={({ src }) => src}
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </Link>
 
                 {/* Name + meta */}
                 <div className="flex-1 min-w-0">
