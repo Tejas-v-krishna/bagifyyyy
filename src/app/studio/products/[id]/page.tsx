@@ -987,9 +987,15 @@ export default function StudioEditProduct() {
                 </span>
 
                 {/* Stock Status Toggle */}
-                <div
-                  onClick={() => setForm((prev) => ({ ...prev, isSoldOut: !prev.isSoldOut }))}
-                  className="flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
+                {/* Stock Status Toggle */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setForm((prev) => ({ ...prev, isSoldOut: !prev.isSoldOut }));
+                  }}
+                  className="w-full text-left flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
                 >
                   <div>
                     <p className="text-xs font-bold uppercase text-y2k-gunmetal">Stock Availability</p>
@@ -1002,12 +1008,17 @@ export default function StudioEditProduct() {
                   ) : (
                     <ToggleLeft className="w-6 h-6 text-y2k-slate" />
                   )}
-                </div>
+                </button>
 
                 {/* New Arrival Tag Toggle */}
-                <div
-                  onClick={() => setForm((prev) => ({ ...prev, isNew: !prev.isNew }))}
-                  className="flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setForm((prev) => ({ ...prev, isNew: !prev.isNew }));
+                  }}
+                  className="w-full text-left flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
                 >
                   <div>
                     <p className="text-xs font-bold uppercase text-y2k-gunmetal">New Arrival Tag</p>
@@ -1016,12 +1027,17 @@ export default function StudioEditProduct() {
                     </p>
                   </div>
                   <Sparkles className={`w-5 h-5 ${form.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
-                </div>
+                </button>
 
                 {/* Best Seller Badge Toggle */}
-                <div
-                  onClick={() => setForm((prev) => ({ ...prev, isBestSeller: !prev.isBestSeller }))}
-                  className="flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setForm((prev) => ({ ...prev, isBestSeller: !prev.isBestSeller }));
+                  }}
+                  className="w-full text-left flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
                 >
                   <div>
                     <p className="text-xs font-bold uppercase text-y2k-gunmetal">Best Seller Badge</p>
@@ -1030,12 +1046,17 @@ export default function StudioEditProduct() {
                     </p>
                   </div>
                   <Star className={`w-5 h-5 ${form.isBestSeller ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
-                </div>
+                </button>
 
                 {/* Archive Status Toggle */}
-                <div
-                  onClick={() => setForm((prev) => ({ ...prev, isArchived: !prev.isArchived }))}
-                  className={`flex items-center justify-between p-3.5 border cursor-pointer transition-colors shadow-2xs ${
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setForm((prev) => ({ ...prev, isArchived: !prev.isArchived }));
+                  }}
+                  className={`w-full text-left flex items-center justify-between p-3.5 border cursor-pointer transition-colors shadow-2xs ${
                     form.isArchived
                       ? "bg-amber-50/70 border-amber-300 hover:bg-amber-100/70"
                       : "bg-white border-y2k-gunmetal/15 hover:bg-y2k-ice/60"
@@ -1061,7 +1082,7 @@ export default function StudioEditProduct() {
                   ) : (
                     <Archive className="w-5 h-5 text-y2k-slate" />
                   )}
-                </div>
+                </button>
               </div>
 
               {/* Bottom Save Action */}

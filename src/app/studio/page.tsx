@@ -181,7 +181,8 @@ export default function StudioDashboard() {
   const [bugReports, setBugReports] = useState<BugReport[]>([]);
   const [openBugCount, setOpenBugCount] = useState(0);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     try {
       const [prodRes, orderRes, bugRes] = await Promise.allSettled([
         fetch("/api/admin/products").then((r) => r.json()),
@@ -234,7 +235,7 @@ export default function StudioDashboard() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   }, []);
 
@@ -261,12 +262,28 @@ export default function StudioDashboard() {
     }
   };
 
-  const handleDelete = async (product: Product) => {    try {
-      await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
-      setDeleteTarget(null);
-      fetchData();
+  const handleDelete = async (product: Product) => {
+    // Optimistic UI update: remove item from state immediately
+    setProducts((prev) => {
+      const next = prev.filter((p) => p.id !== product.id);
+      setStats((s) => ({
+        ...s,
+        total: next.length,
+        soldOut: next.filter((p) => p.isSoldOut).length,
+        newArrivals: next.filter((p) => p.isNew).length,
+      }));
+      return next;
+    });
+    setDeleteTarget(null);
+
+    try {
+      const res = await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        await fetchData(false);
+      }
     } catch (err) {
       console.error(err);
+      await fetchData(false);
     }
   };
 
@@ -274,16 +291,32 @@ export default function StudioDashboard() {
     product: Product,
     field: "isSoldOut" | "isNew"
   ) => {
+    const nextVal = !product[field];
     setToggling(product.id + field);
+
+    // Optimistic UI update: instantly flip state and recompute stats
+    setProducts((prev) => {
+      const next = prev.map((p) => (p.id === product.id ? { ...p, [field]: nextVal } : p));
+      setStats((s) => ({
+        ...s,
+        soldOut: next.filter((p) => p.isSoldOut).length,
+        newArrivals: next.filter((p) => p.isNew).length,
+      }));
+      return next;
+    });
+
     try {
-      await fetch(`/api/admin/products/${product.id}`, {
+      const res = await fetch(`/api/admin/products/${product.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: !product[field] }),
+        body: JSON.stringify({ [field]: nextVal }),
       });
-      fetchData();
+      if (!res.ok) {
+        await fetchData(false);
+      }
     } catch (err) {
       console.error(err);
+      await fetchData(false);
     } finally {
       setToggling(null);
     }

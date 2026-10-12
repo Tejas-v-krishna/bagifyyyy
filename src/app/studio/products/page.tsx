@@ -100,8 +100,8 @@ export default function StudioProductsCatalogPage() {
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [toggling, setToggling] = useState<string | null>(null);
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
+  const fetchProducts = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     try {
       const res = await fetch("/api/admin/products");
       const data = await res.json();
@@ -111,7 +111,7 @@ export default function StudioProductsCatalogPage() {
     } catch (err) {
       console.error("Failed to load catalog products:", err);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   }, []);
 
@@ -123,12 +123,19 @@ export default function StudioProductsCatalogPage() {
   }, [fetchProducts]);
 
   const handleDelete = async (product: Product) => {
+    // Optimistic UI update: instantly remove from component state
+    setProducts((prev) => prev.filter((p) => p.id !== product.id));
+    setDeleteTarget(null);
+
     try {
-      await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
-      setDeleteTarget(null);
-      fetchProducts();
+      const res = await fetch(`/api/admin/products/${product.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        // Rollback if server request fails
+        await fetchProducts(false);
+      }
     } catch (err) {
       console.error("Delete failed:", err);
+      await fetchProducts(false);
     }
   };
 
@@ -136,16 +143,32 @@ export default function StudioProductsCatalogPage() {
     product: Product,
     field: "isSoldOut" | "isNew" | "isArchived"
   ) => {
+    const nextVal = !product[field];
     setToggling(product.id + field);
+
+    // Optimistic UI update: instantly update the product in state
+    setProducts((prev) =>
+      prev.map((p) => (p.id === product.id ? { ...p, [field]: nextVal } : p))
+    );
+
     try {
-      await fetch(`/api/admin/products/${product.id}`, {
+      const res = await fetch(`/api/admin/products/${product.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: !product[field] }),
+        body: JSON.stringify({ [field]: nextVal }),
       });
-      fetchProducts();
+      if (!res.ok) {
+        // Rollback on failure
+        setProducts((prev) =>
+          prev.map((p) => (p.id === product.id ? { ...p, [field]: !nextVal } : p))
+        );
+      }
     } catch (err) {
       console.error("Toggle failed:", err);
+      // Rollback on error
+      setProducts((prev) =>
+        prev.map((p) => (p.id === product.id ? { ...p, [field]: !nextVal } : p))
+      );
     } finally {
       setToggling(null);
     }
@@ -205,7 +228,7 @@ export default function StudioProductsCatalogPage() {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={fetchProducts}
+            onClick={() => fetchProducts()}
             className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
           >
             <RefreshCw className="w-3.5 h-3.5" />
