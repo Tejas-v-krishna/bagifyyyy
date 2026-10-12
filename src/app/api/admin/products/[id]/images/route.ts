@@ -17,7 +17,10 @@ export async function POST(
       ? (body as { url: string }).url.trim()
       : '';
 
-    if (!url || !/^https?:\/\/[^\s]+$/i.test(url) && !url.startsWith('/uploads/')) {
+    const isHttp = /^https?:\/\/[^\s]+$/i.test(url);
+    const isLocalUpload = url.startsWith('/uploads/');
+
+    if (!url || (!isHttp && !isLocalUpload)) {
       return NextResponse.json({ error: 'Image URL is required' }, { status: 400 });
     }
 

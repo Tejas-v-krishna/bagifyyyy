@@ -2,7 +2,26 @@
 
 import { upload } from "@vercel/blob/client";
 
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"];
+const IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "image/gif",
+  "image/heic",
+  "image/heif",
+];
+
+const VALID_EXTS = [".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".heic", ".heif"];
+
+function isImageFile(file: File): boolean {
+  if (!(file instanceof File)) return false;
+  const mime = (file.type || "").toLowerCase();
+  if (IMAGE_TYPES.includes(mime)) return true;
+  const name = (file.name || "").toLowerCase();
+  return VALID_EXTS.some((ext) => name.endsWith(ext));
+}
 
 /** Long edge cap for studio uploads — plenty for 3:4 product shots. */
 const MAX_DIMENSION = 1600;
@@ -107,20 +126,19 @@ async function compressImage(file: File): Promise<File> {
 /**
  * Upload device files and return their public URLs.
  *
- * Production (Vercel) has a read-only filesystem and a ~4.5MB server body
- * limit, so files go straight from the browser to Blob storage via a
- * short-lived token minted by /api/studio/blob-upload. When Blob isn't
- * configured (local dev), it falls back to the legacy /api/studio/upload
- * route that writes into public/uploads.
+ * Primary path: /api/studio/upload (streams compressed images directly to Cloudflare R2 / local uploads).
+ * Fallback: direct-to-Blob (if Vercel Blob is configured).
  */
 export async function uploadDeviceImages(files: File[]): Promise<string[]> {
-  const valid = files.filter((f) => f instanceof File && IMAGE_TYPES.includes(f.type));
+  const valid = files.filter(isImageFile);
   if (valid.length === 0) {
-    throw new Error("Only JPEG, PNG, WebP, AVIF, and GIF images are allowed.");
+    throw new Error("Only JPEG, PNG, WebP, AVIF, HEIC, and GIF images are allowed.");
   }
 
   // Shrink before sending: keeps payload tiny (~150KB-250KB) with no visible loss.
   const compressed = await Promise.all(valid.map(compressImage));
+
+  let lastError: string | null = null;
 
   // Primary path: /api/studio/upload (streams compressed images directly to Cloudflare R2 with $0 egress)
   try {
@@ -132,6 +150,8 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
     if (res.ok) {
       const urls: string[] = data.urls || (data.url ? [data.url] : []);
       if (urls.length > 0) return urls;
+    } else if (data?.error) {
+      lastError = data.error;
     }
   } catch (err) {
     console.warn("Direct R2 / studio upload failed, trying fallback:", err);
@@ -147,8 +167,11 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
         })
       )
     );
-    return blobs.map((b) => b.url);
-  } catch {
-    throw new Error("Failed to upload image from device.");
+    const urls = blobs.map((b) => b.url);
+    if (urls.length > 0) return urls;
+  } catch (blobErr) {
+    console.warn("Blob upload fallback failed:", blobErr);
   }
+
+  throw new Error(lastError || "Failed to upload image from device. Please check file format and connection.");
 }

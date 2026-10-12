@@ -583,7 +583,7 @@ export default function StudioNewProduct() {
                   ref={fileInputRef}
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  accept="image/*"
                   onChange={(e) => handleDeviceUpload(e.target.files)}
                   className="hidden"
                 />

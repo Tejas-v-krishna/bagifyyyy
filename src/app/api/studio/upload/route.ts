@@ -5,14 +5,28 @@ import sharp from "sharp";
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
 import { isR2Configured, uploadToR2 } from '@/lib/r2';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 15 * 1024 * 1024;
 const IMAGE_EXTENSIONS: Record<string, string> = {
   "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
   "image/png": ".png",
   "image/webp": ".webp",
   "image/avif": ".avif",
   "image/gif": ".gif",
+  "image/heic": ".jpg",
+  "image/heif": ".jpg",
 };
+
+function getFileExtension(filename: string, mime: string): string {
+  const ext = path.extname(filename).toLowerCase();
+  if (ext === ".jpg" || ext === ".jpeg") return ".jpg";
+  if (ext === ".png") return ".png";
+  if (ext === ".webp") return ".webp";
+  if (ext === ".avif") return ".avif";
+  if (ext === ".gif") return ".gif";
+  if (ext === ".heic" || ext === ".heif") return ".jpg";
+  return IMAGE_EXTENSIONS[mime.toLowerCase()] || ".jpg";
+}
 
 export async function POST(request: Request) {
   const unauthorized = await requireStudioAuth();
@@ -38,11 +52,15 @@ export async function POST(request: Request) {
     }
 
     for (const file of filesToProcess) {
-      if (!(file instanceof File) || !IMAGE_EXTENSIONS[file.type]) {
-        return NextResponse.json({ error: "Only JPEG, PNG, WebP, AVIF, and GIF images are allowed." }, { status: 400 });
+      const typeLower = (file.type || "").toLowerCase();
+      const ext = path.extname(file.name || "").toLowerCase();
+      const isKnownType = IMAGE_EXTENSIONS[typeLower] || [".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".heic", ".heif"].includes(ext);
+
+      if (!(file instanceof File) || !isKnownType) {
+        return NextResponse.json({ error: `File type not supported for ${file.name || "uploaded file"}. Please upload JPEG, PNG, WebP, or AVIF.` }, { status: 400 });
       }
       if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json({ error: "Each image must be 10 MB or smaller." }, { status: 400 });
+        return NextResponse.json({ error: "Each image must be 15 MB or smaller." }, { status: 400 });
       }
     }
 
@@ -73,7 +91,7 @@ export async function POST(request: Request) {
             .toBuffer();
         } catch (sharpErr) {
           console.warn("Server sharp compression fallback:", sharpErr);
-          ext = IMAGE_EXTENSIONS[file.type] || ".jpg";
+          ext = getFileExtension(file.name, file.type);
           contentType = file.type || "image/jpeg";
         }
       }
