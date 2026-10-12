@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Product } from "@/components/product/ProductCard";
 import AddToBagButton from "@/components/ui/AddToBagButton";
-import { LayoutGrid, List, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutGrid, List, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Sparkles, ShoppingBag } from "lucide-react";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
@@ -494,10 +494,11 @@ export default function CategoryPageClient({
         )}
 
         {/* Sticky toolbar — tools stay in reach while scrolling the rail */}
-        <div className="sticky top-[56px] lg:top-[60px] z-30 -mx-3 sm:-mx-6 lg:-mx-10 border-y border-black/10 bg-[#f5f5f2]/90 px-3 sm:px-6 lg:px-10 backdrop-blur-md mb-6 sm:mb-8">
-          <div className="mx-auto flex w-full max-w-[1440px] items-center justify-end gap-3 py-2 sm:py-2.5">
-            {/* Right: Actions bar (Filter button + View toggle + Sort) */}
-            <div className="flex items-center gap-3 sm:gap-4">
+        {products.length > 0 && (
+          <div className="sticky top-[56px] lg:top-[60px] z-30 -mx-3 sm:-mx-6 lg:-mx-10 border-y border-black/10 bg-[#f5f5f2]/90 px-3 sm:px-6 lg:px-10 backdrop-blur-md mb-6 sm:mb-8">
+            <div className="mx-auto flex w-full max-w-[1440px] items-center justify-end gap-3 py-2 sm:py-2.5">
+              {/* Right: Actions bar (Filter button + View toggle + Sort) */}
+              <div className="flex items-center gap-3 sm:gap-4">
               {/* Filter Popover Dropdown */}
               <FilterPopover
                 isOpen={isFilterOpen}
@@ -566,6 +567,7 @@ export default function CategoryPageClient({
             </div>
           </div>
         </div>
+        )}
 
         {/* Main Content */}
         <div className="w-full pb-32">
@@ -597,23 +599,59 @@ export default function CategoryPageClient({
               </button>
             </div>
           ) : displayedProducts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 text-center">
-              <div className="w-px h-12 bg-black/20 mb-8" aria-hidden="true" />
-              <h3 className="font-sans font-bold text-2xl tracking-tight mb-2 text-black">
-                Nothing Found
-              </h3>
-              <p className="text-[11px] tracking-[0.06em] text-black/50 mb-8">
-                 Try removing a filter or widening your price range.
-              </p>
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="btn-bagify btn-bagify-dark px-8 text-[11px] tracking-[0.1em] cursor-pointer"
-                aria-label="Clear all filters"
-              >
-                Clear Filters
-              </button>
-            </div>
+            products.length === 0 ? (
+              /* Genuine "No Products" state for empty category/catalogue */
+              <div className="flex flex-col items-center justify-center py-28 sm:py-36 text-center px-4 max-w-lg mx-auto">
+                <div className="w-16 h-16 rounded-full bg-black/[0.04] border border-black/10 flex items-center justify-center mb-6 text-black/70 shadow-xs">
+                  <ShoppingBag className="w-7 h-7" aria-hidden="true" />
+                </div>
+                <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.24em] text-black/40 mb-2 block">
+                  Archive / Drop Status
+                </span>
+                <h3 className="font-microgramma font-bold text-2xl sm:text-3xl uppercase tracking-tight mb-3 text-black">
+                  No Products Available
+                </h3>
+                <p className="text-xs sm:text-sm text-black/60 leading-relaxed mb-8 max-w-md">
+                  There are currently no products available in this section. New 1-of-1 archival drops and streetwear pieces are being curated for the next release.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <Link
+                    href="/products"
+                    className="btn-bagify btn-bagify-dark px-8 py-3 text-xs font-bold uppercase tracking-[0.16em] inline-flex items-center gap-2"
+                  >
+                    <span>Browse All Drops</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <Link
+                    href="/"
+                    className="inline-flex items-center justify-center rounded-full border border-black/15 bg-white text-black px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] hover:bg-black/[0.03] transition-colors"
+                  >
+                    Back to Store
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              /* Filter / search query mismatch state */
+              <div className="flex flex-col items-center justify-center py-28 text-center px-4 max-w-md mx-auto">
+                <div className="w-px h-12 bg-black/20 mb-8" aria-hidden="true" />
+                <h3 className="font-microgramma font-bold text-xl sm:text-2xl uppercase tracking-tight mb-2 text-black">
+                  No Matching Pieces
+                </h3>
+                <p className="text-xs text-black/60 leading-relaxed mb-8">
+                  {query
+                    ? `No pieces found matching “${query}”. Try another search keyword or clear your filters.`
+                    : "None of our current pieces match your chosen filters or price range."}
+                </p>
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="btn-bagify btn-bagify-dark px-8 py-3 text-xs font-bold uppercase tracking-[0.14em] cursor-pointer"
+                  aria-label="Clear all filters"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )
           ) : (
             <>
               <div
