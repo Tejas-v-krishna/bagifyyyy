@@ -90,7 +90,7 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* NEW Badge */}
         {product.isNew && (
           <div className="absolute top-2.5 left-2.5 z-20">
-            <span className="text-[8px] font-medium tracking-[0.12em] uppercase bg-black/45 text-white/85 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded-full shadow-xs">
+            <span className="text-[8.5px] font-semibold tracking-[0.14em] uppercase bg-black/75 text-white backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full shadow-md">
               New
             </span>
           </div>
@@ -99,7 +99,7 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* On-hold signal: first-to-bag holds the piece */}
         {product.reserved && !product.isSoldOut && (
           <div className="absolute top-2.5 right-2.5 z-20">
-            <span className="text-[8px] font-medium tracking-[0.12em] uppercase bg-amber-500/20 text-amber-900 backdrop-blur-md border border-amber-500/30 px-2 py-0.5 rounded-full shadow-xs">
+            <span className="text-[8.5px] font-bold tracking-[0.14em] uppercase bg-amber-600/90 text-white backdrop-blur-md border border-amber-300/40 px-2.5 py-0.5 rounded-full shadow-md">
               On Hold
             </span>
           </div>

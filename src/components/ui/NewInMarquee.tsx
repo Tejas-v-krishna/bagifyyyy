@@ -71,7 +71,7 @@ export default function NewInMarquee({ items }: { items: NewInRailItem[] }) {
                       </span>
                     </div>
                   ) : product.reserved ? (
-                    <span className="absolute left-2.5 top-2.5 rounded-full bg-amber-500/20 px-2 py-0.5 text-[8px] font-medium uppercase tracking-[0.12em] text-amber-900 backdrop-blur-md border border-amber-500/30 shadow-xs">
+                    <span className="absolute left-2.5 top-2.5 z-20 rounded-full bg-amber-600/90 px-2.5 py-0.5 text-[8.5px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-md border border-amber-300/40 shadow-md">
                       On Hold
                     </span>
                   ) : null}
