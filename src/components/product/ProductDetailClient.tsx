@@ -9,7 +9,6 @@ import { useWishlistStore } from "@/store/useWishlistStore";
 import Button from "@/components/ui/Button";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import NotifyMeSection from "@/components/product/NotifyMeSection";
-import ReviewSection from "@/components/product/ReviewSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import { categoryHref, categoryLabel } from "@/lib/categories";
 import { useRouter } from "next/navigation";
@@ -123,9 +122,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     ? Math.max(0, new Date(reservationExpiresAt).getTime() - nowTick)
     : 0;
   const countdownStr = formatCountdown(msLeft);
-
-  const rating = product.rating;
-  const hasRating = Boolean(rating && rating.count > 0);
 
   useEffect(() => {
     // If already known as sold out, don't poll
@@ -451,22 +447,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
             <h1 className="text-[28px] sm:text-[34px] font-display font-bold leading-[1.08] tracking-[-0.03em] text-black uppercase">
               {product.name}
             </h1>
-
-            {/* Rating */}
-            <div className="mt-2.5 flex items-center gap-2">
-              {hasRating ? (
-                <>
-                  <RatingStars value={rating.average ?? 0} />
-                  <a href="#reviews" className="text-xs font-mono text-black/50 hover:text-black transition-colors">
-                    {rating.average?.toFixed(1)} ({rating.count} {rating.count === 1 ? "review" : "reviews"})
-                  </a>
-                </>
-              ) : (
-                <a href="#reviews" className="text-xs text-black/45 hover:text-black transition-colors">
-                  No reviews yet. Be the first to review
-                </a>
-              )}
-            </div>
 
             {/* Price */}
             <div className="mt-4 flex items-baseline gap-3">
@@ -837,8 +817,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           </div>
         )}
 
-        <ReviewSection productId={id} />
-
         <div className="mt-20 border-t border-y2k-gunmetal/10 pt-10">
           <RecentlyViewed productId={id} />
         </div>
@@ -910,20 +888,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         product={product}
       />
     </div>
-  );
-}
-
-function RatingStars({ value }: { value: number }) {
-  return (
-    <span className="inline-flex items-center gap-[3px]" role="img" aria-label={`Rated ${value} out of 5`}>
-      {[1, 2, 3, 4, 5].map((s) => (
-        <Star
-          key={s}
-          className={`h-3.5 w-3.5 ${s <= Math.round(value) ? "fill-black text-black" : "text-black/20"}`}
-          aria-hidden="true"
-        />
-      ))}
-    </span>
   );
 }
 
