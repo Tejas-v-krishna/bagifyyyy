@@ -118,41 +118,34 @@ async function compressImage(file: File): Promise<File> {
 }
 
 /**
- * Upload device files and return their public URLs.
- *
- * Primary path: /api/studio/upload (streams compressed images directly to Cloudflare R2 / local uploads).
- * Fallback: direct-to-Blob (if Vercel Blob is configured).
+ * Upload a single image file to /api/studio/upload, with direct-to-Blob fallback.
  */
-export async function uploadDeviceImages(files: File[]): Promise<string[]> {
-  const valid = files.filter(isImageFile);
-  if (valid.length === 0) {
-    throw new Error(`Only image files are allowed (${IMAGE_FORMATS_HINT}).`);
-  }
-
-  // Shrink before sending: keeps payload tiny (~150KB-250KB) with no visible loss.
-  let filesToSend: File[];
+async function uploadSingleImage(file: File): Promise<string> {
+  let fileToSend: File;
   try {
-    filesToSend = await Promise.all(valid.map(compressImage));
+    fileToSend = await compressImage(file);
   } catch (compErr) {
-    console.warn("Client-side image compression failed, falling back to original files:", compErr);
-    filesToSend = valid;
+    console.warn("Client-side image compression failed, falling back to original file:", compErr);
+    fileToSend = file;
   }
 
   let lastError: string | null = null;
 
-  // Primary path: /api/studio/upload (streams compressed images directly to Cloudflare R2 with $0 egress)
+  // Primary path: /api/studio/upload (streams compressed image directly to Cloudflare R2 with $0 egress)
   try {
     const formData = new FormData();
-    filesToSend.forEach((file) => formData.append("files", file));
+    formData.append("file", fileToSend);
 
     const res = await fetch("/api/studio/upload", { method: "POST", body: formData });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      const urls: string[] = data.urls || (data.url ? [data.url] : []);
-      if (urls.length > 0) return urls;
+      const url: string = data.url || (data.urls && data.urls[0]);
+      if (url) return url;
     } else {
       if (data?.error) {
         lastError = data.error;
+      } else if (res.status === 413) {
+        lastError = `Photo "${file.name}" exceeds the server maximum upload size.`;
       } else if (res.status === 401) {
         lastError = "Admin session expired or unauthorized. Please re-login.";
       } else {
@@ -161,37 +154,32 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.warn("Direct R2 / studio upload failed, trying fallback:", err);
+    console.warn("Direct R2 upload failed for single image, trying fallback:", err);
     if (!lastError) lastError = msg;
   }
 
   // Fallback: direct-to-Blob (if Vercel Blob is configured)
   try {
-    const blobs = await Promise.all(
-      filesToSend.map((file) =>
-        upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/studio/blob-upload",
-        })
-      )
-    );
-    const urls = blobs.map((b) => b.url);
-    if (urls.length > 0) return urls;
+    const blob = await upload(fileToSend.name, fileToSend, {
+      access: "public",
+      handleUploadUrl: "/api/studio/blob-upload",
+    });
+    if (blob?.url) return blob.url;
   } catch (blobErr) {
     console.warn("Blob upload fallback failed:", blobErr);
   }
 
-  // Second fallback: if compressed files failed on server, try sending raw original files once
-  if (filesToSend !== valid) {
+  // Second fallback: if compressed file failed on server, try sending raw original file once
+  if (fileToSend !== file && file.size < 4.2 * 1024 * 1024) {
     try {
       const rawFormData = new FormData();
-      valid.forEach((file) => rawFormData.append("files", file));
+      rawFormData.append("file", file);
 
       const rawRes = await fetch("/api/studio/upload", { method: "POST", body: rawFormData });
       const rawData = await rawRes.json().catch(() => ({}));
       if (rawRes.ok) {
-        const rawUrls: string[] = rawData.urls || (rawData.url ? [rawData.url] : []);
-        if (rawUrls.length > 0) return rawUrls;
+        const url: string = rawData.url || (rawData.urls && rawData.urls[0]);
+        if (url) return url;
       } else if (rawData?.error) {
         lastError = rawData.error;
       }
@@ -200,5 +188,29 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
     }
   }
 
-  throw new Error(lastError || "Failed to upload image from device. Please check file format and connection.");
+  throw new Error(lastError || `Failed to upload image "${file.name}". Please check file format and connection.`);
+}
+
+/**
+ * Upload device files and return their public URLs.
+ *
+ * Uploads images individually (in parallel / sequential batches) to ensure requests
+ * stay well within Vercel's 4.5MB Serverless Function payload limit (HTTP 413 Payload Too Large)
+ * and prevent memory crashes on iPhones when uploading multiple photos at once.
+ */
+export async function uploadDeviceImages(files: File[]): Promise<string[]> {
+  const valid = files.filter(isImageFile);
+  if (valid.length === 0) {
+    throw new Error(`Only image files are allowed (${IMAGE_FORMATS_HINT}).`);
+  }
+
+  // Upload files individually. Running with concurrency of 2 keeps mobile memory low
+  // and stays safely within payload limits while finishing very quickly.
+  const uploadedUrls: string[] = [];
+  for (const file of valid) {
+    const url = await uploadSingleImage(file);
+    uploadedUrls.push(url);
+  }
+
+  return uploadedUrls;
 }
