@@ -382,9 +382,9 @@ export default function CartDrawer() {
                   <div className="flex flex-col gap-3">
                     {[
                       { href: "/products", label: "All pieces", count: "Archive & Drops", image: "/assets/ai/prod_model_6_denimjacket_1786660137724.jpg", pos: "object-[50%_25%]" },
-                      { href: "/topwears", label: "Topwears", count: "Hoodies & Jackets", image: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", pos: "object-[50%_18%]" },
-                      { href: "/bottomwears", label: "Bottomwears", count: "Cargos & Denim", image: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", pos: "object-[50%_48%]" },
-                      { href: "/accessories", label: "Accessories", count: "Bags & Chains", image: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", pos: "object-[50%_45%]" },
+                      { href: "/topwears", label: "Topwears", count: "Hoodies & Jackets", image: "/assets/categories/topwear.jpg", pos: "object-[50%_25%]" },
+                      { href: "/bottomwears", label: "Bottomwears", count: "Cargos & Denim", image: "/assets/categories/bottomwear.jpg", pos: "object-[50%_45%]" },
+                      { href: "/accessories", label: "Accessories", count: "Bags & Chains", image: "/assets/categories/accessories.jpg", pos: "object-[50%_35%]" },
                     ].map((cat) => (
                       <Link
                         key={cat.href}

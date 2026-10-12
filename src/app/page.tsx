@@ -283,9 +283,9 @@ export default async function Home() {
           {/* Mobile: taller category cards with blurred fade on the left of the image */}
           <div className="mx-auto mt-6 flex w-full flex-col gap-3.5 sm:hidden">
             {[
-              { href: "/topwears", label: "Topwears", src: "/assets/ai/prod_model_1_hoodie_1786659181183.jpg", pos: "object-[50%_18%]" },
-              { href: "/bottomwears", label: "Bottomwears", src: "/assets/ai/prod_model_2_cargo_1786659253971.jpg", pos: "object-[50%_48%]" },
-              { href: "/accessories", label: "Accessories", src: "/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg", pos: "object-[50%_45%]" },
+              { href: "/topwears", label: "Topwears", src: "/assets/categories/topwear.jpg", pos: "object-[50%_25%]" },
+              { href: "/bottomwears", label: "Bottomwears", src: "/assets/categories/bottomwear.jpg", pos: "object-[50%_45%]" },
+              { href: "/accessories", label: "Accessories", src: "/assets/categories/accessories.jpg", pos: "object-[50%_35%]" },
             ].map((c) => (
               <Link
                 key={c.href}
@@ -328,12 +328,12 @@ export default async function Home() {
               className="group relative aspect-[0.82] overflow-hidden rounded-xl bg-[#e7e7e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-3 sm:rounded-2xl"
             >
               <Image
-                src="/assets/ai/prod_model_1_hoodie_1786659181183.jpg"
+                src="/assets/categories/topwear.jpg"
                 alt="Shop BAGIFYYYY topwears"
                 fill
                 draggable={false}
                 sizes="(max-width: 639px) 100vw, 30vw"
-                className="object-cover object-[50%_20%] transition-transform duration-700 group-hover:scale-[1.025]"
+                className="object-cover object-[50%_25%] transition-transform duration-700 group-hover:scale-[1.025]"
               />
               <span className="absolute bottom-4 left-4 font-microgramma font-bold uppercase text-[clamp(1.1rem,1.8vw,1.9rem)] leading-none tracking-tight sm:bottom-5 sm:left-5 text-[#0a0a0a]">Topwears</span>
             </Link>
@@ -343,12 +343,12 @@ export default async function Home() {
               className="group relative aspect-[0.72] overflow-hidden rounded-xl bg-[#e7e7e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-3 sm:rounded-2xl"
             >
               <Image
-                src="/assets/ai/prod_model_2_cargo_1786659253971.jpg"
+                src="/assets/categories/bottomwear.jpg"
                 alt="Shop BAGIFYYYY bottomwears"
                 fill
                 draggable={false}
                 sizes="(max-width: 639px) 100vw, 30vw"
-                className="object-cover object-[50%_48%] transition-transform duration-700 group-hover:scale-[1.025]"
+                className="object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-[1.025]"
               />
               <span className="absolute bottom-4 left-4 font-microgramma font-bold uppercase text-[clamp(1.1rem,1.8vw,1.9rem)] leading-none tracking-tight sm:bottom-5 sm:left-5 text-[#0a0a0a]">Bottomwears</span>
             </Link>
@@ -358,12 +358,12 @@ export default async function Home() {
               className="group relative aspect-[0.82] overflow-hidden rounded-xl bg-[#e7e7e9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-3 sm:rounded-2xl"
             >
               <Image
-                src="/assets/ai/prod_model_5_shoulderbag_1786659873205.jpg"
+                src="/assets/categories/accessories.jpg"
                 alt="Shop BAGIFYYYY accessories"
                 fill
                 draggable={false}
                 sizes="(max-width: 639px) 100vw, 30vw"
-                className="object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-[1.025]"
+                className="object-cover object-[50%_35%] transition-transform duration-700 group-hover:scale-[1.025]"
               />
               <span className="absolute bottom-4 left-4 font-microgramma font-bold uppercase text-[clamp(1.1rem,1.8vw,1.9rem)] leading-none tracking-tight sm:bottom-5 sm:left-5 text-[#0a0a0a]">Accessories</span>
             </Link>
