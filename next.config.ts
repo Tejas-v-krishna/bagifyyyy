@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
+    unoptimized: true,
     qualities: [75, 100],
     // Serve modern formats (AVIF then WebP) and cache optimized variants for 30 days
     formats: ["image/avif", "image/webp"],
