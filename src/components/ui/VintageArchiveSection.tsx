@@ -18,7 +18,7 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
   if (!items.length) return null;
 
   return (
-    <section className="curated-grails-dark w-full bg-[#151518] text-white" data-nav-theme="dark">
+    <section id="vintage-archive" className="curated-grails-dark w-full bg-[#151518] text-white scroll-mt-20" data-nav-theme="dark">
       <div className="curated-grails-transition curated-grails-transition-in" aria-hidden="true" />
 
       <div className="relative bg-[#151518] px-3 pt-6 pb-6 text-white sm:px-6 sm:pt-10 sm:pb-12 md:pt-14 md:pb-16 lg:px-10">
