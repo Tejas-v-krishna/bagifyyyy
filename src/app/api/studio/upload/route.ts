@@ -143,7 +143,8 @@ export async function POST(request: Request) {
       urls: uploadedUrls,
     });
   } catch (error) {
+    const errMessage = error instanceof Error ? error.message : "Failed to upload image from device.";
     console.error("Image upload failed:", error);
-    return NextResponse.json({ error: "Failed to upload image from device." }, { status: 500 });
+    return NextResponse.json({ error: errMessage }, { status: 500 });
   }
 }

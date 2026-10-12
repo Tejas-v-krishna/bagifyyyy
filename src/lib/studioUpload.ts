@@ -130,31 +130,45 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
   }
 
   // Shrink before sending: keeps payload tiny (~150KB-250KB) with no visible loss.
-  const compressed = await Promise.all(valid.map(compressImage));
+  let filesToSend: File[];
+  try {
+    filesToSend = await Promise.all(valid.map(compressImage));
+  } catch (compErr) {
+    console.warn("Client-side image compression failed, falling back to original files:", compErr);
+    filesToSend = valid;
+  }
 
   let lastError: string | null = null;
 
   // Primary path: /api/studio/upload (streams compressed images directly to Cloudflare R2 with $0 egress)
   try {
     const formData = new FormData();
-    compressed.forEach((file) => formData.append("files", file));
+    filesToSend.forEach((file) => formData.append("files", file));
 
     const res = await fetch("/api/studio/upload", { method: "POST", body: formData });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
       const urls: string[] = data.urls || (data.url ? [data.url] : []);
       if (urls.length > 0) return urls;
-    } else if (data?.error) {
-      lastError = data.error;
+    } else {
+      if (data?.error) {
+        lastError = data.error;
+      } else if (res.status === 401) {
+        lastError = "Admin session expired or unauthorized. Please re-login.";
+      } else {
+        lastError = `Server returned error (${res.status} ${res.statusText})`;
+      }
     }
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     console.warn("Direct R2 / studio upload failed, trying fallback:", err);
+    if (!lastError) lastError = msg;
   }
 
   // Fallback: direct-to-Blob (if Vercel Blob is configured)
   try {
     const blobs = await Promise.all(
-      compressed.map((file) =>
+      filesToSend.map((file) =>
         upload(file.name, file, {
           access: "public",
           handleUploadUrl: "/api/studio/blob-upload",
@@ -165,6 +179,25 @@ export async function uploadDeviceImages(files: File[]): Promise<string[]> {
     if (urls.length > 0) return urls;
   } catch (blobErr) {
     console.warn("Blob upload fallback failed:", blobErr);
+  }
+
+  // Second fallback: if compressed files failed on server, try sending raw original files once
+  if (filesToSend !== valid) {
+    try {
+      const rawFormData = new FormData();
+      valid.forEach((file) => rawFormData.append("files", file));
+
+      const rawRes = await fetch("/api/studio/upload", { method: "POST", body: rawFormData });
+      const rawData = await rawRes.json().catch(() => ({}));
+      if (rawRes.ok) {
+        const rawUrls: string[] = rawData.urls || (rawData.url ? [rawData.url] : []);
+        if (rawUrls.length > 0) return rawUrls;
+      } else if (rawData?.error) {
+        lastError = rawData.error;
+      }
+    } catch {
+      // ignore secondary raw fallback error
+    }
   }
 
   throw new Error(lastError || "Failed to upload image from device. Please check file format and connection.");
