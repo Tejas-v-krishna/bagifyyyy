@@ -1,26 +1,10 @@
 "use client";
 
 import { upload } from "@vercel/blob/client";
-
-const IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-  "image/avif",
-  "image/gif",
-  "image/heic",
-  "image/heif",
-];
-
-const VALID_EXTS = [".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".heic", ".heif"];
+import { isSupportedImageFile, IMAGE_FORMATS_HINT } from "./imageFormats";
 
 function isImageFile(file: File): boolean {
-  if (!(file instanceof File)) return false;
-  const mime = (file.type || "").toLowerCase();
-  if (IMAGE_TYPES.includes(mime)) return true;
-  const name = (file.name || "").toLowerCase();
-  return VALID_EXTS.some((ext) => name.endsWith(ext));
+  return isSupportedImageFile(file);
 }
 
 /** Long edge cap for studio uploads — plenty for 3:4 product shots. */
@@ -34,8 +18,18 @@ const WEBP_QUALITY = 0.82;
  * with visually lossless 0.82 quality, ensuring instant loading even on slow 3G/4G.
  */
 async function compressImage(file: File): Promise<File> {
-  // If already an SVG or animated GIF, keep untouched so animation and vector fidelity are preserved
-  if (file.type === "image/svg+xml" || file.type === "image/gif") return file;
+  // If already an SVG or animated GIF, keep untouched so animation and vector fidelity are preserved.
+  // Detect by MIME *or* extension — iOS sometimes reports an empty MIME type.
+  const nameLower = (file.name || "").toLowerCase();
+  const mimeLower = (file.type || "").toLowerCase();
+  if (
+    mimeLower === "image/svg+xml" ||
+    mimeLower === "image/gif" ||
+    nameLower.endsWith(".svg") ||
+    nameLower.endsWith(".gif")
+  ) {
+    return file;
+  }
 
   const renderToCompressedBlob = (
     source: CanvasImageSource,
@@ -132,7 +126,7 @@ async function compressImage(file: File): Promise<File> {
 export async function uploadDeviceImages(files: File[]): Promise<string[]> {
   const valid = files.filter(isImageFile);
   if (valid.length === 0) {
-    throw new Error("Only JPEG, PNG, WebP, AVIF, HEIC, and GIF images are allowed.");
+    throw new Error(`Only image files are allowed (${IMAGE_FORMATS_HINT}).`);
   }
 
   // Shrink before sending: keeps payload tiny (~150KB-250KB) with no visible loss.

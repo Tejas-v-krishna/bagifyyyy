@@ -16,6 +16,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { uploadDeviceImages } from "@/lib/studioUpload";
+import { IMAGE_ACCEPT_ATTRIBUTE } from "@/lib/imageFormats";
 
 interface InstagramPostItem {
   id: string;
@@ -313,7 +314,7 @@ export default function StudioInstagramPage() {
                         fileInputRefs.current[idx] = el;
                       }}
                       type="file"
-                      accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                      accept={IMAGE_ACCEPT_ATTRIBUTE}
                       className="hidden"
                       aria-label={`Upload image for post ${idx + 1}`}
                       onChange={(e) => handleFileUpload(idx, e.target.files)}

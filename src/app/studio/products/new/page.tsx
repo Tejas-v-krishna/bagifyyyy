@@ -6,6 +6,7 @@ import { CATEGORIES } from "@/lib/categories";
 import Link from "next/link";
 import Image from "next/image";
 import { uploadDeviceImages } from "@/lib/studioUpload";
+import { IMAGE_ACCEPT_ATTRIBUTE } from "@/lib/imageFormats";
 import {
   ArrowLeft,
   Plus,
@@ -583,7 +584,7 @@ export default function StudioNewProduct() {
                   ref={fileInputRef}
                   type="file"
                   multiple
-                  accept="image/*"
+                  accept={IMAGE_ACCEPT_ATTRIBUTE}
                   onChange={(e) => handleDeviceUpload(e.target.files)}
                   className="hidden"
                 />

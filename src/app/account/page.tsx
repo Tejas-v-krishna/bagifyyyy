@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useCartStore } from "@/store/useCartStore";
+import { IMAGE_ACCEPT_ATTRIBUTE } from "@/lib/imageFormats";
 import {
   LogOut,
   User,
@@ -1453,7 +1454,7 @@ export default function AccountPage() {
                     <input
                       ref={avatarInputRef}
                       type="file"
-                      accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                      accept={IMAGE_ACCEPT_ATTRIBUTE}
                       className="hidden"
                       aria-label="Upload profile picture from gallery"
                       onChange={handleAvatarFile}

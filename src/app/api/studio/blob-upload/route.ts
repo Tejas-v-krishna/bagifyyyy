@@ -1,5 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { requireStudioAuth } from "@/lib/requireStudioAuth";
+import { IMAGE_MIME_TYPES } from "@/lib/imageFormats";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +28,10 @@ export async function POST(request: Request): Promise<Response> {
       request,
       onBeforeGenerateToken: async () => {
         return {
-          allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
-          maximumSizeInBytes: 10 * 1024 * 1024,
+          // Full image registry — keeps iPhone HEIC/HEIF and every other
+          // supported format working through the Blob fallback path too.
+          allowedContentTypes: IMAGE_MIME_TYPES,
+          maximumSizeInBytes: 15 * 1024 * 1024,
           addRandomSuffix: true,
           tokenPayload: JSON.stringify({ studio: true }),
         };
