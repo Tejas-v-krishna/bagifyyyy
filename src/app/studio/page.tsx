@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, ChevronRight, Printer, Layers, Bug } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, ToggleLeft, ToggleRight, Package, AlertCircle, Sparkles, ShoppingBag, Clock, ArrowRight, ChevronRight, Printer, Layers, Bug, Calendar } from "lucide-react";
 import ShippingLabelModal from "./orders/ShippingLabelModal";
 import { countsAsRevenue, orderStatusLabel } from "@/lib/orderStatus";
 import Image from "next/image";
@@ -19,6 +19,8 @@ interface Product {
   isNew: boolean;
   isSoldOut: boolean;
   isBestSeller: boolean;
+  isArchived?: boolean;
+  createdAt?: string | Date;
   images: ProductImage[];
   _count?: { variants: number };
 }
@@ -640,35 +642,59 @@ export default function StudioDashboard() {
                   </Link>
 
                 {/* Name + meta */}
+                {/* Name + meta */}
                 <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/studio/products/${product.id}`}
-                    className="text-xs font-bold text-black hover:underline truncate block"
-                  >
-                    {product.name}
-                  </Link>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Link
+                      href={`/studio/products/${product.id}`}
+                      className="text-xs font-bold text-black hover:underline truncate block"
+                    >
+                      {product.name}
+                    </Link>
+                    {product.createdAt && (
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-black bg-black/5 px-1.5 py-0.5 rounded">
+                        <Calendar className="w-2.5 h-2.5 text-black/60 shrink-0" />
+                        <span>
+                          {new Date(product.createdAt).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[9px] uppercase tracking-wider text-black/50 mt-0.5">
                     {product.category} · {product.brand || "BAGIFYYYY"}
                   </p>
                 </div>
 
                 {/* Price */}
-                <div className="font-bold w-28 text-right shrink-0">
+                <div className="font-bold w-24 text-right shrink-0">
                   <p className="text-xs font-bold text-black">
                     ₹{product.price?.toLocaleString("en-IN")}
                   </p>
                 </div>
 
-                {/* Status badges */}
-                <div className="flex gap-2 w-36 shrink-0 justify-center">
-                  {product.isSoldOut && (
-                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-red-50 text-red-600 border border-red-200">
-                      Sold Out
+                {/* Status badges - High Contrast */}
+                <div className="flex flex-col sm:flex-row gap-1.5 w-36 shrink-0 justify-center items-center">
+                  {product.isArchived ? (
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 bg-amber-500 text-black border border-amber-600 shadow-2xs">
+                      ARCHIVED
+                    </span>
+                  ) : product.isSoldOut ? (
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 bg-red-600 text-white border border-red-700 shadow-2xs">
+                      SOLD OUT
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 bg-emerald-600 text-white border border-emerald-700 shadow-2xs">
+                      IN STOCK
                     </span>
                   )}
-                  {product.isNew && (
-                    <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 bg-[#f5f5f2] text-black border border-black/10">
-                      New
+                  {!product.isArchived && product.isNew && (
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 bg-black text-white border border-black shadow-2xs flex items-center gap-1">
+                      <Sparkles className="w-2.5 h-2.5 fill-white text-white" />
+                      <span>NEW DROP</span>
                     </span>
                   )}
                 </div>
