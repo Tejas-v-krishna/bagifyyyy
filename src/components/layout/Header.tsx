@@ -6,7 +6,7 @@ import AnimatedWordmark from "@/components/layout/AnimatedWordmark";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, Heart, User, ShoppingBag, ArrowRight } from "lucide-react";
+import { Menu, X, Heart, User, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import SearchOverlay from "@/components/ui/SearchOverlay";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -228,6 +228,16 @@ export default function Header() {
 
         {/* Desktop nav — right side: labels morph into glass icons on hover */}
         <nav className={`hidden lg:flex items-center gap-1.5 xl:gap-2 flex-1 justify-end ${navTextColor} pointer-events-auto transition-colors duration-200`}>
+          <NavAction
+            href="/track"
+            label="Track"
+            icon={<Truck className="w-[18px] h-[18px]" />}
+            dark={isDark}
+            textColor={navTextColor}
+            hoverColor={navHoverColor}
+            ariaLabel="Track Order"
+          />
+
           <NavAction
             href="/wishlist"
             label="Wishlist"

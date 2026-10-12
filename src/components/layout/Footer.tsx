@@ -16,6 +16,7 @@ const shopLinks = [
 ];
 
 const detailLinks = [
+  { href: "/track", label: "Track Order" },
   { href: "/about", label: "About" },
   { href: "/traceability", label: "Craft" },
   { href: "/contact", label: "Contact" },
