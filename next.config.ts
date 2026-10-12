@@ -19,6 +19,22 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion", "@gsap/react", "gsap", "animejs"],
   },
+  // Exclude dev artifacts, CLI packages, and unused binaries from serverless function traces
+  outputFileTracingExcludes: {
+    "*": [
+      "node_modules/prisma",
+      "node_modules/@prisma/engines/**",
+      "node_modules/@swc/core-*/**",
+      "node_modules/esbuild*/**",
+      "node_modules/sanity/**",
+      "node_modules/@sanity/cli*/**",
+      "node_modules/@types/**",
+      "node_modules/typescript/**",
+      "public/uploads/**",
+      "prisma/*.db*",
+      "prisma/*.sqlite*",
+    ],
+  },
   // Turbopack otherwise walks up to C:\Users\tejas (package-lock.json outside
   // the repo), which both spams warnings and slows file resolution.
   turbopack: {
