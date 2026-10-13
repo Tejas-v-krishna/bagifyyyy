@@ -96,20 +96,49 @@ export async function POST(request: Request) {
       const declaredMime = (file.type || "").toLowerCase().trim();
       const nameLower = (file.name || "").toLowerCase();
       const isGif = declaredMime === "image/gif" || nameLower.endsWith(".gif");
+      const isSvg = declaredMime === "image/svg+xml" || nameLower.endsWith(".svg");
 
       if (isGif) {
         // Keep animated GIFs pristine without flattening frames
         ext = ".gif";
         contentType = "image/gif";
+      } else if (isSvg) {
+        // Keep vector SVGs pristine without rasterizing
+        ext = ".svg";
+        contentType = "image/svg+xml";
       } else {
         try {
-          buffer = await sharp(buffer)
-            .rotate()
-            .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-            .webp({ quality: 82, effort: 4 })
-            .toBuffer();
+          const originalSize = buffer.length;
+          const image = sharp(buffer);
+          const meta = await image.metadata();
+
+          // If the image was already compressed to WebP on the client (<= 1600px and under 450 KB),
+          // avoid secondary lossy re-encoding to preserve crisp detail.
+          const isAlreadyOptimized =
+            meta.format === "webp" &&
+            (meta.width || 0) <= 1600 &&
+            (meta.height || 0) <= 1600 &&
+            originalSize <= 450 * 1024;
+
+          if (!isAlreadyOptimized) {
+            buffer = await sharp(buffer)
+              .rotate()
+              .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+              .webp({ quality: 82, effort: 4 })
+              .toBuffer();
+
+            console.log(
+              `[Server Studio Upload] Compressed "${file.name}": ${(originalSize / 1024).toFixed(1)} KB -> ${(buffer.length / 1024).toFixed(1)} KB (WebP)`
+            );
+          } else {
+            console.log(
+              `[Server Studio Upload] Kept pristine client-compressed WebP "${file.name}": ${(buffer.length / 1024).toFixed(1)} KB`
+            );
+          }
+          ext = ".webp";
+          contentType = "image/webp";
         } catch (sharpErr) {
-          // sharp cannot decode this format (e.g. HEIC on some builds) — store
+          // sharp cannot decode this format (e.g. unsupported format) — store
           // the original bytes under their TRUE extension instead of mislabelling.
           console.warn("Server sharp compression fallback:", sharpErr);
           const detected = sniffImageMime(buffer.subarray(0, 32));

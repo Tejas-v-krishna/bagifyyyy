@@ -54,16 +54,46 @@ async function compressImage(file: File): Promise<File> {
         // Try WebP first for optimal byte-size / visual clarity balance
         canvas.toBlob(
           (blob) => {
-            if (blob) {
-              const name = file.name.replace(/\.[^.]+$/, "") + ".webp";
-              resolve(new File([blob], name, { type: "image/webp" }));
+            // Check if WebP was actually generated (browsers without WebP canvas export return image/png per W3C spec)
+            if (blob && (blob.type === "image/webp" || blob.type === "")) {
+              // If the file is already small and the blob somehow grew, keep original file
+              if (
+                blob.size >= file.size &&
+                origWidth <= MAX_DIMENSION &&
+                origHeight <= MAX_DIMENSION &&
+                (mimeLower === "image/webp" || mimeLower === "image/jpeg")
+              ) {
+                resolve(file);
+                return;
+              }
+              const cleanBase = (file.name || "image").replace(/\.[^.]+$/, "");
+              const name = `${cleanBase}.webp`;
+              const compressedFile = new File([blob], name, { type: "image/webp" });
+              console.log(
+                `[Studio Upload] Compressed "${file.name}" (${(file.size / 1024).toFixed(1)} KB) -> "${name}" (${(compressedFile.size / 1024).toFixed(1)} KB, saved ${Math.max(0, Math.round((1 - compressedFile.size / file.size) * 100))}%)`
+              );
+              resolve(compressedFile);
             } else {
-              // Fallback to high-quality progressive JPEG if WebP canvas export fails
+              // Fallback to high-quality progressive JPEG if WebP canvas export is unsupported
               canvas.toBlob(
                 (jpegBlob) => {
                   if (jpegBlob) {
-                    const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
-                    resolve(new File([jpegBlob], name, { type: "image/jpeg" }));
+                    if (
+                      jpegBlob.size >= file.size &&
+                      origWidth <= MAX_DIMENSION &&
+                      origHeight <= MAX_DIMENSION &&
+                      mimeLower === "image/jpeg"
+                    ) {
+                      resolve(file);
+                      return;
+                    }
+                    const cleanBase = (file.name || "image").replace(/\.[^.]+$/, "");
+                    const name = `${cleanBase}.jpg`;
+                    const compressedFile = new File([jpegBlob], name, { type: "image/jpeg" });
+                    console.log(
+                      `[Studio Upload] Compressed (JPEG fallback) "${file.name}" (${(file.size / 1024).toFixed(1)} KB) -> "${name}" (${(compressedFile.size / 1024).toFixed(1)} KB)`
+                    );
+                    resolve(compressedFile);
                   } else {
                     resolve(null);
                   }
@@ -76,7 +106,8 @@ async function compressImage(file: File): Promise<File> {
           "image/webp",
           WEBP_QUALITY
         );
-      } catch {
+      } catch (err) {
+        console.warn("[Studio Upload] Canvas compression error:", err);
         resolve(null);
       }
     });
@@ -85,7 +116,12 @@ async function compressImage(file: File): Promise<File> {
   try {
     if (typeof createImageBitmap === "function") {
       try {
-        const bitmap = await createImageBitmap(file);
+        let bitmap: ImageBitmap;
+        try {
+          bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+        } catch {
+          bitmap = await createImageBitmap(file);
+        }
         try {
           const compressed = await renderToCompressedBlob(bitmap, bitmap.width, bitmap.height);
           if (compressed) return compressed;
@@ -191,23 +227,26 @@ async function uploadSingleImage(file: File): Promise<string> {
   throw new Error(lastError || `Failed to upload image "${file.name}". Please check file format and connection.`);
 }
 
-/**
- * Upload device files and return their public URLs.
- *
- * Uploads images individually (in parallel / sequential batches) to ensure requests
- * stay well within Vercel's 4.5MB Serverless Function payload limit (HTTP 413 Payload Too Large)
- * and prevent memory crashes on iPhones when uploading multiple photos at once.
- */
-export async function uploadDeviceImages(files: File[]): Promise<string[]> {
+export interface UploadProgress {
+  current: number;
+  total: number;
+  fileName: string;
+}
+
+export async function uploadDeviceImages(
+  files: File[],
+  onProgress?: (progress: UploadProgress) => void
+): Promise<string[]> {
   const valid = files.filter(isImageFile);
   if (valid.length === 0) {
     throw new Error(`Only image files are allowed (${IMAGE_FORMATS_HINT}).`);
   }
 
-  // Upload files individually. Running with concurrency of 2 keeps mobile memory low
-  // and stays safely within payload limits while finishing very quickly.
+  // Upload files individually to keep mobile memory low and stay within payload limits
   const uploadedUrls: string[] = [];
-  for (const file of valid) {
+  for (let i = 0; i < valid.length; i++) {
+    const file = valid[i];
+    onProgress?.({ current: i + 1, total: valid.length, fileName: file.name });
     const url = await uploadSingleImage(file);
     uploadedUrls.push(url);
   }

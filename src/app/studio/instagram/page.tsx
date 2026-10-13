@@ -305,7 +305,7 @@ export default function StudioInstagramPage() {
                         ) : (
                           <Upload className="w-3 h-3" />
                         )}
-                        <span>{uploadingIdx === idx ? "Uploading…" : "Add From Device"}</span>
+                        <span>{uploadingIdx === idx ? "Compressing & Uploading…" : "Add From Device"}</span>
                       </button>
                     </div>
 

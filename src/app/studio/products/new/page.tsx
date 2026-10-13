@@ -21,7 +21,8 @@ import {
   Sparkles,
   Star,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  CheckCircle,
 } from "lucide-react";
 
 export default function StudioNewProduct() {
@@ -30,6 +31,8 @@ export default function StudioNewProduct() {
 
   const [loading, setLoading] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string } | null>(null);
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -90,18 +93,26 @@ export default function StudioNewProduct() {
   const handleDeviceUpload = async (fileList: FileList | null) => {
     if (!fileList || fileList.length === 0) return;
     setUploadingFiles(true);
+    setUploadProgress({ current: 1, total: fileList.length, fileName: fileList[0].name });
+    setUploadSuccessMessage(null);
 
     try {
-      // Blob direct upload on production, legacy local route as fallback.
-      const uploadedUrls = await uploadDeviceImages(Array.from(fileList));
+      const uploadedUrls = await uploadDeviceImages(Array.from(fileList), (p) => {
+        setUploadProgress(p);
+      });
 
       setImages((prev) => [...prev, ...uploadedUrls]);
       setActiveImageIndex(images.length);
+      setUploadSuccessMessage(
+        `✓ ${uploadedUrls.length} photo${uploadedUrls.length > 1 ? "s" : ""} compressed & uploaded successfully!`
+      );
+      setTimeout(() => setUploadSuccessMessage(null), 4000);
     } catch (err) {
       console.error(err);
       alert(err instanceof Error ? err.message : "Failed to upload image from device.");
     } finally {
       setUploadingFiles(false);
+      setUploadProgress(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -557,9 +568,21 @@ export default function StudioNewProduct() {
 
             {/* ── Device File Upload Zone ───────────────────────────────────────── */}
             <div className="w-full mt-6 space-y-3 pt-4 border-t border-y2k-gunmetal/15">
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block">
-                ADD PHOTOS TO PRODUCT
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block">
+                  ADD PHOTOS TO PRODUCT
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 border border-emerald-200">
+                  ⚡ Auto-Compressed to WebP
+                </span>
+              </div>
+
+              {uploadSuccessMessage && (
+                <div className="p-3 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold tracking-wide flex items-center gap-2 animate-in fade-in">
+                  <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
+                  <span>{uploadSuccessMessage}</span>
+                </div>
+              )}
 
               {/* Drag and Drop & Explorer Upload Box */}
               <div
@@ -592,7 +615,13 @@ export default function StudioNewProduct() {
                 {uploadingFiles ? (
                   <div className="flex flex-col items-center gap-2 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
                     <Loader2 className="w-6 h-6 animate-spin text-y2k-gunmetal" />
-                    <span>Uploading photo from device…</span>
+                    <span>
+                      Compressing &amp; uploading photo
+                      {uploadProgress ? ` (${uploadProgress.current}/${uploadProgress.total})` : "…"}
+                    </span>
+                    <span className="text-[10px] text-y2k-slate font-medium normal-case">
+                      Optimizing to 1600px max and converting to lightweight WebP
+                    </span>
                   </div>
                 ) : (
                   <>
@@ -601,7 +630,7 @@ export default function StudioNewProduct() {
                       Upload from Device / File Explorer
                     </p>
                     <p className="text-[10px] text-y2k-slate mt-1">
-                      Drag &amp; drop photos here or click to browse files (JPEG, PNG, WebP)
+                      Drag &amp; drop photos here or click to browse (auto-compressed to high-speed WebP)
                     </p>
                   </>
                 )}
