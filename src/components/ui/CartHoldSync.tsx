@@ -8,8 +8,8 @@ import { showToast } from "@/lib/toast";
 
 /** No interaction for this long and the bag goes back to the shop. */
 const IDLE_RELEASE_MS = 3 * 60 * 1000;
-/** Check hold expiries every 3 seconds so pieces are returned to the shop on time */
-const TICK_MS = 3 * 1000;
+/** Check hold expiries every 10 seconds — still well within the 2-minute hold window */
+const TICK_MS = 10 * 1000;
 
 const ACTIVITY_EVENTS: (keyof WindowEventMap)[] = ["pointerdown", "keydown", "touchstart", "wheel"];
 

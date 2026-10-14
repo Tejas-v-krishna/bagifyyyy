@@ -183,10 +183,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     // Initial check on mount
     checkStockReservation();
 
-    // Poll every 30s instead of 15s: the on-screen countdown ticks locally
-    // every second, so a 30s refresh only delays the hold badge, never the
-    // timer — and it halves the stock-status function calls site-wide.
-    timerId = window.setInterval(checkStockReservation, 30000);
+    // Poll every 60s: the on-screen countdown ticks locally every second,
+    // so a 60s refresh only delays the hold badge, never the timer — and it
+    // quarters the stock-status function calls site-wide vs the original 15s.
+    timerId = window.setInterval(checkStockReservation, 60000);
 
     // Immediately refresh when the shopper switches back to this tab
     const handleVisibilityChange = () => {
