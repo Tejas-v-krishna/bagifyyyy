@@ -2,7 +2,14 @@ import { NextResponse } from 'next/server';
 import { queryProducts } from '@/lib/products';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
+// Edge-cache listings for 60s: this is the highest-traffic route on the site
+// and every miss is a full function run plus Turso round trips. Staleness is
+// safe — the buy button and checkout re-check live stock server-side, so a
+// just-sold piece can never be oversold from a 60s-old listing.
+const LISTING_CACHE_HEADERS = {
+  'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+};
 
 export async function GET(request: Request) {
   try {
@@ -21,7 +28,7 @@ export async function GET(request: Request) {
     const take = Math.min(100, Math.max(1, parseInt(searchParams.get('take') || '100', 10) || 100));
 
     const formattedProducts = await queryProducts({ category, filter, q, ids, take });
-    return NextResponse.json(formattedProducts);
+    return NextResponse.json(formattedProducts, { headers: LISTING_CACHE_HEADERS });
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });

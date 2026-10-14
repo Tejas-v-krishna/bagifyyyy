@@ -5,6 +5,12 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+// Feed changes only when the admin curates it — serve from the edge for
+// 30 minutes instead of running the function on every homepage view.
+const FEED_CACHE_HEADERS = {
+  'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
+};
+
 const CONFIG_FILE = path.join(process.cwd(), "src", "data", "instagram_feed.json");
 
 type InstagramPost = {
@@ -37,7 +43,7 @@ export async function GET() {
     if (dbRow?.value) {
       const parsed = JSON.parse(dbRow.value);
       if (parsed.posts && Array.isArray(parsed.posts) && parsed.posts.length > 0) {
-        return NextResponse.json({ success: true, source: "curated_admin", ...parsed });
+        return NextResponse.json({ success: true, source: "curated_admin", ...parsed }, { headers: FEED_CACHE_HEADERS });
       }
     }
   } catch (dbErr) {
@@ -50,7 +56,7 @@ export async function GET() {
       const content = fs.readFileSync(CONFIG_FILE, "utf-8");
       const parsed = JSON.parse(content);
       if (parsed.posts && Array.isArray(parsed.posts) && parsed.posts.length > 0) {
-        return NextResponse.json({ success: true, source: "curated_admin", ...parsed });
+        return NextResponse.json({ success: true, source: "curated_admin", ...parsed }, { headers: FEED_CACHE_HEADERS });
       }
     }
   } catch (e) {
@@ -86,7 +92,7 @@ export async function GET() {
               caption: item.caption || item.prunedCaption || "BAGIFYYYY Archive fit.",
               link: item.permalink || item.link || "https://instagram.com/bagifyyyy",
             })),
-          });
+          }, { headers: FEED_CACHE_HEADERS });
         }
       }
     } catch (e) {
@@ -137,7 +143,7 @@ export async function GET() {
             timestamp: new Date(item.timestamp || "").toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
             link: item.permalink || "https://instagram.com/bagifyyyy",
           })),
-        });
+        }, { headers: FEED_CACHE_HEADERS });
       }
     } catch (err) {
       console.warn("Instagram Graph API request error:", err);
@@ -194,5 +200,5 @@ export async function GET() {
         link: "https://www.instagram.com/bagifyyyy",
       },
     ],
-  });
+  }, { headers: FEED_CACHE_HEADERS });
 }
