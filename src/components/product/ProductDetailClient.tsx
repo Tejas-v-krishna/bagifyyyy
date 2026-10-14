@@ -183,10 +183,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     // Initial check on mount
     checkStockReservation();
 
-    // Poll every 60s: the on-screen countdown ticks locally every second,
-    // so a 60s refresh only delays the hold badge, never the timer — and it
-    // quarters the stock-status function calls site-wide vs the original 15s.
-    timerId = window.setInterval(checkStockReservation, 60000);
+    // EMERGENCY: Poll every 5 minutes to cut CPU. The on-screen countdown
+    // ticks locally every second, so this only delays the hold badge, never
+    // the timer. Revert to 60s once Vercel CPU is back under control.
+    timerId = window.setInterval(checkStockReservation, 300000);
 
     // Immediately refresh when the shopper switches back to this tab
     const handleVisibilityChange = () => {
