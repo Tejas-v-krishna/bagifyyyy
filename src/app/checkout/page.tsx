@@ -350,6 +350,23 @@ function CheckoutContent() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // Mobile numbers are 10 digits (optionally with +91); never let the field
+    // grow past that while typing or pasting.
+    if (name === "phone") {
+      const digits = value.replace(/\D/g, "");
+      // If someone pastes a 12-digit "+91 9XXXXXXXXX" number, keep the
+      // trailing 10 digits (the actual mobile number).
+      const normalized = digits.length > 10 ? digits.slice(-10) : digits;
+      setFormData((prev) => ({ ...prev, phone: normalized }));
+      setFieldErrors((prev) => (prev.phone ? { ...prev, phone: undefined } : prev));
+      return;
+    }
+    if (name === "pincode") {
+      const digits = value.replace(/\D/g, "").slice(0, 6);
+      setFormData((prev) => ({ ...prev, pincode: digits }));
+      setFieldErrors((prev) => (prev.pincode ? { ...prev, pincode: undefined } : prev));
+      return;
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear the field's complaint as soon as the shopper starts fixing it.
     setFieldErrors((prev) => (prev[name as keyof AddressForm] ? { ...prev, [name]: undefined } : prev));
@@ -826,9 +843,9 @@ function CheckoutContent() {
                           onChange={handleInputChange}
                           placeholder="9876543210"
                           autoComplete="tel"
-                          inputMode="tel"
-                          pattern="[+\d][\d\s-]{7,15}"
-                          title="8 to 16 digits, optionally starting with a plus"
+                          inputMode="numeric"
+                          maxLength={10}
+                          pattern="\d{10}"
                           required
                           aria-invalid={Boolean(fieldErrors.phone)}
                           aria-describedby={fieldErrors.phone ? "checkout-phone-error" : undefined}
