@@ -51,8 +51,9 @@ export function isAwaitingPayment(order: Pick<OrderState, "orderStatus" | "payme
 }
 
 /**
- * Whether an order belongs in the revenue figure. Card orders count once the
- * money is captured; cash on delivery counts as a commitment until cancelled.
+ * Whether an order belongs in the revenue figure. Card/UPI orders count once
+ * the money is captured (including MANUAL offline UPI, stored as PAID); cash
+ * on delivery counts as a commitment until cancelled.
  * The old test was `paid || not cancelled`, which counted every abandoned
  * payment sheet as a sale.
  */

@@ -17,6 +17,7 @@ import Image from "next/image";
 
 type OrderItem = {
   id: string;
+  sku: string | null;
   name: string;
   price: number;
   quantity: number;
@@ -209,7 +210,11 @@ export default function StudioOrdersPage() {
     const matchCity = (o.shippingAddress?.city || "").toLowerCase().includes(q);
     const matchState = (o.shippingAddress?.state || "").toLowerCase().includes(q);
     const matchPincode = (o.shippingAddress?.pincode || "").toLowerCase().includes(q);
-    const matchItems = o.items?.some((item) => item.name?.toLowerCase().includes(q));
+    const matchItems = o.items?.some(
+      (item) =>
+        item.name?.toLowerCase().includes(q) ||
+        item.sku?.toLowerCase().includes(q)
+    );
 
     return (
       matchesTab &&
@@ -380,7 +385,11 @@ export default function StudioOrdersPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-mono text-sm font-bold text-y2k-gunmetal">#{order.orderNumber}</span>
                           <span className="text-[8px] font-bold uppercase px-2 py-0.5 border border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal">
-                            {order.paymentMethod === "COD" ? "COD" : order.paymentMethod}
+                            {order.paymentMethod === "MANUAL"
+                              ? "IG • UPI"
+                              : order.paymentMethod === "COD"
+                                ? "COD"
+                                : order.paymentMethod}
                           </span>
                           <span
                             className={`text-[8px] font-bold uppercase px-2 py-0.5 border ${
@@ -536,6 +545,11 @@ export default function StudioOrdersPage() {
                                     </div>
                                     <div>
                                       <p className="font-bold text-y2k-gunmetal">{item.name}</p>
+                                      {item.sku && (
+                                        <p className="text-[9px] font-mono font-bold text-y2k-gunmetal/60">
+                                          {item.sku}
+                                        </p>
+                                      )}
                                       <p className="text-[9px] uppercase tracking-wider text-y2k-slate">
                                         Size: {item.size} • Color: {item.color} • Qty: {item.quantity}
                                       </p>

@@ -27,6 +27,9 @@ model User {
 
 model Product {
   id            String   @id @default(uuid())
+  // Studio badge number (e.g. BGF-0001). Searchable in the studio and exported
+  // to the orders Sheet so an Instagram sale can be traced back to the piece.
+  sku           String?  @unique
   name          String
   description   String
   price         Float
@@ -152,7 +155,7 @@ model Order {
   discountAmount    Float       @default(0)
   paymentStatus     String      @default("PENDING") // PENDING, PAID, FAILED, REFUND_PENDING, REFUNDED
   orderStatus       String      @default("PROCESSING") // AWAITING_PAYMENT, PROCESSING, SHIPPED, DELIVERED, CANCELLED
-  paymentMethod     String      // RAZORPAY, COD
+  paymentMethod     String      // RAZORPAY, COD, MANUAL (studio offline / Instagram UPI)
   razorpayOrderId   String?     @unique
   paymentId         String?
   signature         String?
@@ -179,6 +182,9 @@ model OrderItem {
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
+  // Denormalized at order time so the Sheet and studio search keep working
+  // even if the product is later renamed or deleted.
+  sku       String?
   name      String
   price     Float
   size      String

@@ -112,14 +112,22 @@ export async function PATCH(
       return NextResponse.json({ error: 'Image must be a secure URL or an uploaded path' }, { status: 400 });
     }
 
-    const existing = await prisma.product.findUnique({ where: { id }, select: { id: true } });
+    const existing = await prisma.product.findUnique({ where: { id }, select: { id: true, sku: true } });
     if (!existing) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+
+    // Lazy badge: products created before badges existed get one on first edit.
+    let backfillSku: string | undefined;
+    if (!existing.sku) {
+      const { nextSku } = await import('@/lib/sku');
+      backfillSku = await nextSku();
     }
 
     const product = await prisma.product.update({
       where: { id },
       data: {
+        ...(backfillSku && { sku: backfillSku }),
         ...(name !== undefined && { name: (name as string).trim() }),
         ...(category !== undefined && { category: canonicalCategory(category as string) }),
         ...(description !== undefined && { description: (description as string).trim() }),

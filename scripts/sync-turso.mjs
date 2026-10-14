@@ -35,6 +35,7 @@ async function main() {
     );`,
     `CREATE TABLE IF NOT EXISTS "Product" (
       "id" TEXT NOT NULL PRIMARY KEY,
+      "sku" TEXT,
       "name" TEXT NOT NULL,
       "description" TEXT NOT NULL,
       "price" REAL NOT NULL,
@@ -145,6 +146,7 @@ async function main() {
       "id" TEXT NOT NULL PRIMARY KEY,
       "orderId" TEXT NOT NULL,
       "productId" TEXT NOT NULL,
+      "sku" TEXT,
       "name" TEXT NOT NULL,
       "price" REAL NOT NULL,
       "size" TEXT NOT NULL,
@@ -212,6 +214,7 @@ async function main() {
     `CREATE UNIQUE INDEX IF NOT EXISTS "PointTransaction_orderId_key" ON "PointTransaction"("orderId");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "Order_orderNumber_key" ON "Order"("orderNumber");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "Order_checkoutId_key" ON "Order"("checkoutId");`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS "Product_sku_key" ON "Product"("sku");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "Order_razorpayOrderId_key" ON "Order"("razorpayOrderId");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "PasswordResetToken_token_key" ON "PasswordResetToken"("token");`,
     `CREATE UNIQUE INDEX IF NOT EXISTS "Review_productId_userId_key" ON "Review"("productId", "userId");`,
@@ -305,6 +308,17 @@ async function main() {
   } catch {}
   try {
     await turso.execute('CREATE INDEX IF NOT EXISTS "Order_customerEmail_idx" ON "Order"("customerEmail");');
+  } catch {}
+  // Studio badge numbers (BGF-0001…) and per-line SKU snapshots for the Sheet.
+  // Additive and idempotent like every block above.
+  try {
+    await turso.execute('ALTER TABLE "Product" ADD COLUMN "sku" TEXT;');
+  } catch {}
+  try {
+    await turso.execute('CREATE UNIQUE INDEX IF NOT EXISTS "Product_sku_key" ON "Product"("sku");');
+  } catch {}
+  try {
+    await turso.execute('ALTER TABLE "OrderItem" ADD COLUMN "sku" TEXT;');
   } catch {}
   try {
     await turso.execute('CREATE INDEX IF NOT EXISTS "SupportTicket_email_idx" ON "SupportTicket"("email");');

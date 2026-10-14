@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { isStudioAuthed } from '@/lib/requireStudioAuth';
 import { canonicalCategory } from '@/lib/categories';
+import { nextSku, isUniqueViolation } from '@/lib/sku';
 
 export async function GET() {
   if (!(await isStudioAuthed())) {
@@ -45,30 +46,48 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Compare-at price must be a positive number or left empty.' }, { status: 400 });
     }
 
-    const product = await prisma.product.create({
-      data: {
-        name: name.trim(),
-        price: parsedPrice,
-        compareAtPrice: parsedMrp,
-        // Stored canonically so the storefront breadcrumb and the category
-        // route always agree. Clients have sent both "topwear" and "topwears".
-        category: canonicalCategory(category),
-        description: description.trim(),
-        isNew: Boolean(isNew),
-        isSoldOut: Boolean(isSoldOut),
-        isBestSeller: Boolean(isBestSeller),
-        isArchived: Boolean(isArchived),
-        brand: typeof collectionTag === 'string' && collectionTag.trim() ? collectionTag.trim() : "BAGIFYYYY",
-        images: {
-          create: [{ url: image.trim(), position: 0 }]
-        },
-        variants: {
-          create: [
-            { color: "Default", size: "One Size", stock: 1 },
-          ]
-        }
+    // Badge number with collision retry: two admins adding products at once
+    // can mint the same BGF-NNNN, so retry the whole create past P2002.
+    let product: Awaited<ReturnType<typeof prisma.product.create>> | null = null;
+    let lastError: unknown = null;
+    for (let attempt = 0; attempt < 5 && !product; attempt++) {
+      const sku = await nextSku();
+      try {
+        product = await prisma.product.create({
+          data: {
+            sku,
+            name: name.trim(),
+            price: parsedPrice,
+            compareAtPrice: parsedMrp,
+            // Stored canonically so the storefront breadcrumb and the category
+            // route always agree. Clients have sent both "topwear" and "topwears".
+            category: canonicalCategory(category),
+            description: description.trim(),
+            isNew: Boolean(isNew),
+            isSoldOut: Boolean(isSoldOut),
+            isBestSeller: Boolean(isBestSeller),
+            isArchived: Boolean(isArchived),
+            brand: typeof collectionTag === 'string' && collectionTag.trim() ? collectionTag.trim() : "BAGIFYYYY",
+            images: {
+              create: [{ url: image.trim(), position: 0 }]
+            },
+            variants: {
+              create: [
+                { color: "Default", size: "One Size", stock: 1 },
+              ]
+            }
+          }
+        });
+      } catch (e) {
+        // Only a badge collision retries; anything else fails immediately.
+        if (!isUniqueViolation(e)) throw e;
+        lastError = e;
       }
-    });
+    }
+    if (!product) {
+      console.error('Product create exhausted SKU retries:', lastError);
+      return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+    }
 
     if (subcategory) {
       const { updateProductSubcategory } = await import('@/lib/subcategories');

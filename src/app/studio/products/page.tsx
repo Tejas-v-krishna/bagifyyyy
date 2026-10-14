@@ -26,6 +26,7 @@ type ProductImage = string | { id?: string; url?: string | null } | null;
 
 interface Product {
   id: string;
+  sku?: string | null;
   name: string;
   price: number;
   category: string;
@@ -214,7 +215,8 @@ export default function StudioProductsCatalogPage() {
         !q ||
         p.name?.toLowerCase().includes(q) ||
         p.category?.toLowerCase().includes(q) ||
-        p.brand?.toLowerCase().includes(q);
+        p.brand?.toLowerCase().includes(q) ||
+        p.sku?.toLowerCase().includes(q);
 
       return matchesCategory && matchesStock && matchesSearch;
     });
@@ -405,6 +407,12 @@ export default function StudioProductsCatalogPage() {
                     >
                       {product.name}
                     </Link>
+                    {/* Badge number: trace any Sheet/Instagram sale back here */}
+                    {product.sku && (
+                      <span className="text-[9px] font-mono font-bold text-black bg-black/5 px-2 py-0.5 border border-black/20">
+                        {product.sku}
+                      </span>
+                    )}
                     {/* Clear Upload Date Tag */}
                     <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-y2k-gunmetal bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/20 shadow-2xs">
                       <Calendar className="w-3 h-3 text-y2k-slate shrink-0" />

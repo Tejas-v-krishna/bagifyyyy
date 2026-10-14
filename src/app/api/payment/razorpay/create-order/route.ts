@@ -209,6 +209,7 @@ export async function POST(request: Request) {
         items: {
           create: cart.items.map((item) => ({
             productId: item.productId,
+            sku: item.sku,
             name: item.name,
             price: item.price,
             size: item.size,

@@ -14,6 +14,8 @@ export const FREE_SHIPPING_THRESHOLD = Infinity;
 export type PricedItem = {
   productId: string;
   variantId: string | null;
+  /** Studio badge number (BGF-0001…), snapshotted for the Sheet + search. */
+  sku: string | null;
   name: string;
   price: number;
   size: string;
@@ -175,6 +177,7 @@ export async function priceCart(options: {
     pricedItems.push({
       productId: product.id,
       variantId: variant?.id ?? null,
+      sku: product.sku ?? null,
       name: product.name,
       price: product.price,
       mrp: typeof product.compareAtPrice === 'number' && product.compareAtPrice > product.price

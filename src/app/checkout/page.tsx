@@ -40,6 +40,11 @@ type RazorpayOptions = {
   notes: Record<string, string>;
   theme: { color: string };
   modal: { ondismiss: () => void };
+  // In-modal retry keeps a failed UPI attempt inside the same checkout instead
+  // of forcing a fresh order; timeout (seconds) is aligned with the 7-minute
+  // stock hold so the sheet cannot outlive the reservation it is paying for.
+  retry?: { enabled: boolean; max_count: number };
+  timeout?: number;
 };
 
 type RazorpayInstance = {
@@ -496,6 +501,15 @@ function CheckoutContent() {
         theme: {
           color: "#050505",
         },
+        // Let UPI timed-out/invalid-account attempts retry in place (same
+        // Razorpay order, same local order) instead of starting over.
+        retry: {
+          enabled: true,
+          max_count: 3,
+        },
+        // Matches the 7-minute stock reservation: a sheet left open past the
+        // hold would pay for pieces that may already be sold to someone else.
+        timeout: 420,
         modal: {
           ondismiss: function () {
             setLoading(false);

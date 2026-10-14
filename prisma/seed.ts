@@ -156,6 +156,8 @@ async function main() {
   for (const p of products) {
     await prisma.product.create({
       data: {
+        // Seed badges match production's BGF-0001… sequence shape.
+        sku: `BGF-${String(products.indexOf(p) + 1).padStart(4, '0')}`,
         name: p.name,
         description: p.description,
         price: p.price,

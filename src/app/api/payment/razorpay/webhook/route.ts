@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { completeRazorpayOrder, PaymentFinalizationError } from '@/lib/completeRazorpayOrder';
+import { recoverCapturedPayment } from '@/lib/paymentRecovery';
 import { sendOrderConfirmationIfNeeded, alertManualRefundRequired } from '@/lib/orderEmail';
 import { verifyRazorpayWebhookSignature, refundRazorpayPayment } from '@/lib/razorpay';
 
@@ -8,6 +9,12 @@ export async function POST(request: Request) {
   const rawBody = await request.text();
   const signature = request.headers.get('x-razorpay-signature');
 
+  if (!process.env.RAZORPAY_WEBHOOK_SECRET) {
+    console.error(
+      'Razorpay webhook received but RAZORPAY_WEBHOOK_SECRET is not configured — every webhook 401s. ' +
+        'Set it from Razorpay Dashboard → Settings → Webhooks.'
+    );
+  }
   if (!verifyRazorpayWebhookSignature(rawBody, signature)) {
     return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 401 });
   }
@@ -132,9 +139,68 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, orderId: result.orderId });
   } catch (error) {
     if (error instanceof PaymentFinalizationError) {
-      return NextResponse.json({ error: error.message, shortfall: error.shortfall }, { status: error.status });
+      // Money is captured but cannot be allocated (stock shortfall, missing
+      // variant, already claimed). Mirror the verify path: move the order to
+      // a refund-tracked state so it becomes visible in the studio instead of
+      // stranding as an invisible AWAITING_PAYMENT row with cash taken.
+      const amountInPaise =
+        typeof entity?.amount === 'number'
+          ? entity.amount
+          : Math.round(order.totalAmount * 100);
+      const recovery = await recoverCapturedPayment({
+        orderId: order.id,
+        paymentId,
+        signature: `webhook:${paymentId}`,
+        amountInPaise,
+        receipt: order.orderNumber,
+      }).catch(() => 'REFUND_PENDING' as const);
+      if (recovery !== 'REFUNDED') {
+        await alertManualRefundRequired({
+          paymentId,
+          orderNumber: order.orderNumber,
+          amountInPaise,
+          reason: `Webhook finalization failed (${error.message}) and the automatic refund is pending.`,
+        });
+      }
+      return NextResponse.json(
+        { error: error.message, shortfall: error.shortfall, recovery },
+        { status: error.status }
+      );
     }
     console.error('Razorpay webhook error:', error);
-    return NextResponse.json({ error: 'Failed to process webhook' }, { status: 500 });
+    // Last-resort: a captured payment whose finalization crashed outright.
+    // Only recover when the order is still unpaid — a concurrent verify call
+    // may have completed it in the meantime.
+    const latest = await prisma.order
+      .findUnique({ where: { id: order.id }, select: { paymentStatus: true } })
+      .catch(() => null);
+    if (
+      latest &&
+      latest.paymentStatus !== 'PENDING' &&
+      latest.paymentStatus !== 'FAILED'
+    ) {
+      return NextResponse.json({ error: 'Failed to process webhook' }, { status: 500 });
+    }
+    const amountInPaise =
+      typeof entity?.amount === 'number'
+        ? entity.amount
+        : Math.round(order.totalAmount * 100);
+    const recovery = await recoverCapturedPayment({
+      orderId: order.id,
+      paymentId,
+      signature: `webhook:${paymentId}`,
+      amountInPaise,
+      receipt: order.orderNumber,
+    }).catch(() => 'REFUND_PENDING' as const);
+    if (recovery !== 'REFUNDED') {
+      console.error(`MANUAL REFUND REQUIRED for payment ${paymentId} (order ${order.orderNumber}).`);
+      await alertManualRefundRequired({
+        paymentId,
+        orderNumber: order.orderNumber,
+        amountInPaise,
+        reason: 'Webhook processing crashed after capture and the automatic refund is pending.',
+      });
+    }
+    return NextResponse.json({ error: 'Failed to process webhook', recovery }, { status: 500 });
   }
 }

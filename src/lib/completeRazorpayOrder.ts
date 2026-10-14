@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { applyLoyaltyEarn } from '@/lib/loyalty';
 import { revalidatePath } from 'next/cache';
+import { syncOrderToSheet } from '@/lib/googleSheets';
 
 export class PaymentFinalizationError extends Error {
   constructor(
@@ -160,6 +161,10 @@ export async function completeRazorpayOrder(input: {
   } catch (err) {
     console.warn('Failed to revalidate path after order completion:', err);
   }
+
+  // Live log for the admin Sheet. Never throws — a Sheet outage must not undo
+  // a payment that already succeeded. Covers both verify and webhook callers.
+  await syncOrderToSheet(result.orderId);
 
   return result;
 }
