@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import ShippingLabelModal from "./ShippingLabelModal";
 import { AWAITING_PAYMENT, ORDER_STATUSES, orderStatusLabel } from "@/lib/orderStatus";
+import MessageCustomerModal from "./MessageCustomerModal";
 import Image from "next/image";
 
 type OrderItem = {
@@ -68,6 +69,7 @@ export default function StudioOrdersPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteConfirmOrder, setDeleteConfirmOrder] = useState<Order | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [messagingOrder, setMessagingOrder] = useState<Order | null>(null);
 
   const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
   const [statusSelects, setStatusSelects] = useState<Record<string, string>>({});
@@ -454,6 +456,18 @@ export default function StudioOrdersPage() {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
+                            setMessagingOrder(order);
+                          }}
+                          className="p-1.5 text-emerald-600/70 hover:text-emerald-700 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 transition-colors cursor-pointer"
+                          title="Message customer"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/></svg>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setDeleteConfirmOrder(order);
                           }}
                           className="p-1.5 text-red-500/70 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors cursor-pointer"
@@ -704,6 +718,11 @@ export default function StudioOrdersPage() {
       {/* ── Thermal Print Modal ─────────────────────────────────────────────── */}
       {printingOrder && (
         <ShippingLabelModal order={printingOrder} onClose={() => setPrintingOrder(null)} />
+      )}
+
+      {/* ── Customer Message Modal ───────────────────────────────────────────── */}
+      {messagingOrder && (
+        <MessageCustomerModal order={messagingOrder} onClose={() => setMessagingOrder(null)} />
       )}
     </div>
   );
