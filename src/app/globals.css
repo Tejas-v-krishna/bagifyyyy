@@ -31,6 +31,7 @@
   --font-sans: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   --font-display: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   --font-microgramma: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 
   --animate-marquee: marquee 30s linear infinite;
 
@@ -44,6 +45,10 @@
   .font-microgramma {
     font-family: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     text-transform: uppercase;
+  }
+
+  .font-mono {
+    font-family: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
   }
 
   /* ── Glassmorphism Utilities ──────────────────────────────────────── */
@@ -341,7 +346,7 @@
     background-color: #000000 !important;
   }
   .text-bagify {
-    font-family: "SuisseIntl-Regular", sans-serif;
+    font-family: "ITCAvantGardeStd", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 1rem;
     font-style: normal;
     font-weight: 500;
@@ -521,8 +526,9 @@
     border-color: #ffffff;
   }
 
-  /* Interactive controls and CTA buttons use full capsule border radius */
-  button:not([class*="rounded-full"]):not([role="tab"]),
+  /* Interactive controls and CTA buttons use full capsule border radius.
+     Gallery thumbnails are excluded — they match the card radius. */
+  button:not([class*="rounded-full"]):not([role="tab"]):not(.product-thumb-btn):not([class*="checkout-flat"]),
   input[type="button"]:not([class*="rounded-full"]),
   input[type="submit"]:not([class*="rounded-full"]),
   input[type="reset"]:not([class*="rounded-full"]),

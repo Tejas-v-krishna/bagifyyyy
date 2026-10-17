@@ -28,9 +28,20 @@ export async function POST(request: Request) {
           order_id?: string;
           status?: string;
           amount?: number;
-          notes?: { orderNumber?: string };
+          notes?: { orderNumber?: string; bagifyOrderId?: string };
           error_description?: string;
           error_reason?: string;
+        };
+      };
+      payment_link?: {
+        entity?: {
+          id?: string;
+          amount?: number;
+          amount_paid?: number;
+          status?: string;
+          reference_id?: string;
+          notes?: { orderNumber?: string; bagifyOrderId?: string } | null;
+          payments?: { payment_id?: string; amount?: string | number }[] | null;
         };
       };
       refund?: {
@@ -85,6 +96,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, logged: true });
   }
 
+  if (event.event === 'payment_link.paid') {
+    // A payment arrived on the failure dialog's "pay manually" link. The
+    // order is resolved from the note set when minting the link — never from
+    // the link's own internal Razorpay order — then finalized like a capture.
+    const link = event.payload?.payment_link?.entity;
+    const payment = event.payload?.payment?.entity;
+    const linkOrderId = link?.notes?.bagifyOrderId;
+    const linkPaymentId = payment?.id ?? link?.payments?.[0]?.payment_id;
+    if (!linkOrderId || !linkPaymentId) {
+      return NextResponse.json({ error: 'Incomplete payment link entity' }, { status: 400 });
+    }
+    return finalizePaymentLinkPayment({
+      orderId: linkOrderId,
+      paymentId: linkPaymentId,
+      amountInPaise: typeof payment?.amount === 'number' ? payment.amount : undefined,
+    });
+  }
+
   if (event.event !== 'payment.captured') {
     return NextResponse.json({ success: true, ignored: true });
   }
@@ -92,6 +121,19 @@ export async function POST(request: Request) {
   const entity = event.payload?.payment?.entity;
   const paymentId = entity?.id;
   const razorpayOrderId = entity?.order_id;
+
+  // Link payments arrive as ordinary captures but carry the `bagifyOrderId`
+  // note set when the link was minted. Route them to the linked order before
+  // the unknown-payment handling below can mistake them for orphaned money.
+  const paymentLinkOrderId = entity?.notes?.bagifyOrderId;
+  if (paymentId && paymentLinkOrderId) {
+    return finalizePaymentLinkPayment({
+      orderId: paymentLinkOrderId,
+      paymentId,
+      amountInPaise: typeof entity?.amount === 'number' ? entity.amount : undefined,
+    });
+  }
+
   if (!paymentId || !razorpayOrderId) {
     return NextResponse.json({ error: 'Incomplete payment entity' }, { status: 400 });
   }
@@ -100,6 +142,19 @@ export async function POST(request: Request) {
     where: { razorpayOrderId },
   });
   if (!order) {
+    // A capture whose payment is already attached to a local order (for
+    // example `payment_link.paid` finalized it first) is never orphaned money
+    // and must never be refunded — check before treating it as unknown.
+    const attached = await prisma.order.findFirst({
+      where: { paymentId },
+      select: { orderNumber: true },
+    });
+    if (attached) {
+      console.log(
+        `Captured payment ${paymentId} is already attached to order ${attached.orderNumber}; skipping refund.`
+      );
+      return NextResponse.json({ success: true, alreadyHandled: true });
+    }
     // Money was captured but we have no order row. The create-order cleanup
     // deletes the Order when the local stock hold fails but cannot cancel the
     // provider-side Razorpay order, so a payment made in that window used to
@@ -202,5 +257,140 @@ export async function POST(request: Request) {
       });
     }
     return NextResponse.json({ error: 'Failed to process webhook', recovery }, { status: 500 });
+  }
+}
+
+/**
+ * Finalize a payment made on a Razorpay Payment Link — the failure dialog's
+ * "pay manually" fallback — against its local order. Called both from
+ * `payment_link.paid` and from `payment.captured` when the capture carries a
+ * link's `bagifyOrderId` note (either event can arrive first).
+ *
+ * Ownership is already proven at this point: the webhook signature verified,
+ * and the note it reads was written server-side when the link was minted. The
+ * money is captured either way, so every branch ends with the order being
+ * finalized or the payment refunded and flagged — never stranded.
+ */
+async function finalizePaymentLinkPayment(params: {
+  orderId: string;
+  paymentId: string;
+  amountInPaise?: number;
+}): Promise<NextResponse> {
+  const { orderId, paymentId, amountInPaise } = params;
+
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order) {
+    console.error(
+      `Payment link payment ${paymentId} references missing order ${orderId}; attempting automatic refund.`
+    );
+    const refunded = await refundRazorpayPayment({
+      paymentId,
+      amount: amountInPaise ?? 0,
+      receipt: 'payment-link-unknown-order',
+    });
+    if (!refunded) {
+      await alertManualRefundRequired({
+        paymentId,
+        orderNumber: orderId,
+        amountInPaise: amountInPaise ?? null,
+        reason: 'Payment link payment had no matching order and the automatic refund failed.',
+      });
+    }
+    return NextResponse.json({ success: true, refundedUnknownPayment: refunded });
+  }
+
+  if (order.paymentStatus === 'PAID') {
+    await sendOrderConfirmationIfNeeded(order.id).catch(() => {});
+    return NextResponse.json({ success: true, alreadyPaid: true });
+  }
+
+  const expectedPaise = Math.round(order.totalAmount * 100);
+  const capturedPaise = amountInPaise ?? expectedPaise;
+
+  if (order.paymentStatus !== 'PENDING' || capturedPaise !== expectedPaise) {
+    // The order can no longer accept the payment, or its total changed since
+    // the link was minted. Money is captured regardless — refund it the same
+    // way the Checkout paths do instead of stranding it.
+    const reason =
+      order.paymentStatus !== 'PENDING'
+        ? `Payment link payment arrived for an order in status ${order.paymentStatus}.`
+        : `Payment link captured ${capturedPaise} paise but the order expects ${expectedPaise} paise.`;
+    const recovery = await recoverCapturedPayment({
+      orderId: order.id,
+      paymentId,
+      signature: `webhook:${paymentId}`,
+      amountInPaise: capturedPaise,
+      receipt: order.orderNumber,
+    }).catch(() => 'REFUND_PENDING' as const);
+    console.error(`Payment link recovery on order ${order.orderNumber}: ${reason} Recovery: ${recovery}`);
+    if (recovery !== 'REFUNDED') {
+      await alertManualRefundRequired({
+        paymentId,
+        orderNumber: order.orderNumber,
+        amountInPaise: capturedPaise,
+        reason: `${reason} The automatic refund is pending.`,
+      });
+    }
+    return NextResponse.json({ success: true, recovery });
+  }
+
+  try {
+    const result = await completeRazorpayOrder({
+      orderId: order.id,
+      razorpayOrderId: order.razorpayOrderId ?? '',
+      paymentId,
+      signature: `webhook:${paymentId}`,
+      allowProviderOrderMismatch: true,
+    });
+    await sendOrderConfirmationIfNeeded(result.orderId).catch(() => {});
+    return NextResponse.json({ success: true, orderId: result.orderId, viaPaymentLink: true });
+  } catch (error) {
+    if (error instanceof PaymentFinalizationError) {
+      const recovery = await recoverCapturedPayment({
+        orderId: order.id,
+        paymentId,
+        signature: `webhook:${paymentId}`,
+        amountInPaise: capturedPaise,
+        receipt: order.orderNumber,
+      }).catch(() => 'REFUND_PENDING' as const);
+      if (recovery !== 'REFUNDED') {
+        await alertManualRefundRequired({
+          paymentId,
+          orderNumber: order.orderNumber,
+          amountInPaise: capturedPaise,
+          reason: `Payment link finalization failed (${error.message}) and the automatic refund is pending.`,
+        });
+      }
+      return NextResponse.json(
+        { error: error.message, shortfall: error.shortfall, recovery },
+        { status: error.status }
+      );
+    }
+    console.error('Payment link finalization error:', error);
+    const latest = await prisma.order
+      .findUnique({ where: { id: order.id }, select: { paymentStatus: true } })
+      .catch(() => null);
+    if (latest && latest.paymentStatus !== 'PENDING' && latest.paymentStatus !== 'FAILED') {
+      return NextResponse.json({ error: 'Failed to process payment link payment' }, { status: 500 });
+    }
+    const recovery = await recoverCapturedPayment({
+      orderId: order.id,
+      paymentId,
+      signature: `webhook:${paymentId}`,
+      amountInPaise: capturedPaise,
+      receipt: order.orderNumber,
+    }).catch(() => 'REFUND_PENDING' as const);
+    if (recovery !== 'REFUNDED') {
+      await alertManualRefundRequired({
+        paymentId,
+        orderNumber: order.orderNumber,
+        amountInPaise: capturedPaise,
+        reason: 'Payment link finalization crashed after capture and the automatic refund is pending.',
+      });
+    }
+    return NextResponse.json(
+      { error: 'Failed to process payment link payment', recovery },
+      { status: 500 }
+    );
   }
 }

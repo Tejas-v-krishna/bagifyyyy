@@ -11,8 +11,13 @@ import {
   extFromMime,
   sniffImageMime,
 } from '@/lib/imageFormats';
+import { isKeepPristineWebp, optimizeImageBuffer } from '@/lib/imageOptimize';
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
+// Decoding + up to two WebP encodes + the R2 PUT needs more than the platform
+// default on slower instances. Vercel clamps this to the plan's own ceiling.
+export const maxDuration = 30;
 
 /** True when the declared MIME type or the filename extension looks like an image. */
 function looksLikeImage(name: string, mime: string): boolean {
@@ -89,7 +94,7 @@ export async function POST(request: Request) {
 
     for (const file of filesToProcess) {
       const bytes = await file.arrayBuffer();
-      let buffer = Buffer.from(bytes);
+      let buffer: Buffer = Buffer.from(bytes);
       let ext = ".webp";
       let contentType = "image/webp";
 
@@ -109,34 +114,47 @@ export async function POST(request: Request) {
       } else {
         try {
           const originalSize = buffer.length;
-          const image = sharp(buffer);
-          const meta = await image.metadata();
+          const meta = await sharp(buffer).metadata();
+          const isAnimated = (meta.pages ?? 1) > 1;
 
-          // If the image was already compressed to WebP on the client (<= 1600px and under 450 KB),
-          // avoid secondary lossy re-encoding to preserve crisp detail.
-          const isAlreadyOptimized =
-            meta.format === "webp" &&
-            (meta.width || 0) <= 1600 &&
-            (meta.height || 0) <= 1600 &&
-            originalSize <= 450 * 1024;
-
-          if (!isAlreadyOptimized) {
-            buffer = await sharp(buffer)
-              .rotate()
-              .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-              .webp({ quality: 82, effort: 4 })
-              .toBuffer();
-
+          if (isAnimated) {
+            // Keep animated uploads intact rather than flattening to frame one.
+            const detected = sniffImageMime(buffer.subarray(0, 32));
+            ext = resolveExtension(file.name, declaredMime, detected);
+            contentType = declaredMime || detected || 'image/webp';
             console.log(
-              `[Server Studio Upload] Compressed "${file.name}": ${(originalSize / 1024).toFixed(1)} KB -> ${(buffer.length / 1024).toFixed(1)} KB (WebP)`
+              `[Server Studio Upload] Kept animated "${file.name}" untouched: ${(originalSize / 1024).toFixed(1)} KB`
+            );
+          } else if (isKeepPristineWebp(meta, originalSize)) {
+            // Already small client-side WebP (<= 1600px, <= 280 KB): store
+            // as-is to avoid a secondary lossy generation.
+            ext = ".webp";
+            contentType = "image/webp";
+            console.log(
+              `[Server Studio Upload] Kept pristine client-compressed WebP "${file.name}": ${(originalSize / 1024).toFixed(1)} KB`
             );
           } else {
-            console.log(
-              `[Server Studio Upload] Kept pristine client-compressed WebP "${file.name}": ${(buffer.length / 1024).toFixed(1)} KB`
-            );
+            const optimized = await optimizeImageBuffer(buffer);
+
+            if (optimized.buffer.length < originalSize) {
+              buffer = optimized.buffer;
+              ext = ".webp";
+              contentType = "image/webp";
+              console.log(
+                `[Server Studio Upload] Compressed "${file.name}": ${(originalSize / 1024).toFixed(1)} KB -> ${(buffer.length / 1024).toFixed(1)} KB (WebP q${optimized.quality})`
+              );
+            } else {
+              // The optimizer could not beat the stored bytes (tiny or exotic
+              // source) — keep the original under its true type rather than
+              // shipping a bigger file.
+              const detected = sniffImageMime(buffer.subarray(0, 32));
+              ext = resolveExtension(file.name, declaredMime, detected);
+              contentType = declaredMime || detected || "image/jpeg";
+              console.log(
+                `[Server Studio Upload] Kept original "${file.name}" (optimizer produced no smaller file): ${(originalSize / 1024).toFixed(1)} KB`
+              );
+            }
           }
-          ext = ".webp";
-          contentType = "image/webp";
         } catch (sharpErr) {
           // sharp cannot decode this format (e.g. unsupported format) — store
           // the original bytes under their TRUE extension instead of mislabelling.

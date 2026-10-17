@@ -310,6 +310,13 @@ export function assertValidShippingAddress(address: unknown): {
   state: string;
   pincode: string;
   country: string;
+  /** Checkout "House / Office / Other" segment — only when a valid one was sent. */
+  label?: string;
+  /** Google-formatted area text from the checkout Area picker — capped. */
+  area?: string;
+  /** Exact delivery pin from the checkout map — only when a valid pair was sent. */
+  lat?: number;
+  lng?: number;
 } {
   if (!address || typeof address !== 'object') {
     throw new CartError('Complete shipping address is required');
@@ -328,6 +335,19 @@ export function assertValidShippingAddress(address: unknown): {
     throw new CartError('Enter a valid 6-digit PIN code.');
   }
 
+  // Garbage or half a pair is dropped rather than blocking a real order.
+  const coord = (v: unknown, min: number, max: number) =>
+    typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : null;
+  const lat = coord(a.lat, -90, 90);
+  const lng = coord(a.lng, -180, 180);
+
+  // Optional extras the checkout picker fills; garbage is dropped, never fatal.
+  const labelRaw = str(a.label).toLowerCase();
+  const areaText = str(a.area).slice(0, 280);
+  const extras: { label?: string; area?: string } = {};
+  if (labelRaw === 'house' || labelRaw === 'office' || labelRaw === 'other') extras.label = labelRaw;
+  if (areaText) extras.area = areaText;
+
   return {
     fullName,
     street,
@@ -335,6 +355,8 @@ export function assertValidShippingAddress(address: unknown): {
     state: str(a.state) || 'State',
     pincode,
     country: str(a.country) || 'India',
+    ...extras,
+    ...(lat !== null && lng !== null ? { lat, lng } : {}),
   };
 }
 

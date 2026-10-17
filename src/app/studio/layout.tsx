@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Plus, 
-  Package, 
-  LogOut, 
-  Mail, 
+import {
+  LayoutDashboard,
+  Plus,
+  Package,
+  LogOut,
+  Mail,
   ShoppingBag,
   TableProperties,
   Layers,
-  Camera, 
+  Camera,
+  MessageCircleHeart,
   ExternalLink,
   ShieldCheck,
   Tags,
@@ -31,6 +32,7 @@ const navItems = [
   { href: "/studio/ledger", label: "Order Ledger", icon: TableProperties, exact: true },
   { href: "/studio/orders/new", label: "Add Offline Order", icon: Plus, exact: true },
   { href: "/studio/instagram", label: "Instagram Feed", icon: Camera },
+  { href: "/studio/reviews", label: "Community Reviews", icon: MessageCircleHeart },
   { href: "/studio/marketing", label: "Email Marketing", icon: Mail },
   { href: "/studio/setup-2fa", label: "Security & 2FA", icon: ShieldCheck },
 ];

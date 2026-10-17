@@ -19,7 +19,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { fullName, phone, street, city, state, pincode } = body;
+    const { fullName, phone, street, city, state, pincode, label, area } = body;
 
     if (!fullName || !phone || !street || !city || !state || !pincode) {
       return NextResponse.json({ error: 'All address fields are required.' }, { status: 400 });
@@ -31,6 +31,13 @@ export async function PUT(
       return NextResponse.json({ error: 'Enter a valid phone number.' }, { status: 400 });
     }
 
+    // Optional checkout-picker extras (older clients don't send them).
+    const labelValue =
+      typeof label === 'string' && ['house', 'office', 'other'].includes(label.trim().toLowerCase())
+        ? label.trim().toLowerCase()
+        : null;
+    const areaValue = typeof area === 'string' && area.trim() ? area.trim().slice(0, 280) : null;
+
     const updated = await prisma.address.update({
       where: { id },
       data: {
@@ -40,6 +47,8 @@ export async function PUT(
         city: city.trim(),
         state: state.trim(),
         pincode: pincode.trim(),
+        ...(labelValue ? { label: labelValue } : {}),
+        ...(areaValue ? { area: areaValue } : {}),
       },
     });
 
@@ -66,7 +75,15 @@ export async function DELETE(
       return NextResponse.json({ error: 'Address not found.' }, { status: 404 });
     }
 
-    await prisma.address.delete({ where: { id } });
+    // Addresses referenced by an order are that order's permanent shipping
+    // snapshot — detach them from the address book instead of deleting, so
+    // order history stays intact and the delete never fails on a foreign key.
+    const orderCount = await prisma.order.count({ where: { shippingAddressId: id } });
+    if (orderCount > 0) {
+      await prisma.address.update({ where: { id }, data: { userId: null } });
+    } else {
+      await prisma.address.delete({ where: { id } });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete address error:', error);

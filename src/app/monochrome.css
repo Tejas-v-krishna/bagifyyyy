@@ -49,7 +49,10 @@ body.monochrome-site .bg-\[\#1A6FD6\],
 body.monochrome-site .bg-emerald-600,
 body.monochrome-site .bg-green-700 { background-color: var(--mono-ink) !important; }
 
-body.monochrome-site [class*="rounded-md"] { border-radius: var(--mono-radius-cta) !important; }
+/* Pills are for compact controls. Overlay panels (autocomplete listboxes,
+   dialogs) keep their own small radius — a pill radius on a tall panel
+   renders as a giant ellipse. */
+body.monochrome-site [class*="rounded-md"]:not([role="listbox"]):not([role="dialog"]) { border-radius: var(--mono-radius-cta) !important; }
 body.monochrome-site [class*="rounded-xl"] { border-radius: var(--mono-radius-image) !important; }
 body.monochrome-site [class*="rounded-2xl"] { border-radius: var(--mono-radius-image-lg) !important; }
 body.monochrome-site [class*="shadow-"] { box-shadow: none !important; }
@@ -69,7 +72,7 @@ body.monochrome-site .editorial-glass-nav.is-scrolled.is-dark {
   box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45) !important;
 }
 
-body.monochrome-site button:not([class*="rounded-full"]):not([role="tab"]),
+body.monochrome-site button:not([class*="rounded-full"]):not([role="tab"]):not([class*="checkout-flat"]),
 body.monochrome-site input[type="button"]:not([class*="rounded-full"]),
 body.monochrome-site input[type="submit"]:not([class*="rounded-full"]),
 body.monochrome-site input[type="reset"]:not([class*="rounded-full"]),

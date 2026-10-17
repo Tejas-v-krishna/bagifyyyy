@@ -5,8 +5,14 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = searchParams.get('q')?.trim() ?? '';
 
+  // Edge-cache for 60s: search is called per keystroke, every miss is
+  // a full function run + DB round trip. Stale 60s is safe for listings.
+  const CACHE_HEADERS = {
+    'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+  };
+
   if (q.length < 2) {
-    return NextResponse.json({ results: [] });
+    return NextResponse.json({ results: [] }, { headers: CACHE_HEADERS });
   }
 
   try {
@@ -40,9 +46,9 @@ export async function GET(request: Request) {
       isSoldOut: p.isSoldOut,
     }));
 
-    return NextResponse.json({ results });
+    return NextResponse.json({ results }, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error('Search error:', error);
-    return NextResponse.json({ results: [] });
+    return NextResponse.json({ results: [] }, { headers: CACHE_HEADERS });
   }
 }

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { fullName, phone, street, city, state, pincode } = body;
+    const { fullName, phone, street, city, state, pincode, label, area } = body;
 
     if (!fullName || !phone || !street || !city || !state || !pincode) {
       return NextResponse.json({ error: 'All address fields are required.' }, { status: 400 });
@@ -34,6 +34,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Enter a valid phone number.' }, { status: 400 });
     }
 
+    // Optional checkout-picker extras (older clients don't send them).
+    const labelValue =
+      typeof label === 'string' && ['house', 'office', 'other'].includes(label.trim().toLowerCase())
+        ? label.trim().toLowerCase()
+        : null;
+    const areaValue = typeof area === 'string' && area.trim() ? area.trim().slice(0, 280) : null;
+
     const address = await prisma.address.create({
       data: {
         userId: user.id,
@@ -44,6 +51,8 @@ export async function POST(request: Request) {
         state: state.trim(),
         pincode: pincode.trim(),
         country: 'India',
+        ...(labelValue ? { label: labelValue } : {}),
+        ...(areaValue ? { area: areaValue } : {}),
       },
     });
 

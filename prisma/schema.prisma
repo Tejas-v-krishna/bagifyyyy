@@ -137,6 +137,13 @@ model Address {
   state     String
   pincode   String
   country   String   @default("India")
+  // Checkout "House / Office / Other" segment (optional).
+  label     String?
+  // Google-formatted area text picked in the checkout Area picker (optional).
+  area      String?
+  // Exact delivery pin dropped on the checkout map (optional).
+  lat       Float?
+  lng       Float?
   createdAt DateTime @default(now())
 
   orders    Order[]

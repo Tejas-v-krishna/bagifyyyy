@@ -210,7 +210,7 @@ export default function ContactPage() {
                For quick sizing questions and fit checks, message us on Instagram.
             </p>
             <a
-              href="https://instagram.com"
+              href="https://instagram.com/bagifyyyy"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white underline underline-offset-4 hover:opacity-80 transition-opacity"

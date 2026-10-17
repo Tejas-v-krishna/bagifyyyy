@@ -11,6 +11,14 @@ export async function GET(request: Request) {
   // Hold identity comes from the server-minted cookie, not a caller header.
   const sessionId = readHoldSession(request) || undefined;
 
+  // Short browser cache only: response is personalized by hold cookie (heldByYou),
+  // so public edge cache would leak one shopper's hold to another.
+  // private max-age=10 still cuts polling without poisoning the edge.
+  const CACHE_HEADERS = {
+    'Cache-Control': 'private, max-age=10, stale-while-revalidate=30',
+    'Vary': 'Cookie',
+  };
+
   if (!productId) {
     return NextResponse.json({ error: 'Missing productId' }, { status: 400 });
   }
@@ -41,7 +49,7 @@ export async function GET(request: Request) {
       isAvailable: !isSoldOut,
       totalStock,
       ...status,
-    });
+    }, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error('Error fetching stock status:', error);
     return NextResponse.json({

@@ -7,13 +7,18 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
 
+    // Subcategories change rarely: edge-cache 5min to avoid DB + function run per page view.
+    const CACHE_HEADERS = {
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+    };
+
     if (category) {
       const subcategories = await getSubcategories(category);
-      return NextResponse.json({ subcategories });
+      return NextResponse.json({ subcategories }, { headers: CACHE_HEADERS });
     }
 
     const subcategories = await getAllSubcategories();
-    return NextResponse.json({ subcategories });
+    return NextResponse.json({ subcategories }, { headers: CACHE_HEADERS });
   } catch (error) {
     console.error("GET /api/subcategories error:", error);
     return NextResponse.json({ error: "Failed to fetch subcategories" }, { status: 500 });

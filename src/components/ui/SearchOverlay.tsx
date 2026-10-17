@@ -57,7 +57,8 @@ export default function SearchOverlay({
   }, []);
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const debouncedQuery = useDebounce(query, 220);
+  const debouncedQuery = useDebounce(query, 400);
+  const resultCache = useRef(new Map<string, SearchResult[]>());
 
   const [search, setSearch] = useState<{ key: string; results: SearchResult[] } | null>(null);
 
@@ -71,6 +72,13 @@ export default function SearchOverlay({
   useEffect(() => {
     if (debouncedQuery.length < MIN_QUERY_LENGTH) return;
 
+    // Client cache: back/forward keystrokes reuse prior results, no CDN/function hit.
+    const cached = resultCache.current.get(debouncedQuery);
+    if (cached) {
+      setSearch({ key: debouncedQuery, results: cached });
+      return;
+    }
+
     const controller = new AbortController();
 
     fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`, {
@@ -78,7 +86,14 @@ export default function SearchOverlay({
     })
       .then((r) => r.json())
       .then((data) => {
-        setSearch({ key: debouncedQuery, results: data.results ?? NO_RESULTS });
+        const list = data.results ?? NO_RESULTS;
+        resultCache.current.set(debouncedQuery, list);
+        // Bound cache so long sessions don't grow forever.
+        if (resultCache.current.size > 50) {
+          const first = resultCache.current.keys().next().value;
+          if (first) resultCache.current.delete(first);
+        }
+        setSearch({ key: debouncedQuery, results: list });
       })
       .catch((err) => {
         if (err?.name === "AbortError") return;

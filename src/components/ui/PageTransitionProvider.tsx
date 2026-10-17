@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export default function PageTransitionProvider({
@@ -11,6 +11,19 @@ export default function PageTransitionProvider({
 }) {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Drop the landing animation class once the intro finishes. With
+  // `animation-fill-mode: both` + `will-change: transform/filter` the wrapper
+  // permanently becomes a containing block, which breaks `position: fixed`
+  // overlays rendered inside pages (payment pop-ups scrolling with the page).
+  const [landedFor, setLandedFor] = useState<string | null>(null);
+  const landed = landedFor === pathname;
+
+  useEffect(() => {
+    // Fallback in case animationend never fires (e.g. reduced-motion overrides).
+    const t = window.setTimeout(() => setLandedFor(pathname), 1200);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
 
   const isStudioRoute = pathname?.startsWith("/studio") || pathname?.startsWith("/admin");
 
@@ -174,7 +187,10 @@ export default function PageTransitionProvider({
     <div
       key={pathname}
       ref={containerRef}
-      className="page-landing-animate w-full flex-1 flex flex-col"
+      onAnimationEnd={(e) => {
+        if (e.target === e.currentTarget) setLandedFor(pathname);
+      }}
+      className={`w-full flex-1 flex flex-col ${landed ? "" : "page-landing-animate"}`}
     >
       {children}
     </div>

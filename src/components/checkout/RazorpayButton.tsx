@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { toRazorpayContact } from "@/lib/razorpayContact";
 
 declare global {
   interface RazorpayOptions {
@@ -17,6 +18,11 @@ declare global {
     theme: { color: string };
     modal: { ondismiss: () => void };
     handler: (response: RazorpayPaymentResponse) => void;
+    config?: {
+      display?: {
+        hide?: Array<{ method: string; flows?: string[] }>;
+      };
+    };
   }
 
   interface RazorpayPaymentResponse {
@@ -161,11 +167,22 @@ export default function RazorpayButton({
         prefill: {
           name: customer?.name || "",
           email: customer?.email || "",
-          contact: customer?.phone || "",
+          // Razorpay expects "+{country code}{number}" (digits only); digits
+          // can arrive with spaces or a stray country-code prefix.
+          contact: toRazorpayContact(customer?.phone),
         },
         notes: notes || {},
         theme: {
           color: themeColor,
+        },
+        // NPCI retired UPI "collect" (VPA collect requests) on 28 Feb 2026 —
+        // leaving it enabled makes those attempts fail at authentication with
+        // payment_timed_out. Checkout then falls back to UPI Intent on mobile
+        // and dynamic QR on desktop.
+        config: {
+          display: {
+            hide: [{ method: "upi", flows: ["collect"] }],
+          },
         },
         modal: {
           ondismiss: function () {

@@ -2,16 +2,30 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense, useSyncExternalStore } from "react";
 import { useCartStore, getItemKey, VALID_PROMOS } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Loader2, ArrowRight, ArrowLeft, User, CreditCard, Tag, CheckCircle2, AlertCircle, Minus, Plus, X } from "lucide-react";
+import { Loader2, ArrowLeft, CreditCard, Tag, CheckCircle2, AlertCircle, Minus, Plus, Truck, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { triggerPromoSuccessBurst } from "@/lib/confetti";
-import Button from "@/components/ui/Button";
+import { createPortal } from "react-dom";
+import { acquireScrollLock, releaseScrollLock } from "@/lib/scrollLock";
+import AreaPicker from "@/components/checkout/AreaPicker";
+import { type PickedSpot } from "@/components/checkout/ExactLocationMap";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import type { ParsedPlace } from "@/lib/googleMaps";
+import { estimateDeliveryEta, formatEtaRange } from "@/lib/deliveryEta";
+import {
+  composeStreetAddress,
+  dedupeSavedAddresses,
+  splitStreetAddress,
+  type SavedCheckoutAddress,
+} from "@/lib/savedAddresses";
+import { toRazorpayContact } from "@/lib/razorpayContact";
+import { externalBrowserHref, isInAppBrowser } from "@/lib/inAppBrowser";
 // Hold identity is a server-minted cookie now — the client no longer picks it.
 
 type RazorpayPaymentResponse = {
@@ -45,6 +59,13 @@ type RazorpayOptions = {
   // stock hold so the sheet cannot outlive the reservation it is paying for.
   retry?: { enabled: boolean; max_count: number };
   timeout?: number;
+  // Lets Checkout show only the UPI flows the network still supports — the
+  // retired "collect" flow is hidden via this config (see options below).
+  config?: {
+    display?: {
+      hide?: Array<{ method: string; flows?: string[] }>;
+    };
+  };
 };
 
 type RazorpayInstance = {
@@ -53,6 +74,18 @@ type RazorpayInstance = {
 };
 
 type RazorpayConstructor = new (options: RazorpayOptions) => RazorpayInstance;
+
+/** Renders children straight into <body>. Payment overlays must not live under
+ * the animated page wrapper — its transform/filter makes it a containing
+ * block, which breaks `position: fixed` and makes pop-ups scroll with the page. */
+function ViewportPortal({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(true);
+  }, []);
+  if (!ready || typeof document === "undefined") return null;
+  return createPortal(children, document.body);
+}
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
@@ -67,6 +100,7 @@ type AddressForm = {
   fullName: string;
   email: string;
   phone: string;
+  building: string;
   street: string;
   city: string;
   state: string;
@@ -74,7 +108,7 @@ type AddressForm = {
 };
 
 /** The order the fields appear in, so focus lands on the first bad one. */
-const FIELD_ORDER = ["fullName", "phone", "email", "street", "pincode", "city"] as const;
+const FIELD_ORDER = ["fullName", "phone", "email", "building", "pincode", "city"] as const;
 
 /**
  * Mirrors assertValidShippingAddress and assertValidContact in src/lib/cart.ts.
@@ -94,7 +128,7 @@ function validateAddress(data: AddressForm): Partial<Record<keyof AddressForm, s
   if (!email) errors.email = "Enter an email so we can send the receipt.";
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "That does not look like a valid email address.";
 
-  if (!data.street.trim()) errors.street = "Enter the house, flat and street.";
+  if (!data.building.trim()) errors.building = "Enter the building / floor and house number.";
 
   const pincode = data.pincode.trim();
   if (!pincode) errors.pincode = "Enter your 6-digit PIN code.";
@@ -105,11 +139,16 @@ function validateAddress(data: AddressForm): Partial<Record<keyof AddressForm, s
   return errors;
 }
 
-const fieldClass = (hasError: boolean) =>
-  `w-full border px-4 py-3.5 text-sm outline-none transition-colors rounded-sm ${
-    hasError
-      ? "border-red-500 focus:border-red-600 bg-red-50/20"
-      : "border-black/15 focus:border-black bg-white"
+/** Boxed fields (reference style): the wrapper draws the rounded frame (black
+ *  on focus-within), the control stays borderless — the monochrome theme
+ *  forces borders and a white fill onto inputs, and `bg-transparent` opts the
+ *  control out of it. */
+const fieldClass = () =>
+  "w-full bg-transparent px-0 py-3.5 text-sm text-black outline-none placeholder:text-black/35 rounded-none";
+
+const fieldWrap = (hasError: boolean) =>
+  `flex items-center rounded-xl border bg-white px-3.5 transition-colors ${
+    hasError ? "border-red-400" : "border-black/10 focus-within:border-black"
   }`;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -136,6 +175,32 @@ const loadRazorpayScript = (): Promise<boolean> => {
     document.body.appendChild(script);
   });
 };
+
+// useSyncExternalStore needs stable, module-level functions. The user agent
+// cannot change mid-session, so the subscription never fires; hydration renders
+// the server snapshot ("") first and then swaps in the real UA.
+const subscribeNever = () => () => {};
+const getUaSnapshot = () => (typeof navigator === "undefined" ? "" : navigator.userAgent);
+const getUaServerSnapshot = () => "";
+
+/** In-app browsers often block the async Clipboard API; textarea + execCommand
+ * still works there. */
+function fallbackCopy(text: string, onDone: () => void) {
+  try {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    document.body.removeChild(area);
+    onDone();
+  } catch {
+    // The ⋮ / ⋯ menu path in the notice still works without the copy.
+  }
+}
 
 function CheckoutContent() {
   const router = useRouter();
@@ -171,6 +236,38 @@ function CheckoutContent() {
   const [failureDetails, setFailureDetails] = useState<{ title: string; message: string } | null>(null);
   const paymentCompletedRef = useRef(false);
   const checkoutIdsRef = useRef<{ razorpay: string | null }>({ razorpay: null });
+
+  // In-app browsers (Instagram, Facebook, WhatsApp, TikTok …) block UPI app
+  // hand-offs, so a payment started inside one strands at authentication and
+  // times out ("payment_timed_out" with no Bank RRN in the Razorpay
+  // dashboard). Detect it and offer a one-tap escape to the real browser
+  // before taking payment.
+  const inAppUa = useSyncExternalStore(subscribeNever, getUaSnapshot, getUaServerSnapshot);
+  const isInApp = isInAppBrowser(inAppUa);
+  const [showInAppPrompt, setShowInAppPrompt] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  // Set only by the prompt's "Continue anyway" button — one payment attempt
+  // may proceed without the escape, then the guard arms again.
+  const allowInAppPayRef = useRef(false);
+
+  // The most recently created (or resumed) Razorpay order — the failure
+  // dialog's "pay manually" fallback mints a payment link for it.
+  const [activeOrder, setActiveOrder] = useState<{ id: string; number: string } | null>(null);
+  const [creatingLink, setCreatingLink] = useState(false);
+  const [linkError, setLinkError] = useState("");
+  // One live link per order is enough; clicks reuse it instead of minting
+  // (and texting/emailing) a new one until it expires.
+  const paymentLinkRef = useRef<{ orderId: string; shortUrl: string; expiresAt: number } | null>(null);
+
+  // Lock page scroll while a payment overlay is up — they are portalled to
+  // <body> and the page behind them must not scroll on phones.
+  const paymentOverlayOpen =
+    paymentState === "initiating" || paymentState === "verifying" || paymentState === "failed" || showInAppPrompt;
+  useEffect(() => {
+    if (!paymentOverlayOpen) return;
+    acquireScrollLock();
+    return () => releaseScrollLock();
+  }, [paymentOverlayOpen]);
 
   const getCheckoutIdFor = (method: 'razorpay'): string => {
     const storageKey = `bagify-checkout-${method}`;
@@ -277,12 +374,221 @@ function CheckoutContent() {
     fullName: user?.name || "",
     email: user?.email || "",
     phone: "",
+    building: "",
     street: "",
     city: "",
     state: "Maharashtra",
     pincode: "",
   });
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof AddressForm, string>>>({});
+  // Google-formatted "Area" line picked in the checkout picker (persisted).
+  const [areaText, setAreaText] = useState("");
+  const [areaHint, setAreaHint] = useState("");
+  // Exact delivery pin picked on the map (optional). pinAtSet guards against
+  // keeping coordinates after the shopper switches the PIN to another city.
+  const [exactSpot, setExactSpot] = useState<{ lat: number; lng: number; pinAtSet: string } | null>(null);
+  const [addressWarning, setAddressWarning] = useState("");
+  const pincodeCache = useRef(new Map<string, { city: string; state: string }>());
+  const locSeq = useRef(0);
+  const lastCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  /** Map a reverse-geocoded subdivision name onto our state list. */
+  const matchState = (name: string): string | null => {
+    const clean = name.trim().toLowerCase();
+    const aliases: Record<string, string> = {
+      "national capital territory of delhi": "Delhi",
+      "nct of delhi": "Delhi",
+      "new delhi": "Delhi",
+      "jammu and kashmir": "Jammu & Kashmir",
+      "uttaranchal": "Uttarakhand",
+      "orissa": "Odisha",
+      "pondicherry": "Puducherry",
+    };
+    if (aliases[clean]) return aliases[clean] ?? null;
+    const hit = INDIAN_STATES.find((st) => st.toLowerCase() === clean);
+    return hit ?? null;
+  };
+
+  // Saved addresses (signed-in shoppers). Fetched once per checkout visit;
+  // the form auto-fills with the most recent one, Amazon/Flipkart style.
+  const [savedAddresses, setSavedAddresses] = useState<SavedCheckoutAddress[]>([]);
+  const [selectedSavedAddressId, setSelectedSavedAddressId] = useState<string | null>(null);
+
+  // Order summary rail (collapsed by default) in the checkpoint layout.
+  const [summaryOpen, setSummaryOpen] = useState(false);
+
+  // Read inside the fetch effect without making it re-run on every keystroke.
+  const formDataRef = useRef(formData);
+  useEffect(() => {
+    formDataRef.current = formData;
+  });
+
+  /** Fill the form from a saved address (also restores its exact map pin). */
+  const applySavedAddress = (address: SavedCheckoutAddress) => {
+    // Rows store one combined street line; the form shows Building + Street.
+    const parts = splitStreetAddress(address.street);
+    setFormData((prev) => ({
+      ...prev,
+      fullName: address.fullName || prev.fullName,
+      phone: address.phone || prev.phone,
+      building: parts.building,
+      street: parts.street,
+      city: address.city,
+      state: matchState(address.state) || prev.state,
+      pincode: address.pincode,
+    }));
+    setAreaText(address.area || "");
+    setExactSpot(
+      typeof address.lat === "number" && typeof address.lng === "number"
+        ? { lat: address.lat, lng: address.lng, pinAtSet: address.pincode }
+        : null
+    );
+    setSelectedSavedAddressId(address.id);
+    setFieldErrors({});
+    setAddressWarning("");
+  };
+
+  const clearSavedAddressSelection = () => {
+    setSelectedSavedAddressId(null);
+    setFormData((prev) => ({ ...prev, building: "", street: "", city: "", pincode: "" }));
+    setAreaText("");
+    setExactSpot(null);
+    setFieldErrors({});
+    setAddressWarning("");
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated || !user || checkoutMode !== "account") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/account/addresses");
+        if (!res.ok) return;
+        const data = await res.json().catch(() => null);
+        const list = dedupeSavedAddresses(
+          Array.isArray(data?.addresses) ? data.addresses : []
+        ).slice(0, 5);
+        if (cancelled || list.length === 0) return;
+        setSavedAddresses(list);
+        // Pre-select the last used address unless the shopper already typed.
+        const first = list[0];
+        if (first && !formDataRef.current.building && !formDataRef.current.street && !formDataRef.current.pincode) {
+          applySavedAddress(first);
+        }
+      } catch {
+        // Offline or signed out mid-flight — the plain form still works.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // The fetch must run only when the signed-in shopper shows up, not on
+    // every keystroke — the helpers it calls are stable per render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user, checkoutMode]);
+
+  // "Arrives Mon, 19 Oct – Wed, 21 Oct" once a full PIN is entered.
+  const etaLabel = /^\d{6}$/.test(formData.pincode.trim())
+    ? formatEtaRange(estimateDeliveryEta(formData.state))
+    : null;
+
+  /** Free India PIN lookup (India Post data), cached for the visit. */
+  const fetchPincodeInfo = async (pin: string): Promise<{ city: string; state: string } | null> => {
+    const cached = pincodeCache.current.get(pin);
+    if (cached) return cached;
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      const office = data?.[0]?.PostOffice?.[0];
+      if (!office) return null;
+      const city = String(office.District || office.Block || "").trim();
+      const state = matchState(String(office.State || "")) || String(office.State || "").trim();
+      if (!city || !state) return null;
+      const info = { city, state };
+      pincodeCache.current.set(pin, info);
+      return info;
+    } catch {
+      return null; // Offline — the shopper types city manually.
+    }
+  };
+
+  /** Typing 6 digits fills city + state, no dropdown hunt. */
+  const lookupPincode = async (pin: string) => {
+    const seq = ++locSeq.current;
+    const info = await fetchPincodeInfo(pin);
+    if (!info || seq !== locSeq.current) return;
+    setFormData((prev) => ({ ...prev, city: info.city, state: info.state }));
+    setFieldErrors((prev) => ({ ...prev, city: undefined }));
+    setAreaHint(`Delivering to ${info.city}, ${info.state}`);
+  };
+
+  /**
+   * Soft quality check before payment: does the PIN's official India Post
+   * record agree with the chosen state? Never blocks checkout — just flags a
+   * likely typo for one more look.
+   */
+  const verifyAddressPin = async (data: AddressForm) => {
+    if (exactSpot) return; // A dropped pin outranks postal-record naming.
+    const pin = data.pincode.trim();
+    if (!/^\d{6}$/.test(pin)) return;
+    const info = await fetchPincodeInfo(pin);
+    if (!info) return;
+    if (info.state && data.state && info.state !== data.state) {
+      setAddressWarning(`PIN ${pin} belongs to ${info.city}, ${info.state} — please double-check the state.`);
+    } else {
+      setAddressWarning("");
+    }
+  };
+
+  /** A Places suggestion was picked — fill the Area line + locality fields. */
+  const handlePlaceSelected = (place: ParsedPlace) => {
+    const mappedState = place.state ? matchState(place.state) : null;
+    setAreaText(place.label || place.street || "");
+    setFormData((prev) => ({
+      ...prev,
+      // Never stomp text the shopper already typed — only seed empty fields.
+      street: prev.street.trim() ? prev.street : place.street || prev.street,
+      city: place.city || prev.city,
+      state: mappedState || prev.state,
+      pincode: place.pincode.length === 6 ? place.pincode : prev.pincode,
+    }));
+    setFieldErrors((prev) => ({ ...prev, city: undefined, pincode: undefined }));
+    setAddressWarning("");
+    if (place.location) {
+      setExactSpot({ lat: place.location.lat, lng: place.location.lng, pinAtSet: place.pincode });
+      lastCoordsRef.current = { lat: place.location.lat, lng: place.location.lng };
+    }
+    if (place.pincode.length === 6) {
+      // India Post district data is what the courier's address system uses.
+      void lookupPincode(place.pincode);
+    }
+  };
+
+  /** Exact spot chosen on the map — fill what the reverse lookup found. */
+  const handleMapPicked = (spot: PickedSpot) => {
+    const mappedState = spot.state ? matchState(spot.state) : null;
+    if (spot.areaLabel) setAreaText(spot.areaLabel);
+    setFormData((prev) => ({
+      ...prev,
+      ...(spot.pincode.length === 6 ? { pincode: spot.pincode } : {}),
+      ...(spot.city ? { city: spot.city } : {}),
+      ...(mappedState ? { state: mappedState } : {}),
+    }));
+    setExactSpot({
+      lat: spot.lat,
+      lng: spot.lng,
+      pinAtSet: spot.pincode.length === 6 ? spot.pincode : formData.pincode,
+    });
+    lastCoordsRef.current = { lat: spot.lat, lng: spot.lng };
+    setAddressWarning("");
+    setAreaHint('Exact spot pinned — the courier will see it.');
+  };
+
+  const handleMapCleared = () => {
+    setExactSpot(null);
+    setAreaHint('');
+  };
 
   // Auto-apply promo from cart URL param (back-compat) or store
   useEffect(() => {
@@ -365,11 +671,17 @@ function CheckoutContent() {
       const digits = value.replace(/\D/g, "").slice(0, 6);
       setFormData((prev) => ({ ...prev, pincode: digits }));
       setFieldErrors((prev) => (prev.pincode ? { ...prev, pincode: undefined } : prev));
+      // A pin dropped for another PIN city no longer applies to this address.
+      setExactSpot((prev) => (prev && prev.pinAtSet && digits !== prev.pinAtSet ? null : prev));
+      setAddressWarning("");
+      if (digits.length === 6) void lookupPincode(digits);
+      else setAreaHint("");
       return;
     }
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear the field's complaint as soon as the shopper starts fixing it.
     setFieldErrors((prev) => (prev[name as keyof AddressForm] ? { ...prev, [name]: undefined } : prev));
+    if (name === "city" || name === "state") setAddressWarning("");
   };
 
   /** Puts the caret on the first field that failed, so nothing is hunted for. */
@@ -389,6 +701,8 @@ function CheckoutContent() {
     }
     setError("");
     setActiveStep(2);
+    // Non-blocking India Post sanity check — a warning may appear under the form.
+    void verifyAddressPin(formData);
   };
 
   const handlePaymentSuccess = async (orderId: string, response: RazorpayPaymentResponse) => {
@@ -441,8 +755,97 @@ function CheckoutContent() {
     }
   };
 
+  /** Hands the current checkout URL to the phone's real browser. Android
+   * honours the intent: hand-off; iOS 17+ the x-safari-https form. */
+  const openInRealBrowser = () => {
+    if (typeof window === "undefined") return;
+    window.location.href = externalBrowserHref(window.location.href, inAppUa);
+  };
+
+  const copyCheckoutLink = () => {
+    if (typeof window === "undefined") return;
+    const link = window.location.href;
+    const done = () => {
+      setCopiedLink(true);
+      window.setTimeout(() => setCopiedLink(false), 2500);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(link).then(done).catch(() => fallbackCopy(link, done));
+    } else {
+      fallbackCopy(link, done);
+    }
+  };
+
+  /** Hand a Razorpay payment link to the shopper — via the phone's real
+   * browser when they're stuck in an in-app WebView, which would otherwise
+   * block the hosted page's UPI hand-off the same way it blocks Checkout. */
+  const openPaymentLink = (shortUrl: string) => {
+    if (typeof window === "undefined") return;
+    window.location.href = isInApp ? externalBrowserHref(shortUrl, inAppUa) : shortUrl;
+  };
+
+  /** Failure-dialog escape hatch: mint (or reuse) a Razorpay Payment Link for
+   * the order that just failed and send the shopper to it. The link carries
+   * the exact total and a bagifyOrderId note, so paying it finalizes this
+   * same order through the normal webhook pipeline. Razorpay also texts and
+   * emails the link, so the payment survives a closed tab. */
+  const handlePayViaLink = async () => {
+    if (!activeOrder || creatingLink) return;
+    setLinkError("");
+
+    const cached = paymentLinkRef.current;
+    if (cached && cached.orderId === activeOrder.id && Date.now() < cached.expiresAt - 30_000) {
+      openPaymentLink(cached.shortUrl);
+      return;
+    }
+
+    try {
+      setCreatingLink(true);
+      const res = await fetch("/api/payment/razorpay/create-payment-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: activeOrder.id,
+          checkoutId: getCheckoutIdFor("razorpay"),
+          customerEmail: formData.email,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error || "Could not create the payment link. Please try again.");
+      }
+      if (data.alreadyPaid) {
+        router.push(`/checkout/success?order_id=${activeOrder.id}`);
+        return;
+      }
+      if (typeof data.shortUrl !== "string" || !data.shortUrl) {
+        throw new Error("Could not create the payment link. Please try again.");
+      }
+      paymentLinkRef.current = {
+        orderId: activeOrder.id,
+        shortUrl: data.shortUrl,
+        expiresAt: typeof data.expiresAt === "number" ? data.expiresAt : Date.now() + 15 * 60 * 1000,
+      };
+      openPaymentLink(data.shortUrl);
+    } catch (err) {
+      setLinkError(
+        err instanceof Error ? err.message : "Could not create the payment link. Please try again."
+      );
+    } finally {
+      setCreatingLink(false);
+    }
+  };
+
   const handleProceedToPayment = async () => {
+    // Starting Checkout inside an in-app browser is what produced the wave of
+    // timed-out UPI payments — route the shopper to a real browser first.
+    if (isInApp && !allowInAppPayRef.current) {
+      setShowInAppPrompt(true);
+      return;
+    }
+    allowInAppPayRef.current = false;
     setError("");
+    setLinkError("");
     setFailureDetails(null);
     paymentCompletedRef.current = false;
 
@@ -457,6 +860,7 @@ function CheckoutContent() {
       return;
     }
     setFieldErrors({});
+    void verifyAddressPin(formData);
 
     try {
       setLoading(true);
@@ -468,25 +872,60 @@ function CheckoutContent() {
         throw new Error('Unable to load Razorpay SDK. Please check your internet connection.');
       }
 
-      const res = await fetch('/api/payment/razorpay/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items,
-          shippingAddress: formData,
-          customerEmail: formData.email,
-          customerPhone: formData.phone,
-          promoCode: appliedPromo?.code || null,
-          checkoutId: getCheckoutIdFor('razorpay'),
-        }),
+      const buildOrderBody = () => JSON.stringify({
+        items,
+        shippingAddress: {
+          ...formData,
+          // The form posts one stored street line; the Area line rides along.
+          street: composeStreetAddress(formData.building, formData.street),
+          ...(areaText ? { area: areaText } : {}),
+          ...(exactSpot ? { lat: exactSpot.lat, lng: exactSpot.lng } : {}),
+        },
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        promoCode: appliedPromo?.code || null,
+        checkoutId: getCheckoutIdFor('razorpay'),
       });
 
-      const orderData = await res.json();
+      const createOrder = () =>
+        fetch('/api/payment/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: buildOrderBody(),
+        });
+
+      let res = await createOrder();
+      let orderData = await res.json();
+
+      // A reference that belongs to an older session (different login state or
+      // email), or an order that can no longer be resumed, is a dead end —
+      // mint a fresh reference and retry once so "Retry Payment" can never
+      // get stuck reusing a stale checkout id.
+      const staleReference =
+        res.status === 409 &&
+        /no longer valid|cannot be resumed/i.test(String(orderData?.error || ""));
+      if (staleReference) {
+        rotateCheckoutId('razorpay');
+        res = await createOrder();
+        orderData = await res.json();
+      }
+
       if (!res.ok) {
         throw new Error(
           orderData.ref ? `${orderData.error || 'Failed to initialize payment'} (ref ${orderData.ref})` : (orderData.error || 'Failed to initialize payment')
         );
       }
+
+      // A settled order can still be reached from this dialog — e.g. the
+      // shopper paid the fallback link in another tab, or a late UPI approval
+      // landed after the window. Go straight to the confirmation instead of
+      // opening Checkout again.
+      if (orderData.alreadyPaid) {
+        router.push(`/checkout/success?order_id=${orderData.orderId}`);
+        return;
+      }
+
+      setActiveOrder({ id: orderData.orderId, number: orderData.orderNumber });
 
       const razorpayKey = orderData.keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
       if (!razorpayKey) {
@@ -510,13 +949,29 @@ function CheckoutContent() {
         prefill: {
           name: formData.fullName,
           email: formData.email,
-          contact: formData.phone,
+          // Razorpay expects "+{country code}{number}" (digits only) and uses
+          // it to pre-fill the UPI intent/QR flows. The form keeps bare
+          // 10-digit numbers, but saved addresses can still hold older
+          // "+91 98765 43210"-style values, so normalise before sending.
+          contact: toRazorpayContact(formData.phone),
         },
         notes: {
-          address: `${formData.street}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
+          address: `${composeStreetAddress(formData.building, formData.street)}, ${formData.city}, ${formData.state} - ${formData.pincode}`,
         },
         theme: {
           color: "#050505",
+        },
+        // NPCI retired the UPI "collect" flow (VPA/mobile-number collect
+        // requests) on 28 February 2026. Leaving it on Checkout is exactly
+        // what produced the BAD_REQUEST_ERROR / payment_authentication /
+        // payment_timed_out failures in the Razorpay dashboard: shoppers who
+        // picked a collect-style UPI option could never be authenticated.
+        // Hiding it makes Checkout fall back to the supported flows —
+        // app-switch (UPI Intent) on phones, dynamic QR on desktop.
+        config: {
+          display: {
+            hide: [{ method: "upi", flows: ["collect"] }],
+          },
         },
         // Let UPI timed-out/invalid-account attempts retry in place (same
         // Razorpay order, same local order) instead of starting over.
@@ -551,11 +1006,19 @@ function CheckoutContent() {
         setError(`Payment failed: ${failureReason}`);
         setLoading(false);
         setPaymentState('idle');
+        // "payment_timed_out" is the one failure a shopper can turn around:
+        // the UPI request reached their app but expired unapproved. Spell
+        // that out instead of the generic line.
+        const upiTimedOut =
+          resp.error?.reason === "payment_timed_out" ||
+          /timed?\s*out/i.test(failureReason);
         setTimeout(() => {
           setPaymentState('failed');
           setFailureDetails({
             title: "Transaction Didn't Go Through",
-            message: "Your transaction didn't go through, please try again.",
+            message: upiTimedOut
+              ? "Your UPI request expired before it was approved. Please try again and approve the payment request in your UPI app the moment it appears."
+              : "Your transaction didn't go through, please try again.",
           });
         }, 800);
       });
@@ -617,10 +1080,9 @@ function CheckoutContent() {
 
   return (
     <div className="editorial-page min-h-screen bg-[#f5f5f2] text-black font-sans px-4 py-8 sm:px-6 sm:py-12 lg:px-10">
-      <div className="max-w-[1300px] mx-auto">
+      <div className="mx-auto w-full max-w-[620px]">
 
-        {/* Top Navigation Bar */}
-        <div className="mb-8 flex items-center justify-start border-b border-black/10 pb-3">
+        <div className="bg-white border border-black/10 rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
           <Link
             href="/"
             className="editorial-back inline-flex items-center gap-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-black/50 transition-colors hover:text-black"
@@ -628,30 +1090,69 @@ function CheckoutContent() {
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             Back to store
           </Link>
-        </div>
-        
-        {/* Header */}
-        <div className="mb-8 border-b border-black/10 pb-6 sm:mb-12 sm:pb-8">
-          <div>
-            <h1 className="font-microgramma text-[clamp(1.9rem,4.5vw,4.2rem)] font-bold uppercase leading-[0.88] tracking-tight text-black">
-              Secure Checkout
-            </h1>
-          </div>
-        </div>
+
+          <h1 className="mt-6 text-3xl font-medium tracking-[-0.04em] text-black sm:text-4xl">
+            Checkout
+          </h1>
+
+          <CheckoutStepper
+            current={checkoutMode === 'select' ? 1 : activeStep}
+            className="mt-8"
+          />
+
+          {/* In-app browser notice — Instagram/Facebook/WhatsApp webviews
+              cannot open UPI apps, which is what stranded the failed UPI
+              payments at authentication. */}
+          {isInApp && (
+            <div
+              role="status"
+              className="mt-6 rounded-xl border border-amber-600/40 bg-amber-50/80 p-4 text-left"
+            >
+              <div className="flex items-start gap-3">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" aria-hidden="true" />
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.12em] text-black">
+                    Open this page in Chrome or Safari to pay
+                  </p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-black/65">
+                    You&apos;re inside an app&apos;s built-in browser, where UPI apps (GPay, PhonePe…) can&apos;t open and payments time out. Tap the button below, or use the ⋮ / ⋯ menu at the top and choose &ldquo;Open in browser&rdquo;. Your bag is saved.
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={openInRealBrowser}
+                      className="btn-bagify btn-bagify-dark text-xs uppercase tracking-[0.14em] cursor-pointer"
+                    >
+                      <span>Open in browser</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={copyCheckoutLink}
+                      className="btn-bagify btn-bagify-light text-xs uppercase tracking-[0.14em] cursor-pointer"
+                    >
+                      <span>{copiedLink ? "Link copied ✓" : "Copy link"}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
         {/* Light Stone Processing Pop-up */}
         {(paymentState === 'initiating' || paymentState === 'verifying') && (
+          <ViewportPortal>
           <div
-            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overscroll-none"
             role="status"
             aria-live="polite"
+            data-lenis-prevent="true"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              initial={{ opacity: 1, scale: 0.95, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              className="max-w-sm w-full rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+              className="max-w-sm w-full max-h-[85dvh] overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
             >
               <div className="relative w-12 h-12 mx-auto mb-4" aria-hidden="true">
                 <span className="absolute inset-0 rounded-full border-2 border-black/10" />
@@ -674,22 +1175,25 @@ function CheckoutContent() {
               </div>
             </motion.div>
           </div>
+          </ViewportPortal>
         )}
 
         {/* Light Stone Transaction Failed Pop-up */}
         {paymentState === 'failed' && (
+          <ViewportPortal>
           <div
-            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overscroll-none"
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="pay-fail-title"
+            data-lenis-prevent="true"
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              initial={{ opacity: 1, scale: 0.95, y: 8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 8 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="max-w-sm w-full rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+              className="max-w-sm w-full max-h-[85dvh] overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
             >
               <div className="w-12 h-12 rounded-full border border-black/10 bg-white flex items-center justify-center mx-auto mb-4 text-black shadow-2xs">
                 <AlertCircle className="w-5 h-5 text-black" aria-hidden="true" />
@@ -716,6 +1220,36 @@ function CheckoutContent() {
                 >
                   <span>Retry Payment</span>
                 </button>
+                {activeOrder && (
+                  <>
+                    <div className="flex items-center gap-3" aria-hidden="true">
+                      <span className="h-px flex-1 bg-black/10" />
+                      <span className="text-[9px] font-mono uppercase tracking-[0.18em] text-black/40">or</span>
+                      <span className="h-px flex-1 bg-black/10" />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handlePayViaLink}
+                      disabled={creatingLink}
+                      className="btn-bagify btn-bagify-light w-full justify-center text-xs uppercase tracking-[0.14em] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <span>
+                        {creatingLink
+                          ? 'Creating secure link…'
+                          : `Pay ₹${finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })} via secure link`}
+                      </span>
+                    </button>
+                    <p className="text-[10px] leading-relaxed text-black/55 -mt-1">
+                      Opens Razorpay&apos;s hosted page{isInApp ? " in your phone's browser" : ''} — paying there
+                      confirms this same order automatically, and the link is texted to you as backup.
+                    </p>
+                    {linkError && (
+                      <p className="text-[10px] leading-relaxed text-red-600" role="alert">
+                        {linkError}
+                      </p>
+                    )}
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -731,63 +1265,130 @@ function CheckoutContent() {
               </div>
             </motion.div>
           </div>
+          </ViewportPortal>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 sm:gap-12 lg:gap-16">
+        {/* In-app browser escape prompt — shown instead of opening Checkout
+            when the shopper is inside a WebView that cannot open UPI apps. */}
+        {showInAppPrompt && (
+          <ViewportPortal>
+          <div
+            className="fixed inset-0 z-[9990] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overscroll-none"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="in-app-pay-title"
+            data-lenis-prevent="true"
+          >
+            <motion.div
+              initial={{ opacity: 1, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 8 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="max-w-sm w-full max-h-[85dvh] overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-[#f7f7f5] p-6 sm:p-8 text-center text-black shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+            >
+              <div className="w-12 h-12 rounded-full border border-black/10 bg-white flex items-center justify-center mx-auto mb-4 text-black shadow-2xs">
+                <AlertCircle className="w-5 h-5 text-black" aria-hidden="true" />
+              </div>
+              <h2
+                id="in-app-pay-title"
+                className="text-base sm:text-lg font-bold uppercase tracking-tight text-black mb-1.5"
+              >
+                Pay in Chrome or Safari
+              </h2>
+              <p className="text-xs text-black/60 leading-relaxed max-w-xs mx-auto mb-2">
+                You&apos;re in an app&apos;s built-in browser, where UPI apps (GPay, PhonePe…) can&apos;t open — payments started here time out.
+              </p>
+              <p className="text-[11px] text-black/50 leading-relaxed max-w-xs mx-auto mb-6">
+                If the button does nothing, use the ⋮ / ⋯ menu at the top and choose &ldquo;Open in browser&rdquo;. Your bag is saved.
+              </p>
+              <div className="flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowInAppPrompt(false);
+                    openInRealBrowser();
+                  }}
+                  className="btn-bagify btn-bagify-dark w-full justify-center text-xs uppercase tracking-[0.14em] cursor-pointer"
+                >
+                  <span>Open in browser</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowInAppPrompt(false);
+                    allowInAppPayRef.current = true;
+                    handleProceedToPayment();
+                  }}
+                  className="btn-bagify btn-bagify-light w-full justify-center text-xs uppercase tracking-[0.14em] cursor-pointer"
+                >
+                  <span>Continue here anyway</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={copyCheckoutLink}
+                  className="text-[10px] font-mono uppercase tracking-[0.16em] text-black/50 hover:text-black cursor-pointer"
+                >
+                  {copiedLink ? "Link copied ✓" : "Copy link instead"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+          </ViewportPortal>
+        )}
+
+        <div>
           
           {/* Left Column: Form Stepper */}
           {checkoutMode === 'select' ? (
-            <div className="flex flex-col items-center pt-8 bg-white border border-black/10 rounded-2xl p-8 sm:p-12 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-              <div className="max-w-lg mx-auto w-full text-center">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] mb-8 text-black">
-                  HOW WOULD YOU LIKE TO CONTINUE?
+            <div className="mt-8">
+              <div className="w-full">
+                <h2 className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] mb-5 text-black/50">
+                  How would you like to continue?
                 </h2>
-                <div className="flex flex-col sm:flex-row gap-6 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
                   {/* Option 1: Guest */}
-                  <div className="flex-1 flex flex-col items-center p-6 border border-black/10 rounded-xl hover:border-black transition-colors">
-                    <ArrowRight className="w-5 h-5 mb-4 text-black" />
-                    <h3 className="text-xs font-semibold uppercase tracking-[0.14em] mb-2 text-black">
-                      GUEST CHECKOUT
+                  <div className="flex flex-col border border-black/10 p-5">
+                    <h3 className="text-xs font-bold uppercase tracking-[0.14em] mb-1.5 text-black">
+                      Guest checkout
                     </h3>
-                    <p className="text-[11px] text-black/60 mb-6 h-8">Fast checkout with email &amp; phone.</p>
+                    <p className="text-[11px] text-black/55 mb-5">Fast checkout with email &amp; phone.</p>
                     <button 
                       onClick={() => setCheckoutMode('guest')}
-                      className="btn-bagify btn-bagify-dark w-full text-xs uppercase tracking-[0.14em] cursor-pointer"
+                      className="checkout-flat mt-auto w-full rounded-none bg-black px-4 py-3.5 text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-neutral-800 cursor-pointer"
                     >
-                      <span>CONTINUE</span>
+                      <span>Continue</span>
                     </button>
                   </div>
                   {/* Option 2: Sign In */}
-                  <div className="flex-1 flex flex-col items-center p-6 border border-black/10 rounded-xl hover:border-black transition-colors">
-                    <User className="w-5 h-5 mb-4 text-black" />
-                    <h3 className="text-xs font-semibold uppercase tracking-[0.14em] mb-2 text-black">
-                      GOOGLE / SIGN IN
+                  <div className="flex flex-col border border-black/10 p-5">
+                    <h3 className="text-xs font-bold uppercase tracking-[0.14em] mb-1.5 text-black">
+                      Google / Sign in
                     </h3>
-                      <p className="text-[11px] text-black/60 mb-6 h-8">Save your details and earn points.</p>
+                    <p className="text-[11px] text-black/55 mb-5">Save your details and earn points.</p>
                     <Link 
                       href="/login?from=/checkout"
-                      className="btn-bagify btn-bagify-dark w-full text-xs uppercase tracking-[0.14em] cursor-pointer"
+                      className="checkout-flat mt-auto block w-full rounded-none bg-black px-4 py-3.5 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-neutral-800 cursor-pointer"
                     >
-                      <span>SIGN IN</span>
+                      <span>Sign in</span>
                     </Link>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-6 sm:gap-8">
-              <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-6">
+              <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   type="button"
                   onClick={() => setCheckoutMode('select')}
-                  className="text-xs font-semibold text-black/60 hover:text-black active:text-black transition-colors cursor-pointer py-1"
+                  className="text-[10px] font-mono font-bold uppercase tracking-[0.12em] text-black/45 hover:text-black transition-colors cursor-pointer py-1"
                 >
                   ← Change checkout mode
                 </button>
                 {user && (
-                  <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5 max-w-full">
+                  <span className="text-[11px] text-black/55 flex items-center gap-1.5 max-w-full">
                     <span className="shrink-0">Logged in as</span>
-                    <b className="truncate min-w-0">{user.email}</b>
+                    <b className="truncate min-w-0 font-semibold text-black/70">{user.email}</b>
                   </span>
                 )}
               </div>
@@ -799,235 +1400,376 @@ function CheckoutContent() {
                 </div>
               )}
 
-              {/* Step 1: Shipping & Delivery Address */}
-              <div className="bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-black/10">
-                  <div className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold">01</span>
-                    <h2 className="font-sans font-medium text-lg sm:text-xl uppercase tracking-tight text-black">Delivery Address</h2>
-                  </div>
-                  {activeStep > 1 && (
-                    <button type="button" onClick={() => setActiveStep(1)} className="text-xs font-semibold text-black/50 hover:text-black hover:underline cursor-pointer">
-                      Edit
-                    </button>
-                  )}
-                </div>
-
+              {/* Step 1: Delivery address */}
+              <div className="mt-8">
                 {activeStep === 1 ? (
-                  <form onSubmit={handleAddressSubmit} className="flex flex-col gap-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <form onSubmit={handleAddressSubmit} noValidate className="flex flex-col gap-6">
+                    {checkoutMode === "account" && savedAddresses.length > 0 && (
                       <div>
-                        <label htmlFor="checkout-fullName" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">Full Name *</label>
-                        <input
-                          id="checkout-fullName"
-                          type="text"
-                          name="fullName"
-                          value={formData.fullName}
-                          onChange={handleInputChange}
-                          placeholder="e.g. Rahul Sharma"
-                          autoComplete="name"
-                          required
-                          aria-invalid={Boolean(fieldErrors.fullName)}
-                          aria-describedby={fieldErrors.fullName ? "checkout-fullName-error" : undefined}
-                          className={fieldClass(Boolean(fieldErrors.fullName))}
-                        />
+                        <p className="mb-2 text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black/45">
+                          Saved addresses
+                        </p>
+                        <div className="flex flex-col">
+                          {savedAddresses.map((address) => {
+                            const selected = selectedSavedAddressId === address.id;
+                            return (
+                              <button
+                                type="button"
+                                key={address.id}
+                                onClick={() => applySavedAddress(address)}
+                                aria-pressed={selected}
+                                className={`checkout-flat group flex w-full items-start gap-3 rounded-none border-b border-black/[0.08] py-3 text-left transition-colors cursor-pointer ${
+                                  selected ? "" : "hover:bg-black/[0.02]"
+                                }`}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className={`mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                                    selected ? "border-black bg-black" : "border-black/30 group-hover:border-black/60"
+                                  }`}
+                                >
+                                  {selected && <span className="h-[5px] w-[5px] rounded-full bg-white" />}
+                                </span>
+                                <span className="min-w-0">
+                                  <span className="block truncate text-xs font-semibold text-black">
+                                    {address.fullName} · {address.phone}
+                                  </span>
+                                  <span className="mt-0.5 block truncate text-[11px] text-black/55">
+                                    {address.street}, {address.city}, {address.state} — {address.pincode}
+                                  </span>
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={clearSavedAddressSelection}
+                          className="mt-3 text-[10px] font-mono font-bold uppercase tracking-[0.12em] text-black/45 hover:text-black underline underline-offset-4 transition-colors cursor-pointer"
+                        >
+                          + Use a new address
+                        </button>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="checkout-fullName" className="sr-only">Full Name</label>
+                        <div className={fieldWrap(Boolean(fieldErrors.fullName))}>
+                          <input
+                            id="checkout-fullName"
+                            type="text"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleInputChange}
+                            placeholder="Full Name *"
+                            autoComplete="name"
+                            required
+                            aria-invalid={Boolean(fieldErrors.fullName)}
+                            aria-describedby={fieldErrors.fullName ? "checkout-fullName-error" : undefined}
+                            className={fieldClass()}
+                          />
+                        </div>
                         <FieldError id="checkout-fullName-error" message={fieldErrors.fullName} />
                       </div>
                       <div>
-                        <label htmlFor="checkout-phone" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">Phone Number (+91) *</label>
-                        <input
-                          id="checkout-phone"
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          placeholder="9876543210"
-                          autoComplete="tel"
-                          inputMode="numeric"
-                          maxLength={10}
-                          pattern="\d{10}"
-                          required
-                          aria-invalid={Boolean(fieldErrors.phone)}
-                          aria-describedby={fieldErrors.phone ? "checkout-phone-error" : undefined}
-                          className={fieldClass(Boolean(fieldErrors.phone))}
-                        />
+                        <label htmlFor="checkout-phone" className="sr-only">Phone Number</label>
+                        <div className={fieldWrap(Boolean(fieldErrors.phone))}>
+                          <input
+                            id="checkout-phone"
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            placeholder="Phone Number (+91) *"
+                            autoComplete="tel"
+                            inputMode="numeric"
+                            maxLength={10}
+                            pattern="[0-9]{10}"
+                            title="Enter the 10-digit mobile number"
+                            required
+                            aria-invalid={Boolean(fieldErrors.phone)}
+                            aria-describedby={fieldErrors.phone ? "checkout-phone-error" : undefined}
+                            className={fieldClass()}
+                          />
+                        </div>
                         <FieldError id="checkout-phone-error" message={fieldErrors.phone} />
                       </div>
                     </div>
 
                     <div>
-                      <label htmlFor="checkout-email" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">Email Address (for Receipt &amp; Tracking) *</label>
-                      <input
-                        id="checkout-email"
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="you@email.com"
-                        autoComplete="email"
-                        inputMode="email"
-                        required
-                        aria-invalid={Boolean(fieldErrors.email)}
-                        aria-describedby={fieldErrors.email ? "checkout-email-error" : undefined}
-                        className={fieldClass(Boolean(fieldErrors.email))}
-                      />
+                      <label htmlFor="checkout-email" className="sr-only">Email Address</label>
+                      <div className={fieldWrap(Boolean(fieldErrors.email))}>
+                        <input
+                          id="checkout-email"
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="Email Address *"
+                          autoComplete="email"
+                          inputMode="email"
+                          required
+                          aria-invalid={Boolean(fieldErrors.email)}
+                          aria-describedby={fieldErrors.email ? "checkout-email-error" : undefined}
+                          className={fieldClass()}
+                        />
+                      </div>
                       <FieldError id="checkout-email-error" message={fieldErrors.email} />
                     </div>
 
-                    <div>
-                      <label htmlFor="checkout-street" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">House / Flat / Street Address *</label>
-                      <input
-                        id="checkout-street"
-                        type="text"
-                        name="street"
-                        value={formData.street}
-                        onChange={handleInputChange}
-                        placeholder="Flat 402, Lotus Heights, MG Road"
-                        autoComplete="street-address"
-                        required
-                        aria-invalid={Boolean(fieldErrors.street)}
-                        aria-describedby={fieldErrors.street ? "checkout-street-error" : undefined}
-                        className={fieldClass(Boolean(fieldErrors.street))}
-                      />
-                      <FieldError id="checkout-street-error" message={fieldErrors.street} />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label htmlFor="checkout-pincode" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">PIN Code *</label>
-                        <input
-                          id="checkout-pincode"
-                          type="text"
-                          name="pincode"
-                          maxLength={6}
-                          value={formData.pincode}
-                          onChange={handleInputChange}
-                          placeholder="400001"
-                          autoComplete="postal-code"
-                          inputMode="numeric"
-                          pattern="\d{6}"
-                          title="Exactly 6 digits"
-                          required
-                          aria-invalid={Boolean(fieldErrors.pincode)}
-                          aria-describedby={fieldErrors.pincode ? "checkout-pincode-error" : undefined}
-                          className={fieldClass(Boolean(fieldErrors.pincode))}
-                        />
-                        <FieldError id="checkout-pincode-error" message={fieldErrors.pincode} />
-                      </div>
-                      <div>
-                        <label htmlFor="checkout-city" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">City *</label>
-                        <input
-                          id="checkout-city"
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          placeholder="Mumbai"
-                          autoComplete="address-level2"
-                          required
-                          aria-invalid={Boolean(fieldErrors.city)}
-                          aria-describedby={fieldErrors.city ? "checkout-city-error" : undefined}
-                          className={fieldClass(Boolean(fieldErrors.city))}
-                        />
-                        <FieldError id="checkout-city-error" message={fieldErrors.city} />
-                      </div>
-                      <div>
-                        <label htmlFor="checkout-state" className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/60 mb-1.5 block">State *</label>
-                        <select
-                          id="checkout-state"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleInputChange}
-                          autoComplete="address-level1"
-                          className="w-full border border-black/15 px-4 py-3 text-sm focus:border-black outline-none bg-white text-black rounded-sm"
-                        >
-                          {INDIAN_STATES.map((st) => (
-                            <option key={st} value={st}>{st}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end mt-4">
-                      <button
-                        type="submit"
-                        className="btn-bagify btn-bagify-dark text-xs uppercase tracking-[0.14em] cursor-pointer"
-                      >
-                        <span>CONTINUE TO PAYMENT</span>
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="text-xs text-black/80 leading-relaxed">
-                    <p className="font-semibold text-black">{formData.fullName} ({formData.phone})</p>
-                    <p>{formData.street}, {formData.city}, {formData.state} - {formData.pincode}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 2: Payment Method */}
-              <div className="bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-black/10">
-                  <span className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold">02</span>
-                  <h2 className="font-sans font-medium text-lg sm:text-xl uppercase tracking-tight text-black">Payment Method</h2>
-                </div>
-
-                {activeStep === 2 && (
-                  <div className="flex flex-col gap-4">
-                    {/* Online payment only */}
-                    <div className="flex items-start justify-between p-4 border border-black bg-black/[0.02] rounded-xl shadow-xs">
-                      <div className="flex items-start gap-3">
+                    <div className="flex flex-col gap-2.5">
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black/45">
+                        Location Details
+                      </p>
+                      <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-3.5 sm:p-4">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.12em] flex items-center gap-2 text-black">
-                            <CreditCard className="w-4 h-4 text-blue-600" /> UPI / Cards / NetBanking (Official Razorpay Gateway)
-                          </p>
-                          <p className="text-[11px] text-black/60 mt-1">
-                            Secure payment with Google Pay, PhonePe, Paytm, RuPay cards, and NetBanking.
-                          </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className="text-[9px] bg-[#f5f5f2] border border-black/10 px-2 py-0.5 rounded-xs font-semibold text-black">UPI</span>
-                            <span className="text-[9px] bg-[#f5f5f2] border border-black/10 px-2 py-0.5 rounded-xs font-semibold text-black">GPAY</span>
-                            <span className="text-[9px] bg-[#f5f5f2] border border-black/10 px-2 py-0.5 rounded-xs font-semibold text-black">PHONEPE</span>
-                            <span className="text-[9px] bg-[#f5f5f2] border border-black/10 px-2 py-0.5 rounded-xs font-semibold text-black">CARDS</span>
+                          <label htmlFor="checkout-building" className="sr-only">Building / Floor</label>
+                          <div className={fieldWrap(Boolean(fieldErrors.building))}>
+                            <input
+                              id="checkout-building"
+                              type="text"
+                              name="building"
+                              value={formData.building}
+                              onChange={handleInputChange}
+                              placeholder="Building / Floor *"
+                              autoComplete="address-line1"
+                              required
+                              aria-invalid={Boolean(fieldErrors.building)}
+                              aria-describedby={fieldErrors.building ? "checkout-building-error" : undefined}
+                              className={fieldClass()}
+                            />
+                          </div>
+                          <FieldError id="checkout-building-error" message={fieldErrors.building} />
+                        </div>
+
+                        <div>
+                          <label htmlFor="checkout-street" className="sr-only">Street</label>
+                          <div className={fieldWrap(false)}>
+                            <input
+                              id="checkout-street"
+                              type="text"
+                              name="street"
+                              value={formData.street}
+                              onChange={handleInputChange}
+                              placeholder="Street (Recommended)"
+                              autoComplete="address-line2"
+                              className={fieldClass()}
+                            />
                           </div>
                         </div>
+
+                        <AreaPicker
+                          areaText={areaText}
+                          spot={exactSpot ? { lat: exactSpot.lat, lng: exactSpot.lng } : null}
+                          fallbackCenter={lastCoordsRef.current}
+                          onPlaceSelected={handlePlaceSelected}
+                          onPicked={handleMapPicked}
+                          onCleared={handleMapCleared}
+                        />
+
+                        {areaHint && (
+                          <p className="text-[11px] font-mono text-emerald-700" role="status">
+                            ✓ {areaHint}
+                          </p>
+                        )}
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label htmlFor="checkout-pincode" className="sr-only">PIN Code</label>
+                            <div className={fieldWrap(Boolean(fieldErrors.pincode))}>
+                              <input
+                                id="checkout-pincode"
+                                type="text"
+                                name="pincode"
+                                maxLength={6}
+                                value={formData.pincode}
+                                onChange={handleInputChange}
+                                placeholder="PIN Code *"
+                                autoComplete="postal-code"
+                                inputMode="numeric"
+                                pattern="[0-9]{6}"
+                                title="Exactly 6 digits"
+                                required
+                                aria-invalid={Boolean(fieldErrors.pincode)}
+                                aria-describedby={fieldErrors.pincode ? "checkout-pincode-error" : undefined}
+                                className={fieldClass()}
+                              />
+                            </div>
+                            <FieldError id="checkout-pincode-error" message={fieldErrors.pincode} />
+                          </div>
+                          <div>
+                            <label htmlFor="checkout-city" className="sr-only">City</label>
+                            <div className={fieldWrap(Boolean(fieldErrors.city))}>
+                              <input
+                                id="checkout-city"
+                                type="text"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleInputChange}
+                                placeholder="City *"
+                                autoComplete="address-level2"
+                                required
+                                aria-invalid={Boolean(fieldErrors.city)}
+                                aria-describedby={fieldErrors.city ? "checkout-city-error" : undefined}
+                                className={fieldClass()}
+                              />
+                            </div>
+                            <FieldError id="checkout-city-error" message={fieldErrors.city} />
+                          </div>
+                          <div>
+                            <label htmlFor="checkout-state" className="sr-only">State</label>
+                            <div className={fieldWrap(false)}>
+                              <select
+                                id="checkout-state"
+                                name="state"
+                                value={formData.state}
+                                onChange={handleInputChange}
+                                autoComplete="address-level1"
+                                className="w-full cursor-pointer bg-transparent px-0 py-3.5 text-sm text-black outline-none"
+                              >
+                                {INDIAN_STATES.map((st) => (
+                                  <option key={st} value={st}>{st}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        {etaLabel && (
+                          <p className="flex items-center gap-2 text-[11px] font-mono text-emerald-700" role="status">
+                            <Truck className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                            Estimated delivery {etaLabel} · ships within 24–48h
+                          </p>
+                        )}
                       </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                      <p className="text-xs text-black/70">
-                        Total Payable: <b className="font-sans font-medium text-base text-black">₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</b>
+                    {addressWarning && (
+                      <p className="text-[11px] text-amber-700" role="status">
+                        ⚠ {addressWarning}
                       </p>
-                      <Button
-                        variant="dark"
-                        onClick={handleProceedToPayment}
-                        disabled={loading || paymentState === 'initiating' || paymentState === 'verifying'}
-                        className="w-full text-xs uppercase tracking-[0.14em] sm:w-auto"
-                      >
-                        {(loading || paymentState === 'initiating' || paymentState === 'verifying') && (
-                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="checkout-flat mt-2 w-full rounded-none bg-black px-6 py-4 text-[11px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-neutral-800 cursor-pointer disabled:opacity-60"
+                    >
+                      <span>Continue to payment</span>
+                    </button>
+                  </form>
+                ) : (
+                  <div className="border-t border-black/10 pt-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-xs leading-relaxed text-black/75">
+                        <p className="font-semibold text-black">
+                          {formData.fullName} <span className="font-normal text-black/45">· {formData.phone}</span>
+                        </p>
+                        <p className="mt-1">{composeStreetAddress(formData.building, formData.street)}</p>
+                        {areaText && (
+                          <p className="text-[11px] leading-snug text-black/50">{areaText}</p>
                         )}
-                        <span>
-                          {paymentState === 'initiating'
-                            ? 'Opening payment…'
-                            : paymentState === 'verifying'
-                            ? 'Verifying Payment…'
-                            : 'Pay with Razorpay'}
-                        </span>
-                      </Button>
+                        <p>{formData.city}, {formData.state} — {formData.pincode}</p>
+                        {exactSpot && (
+                          <p className="mt-1.5 text-[11px] font-mono text-emerald-700">✓ Exact location pinned for the courier</p>
+                        )}
+                        {etaLabel && (
+                          <p className="mt-1 flex items-center gap-1.5 text-[11px] font-mono text-emerald-700">
+                            <Truck className="w-3 h-3 shrink-0" aria-hidden="true" />
+                            Estimated delivery {etaLabel}
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveStep(1)}
+                        className="shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-black/45 underline underline-offset-4 transition-colors hover:text-black cursor-pointer"
+                      >
+                        Edit
+                      </button>
                     </div>
                   </div>
                 )}
               </div>
+
+              {/* Step 2: Payment */}
+              {activeStep === 2 && (
+                <div className="mt-8 border-t border-black/10 pt-8">
+                  <div className="border border-black/10 bg-black/[0.015] p-5">
+                    <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-black">
+                      <CreditCard className="w-4 h-4 text-black" aria-hidden="true" />
+                      UPI / Cards / NetBanking · Razorpay
+                    </p>
+                    <p className="mt-2 text-[11px] leading-relaxed text-black/55">
+                      Secure payment with Google Pay, PhonePe, Paytm, RuPay cards and NetBanking. Paying by UPI? On mobile
+                      you&apos;ll jump straight to your UPI app — approve with your PIN to finish. On desktop, scan the QR
+                      with any UPI app. The request expires quickly, so approve it as soon as it appears.
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                      <span className="border border-black/10 bg-white px-2 py-0.5 text-[9px] font-semibold text-black">UPI</span>
+                      <span className="border border-black/10 bg-white px-2 py-0.5 text-[9px] font-semibold text-black">GPAY</span>
+                      <span className="border border-black/10 bg-white px-2 py-0.5 text-[9px] font-semibold text-black">PHONEPE</span>
+                      <span className="border border-black/10 bg-white px-2 py-0.5 text-[9px] font-semibold text-black">CARDS</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-between text-xs text-black/55">
+                    <span>Total payable</span>
+                    <span className="text-sm font-semibold tabular-nums text-black">
+                      ₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleProceedToPayment}
+                    disabled={loading || paymentState === 'initiating' || paymentState === 'verifying'}
+                    className="checkout-flat mt-3 flex w-full items-center justify-center gap-2 rounded-none bg-black px-6 py-4 text-[11px] font-bold uppercase tracking-[0.24em] text-white transition-colors hover:bg-neutral-800 cursor-pointer disabled:opacity-60"
+                  >
+                    {(loading || paymentState === 'initiating' || paymentState === 'verifying') && (
+                      <Loader2 className="w-4 h-4 animate-spin text-white" aria-hidden="true" />
+                    )}
+                    <span>
+                      {paymentState === 'initiating'
+                        ? 'Opening payment…'
+                        : paymentState === 'verifying'
+                        ? 'Verifying payment…'
+                        : 'Pay now'}
+                    </span>
+                  </button>
+                  <p className="mt-3 text-center text-[10px] font-mono uppercase tracking-[0.16em] text-black/35">
+                    Payments secured by Razorpay
+                  </p>
+                </div>
+              )}
 
             </div>
           )}
 
-          {/* Right Column: Order Summary */}
-          <div className="flex flex-col lg:sticky lg:top-24 h-fit bg-white border border-black/10 rounded-xl p-6 sm:p-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-            <h3 className="font-sans font-medium text-lg uppercase tracking-tight mb-6 pb-4 border-b border-black/10 text-black">
-              ORDER SUMMARY ({items.length})
-            </h3>
+          {/* Order summary — tap the rail to expand items, promo & totals */}
+          <div className="mt-10 border-y border-black/10">
+            <button
+              type="button"
+              onClick={() => setSummaryOpen((v) => !v)}
+              aria-expanded={summaryOpen}
+              aria-controls="checkout-order-summary"
+              className="checkout-flat flex w-full items-center justify-between gap-4 rounded-none py-4 cursor-pointer group"
+            >
+              <span className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black/60 transition-colors group-hover:text-black">
+                Order summary ({items.length})
+              </span>
+              <span className="flex items-center gap-2.5">
+                <span className="text-sm font-semibold tabular-nums text-black">
+                  ₹{finalTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                </span>
+                <ChevronDown
+                  className={`h-4 w-4 text-black/40 transition-transform duration-200 ${summaryOpen ? "rotate-180" : ""}`}
+                  aria-hidden="true"
+                />
+              </span>
+            </button>
+            {summaryOpen && (
+              <div id="checkout-order-summary" className="pb-6">
             
             <div className="flex flex-col gap-5 mb-8 max-h-[380px] overflow-y-auto pr-1">
               {items.map(item => {
@@ -1151,7 +1893,7 @@ function CheckoutContent() {
               {appliedPromo ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9, y: -4 }}
-                  animate={{ opacity: 1, scale: [0.95, 1.04, 1], y: 0 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ type: "spring", stiffness: 450, damping: 20 }}
                   className="flex items-center justify-between bg-[#f4f4f2] border border-black/10 px-3 py-2 rounded-xl shadow-2xs"
                 >
@@ -1275,8 +2017,11 @@ function CheckoutContent() {
             <p className="text-[10px] text-black/50 text-center mt-6 tracking-[0.04em]">
                ✦ You will earn {Math.floor(finalTotal / 10)} points with this order.
             </p>
+              </div>
+            )}
           </div>
 
+        </div>
         </div>
       </div>
     </div>

@@ -23,6 +23,9 @@ function isAuthorized(request: Request): boolean {
 }
 
 export async function GET(request: Request) {
+  if (process.env.DISABLE_MAINTENANCE_CRON === '1') {
+    return NextResponse.json({ error: 'Disabled' }, { status: 503 });
+  }
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

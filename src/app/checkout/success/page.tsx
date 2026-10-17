@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
 import { useSearchParams } from "next/navigation";
 import { Check, Truck, Package, ArrowRight, ArrowLeft, Sparkles, MapPin, Loader2, AlertCircle } from "lucide-react";
+import CheckoutStepper from "@/components/checkout/CheckoutStepper";
+import SuccessCelebration from "@/components/checkout/SuccessCelebration";
 import Image from "next/image";
 import { isAwaitingPayment, orderStatusLabel } from "@/lib/orderStatus";
 import { saveGuestOrder } from "@/lib/guestOrders";
@@ -60,6 +62,7 @@ function SuccessContent() {
     orderId ? "loading" : "missing"
   );
   const [reloadKey, setReloadKey] = useState(0);
+  const [celebrate, setCelebrate] = useState(false);
 
   useEffect(() => {
     if (!orderId) return;
@@ -74,6 +77,18 @@ function SuccessContent() {
         if (res.ok && data.order) {
           setOrder(data.order);
           setStatus("loaded");
+          if (data.order.paymentStatus === "PAID") {
+            // One-time celebration per order per browser session.
+            const seenKey = `bagify_success_celebrated_${data.order.id}`;
+            let seen = false;
+            try {
+              seen = sessionStorage.getItem(seenKey) === "1";
+              if (!seen) sessionStorage.setItem(seenKey, "1");
+            } catch {
+              seen = false; // Storage unavailable — celebrate anyway.
+            }
+            if (!seen) setCelebrate(true);
+          }
           if (!isAwaitingPayment(data.order)) {
             clearCart();
             saveGuestOrder({
@@ -226,6 +241,7 @@ function SuccessContent() {
   }
 
   const itemsSubtotal = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
   const earnedPoints = isPaid ? Math.floor(order.totalAmount / 10) : 0;
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-IN", {
     day: "numeric",
@@ -255,6 +271,7 @@ function SuccessContent() {
 
           {/* 1. Confirmation header */}
           <div className="p-8 sm:p-12 text-center border-b border-black/10">
+            <CheckoutStepper current={3} className="mb-10" />
             <div className="w-14 h-14 bg-[#f5f5f2] border border-black/10 rounded-full flex items-center justify-center mx-auto mb-5 text-black shadow-xs">
               <Check className="w-6 h-6 text-black" aria-hidden="true" />
             </div>
@@ -469,6 +486,20 @@ function SuccessContent() {
           </a>
           .
         </p>
+
+        {/* One-time post-payment celebration. Rendered without AnimatePresence
+            so dismissal is an instant unmount — it can never get stuck open
+            waiting on an exit animation. */}
+        {celebrate && isPaid && (
+          <SuccessCelebration
+            orderNumber={order.orderNumber}
+            orderDate={orderDate}
+            customerEmail={order.customerEmail}
+            totalAmount={order.totalAmount}
+            totalQty={totalQty}
+            onClose={() => setCelebrate(false)}
+          />
+        )}
 
       </div>
     </div>

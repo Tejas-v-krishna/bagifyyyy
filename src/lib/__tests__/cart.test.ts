@@ -66,6 +66,30 @@ describe('assertValidShippingAddress', () => {
       assertValidShippingAddress({ fullName: 'A', street: 'B', pincode: '12345' })
     ).toThrow(/PIN/);
   });
+
+  it('carries a valid exact-delivery pin through', () => {
+    const a = assertValidShippingAddress({
+      fullName: 'Tejas',
+      street: '12 MG Road',
+      city: 'Kollam',
+      state: 'Kerala',
+      pincode: '691001',
+      lat: 8.88631,
+      lng: 76.59312,
+    });
+    expect(a.lat).toBe(8.88631);
+    expect(a.lng).toBe(76.59312);
+  });
+
+  it('drops out-of-range or half pin pairs instead of blocking the order', () => {
+    const base = { fullName: 'A', street: 'B', city: 'C', state: 'D', pincode: '560001' };
+    const outOfRange = assertValidShippingAddress({ ...base, lat: 999, lng: 76.59 });
+    expect(outOfRange.lat).toBeUndefined();
+    expect(outOfRange.lng).toBeUndefined();
+    const halfPair = assertValidShippingAddress({ ...base, lat: 8.88 });
+    expect(halfPair.lat).toBeUndefined();
+    expect(halfPair.lng).toBeUndefined();
+  });
 });
 
 describe('assertValidContact', () => {

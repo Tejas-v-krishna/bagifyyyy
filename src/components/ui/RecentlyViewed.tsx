@@ -21,9 +21,10 @@ type RecentProduct = {
 
 interface RecentlyViewedProps {
   productId?: string;
+  showAll?: boolean;
 }
 
-export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
+export default function RecentlyViewed({ productId, showAll = false }: RecentlyViewedProps) {
   const [recentProducts, setRecentProducts] = useState<RecentProduct[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -81,7 +82,12 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
         }
 
         // Filter out current product for display, and keep at most 5 cards
-        const idsToFetch = (productId ? recentIds.filter((id) => id !== productId) : recentIds).slice(0, 5);
+        // showAll (product page bottom): include the current piece too, so the
+        // strip shows every card the user has viewed.
+        const idsToFetch = (productId && !showAll
+          ? recentIds.filter((id) => id !== productId)
+          : recentIds
+        ).slice(0, 5);
 
         if (idsToFetch.length === 0) {
           setRecentProducts([]);
@@ -155,8 +161,11 @@ export default function RecentlyViewed({ productId }: RecentlyViewedProps) {
       style={{ userSelect: "none", WebkitUserSelect: "none" }}
       aria-label="Recently viewed products"
     >
-      {/* Header with Scroll Arrows */}
-      <div className="flex items-center justify-end mb-6 sm:mb-8">
+      {/* Header with title + Scroll Arrows */}
+      <div className="flex items-end justify-between mb-6 sm:mb-8">
+        <h2 className="text-[22px] sm:text-[26px] font-bold tracking-[-0.02em] text-y2k-gunmetal uppercase leading-none">
+          Recently viewed
+        </h2>
         {/* Prev / Next Scroll Buttons */}
         <div className="flex items-center gap-2">
           <button

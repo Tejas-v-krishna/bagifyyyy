@@ -21,6 +21,9 @@ type ShippingAddress = {
   state: string;
   pincode: string;
   country?: string;
+  /** Exact delivery pin dropped on the checkout map, when the shopper set one. */
+  lat?: number | null;
+  lng?: number | null;
 };
 
 type Order = {
@@ -141,7 +144,11 @@ export default function ShippingLabelModal({
   };
 
   const handleCopyAddress = () => {
-    const fullText = `${order.shippingAddress?.fullName}\nPhone: ${order.shippingAddress?.phone || order.customerPhone}\n${order.shippingAddress?.street}\n${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.pincode}\nIndia`;
+    const spot =
+      order.shippingAddress?.lat != null && order.shippingAddress?.lng != null
+        ? `\nExact spot: https://maps.google.com/?q=${order.shippingAddress.lat},${order.shippingAddress.lng}`
+        : "";
+    const fullText = `${order.shippingAddress?.fullName}\nPhone: ${order.shippingAddress?.phone || order.customerPhone}\n${order.shippingAddress?.street}\n${order.shippingAddress?.city}, ${order.shippingAddress?.state} - ${order.shippingAddress?.pincode}\nIndia${spot}`;
     navigator.clipboard.writeText(fullText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);

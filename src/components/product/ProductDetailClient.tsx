@@ -8,11 +8,12 @@ import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import Button from "@/components/ui/Button";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
+import CustomerReviews from "@/components/product/CustomerReviews";
 import NotifyMeSection from "@/components/product/NotifyMeSection";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import { categoryHref, categoryLabel } from "@/lib/categories";
 import { useRouter } from "next/navigation";
-import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Package, Check, ArrowRight, ArrowLeft, Share2 } from "lucide-react";
+import { Clock, Heart, ChevronLeft, ChevronRight, Star, Minus, Plus, Truck, ShieldCheck, Check, ArrowRight, ArrowLeft, Share2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { triggerPinataBurst } from "@/lib/confetti";
 import type { ProductForDisplay } from "@/lib/product";
@@ -100,6 +101,25 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   const wishlisted = isInWishlist(id);
   const productImages = product.images && product.images.length > 0 ? product.images : [product.image].filter(Boolean) as string[];
   const touchStartX = useRef<number | null>(null);
+  const mobileTrackRef = useRef<HTMLDivElement>(null);
+
+  // Mobile peek carousel index (segment bar + arrows).
+  const [mobileIndex, setMobileIndex] = useState(0);
+  const scrollMobileTo = (idx: number) => {
+    if (productImages.length === 0) return;
+    const clamped = ((idx % productImages.length) + productImages.length) % productImages.length;
+    setMobileIndex(clamped);
+    mobileTrackRef.current
+      ?.querySelectorAll(":scope > div")[clamped]
+      ?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  };
+  const handleMobileScroll = () => {
+    const track = mobileTrackRef.current;
+    const first = track?.querySelector(":scope > div") as HTMLElement | null;
+    if (!track || !first || productImages.length === 0) return;
+    const step = first.offsetWidth + 8;
+    setMobileIndex(Math.min(productImages.length - 1, Math.max(0, Math.round(track.scrollLeft / step))));
+  };
 
   const goToImage = (idx: number) => {
     if (productImages.length === 0) return;
@@ -122,6 +142,8 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
     ? Math.max(0, new Date(reservationExpiresAt).getTime() - nowTick)
     : 0;
   const countdownStr = formatCountdown(msLeft);
+  const holdProgressPct = Math.min(100, Math.max(0, (msLeft / (2 * 60 * 1000)) * 100));
+  const holdExpiringSoon = msLeft > 0 && msLeft <= 30_000;
 
   useEffect(() => {
     // If already known as sold out, don't poll
@@ -291,10 +313,10 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
   return (
     <div className="w-full bg-white text-y2k-gunmetal min-h-screen pb-24">
-      <div className="max-w-[1480px] mx-auto px-6 sm:px-10 lg:px-16 pt-6 lg:pt-8">
+      <div className="max-w-[1480px] mx-auto px-6 sm:px-10 lg:px-16 pt-0 lg:pt-8">
 
-        {/* Back Button & Share Pill */}
-        <div className="mb-6 flex items-center justify-between">
+        {/* Back Button & Share Pill — desktop only, mobile uses gallery overlay */}
+        <div className="mb-6 hidden items-center justify-between lg:flex">
           <button
             type="button"
             onClick={handleBack}
@@ -319,12 +341,120 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
         </div>
 
         {/* ── Main Grid: Gallery (left) + Buy panel (right) ─────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,400px)] gap-10 xl:gap-16 items-start">
+        <div className="grid grid-cols-1 gap-0 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,400px)] lg:gap-10 xl:gap-16 items-start">
 
-          {/* ── LEFT: Gallery (Image itself is the card) ───────────────────── */}
-          <div className="min-w-0 pb-8 p-1 sm:p-2">
+          {/* ── MOBILE: full-bleed peek carousel with overlay actions ─────── */}
+          <div className="relative -mx-6 sm:-mx-10 lg:hidden">
             <div
-              className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full overflow-hidden rounded-2xl bg-[#e9e9ec] touch-pan-y select-none shadow-xs"
+              ref={mobileTrackRef}
+              onScroll={handleMobileScroll}
+              className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-0 pb-6 pt-0"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {productImages.map((img, idx) => (
+                <div
+                  key={idx}
+                  className="relative aspect-[3/4] w-full shrink-0 snap-center overflow-hidden rounded-b-2xl bg-[#e9e9ec] [-webkit-mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)] [mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)]"
+                >
+                  <Image
+                    src={img}
+                    alt={idx === 0 ? product.name : `${product.name} view ${idx + 1}`}
+                    fill
+                    priority={idx === 0}
+                    draggable={false}
+                    sizes="80vw"
+                    className={`object-cover object-center ${
+                      effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
+                    }`}
+                  />
+                  {/* Blurred clones of the photo itself — real filter blur that masks reliably */}
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[5] [mask-image:linear-gradient(to_top,black_10%,transparent_42%)]">
+                    <Image src={img} alt="" fill draggable={false} sizes="80vw" className="object-cover object-center blur-[6px]" />
+                  </div>
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[5] [mask-image:linear-gradient(to_top,black_0%,transparent_30%)]">
+                    <Image src={img} alt="" fill draggable={false} sizes="80vw" className="object-cover object-center blur-[18px] saturate-150" />
+                  </div>
+                  {effectiveSoldOut && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/45 p-4 text-center">
+                      <span className="rounded-full bg-white/95 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-black">
+                        Already gone
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {/* Top overlay: back left, share + wishlist right */}
+            <div className="pointer-events-none absolute inset-x-0 top-4 z-10 flex items-center justify-between px-5">
+              <button
+                type="button"
+                onClick={handleBack}
+                aria-label="Go back"
+                className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-black shadow-sm backdrop-blur transition active:scale-95 cursor-pointer"
+              >
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsShareOpen(true)}
+                  aria-label="Share this piece"
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-black shadow-sm backdrop-blur transition active:scale-95 cursor-pointer"
+                >
+                  <Share2 className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleItem(id)}
+                  aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-black shadow-sm backdrop-blur transition active:scale-95 cursor-pointer"
+                >
+                  <Heart className={`h-4 w-4 ${wishlisted ? "fill-black" : ""}`} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Side arrows */}
+            {productImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => scrollMobileTo(mobileIndex - 1)}
+                  aria-label="Previous image"
+                  className="absolute left-4 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-black shadow-sm backdrop-blur transition active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollMobileTo(mobileIndex + 1)}
+                  aria-label="Next image"
+                  className="absolute right-4 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-black shadow-sm backdrop-blur transition active:scale-95 cursor-pointer"
+                >
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </>
+            )}
+
+            {/* Segment progress */}
+            {productImages.length > 1 && (
+              <div className="mt-2 flex items-center justify-center gap-1.5 px-6" aria-hidden="true">
+                {productImages.map((_, idx) => (
+                  <span
+                    key={idx}
+                    className={`h-[3px] rounded-full transition-all ${
+                      idx === mobileIndex ? "w-6 bg-black" : "w-3 bg-black/15"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ── DESKTOP: Gallery (Image itself is the card) ─────────────────── */}
+          <div className="hidden min-w-0 p-2 pb-8 lg:block">
+            <div
+              className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full overflow-hidden rounded-2xl bg-[#e9e9ec] touch-pan-y select-none [-webkit-mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)] [mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)]"
               onTouchStart={(e) => {
                 touchStartX.current = e.touches[0]?.clientX ?? null;
               }}
@@ -367,6 +497,13 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                       }`}
                     />
+                    {/* Blurred clones of the photo itself — real filter blur that masks reliably */}
+                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_top,black_10%,transparent_42%)]">
+                      <Image src={productImages[activeImageIndex] || productImages[0]} alt="" fill draggable={false} sizes="(max-width: 1023px) 100vw, 60vw" className="object-cover object-center blur-[6px]" />
+                    </div>
+                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_top,black_0%,transparent_30%)]">
+                      <Image src={productImages[activeImageIndex] || productImages[0]} alt="" fill draggable={false} sizes="(max-width: 1023px) 100vw, 60vw" className="object-cover object-center blur-[18px] saturate-150" />
+                    </div>
                   </motion.div>
                 </AnimatePresence>
               ) : (
@@ -417,7 +554,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               )}
             </div>
             {productImages.length > 1 && (
-              <div className="mt-3 relative z-10 flex justify-center gap-2 px-1">
+              <div className="mt-3 relative z-10 hidden justify-center gap-2 px-1 lg:flex">
                 {productImages.map((img, idx) => (
                   <button
                     key={idx}
@@ -425,7 +562,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     onClick={() => setActiveImageIndex(idx)}
                     aria-label={`View image ${idx + 1}`}
                     aria-pressed={activeImageIndex === idx}
-                    className={`relative h-18 w-14 shrink-0 overflow-hidden rounded-[3px] bg-[#f2f2f2] transition-all cursor-pointer ${
+                    className={`product-thumb-btn relative h-18 w-14 shrink-0 overflow-hidden rounded-[10px] bg-[#f2f2f2] transition-all cursor-pointer ${
                       activeImageIndex === idx
                         ? "ring-1.5 ring-black opacity-100 shadow-xs"
                         : "opacity-60 hover:opacity-100 border border-black/10"
@@ -445,39 +582,35 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           </div>
 
           {/* ── RIGHT: Sticky buy panel ───────────────────────────────────── */}
-          <aside className="min-w-0 lg:sticky lg:top-24">
-            <h1 className="text-[28px] sm:text-[34px] font-display font-bold leading-[1.08] tracking-[-0.03em] text-black uppercase">
-              {product.name}
-            </h1>
-
-            {/* Price */}
-            <div className="mt-4 flex items-baseline gap-3">
-              <p className="text-[26px] sm:text-[28px] font-mono font-bold tracking-tight text-black">
-                ₹{product.price.toLocaleString("en-IN")}
-              </p>
-              {product.compareAtPrice != null && product.compareAtPrice > product.price && (
-                <p className="text-sm font-mono text-black/35 line-through">
-                  ₹{product.compareAtPrice.toLocaleString("en-IN")}
+          <aside className="mt-4 min-w-0 lg:mt-0 lg:sticky lg:top-24">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/40">
+              {categoryLabel(product.category)} · Single original
+            </p>
+            <div className="mt-1.5 flex items-start justify-between gap-4">
+              <h1 className="min-w-0 flex-1 text-[20px] sm:text-[24px] lg:text-[34px] font-display font-bold leading-[1.1] tracking-[-0.02em] text-black uppercase">
+                {product.name}
+              </h1>
+              <div className="shrink-0 text-right">
+                <p className="text-[20px] sm:text-[24px] lg:text-[30px] font-mono font-bold tracking-tight text-black leading-none">
+                  ₹{product.price.toLocaleString("en-IN")}
                 </p>
-              )}
-            </div>
-
-            {/* Authentic 1-of-1 Piece Guarantee Card (Minimalist editorial design) */}
-            <div className="mt-5 rounded-xl border border-black/10 bg-[#f7f7f5] p-4 text-black">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-black/8">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
-                  Authentic 1-of-1 Piece
-                </span>
-                <span className="text-[9px] font-mono uppercase tracking-[0.14em] text-black/45">
-                  {effectiveSoldOut ? "Acquired" : "Single Original"}
-                </span>
+                {product.compareAtPrice != null && product.compareAtPrice > product.price && (
+                  <p className="mt-1 flex items-center justify-end gap-1.5">
+                    <span className="text-xs font-mono text-black/35 line-through">
+                      ₹{product.compareAtPrice.toLocaleString("en-IN")}
+                    </span>
+                    <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-[0.08em] text-white">
+                      Save {Math.round((1 - product.price / product.compareAtPrice) * 100)}%
+                    </span>
+                  </p>
+                )}
               </div>
-              <p className="text-[11px] text-black/60 leading-relaxed font-sans">
-                {effectiveSoldOut
-                  ? "This 1-of-1 piece has been claimed by another collector and will not be restocked."
-                  : "Only 1 piece exists in inventory. Once purchased, this item will never be restocked."}
-              </p>
             </div>
+            {product.description && (
+              <p className="mt-2 text-[13px] leading-relaxed text-black/60 line-clamp-2">
+                {product.description}
+              </p>
+            )}
 
             {selectionError && (
               <p className="mt-4 text-[10px] font-mono font-bold uppercase tracking-[0.1em] text-red-600" role="alert">
@@ -485,9 +618,73 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </p>
             )}
 
-            {/* Sizes: Only shown when 2 or more sizes are available */}
+            {/* Mobile size + CTA row (reference layout) */}
+            {!effectiveSoldOut && (
+              <div className="mt-4 flex gap-2 lg:hidden">
+                {product.sizes.length > 1 ? (
+                  <select
+                    value={selectedSize}
+                    onChange={(e) => handleSelectSize(e.target.value)}
+                    aria-label="Choose size"
+                    className="min-h-[52px] w-full max-w-[140px] appearance-none rounded-full border border-black/15 bg-white px-4 text-[12px] font-bold uppercase tracking-[0.1em] text-black outline-none"
+                  >
+                    {product.sizes.map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setIsShareOpen(true)}
+                      aria-label="Share this piece"
+                      className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-black transition active:scale-95 cursor-pointer"
+                    >
+                      <Share2 className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleItem(id)}
+                      aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                      className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-black transition active:scale-95 cursor-pointer"
+                    >
+                      <Heart className={`h-4 w-4 ${wishlisted ? "fill-black" : ""}`} aria-hidden="true" />
+                    </button>
+                  </>
+                )}
+                {isHeld && heldByYou ? (
+                  <Button onClick={openCart} variant="dark" className="w-full flex-1 text-[11px] uppercase tracking-[0.14em]">
+                    <span>View bag</span>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={(e) => handleAddToCart(e)}
+                    disabled={!canAddSelectedVariant}
+                    variant="dark"
+                    className="w-full flex-1 text-[11px] uppercase tracking-[0.14em]"
+                  >
+                    <span>{isHeld ? "On hold" : "Add to bag"}</span>
+                  </Button>
+                )}
+              </div>
+            )}
+            {effectiveSoldOut && (
+              <div className="mt-4 lg:hidden">
+                <button
+                  type="button"
+                  disabled
+                  className="w-full rounded-full border border-black/15 bg-black/[0.05] px-5 py-4 text-[11px] font-bold uppercase tracking-[0.16em] text-black/40 cursor-not-allowed"
+                >
+                  Sold out
+                </button>
+              </div>
+            )}
+
+            {/* Sizes: Only shown when 2 or more sizes are available — desktop */}
             {product.sizes.length > 1 && (
-              <div className="mt-6">
+              <div className="mt-6 hidden lg:block">
                 <div className="mb-2.5 flex items-center justify-between">
                   <p className="text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-black">
                     Select size{selectedSize ? <span className="text-black/45">: {selectedSize}</span> : null}
@@ -519,40 +716,70 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
-            {/* Live 2-Minute Hold Countdown Banner placed right above the cart button */}
+            {/* Live 2-Minute Hold Countdown — dark hold ticket with a live timer */}
             {isReservedInCheckout && !product.isSoldOut && (
-              <div className="mt-5 w-full rounded-xl border border-[#e4dec8] bg-[#fbf9f4] p-3.5 sm:p-4 text-black shadow-2xs">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="relative flex h-2.5 w-2.5 shrink-0">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4a838] opacity-60" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#cda434]" />
+              <div
+                className={`mt-5 w-full overflow-hidden rounded-2xl ${
+                  heldByYou
+                    ? "bg-[#101012] text-white ring-1 ring-white/10"
+                    : "border border-black/10 bg-black/[0.03] text-black"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-4 px-4 py-3.5 sm:px-5">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                      <span
+                        className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${
+                          heldByYou ? (holdExpiringSoon ? "bg-red-400" : "bg-[#C6A96B]") : "bg-black/25"
+                        }`}
+                      />
+                      <span
+                        className={`relative inline-flex h-2 w-2 rounded-full ${
+                          heldByYou ? (holdExpiringSoon ? "bg-red-400" : "bg-[#C6A96B]") : "bg-black/30"
+                        }`}
+                      />
                     </span>
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-black leading-tight">
-                        {heldByYou ? "Reserved In Your Bag" : "In Someone's Bag · On Hold"}
-                      </h4>
-                      <p className="text-[10.5px] text-black/55 font-normal leading-tight mt-0.5">
+                    <div className="min-w-0">
+                      <p
+                        className={`truncate font-mono text-[10px] font-bold uppercase tracking-[0.18em] ${
+                          heldByYou ? "text-white" : "text-black/70"
+                        }`}
+                      >
+                        {heldByYou ? "Reserved in your bag" : "In someone's bag · on hold"}
+                      </p>
+                      <p
+                        className={`mt-1 truncate text-[10.5px] leading-tight ${
+                          heldByYou ? "text-white/45" : "text-black/45"
+                        }`}
+                      >
                         {heldByYou
-                          ? "Held for 2 minutes · Complete checkout before 00:00"
-                          : "Held for 2 minutes · Returns to store if session expires"}
+                          ? "Checkout before time runs out"
+                          : "Returns to store when the hold ends"}
                       </p>
                     </div>
                   </div>
 
-                  {/* Digital Clock Box: 02:00 */}
-                  <div className="flex items-center font-mono font-bold text-xs sm:text-sm bg-black/[0.04] border border-black/10 text-black px-3 py-1 rounded-md tracking-widest shadow-2xs shrink-0 select-none">
-                    <span>{countdownStr}</span>
+                  {/* Live countdown — the ticket's hero digits */}
+                  <div
+                    className={`shrink-0 whitespace-nowrap rounded-xl px-3 py-1.5 font-mono text-[20px] font-bold leading-none tracking-[0.06em] tabular-nums sm:text-[23px] ${
+                      heldByYou
+                        ? holdExpiringSoon
+                          ? "bg-red-400/10 text-red-300 ring-1 ring-red-400/30"
+                          : "bg-white/[0.07] text-[#EBD9A9] ring-1 ring-white/10"
+                        : "border border-black/10 bg-white text-black shadow-2xs"
+                    }`}
+                  >
+                    {countdownStr}
                   </div>
                 </div>
 
-                {/* Live Progress Bar */}
-                <div className="w-full bg-black/[0.05] rounded-full h-1 overflow-hidden mt-3">
+                {/* Draining progress bar along the bottom edge */}
+                <div className={`h-[3px] w-full ${heldByYou ? "bg-white/[0.08]" : "bg-black/[0.07]"}`}>
                   <div
-                    className="bg-[#cda434]/70 h-full transition-all duration-1000 ease-linear rounded-full"
-                    style={{
-                      width: `${Math.min(100, Math.max(0, (msLeft / (2 * 60 * 1000)) * 100))}%`,
-                    }}
+                    className={`h-full transition-[width] duration-1000 ease-linear ${
+                      heldByYou ? (holdExpiringSoon ? "bg-red-400" : "bg-[#C6A96B]") : "bg-black/50"
+                    }`}
+                    style={{ width: `${holdProgressPct}%` }}
                   />
                 </div>
               </div>
@@ -587,7 +814,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
             {/* CTA + Action area */}
             {effectiveSoldOut ? (
-              <div className="mt-6 space-y-3.5">
+              <div className="mt-6 hidden space-y-3.5 lg:block">
                 <div className="p-4 rounded-xl bg-black/[0.04] border border-black/10 text-center space-y-1.5">
                   <span className="inline-flex items-center gap-1.5 bg-black text-white text-[9.5px] font-mono font-bold uppercase tracking-[0.16em] px-3 py-1 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
@@ -639,7 +866,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 <NotifyMeSection productId={product.id} />
               </div>
             ) : isHeld ? (
-              <div className="mt-6 flex items-center gap-2.5">
+              <div className="mt-6 hidden items-center gap-2.5 lg:flex">
                 {heldByYou ? (
                   <Button
                     onClick={openCart}
@@ -685,7 +912,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                 </button>
               </div>
             ) : (
-              <div className="mt-6 flex flex-col gap-3">
+              <div className="mt-6 hidden flex-col gap-3 lg:flex">
                 <div className="flex items-center gap-2.5">
                   <motion.div whileTap={{ scale: 0.97 }} className="relative flex-1">
                     <Button
@@ -758,39 +985,42 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </div>
             )}
 
-            {/* Trust badges */}
-            <div className="mt-6 grid grid-cols-3 gap-2 border-y border-black/10 py-3">
-              <div className="flex flex-col items-center gap-1 text-center">
-                <Package className="w-3.5 h-3.5 text-black/50" aria-hidden="true" />
-                <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/70 leading-tight">
-                  {product.isSoldOut ? "Somebody bought this" : "1 of 1 · Single piece"}
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1 text-center border-x border-black/8 px-1">
-                <Truck className="w-3.5 h-3.5 text-black/50" aria-hidden="true" />
-                <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/70 leading-tight">
-                  Ships in 24–48 hrs
-                </span>
-              </div>
-              <div className="flex flex-col items-center gap-1 text-center">
-                <ShieldCheck className="w-3.5 h-3.5 text-black/50" aria-hidden="true" />
-                <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/70 leading-tight">
-                  Secure checkout
-                </span>
-              </div>
+            {/* Trust row — desktop only, mobile stays minimal like reference */}
+            <div className="mt-4 hidden items-center gap-3 py-2 lg:flex">
+              <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.08em] text-black/40">
+                <Truck className="w-3 h-3 text-black/30" aria-hidden="true" />
+                Ships in 24–48 hrs
+              </span>
+              <span className="h-3 w-px bg-black/10" aria-hidden="true" />
+              <span className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.08em] text-black/40">
+                <ShieldCheck className="w-3 h-3 text-black/30" aria-hidden="true" />
+                Secure checkout
+              </span>
             </div>
 
             {/* Accordions */}
-            <div className="mt-1">
-              <Accordion title="Details & fit" defaultOpen>
-                <ul className="space-y-1.5 pt-1">
-                  {detailBullets.map((bullet, i) => (
-                    <li key={i} className="flex items-start gap-2.5 uppercase tracking-[0.06em] text-[11px] font-mono text-black/70">
-                      <span className="shrink-0 text-black/35 select-none" aria-hidden="true">—</span>
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
+            <div className="mt-8 lg:mt-1">
+              <Accordion title="Details & fit">
+                <dl className="pt-1">
+                  {detailBullets.map((bullet, i) => {
+                    const parts = bullet.split(/[-:]/);
+                    const label = (parts[0] ?? bullet).trim().toUpperCase();
+                    const value = parts.slice(1).join("-").trim().replace(/^[,\s]+/, "");
+                    return (
+                      <div
+                        key={i}
+                        className="flex items-baseline justify-between gap-4 border-b border-black/5 py-2 last:border-b-0"
+                      >
+                        <dt className="text-[11px] font-mono font-bold uppercase tracking-[0.1em] text-black/45">
+                          {label}
+                        </dt>
+                        <dd className="text-[12px] font-mono uppercase tracking-[0.04em] text-black text-right">
+                          {value || bullet}
+                        </dd>
+                      </div>
+                    );
+                  })}
+                </dl>
               </Accordion>
               <Accordion title="Shipping & returns">
                 <p className="text-[12px] leading-relaxed text-black/60 pt-1 font-sans">
@@ -819,69 +1049,18 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           </div>
         )}
 
-        <div className="mt-20 border-t border-y2k-gunmetal/10 pt-10">
-          <RecentlyViewed productId={id} />
+        <div className="mt-20">
+          <CustomerReviews />
+        </div>
+
+        <div className="mt-20">
+          <RecentlyViewed productId={id} showAll={true} />
         </div>
 
       </div>
 
-      {/* ── Mobile Sticky Buy Bar ───────────────────────────────────────────── */}
-      {!product.isSoldOut && mounted && createPortal(
-        <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-y2k-gunmetal/10 p-4 flex lg:hidden items-center justify-between gap-4 shadow-xl">
-          <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.12em] truncate text-y2k-gunmetal">{product.name}</p>
-            <p className="font-bold text-base tracking-tight text-y2k-gunmetal">
-              ₹{product.price.toLocaleString("en-IN")}
-            </p>
-          </div>
-           <motion.div whileTap={{ scale: 0.94 }} className="shrink-0">
-             {isHeld && heldByYou ? (
-               <Button
-                 onClick={openCart}
-                 className="shrink-0 text-[10px] uppercase tracking-[0.16em] font-bold !bg-black !text-white flex items-center gap-1.5 shadow-sm"
-               >
-                 <Check className="h-3.5 w-3.5 text-emerald-400 stroke-[3]" />
-                 <span>VIEW IN BAG</span>
-               </Button>
-             ) : (
-               <Button
-                 onClick={(e) => handleAddToCart(e)}
-                 disabled={!canAddSelectedVariant}
-                 className={`shrink-0 text-[10px] uppercase tracking-[0.18em] transition-all font-bold ${
-                   addedAnimation ? "!bg-emerald-600 !text-white scale-[1.02]" : ""
-                 }`}
-               >
-                 <AnimatePresence mode="wait">
-                   {addedAnimation ? (
-                     <motion.span
-                       key="m-added"
-                       initial={{ opacity: 0, scale: 0.8 }}
-                       animate={{ opacity: 1, scale: 1 }}
-                       exit={{ opacity: 0 }}
-                       className="flex items-center gap-1.5"
-                     >
-                       <span>ADDED</span>
-                       <Check className="h-3.5 w-3.5 stroke-[3] animate-bounce" aria-hidden="true" />
-                     </motion.span>
-                   ) : (
-                     <motion.span
-                       key="m-add"
-                       initial={{ opacity: 0 }}
-                       animate={{ opacity: 1 }}
-                       exit={{ opacity: 0 }}
-                       className="flex items-center gap-1.5"
-                     >
-                       <span>ADD TO BAG</span>
-                       <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                     </motion.span>
-                   )}
-                 </AnimatePresence>
-               </Button>
-             )}
-           </motion.div>
-        </div>,
-        document.body
-      )}
+      {/* Mobile sticky bar removed — the in-flow size + ADD TO BAG row above
+          is the single action, matching the reference layout. */}
 
       {/* Share Modal */}
       <ProductShareModal

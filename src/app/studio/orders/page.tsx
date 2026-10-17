@@ -34,6 +34,9 @@ type ShippingAddress = {
   city: string;
   state: string;
   pincode: string;
+  /** Exact delivery pin dropped on the checkout map, when the shopper set one. */
+  lat?: number | null;
+  lng?: number | null;
 };
 
 type Order = {
@@ -502,6 +505,16 @@ export default function StudioOrdersPage() {
                               {order.shippingAddress?.street}<br />
                               {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.pincode}
                             </p>
+                            {order.shippingAddress?.lat != null && order.shippingAddress?.lng != null && (
+                              <a
+                                href={`https://maps.google.com/?q=${order.shippingAddress.lat},${order.shippingAddress.lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-y2k-gunmetal underline underline-offset-2 hover:opacity-70"
+                              >
+                                📍 View exact spot on map
+                              </a>
+                            )}
                           </div>
 
                           <div className="pt-2 border-t border-y2k-gunmetal/10 space-y-1.5">

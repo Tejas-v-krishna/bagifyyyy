@@ -30,6 +30,15 @@ export async function completeRazorpayOrder(input: {
   razorpayOrderId: string;
   paymentId: string;
   signature: string;
+  /**
+   * The payment arrived on a Razorpay Payment Link (the checkout failure
+   * dialog's "pay manually" fallback) rather than through the order's own
+   * Checkout. Link payments belong to an internal Razorpay order of their
+   * own, so the provider-order equality guard cannot hold. Ownership is
+   * proven before calling: the webhook signature verified, and the
+   * server-set `bagifyOrderId` note on the link/payment selected this order.
+   */
+  allowProviderOrderMismatch?: boolean;
 }): Promise<PaymentFinalizationResult> {
   const result = await prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
@@ -38,7 +47,7 @@ export async function completeRazorpayOrder(input: {
     });
 
     if (!order) throw new PaymentFinalizationError('Order not found', 404);
-    if (order.razorpayOrderId !== input.razorpayOrderId) {
+    if (!input.allowProviderOrderMismatch && order.razorpayOrderId !== input.razorpayOrderId) {
       throw new PaymentFinalizationError('Payment does not belong to this order', 400);
     }
 

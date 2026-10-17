@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft, ArrowRight, Clock } from "lucide-react";
+import { X, Minus, Plus, Tag, CheckCircle2, ChevronRight, ChevronLeft, ArrowRight } from "lucide-react";
 import { useCartStore, getItemKey } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -49,9 +49,12 @@ function CartItemHoldBadge({ expiresAt }: { expiresAt?: number }) {
   if (!timeLeft || !expiresAt) return null;
 
   return (
-    <span className="inline-flex items-center gap-1 font-mono text-[9px] font-semibold text-amber-950 bg-amber-400/25 border border-amber-500/30 px-1.5 py-0.5 rounded-sm">
-      <Clock className="w-2.5 h-2.5 text-amber-700" />
-      <span>Held: {timeLeft}</span>
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-[#EBD9A9] bg-[#101012] pl-1.5 pr-2.5 py-1 rounded-full">
+      <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#C6A96B] opacity-50" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#C6A96B]" />
+      </span>
+      <span className="tabular-nums">Held {timeLeft}</span>
     </span>
   );
 }
@@ -115,13 +118,13 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
   };
 
   return (
-    <div className="mt-8 pt-6 border-t border-black/10">
+    <div className="mt-8 pt-6 border-t border-black/[0.08]">
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="font-microgramma text-[15px] font-bold uppercase tracking-tight text-black leading-none">
             You may also like
           </p>
-          <p className="text-[10px] font-mono uppercase tracking-[0.1em] text-black/45 mt-1">
+          <p className="text-[10px] font-mono uppercase tracking-[0.1em] text-[#9A7B3F] mt-1">
             Complementary archive pieces
           </p>
         </div>
@@ -130,7 +133,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
             type="button"
             onClick={() => scrollRail(-1)}
             aria-label="Scroll recommendations back"
-            className="w-7 h-7 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center transition-colors cursor-pointer text-black active:scale-90"
+            className="w-8 h-8 rounded-full border border-black/10 bg-white hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-colors cursor-pointer text-black active:scale-90"
           >
             <ChevronLeft className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
@@ -138,7 +141,7 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
             type="button"
             onClick={() => scrollRail(1)}
             aria-label="Scroll recommendations forward"
-            className="w-7 h-7 rounded-full bg-black hover:bg-black/80 flex items-center justify-center transition-colors cursor-pointer text-white active:scale-90"
+            className="w-8 h-8 rounded-full bg-[#101012] hover:bg-black flex items-center justify-center transition-colors cursor-pointer text-[#F5F3EE] active:scale-90"
           >
             <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
@@ -157,21 +160,21 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
           return (
             <div
               key={p.id}
-              className="group/item snap-start shrink-0 w-[200px] sm:w-[220px] border border-black/10 bg-white rounded-xl p-2 flex items-center gap-2.5 transition-colors hover:border-black/30"
+              className="group/item snap-start shrink-0 w-[210px] sm:w-[230px] rounded-2xl border border-black/[0.06] bg-white p-2.5 flex items-center gap-3 shadow-[0_1px_2px_rgba(16,16,18,0.04),0_12px_28px_-18px_rgba(16,16,18,0.16)] transition-all hover:border-black/15 hover:shadow-[0_2px_4px_rgba(16,16,18,0.05),0_16px_34px_-18px_rgba(16,16,18,0.22)]"
             >
               <Link
                 href={`/product/${p.id}`}
                 onClick={closeCart}
-                className="relative w-16 h-20 bg-[#e9e9ec] rounded-lg shrink-0 overflow-hidden"
+                className="relative h-[88px] w-[70px] bg-[#ECEAE4] rounded-xl shrink-0 overflow-hidden"
                 aria-label={p.name}
               >
                 <Image src={img} alt={p.name} fill draggable={false} sizes="80px" className="object-cover object-center transition-transform duration-500 group-hover/item:scale-105" />
               </Link>
               <div className="flex-1 min-w-0 pr-0.5">
-                <Link href={`/product/${p.id}`} onClick={closeCart} className="block truncate text-[11px] font-semibold uppercase tracking-tight text-black hover:opacity-60 transition-opacity" title={p.name}>
+                <Link href={`/product/${p.id}`} onClick={closeCart} className="block truncate font-microgramma text-[11px] font-bold uppercase tracking-[0.01em] text-black hover:opacity-60 transition-opacity" title={p.name}>
                   {p.name}
                 </Link>
-                <p className="text-[11px] font-mono font-medium text-black mt-0.5 tabular-nums">
+                <p className="text-[11px] font-mono font-medium text-black/60 mt-1 tabular-nums">
                   ₹{p.price.toLocaleString("en-IN")}
                 </p>
                 <motion.button
@@ -179,10 +182,10 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
                   type="button"
                   onClick={(e) => handleAdd(p, e)}
                   disabled={added}
-                  className={`mt-2 w-full py-1 px-2.5 rounded-full text-[9px] font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                  className={`mt-2.5 w-full h-8 rounded-full text-[9px] font-mono uppercase tracking-[0.16em] transition-all cursor-pointer flex items-center justify-center gap-1 ${
                     added
-                      ? "bg-emerald-600 text-white font-bold"
-                      : "bg-black text-white hover:bg-black/80"
+                      ? "bg-[#F1EADB] text-[#8C7132] border border-[#C6A96B]/45 font-bold"
+                      : "bg-[#101012] text-[#F5F3EE] hover:bg-black active:scale-[0.98]"
                   }`}
                 >
                   {added ? "Added ✓" : "Add to bag +"}
@@ -338,10 +341,10 @@ export default function CartDrawer() {
             role="dialog"
             aria-modal="true"
             aria-label={`Shopping bag with ${items.reduce((t, i) => t + i.quantity, 0)} items`}
-            className="fixed inset-y-0 right-0 z-[10000] w-full max-w-md border-l border-black/10 bg-[#f5f5f2] flex flex-col h-[100dvh] text-black selection:bg-black selection:text-white"
+            className="fixed inset-y-0 right-0 z-[10000] w-full max-w-md border-l border-black/10 bg-[#F5F3EE] flex flex-col h-[100dvh] text-black selection:bg-black selection:text-white"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 sm:px-8 py-6 border-b border-black/10 bg-white">
+            <div className="flex items-center justify-between px-6 sm:px-8 py-6 border-b border-black/[0.08] bg-[#F5F3EE]">
               <div className="flex items-baseline gap-3">
                 <h2 className="font-microgramma text-xl sm:text-2xl font-bold uppercase tracking-tight text-black">
                   Your Bag
@@ -455,23 +458,23 @@ export default function CartDrawer() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.18 } }}
                             transition={{ type: "spring", damping: 25, stiffness: 280 }}
-                            className={`relative flex gap-4 py-4 border-b border-black/10 transition-colors ${
+                            className={`relative flex gap-3.5 rounded-2xl border border-black/[0.06] bg-white p-3.5 shadow-[0_1px_2px_rgba(16,16,18,0.04),0_12px_28px_-18px_rgba(16,16,18,0.18)] transition-colors ${
                               item.isSoldOut ? "opacity-75" : ""
                             }`}
                           >
                             {/* If product was bought / out of stock, blur and show overlay */}
                             {item.isSoldOut && (
-                              <div className="absolute inset-0 bg-white/85 backdrop-blur-[3px] flex items-center justify-between p-3.5 z-20 rounded-lg border border-red-200 shadow-xs">
+                              <div className="absolute inset-0 bg-[#FBF9F5]/95 backdrop-blur-[3px] flex items-center justify-between p-3.5 z-20 rounded-2xl border border-[#B3261E]/20 shadow-xs">
                                 <div className="flex items-center gap-2">
-                                  <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" />
-                                  <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-red-600">
+                                  <span className="w-2 h-2 rounded-full bg-[#B3261E] animate-pulse shrink-0" />
+                                  <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-[#B3261E]">
                                     Somebody bought this · Out of stock
                                   </span>
                                 </div>
                                 <button
                                   type="button"
                                   onClick={() => removeItem(key)}
-                                  className="text-[10px] font-mono uppercase tracking-wider text-black underline font-bold hover:text-red-600 cursor-pointer ml-2 shrink-0"
+                                  className="text-[10px] font-mono uppercase tracking-wider text-black underline font-bold hover:text-[#B3261E] cursor-pointer ml-2 shrink-0"
                                 >
                                   Remove
                                 </button>
@@ -479,7 +482,7 @@ export default function CartDrawer() {
                             )}
 
                             {/* Image is the card cover thumbnail */}
-                            <div className="relative h-24 w-18 sm:h-28 sm:w-20 bg-[#e9e9ec] rounded-lg shrink-0 overflow-hidden">
+                            <div className="relative h-24 w-18 sm:h-[108px] sm:w-[86px] bg-[#ECEAE4] rounded-xl shrink-0 overflow-hidden">
                               <Image
                                 src={item.image || "/placeholder.jpg"}
                                 alt={item.name}
@@ -493,24 +496,26 @@ export default function CartDrawer() {
                             <div className="flex flex-1 flex-col justify-between min-w-0">
                               <div>
                                 <div className="flex justify-between items-start gap-2">
-                                  <h3 className="text-[13px] sm:text-[14px] font-bold uppercase tracking-tight text-black leading-snug line-clamp-2 flex-1">
+                                  <h3 className="font-microgramma text-[13px] sm:text-[14px] font-bold uppercase tracking-[0.01em] text-black leading-snug line-clamp-2 flex-1">
                                     {item.name}
                                   </h3>
-                                  <p className="font-mono font-bold text-xs sm:text-[13px] text-black shrink-0 tabular-nums">
+                                  <p className="font-mono font-semibold text-[12px] sm:text-[13px] tracking-wide text-black shrink-0 tabular-nums">
                                     ₹{item.price.toLocaleString("en-IN")}
                                   </p>
                                 </div>
-                                <p className="text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.12em] text-black/50 mt-1">
-                                  {item.color} / {item.size}
+                                <p className="text-[10px] sm:text-[10.5px] font-mono uppercase tracking-[0.16em] text-black/40 mt-1.5 flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
+                                  <span className="truncate">{item.color} / {item.size}</span>
+                                  <span className="text-black/20 shrink-0">·</span>
+                                  <span className="shrink-0">1 of 1 piece</span>
                                 </p>
                                 {item.bundleName && (
-                                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-emerald-700 mt-1">
+                                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#8C7132] mt-1">
                                     Part of {item.bundleName}
                                   </p>
                                 )}
                               </div>
 
-                              <div className="flex items-center justify-between mt-3 pt-1">
+                              <div className="flex items-center justify-between mt-3 pt-3 border-t border-black/[0.06]">
                                 <div className="relative inline-flex items-center" data-remove-tooltip="true">
                                   {/* Tooltip pop-up confirmation */}
                                   <AnimatePresence>
@@ -554,7 +559,7 @@ export default function CartDrawer() {
                                     )}
                                   </AnimatePresence>
 
-                                  <div className="inline-flex items-center border border-black/15 rounded-sm bg-white overflow-hidden shadow-2xs">
+                                  <div className="inline-flex items-center rounded-full border border-black/10 bg-[#FAF9F5] p-0.5">
                                     <button
                                       type="button"
                                       onClick={(e) => {
@@ -562,13 +567,13 @@ export default function CartDrawer() {
                                         setConfirmRemoveKey((prev) => (prev === key ? null : key));
                                       }}
                                       aria-label={`Remove ${item.name} from bag`}
-                                      className="w-7 h-7 flex items-center justify-center text-black hover:bg-black/5 active:scale-95 transition-colors cursor-pointer"
+                                      className="h-6 w-6 rounded-full flex items-center justify-center text-black hover:bg-[#101012] hover:text-[#F5F3EE] active:scale-95 transition-colors cursor-pointer"
                                     >
                                       <Minus className="w-3 h-3" aria-hidden="true" />
                                     </button>
                                     <span
                                       aria-live="polite"
-                                      className="w-7 text-center font-mono font-bold text-xs text-black select-none"
+                                      className="w-6 text-center font-mono font-semibold text-[11px] text-black select-none tabular-nums"
                                     >
                                       {item.quantity}
                                     </span>
@@ -577,17 +582,14 @@ export default function CartDrawer() {
                                       disabled={true}
                                       aria-label="Max quantity reached (1-of-1 piece)"
                                       title="1 of 1 unique piece"
-                                      className="w-7 h-7 flex items-center justify-center text-black/25 bg-black/[0.03] cursor-not-allowed border-l border-black/10 select-none"
+                                      className="h-6 w-6 rounded-full flex items-center justify-center text-black/20 cursor-not-allowed select-none"
                                     >
                                       <Plus className="w-3 h-3" aria-hidden="true" />
                                     </button>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center">
                                   <CartItemHoldBadge expiresAt={item.holdExpiresAt} />
-                                  <span className="text-[9px] font-mono uppercase tracking-[0.12em] text-black/40">
-                                    1 of 1 piece
-                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -603,12 +605,12 @@ export default function CartDrawer() {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="border-t border-black/10 px-6 sm:px-8 py-6 bg-white space-y-4 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+              <div className="border-t border-black/[0.08] px-6 sm:px-8 py-6 bg-[#F5F3EE] space-y-4 shadow-[0_-4px_20px_rgba(16,16,18,0.04)]">
                 {/* Promo Code Row */}
                 {appliedPromo ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.88, y: -6 }}
-                    animate={{ opacity: 1, scale: [0.95, 1.04, 1], y: 0 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ type: "spring", stiffness: 450, damping: 20 }}
                     className="flex items-center justify-between bg-[#f4f4f2] border border-black/10 rounded-xl px-4 py-2.5 shadow-2xs"
                   >
@@ -728,7 +730,12 @@ export default function CartDrawer() {
 
                 <Link
                   href="/checkout"
-                  onClick={closeCart}
+                  onClick={(event) => {
+                    // Close the bag first. On the checkout page itself there
+                    // is nowhere left to navigate, so closing IS the action.
+                    closeCart();
+                    if (pathname === "/checkout") event.preventDefault();
+                  }}
                   className="btn-bagify btn-bagify-dark block w-full uppercase tracking-[0.2em] py-4 text-center text-xs font-bold"
                 >
                   Proceed to Checkout

@@ -173,19 +173,52 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Persist the address now that the provider has accepted the order
-    const savedAddress = await prisma.address.create({
-      data: {
-        userId,
-        fullName: address.fullName,
-        phone: contact.phone,
-        street: address.street,
-        city: address.city,
-        state: address.state,
-        pincode: address.pincode,
-        country: address.country,
-      },
-    });
+    // 4. Persist the address now that the provider has accepted the order.
+    // A signed-in shopper who typed/picked an address they already saved gets
+    // the existing row reused (pin refreshed) instead of a duplicate piling
+    // up in their address book on every order.
+    const reusableAddress = userId
+      ? await prisma.address.findFirst({
+          where: { userId, street: address.street, pincode: address.pincode },
+        })
+      : null;
+
+    const savedAddress = reusableAddress
+      ? await prisma.address.update({
+          where: { id: reusableAddress.id },
+          data: {
+            fullName: address.fullName,
+            phone: contact.phone,
+            city: address.city,
+            state: address.state,
+            // The checkout picker's extras, refreshed when the shopper sent them.
+            ...(address.label ? { label: address.label } : {}),
+            ...(address.area ? { area: address.area } : {}),
+            // Only written when the shopper dropped an exact pin on the map.
+            ...(address.lat !== undefined && address.lng !== undefined
+              ? { lat: address.lat, lng: address.lng }
+              : {}),
+          },
+        })
+      : await prisma.address.create({
+          data: {
+            userId,
+            fullName: address.fullName,
+            phone: contact.phone,
+            street: address.street,
+            city: address.city,
+            state: address.state,
+            pincode: address.pincode,
+            country: address.country,
+            // The checkout picker's extras, when the shopper used the new form.
+            ...(address.label ? { label: address.label } : {}),
+            ...(address.area ? { area: address.area } : {}),
+            // Only written when the shopper dropped an exact pin on the map.
+            ...(address.lat !== undefined && address.lng !== undefined
+              ? { lat: address.lat, lng: address.lng }
+              : {}),
+          },
+        });
 
     // 5. Create Order record in DB. It stays AWAITING_PAYMENT until the receipt
     // is verified, so a shopper who closes the payment sheet does not leave
@@ -243,7 +276,11 @@ export async function POST(request: Request) {
     if (!reservationCreated) {
       await prisma.$transaction(async (tx) => {
         await tx.order.delete({ where: { id: order.id } });
-        await tx.address.delete({ where: { id: savedAddress.id } });
+        // Only remove the address row if this checkout created it — a reused
+        // saved address belongs to the shopper's address book.
+        if (!reusableAddress) {
+          await tx.address.delete({ where: { id: savedAddress.id } });
+        }
       }).catch((cleanupError) => {
         console.error('Failed to clean up unreserved checkout:', cleanupError);
       });

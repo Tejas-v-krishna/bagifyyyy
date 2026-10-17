@@ -70,7 +70,7 @@ export async function POST(req: Request) {
 
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     if (isRateLimited(ip) || isRateLimited(String(contact || ''))) {
-      return NextResponse.json({ error: 'Too many attempts. Try again in a minute.' }, { status: 429 });
+      return NextResponse.json({ error: 'Too many attempts. Try again in a minute.' }, { status: 429, headers: { 'Retry-After': '60', 'Cache-Control': 'no-store' } });
     }
 
     if (typeof query !== "string" || !query.trim()) {
