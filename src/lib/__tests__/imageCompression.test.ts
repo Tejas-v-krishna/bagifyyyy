@@ -46,7 +46,7 @@ describe("Shared image optimizer (studio uploads + existing-image backfill)", ()
     // Aspect ratio preserved: 3000x2000 -> 1600x1067
     expect(metadata.height).toBe(1067);
     expect(result.buffer.length).toBeLessThan(rawBuffer.length);
-    expect([78, 70]).toContain(result.quality);
+    expect([85, 78]).toContain(result.quality);
   });
 
   it("does not enlarge images smaller than the cap", async () => {
@@ -90,7 +90,7 @@ describe("Shared image optimizer (studio uploads + existing-image backfill)", ()
     expect(result.buffer.length).toBeLessThan(pngBuffer.length);
   });
 
-  it("cleans sensor/compression grain on noisy photos far below a plain WebP re-encode", async () => {
+  it("encodes noisy photos to crisp WebP without blur or median artifacts", async () => {
     // A 1600px noisy "photo" straight out of a phone camera.
     const noisy = await sharp(noisyBuffer(1600, 1600), {
       raw: { width: 1600, height: 1600, channels: 3 },
@@ -98,37 +98,25 @@ describe("Shared image optimizer (studio uploads + existing-image backfill)", ()
       .jpeg({ quality: 92 })
       .toBuffer();
 
-    const plainWebp = await sharp(noisy)
-      .rotate()
-      .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 78, effort: 4 })
-      .toBuffer();
-
     const result = await optimizeImageBuffer(noisy);
 
-    // The median cleanup must beat an already-strong plain encode by a wide
-    // margin — that gap is the whole point of the backfill.
-    expect(result.buffer.length).toBeLessThan(plainWebp.length * 0.8);
     expect(result.buffer.length).toBeLessThan(noisy.length);
     const meta = await sharp(result.buffer).metadata();
     expect(meta.format).toBe("webp");
+    expect([85, 78]).toContain(result.quality);
   });
 
-  it("steps down quality when the first pass stays over budget (alpha images skip cleanup)", async () => {
-    // 4-channel noise: hasAlpha skips the median cleanup on purpose, so the
-    // first (q78) pass cannot squeeze under the target and the ladder MUST
-    // settle on the floor quality instead of ballooning the file further.
-    const noisyAlpha = await sharp(noisyBuffer(1600, 1600, 7, 4), {
-      raw: { width: 1600, height: 1600, channels: 4 },
+  it("steps down quality when the first pass stays over budget", async () => {
+    const largeNoisy = await sharp(noisyBuffer(1600, 1600, 7, 3), {
+      raw: { width: 1600, height: 1600, channels: 3 },
     })
-      .png()
+      .png({ compressionLevel: 0 })
       .toBuffer();
 
-    const result = await optimizeImageBuffer(noisyAlpha);
+    const result = await optimizeImageBuffer(largeNoisy);
 
-    expect(result.quality).toBe(70);
-    expect(result.buffer.length).toBeGreaterThan(OPTIMIZE_TARGET_BYTES);
-    expect(result.buffer.length).toBeLessThan(noisyAlpha.length);
+    expect(result.quality).toBe(78);
+    expect(result.buffer.length).toBeLessThan(largeNoisy.length);
   });
 
   it("keeps clean, already-small client WebP files pristine", async () => {
@@ -177,7 +165,7 @@ describe("Shared image optimizer (studio uploads + existing-image backfill)", ()
   });
 
   it("exposes a sane target budget below the pristine keep threshold", () => {
-    expect(OPTIMIZE_TARGET_BYTES).toBeLessThanOrEqual(320 * 1024);
+    expect(OPTIMIZE_TARGET_BYTES).toBeLessThanOrEqual(600 * 1024);
     expect(KEEP_PRISTINE_MAX_BYTES).toBeLessThanOrEqual(OPTIMIZE_TARGET_BYTES);
   });
 });

@@ -354,7 +354,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               {productImages.map((img, idx) => (
                 <div
                   key={idx}
-                  className="relative aspect-[3/4] w-full shrink-0 snap-center overflow-hidden rounded-b-2xl bg-[#e9e9ec] [-webkit-mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)] [mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)]"
+                  className="relative aspect-[3/4] w-full shrink-0 snap-center overflow-hidden rounded-b-2xl bg-[#e9e9ec]"
                 >
                   <Image
                     src={img}
@@ -367,13 +367,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                     }`}
                   />
-                  {/* Blurred clones of the photo itself — real filter blur that masks reliably */}
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[5] [mask-image:linear-gradient(to_top,black_10%,transparent_42%)]">
-                    <Image src={img} alt="" fill draggable={false} sizes="80vw" className="object-cover object-center blur-[6px]" />
-                  </div>
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[5] [mask-image:linear-gradient(to_top,black_0%,transparent_30%)]">
-                    <Image src={img} alt="" fill draggable={false} sizes="80vw" className="object-cover object-center blur-[18px] saturate-150" />
-                  </div>
                   {effectiveSoldOut && (
                     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/45 p-4 text-center">
                       <span className="rounded-full bg-white/95 px-4 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-black">
@@ -497,13 +490,6 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                         effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                       }`}
                     />
-                    {/* Blurred clones of the photo itself — real filter blur that masks reliably */}
-                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_top,black_10%,transparent_42%)]">
-                      <Image src={productImages[activeImageIndex] || productImages[0]} alt="" fill draggable={false} sizes="(max-width: 1023px) 100vw, 60vw" className="object-cover object-center blur-[6px]" />
-                    </div>
-                    <div aria-hidden="true" className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_top,black_0%,transparent_30%)]">
-                      <Image src={productImages[activeImageIndex] || productImages[0]} alt="" fill draggable={false} sizes="(max-width: 1023px) 100vw, 60vw" className="object-cover object-center blur-[18px] saturate-150" />
-                    </div>
                   </motion.div>
                 </AnimatePresence>
               ) : (

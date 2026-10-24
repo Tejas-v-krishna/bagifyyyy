@@ -1,35 +1,27 @@
 import sharp from "sharp";
 
 /**
- * Shared server-side image optimizer used by the studio upload route and the
- * one-time backfill script (`scripts/optimize-existing-images.ts`).
+ * Shared server-side image optimizer used by the studio upload route.
  *
- * Why this exists: phone photos of garments (especially flat-lays on textured
- * carpet and WhatsApp-forwarded shots) can stay ~1 MB even after a plain WebP
- * re-encode, because per-pixel grain from the camera/compression is the bulk
- * of the data. A mild 5×5 median pass removes that speckle *without* touching
- * real edges (stitching, prints, garment seams), which lets the encoder get
- * 3–5× smaller files at a quality that is visually indistinguishable at
- * storefront sizes.
- *
- * The quality ladder only steps down when the result is still over budget, so
- * clean photos finish in a single encode and stubborn grainy ones settle for
- * one lower quality step instead of ballooning the request time.
+ * Keeps image quality high and crisp: resizes down to 1600px cap (if larger)
+ * and encodes to WebP at quality 85 (dropping to 78 only if file exceeds 550KB).
+ * Does NOT apply median or blurring filters so garments, textures, and details
+ * remain pin-sharp across laptop and mobile displays.
  */
 
-/** Long edge cap for studio uploads — plenty for 3:4 product shots. */
+/** Long edge cap for studio uploads — plenty for 3:4 product shots at 2x/3x retina. */
 export const OPTIMIZE_MAX_DIMENSION = 1600;
 /** WebP effort: 4 keeps upload responses comfortably inside Vercel limits. */
 const WEBP_EFFORT = 4;
-/** First attempt quality; the ladder steps down only when the result is heavy. */
-const QUALITY_STEPS = [78, 70];
+/** Quality ladder: 85 delivers crisp ecommerce quality; 78 as fallback for heavy files. */
+const QUALITY_STEPS = [85, 78];
 /** Weight target after which the next (lower) quality step is tried. */
-export const OPTIMIZE_TARGET_BYTES = 300 * 1024;
+export const OPTIMIZE_TARGET_BYTES = 550 * 1024;
 /**
  * Client-side WebP files at/below this size are kept pristine — re-encoding
  * them would add a lossy generation for a negligible byte win.
  */
-export const KEEP_PRISTINE_MAX_BYTES = 280 * 1024;
+export const KEEP_PRISTINE_MAX_BYTES = 500 * 1024;
 
 export interface OptimizeResult {
   buffer: Buffer;
@@ -58,23 +50,21 @@ export function isKeepPristineWebp(
 }
 
 /**
- * Downscale + clean + encode a raster image to WebP.
+ * Downscale + encode a raster image to clean, crisp WebP.
  *
  * - `rotate()` applies EXIF orientation before everything else.
- * - `median(5)` speckle cleanup is skipped for images with alpha so soft
- *   transparency edges are not smeared.
+ * - Preserves sharp edges without blurring or median smoothing.
  * - Returns the first ladder result at/below the target bytes, or the final
  *   step's result when even the floor quality stays heavier.
  */
 export async function optimizeImageBuffer(input: Buffer): Promise<OptimizeResult> {
   const originalMeta = await sharp(input).metadata();
-  const hasAlpha = Boolean(originalMeta.hasAlpha);
   const originalBytes = input.length;
 
   let best: OptimizeResult | null = null;
 
   for (const quality of QUALITY_STEPS) {
-    let pipeline = sharp(input)
+    const pipeline = sharp(input)
       .rotate()
       .resize({
         width: OPTIMIZE_MAX_DIMENSION,
@@ -82,10 +72,6 @@ export async function optimizeImageBuffer(input: Buffer): Promise<OptimizeResult
         fit: "inside",
         withoutEnlargement: true,
       });
-
-    if (!hasAlpha) {
-      pipeline = pipeline.median(5);
-    }
 
     const buffer = await pipeline
       .webp({ quality, effort: WEBP_EFFORT, smartSubsample: true })
