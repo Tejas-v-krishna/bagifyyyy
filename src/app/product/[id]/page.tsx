@@ -13,7 +13,7 @@ import Link from "next/link";
 
 type Props = { params: Promise<{ id: string }> };
 
-export const revalidate = 60; // ISR: edge-cached 60s; revalidatePath fires on purchases/edits so stock stays fresh
+export const revalidate = 900; // ISR: edge-cached 15m. Purchases and studio edits call revalidatePath, so on-demand freshness is exact; the interval only bounds how often an idle route re-reads Turso.
 
 // Metadata + page both need the same product — share one DB hit per render
 // instead of querying twice.

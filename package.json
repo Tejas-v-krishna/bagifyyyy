@@ -12,6 +12,7 @@
     "test": "vitest run",
     "images:optimize": "tsx --env-file=.env scripts/optimize-existing-images.ts",
     "catalog:snapshot": "tsx --env-file=.env scripts/snapshot-catalog.ts",
+    "db:indexes": "tsx --env-file=.env scripts/add-indexes.ts",
     "prisma:seed": "npx tsx prisma/seed.ts",
     "sanity:dev": "sanity dev",
     "sanity:deploy": "sanity deploy"

@@ -52,6 +52,15 @@ model Product {
   bundleItems         BundleProduct[]
   reviews             Review[]
   stockReservations   StockReservation[]
+
+  // Turso bills per ROW READ, and SQLite without an index reads the entire
+  // table for every query. Every storefront listing filters on these flags and
+  // orders by createdAt/price, so each one was a full Product scan. Each index
+  // below mirrors one real query shape in src/lib/products.ts.
+  @@index([isArchived, isSoldOut, createdAt]) // catalogue / price rails
+  @@index([category, isArchived, createdAt]) // category + subcategory pages
+  @@index([isNew, isArchived, isSoldOut, createdAt]) // new arrivals rail
+  @@index([isBestSeller, isArchived, isSoldOut, price]) // curated grails rail
 }
 
 model Image {
@@ -61,6 +70,10 @@ model Image {
   position  Int     @default(0)
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Prisma loads images with `WHERE productId IN (...) ORDER BY position`.
+  // Unindexed, that scanned the whole Image table for every listing query.
+  @@index([productId, position])
 }
 
 model Variant {
@@ -72,6 +85,9 @@ model Variant {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   stockReservations StockReservation[]
+
+  // Same N+1 shape as Image: `WHERE productId IN (...)` on every listing.
+  @@index([productId])
 }
 
 model Subscriber {
@@ -105,6 +121,9 @@ model BundleProduct {
   productId String
   bundle    Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([bundleId])
+  @@index([productId])
 }
 
 model LoyaltyAccount {
@@ -124,6 +143,8 @@ model PointTransaction {
   points           Int
   reason           String
   createdAt        DateTime       @default(now())
+
+  @@index([loyaltyAccountId])
 }
 
 model Address {
@@ -198,6 +219,10 @@ model OrderItem {
   color     String
   quantity  Int
   image     String
+
+  // Orders are always read with their line items.
+  @@index([orderId])
+  @@index([productId])
 }
 
 model MarketingCampaign {

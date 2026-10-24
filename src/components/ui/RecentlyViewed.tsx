@@ -95,17 +95,30 @@ export default function RecentlyViewed({ productId, showAll = false }: RecentlyV
           return;
         }
 
-        const promises = idsToFetch.map((id) =>
-          fetch(`/api/products/${id}`)
-            .then((res) => (res.ok ? res.json() : null))
-            .catch(() => null)
-        );
+        // One request for every card, instead of one per card. The previous
+        // shape fired up to five uncached /api/products/[id] lookups on every
+        // page view, and each lookup ran three queries (product + related +
+        // review aggregate). Batching turns that into a single indexed read
+        // that the edge can also cache.
+        let results: RecentProduct[] = [];
+        try {
+          const res = await fetch(
+            `/api/products?ids=${encodeURIComponent(idsToFetch.join(","))}`
+          );
+          if (res.ok) {
+            const list: unknown = await res.json();
+            if (Array.isArray(list)) results = list as RecentProduct[];
+          }
+        } catch {
+          results = [];
+        }
 
-        const results = await Promise.all(promises);
-        const validProducts = results.filter(
-          (result): result is RecentProduct =>
-            Boolean(result && !result.error && result.id)
-        );
+        // The listing endpoint sorts by recency of creation; the strip must
+        // follow the shopper's own viewing order.
+        const byId = new Map(results.map((item) => [item.id, item]));
+        const validProducts = idsToFetch
+          .map((id) => byId.get(id))
+          .filter((item): item is RecentProduct => Boolean(item && item.id));
 
         // Prune any deleted/invalid products from localStorage
         const validIds = new Set(validProducts.map((p) => p.id));

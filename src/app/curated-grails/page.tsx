@@ -5,7 +5,7 @@ import CategoryPageSkeleton from "@/components/product/CategoryPageSkeleton";
 import { collectionMetadata } from "@/lib/seo";
 import { queryProducts } from "@/lib/products";
 
-export const revalidate = 60; // ISR: edge-cached 60s; revalidatePath fires on purchases/edits so stock stays fresh
+export const revalidate = 900; // ISR: edge-cached 15m. Purchases and studio edits call revalidatePath, so on-demand freshness is exact; the interval only bounds how often an idle route re-reads Turso.
 
 export const metadata: Metadata = collectionMetadata({
   title: "Hard-to-find pieces",
