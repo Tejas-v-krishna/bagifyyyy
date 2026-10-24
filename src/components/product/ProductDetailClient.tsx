@@ -354,7 +354,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               {productImages.map((img, idx) => (
                 <div
                   key={idx}
-                  className="relative aspect-[3/4] w-full shrink-0 snap-center overflow-hidden rounded-b-2xl bg-[#e9e9ec]"
+                  className="relative aspect-[3/4] w-full shrink-0 snap-center overflow-hidden rounded-2xl bg-[#e9e9ec]"
                 >
                   <Image
                     src={img}
@@ -363,7 +363,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     priority={idx === 0}
                     draggable={false}
                     sizes="80vw"
-                    className={`object-cover object-center ${
+                    className={`object-cover object-center rounded-2xl ${
                       effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                     }`}
                   />
@@ -447,7 +447,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
           {/* ── DESKTOP: Gallery (Image itself is the card) ─────────────────── */}
           <div className="hidden min-w-0 p-2 pb-8 lg:block">
             <div
-              className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full overflow-hidden rounded-2xl bg-[#e9e9ec] touch-pan-y select-none [-webkit-mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)] [mask-image:linear-gradient(to_bottom,black_86%,transparent_98%)]"
+              className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-[#e9e9ec] touch-pan-y select-none isolate"
               onTouchStart={(e) => {
                 touchStartX.current = e.touches[0]?.clientX ?? null;
               }}
@@ -469,7 +469,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0"
+                    className="absolute inset-0 overflow-hidden rounded-2xl sm:rounded-3xl"
                     drag={productImages.length > 1 ? "x" : false}
                     dragConstraints={{ left: 0, right: 0 }}
                     dragElastic={0.6}
@@ -486,7 +486,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       priority
                       draggable={false}
                       sizes="(max-width: 1023px) 100vw, 60vw"
-                      className={`object-cover object-center pointer-events-none transition-all duration-300 ${
+                      className={`object-cover object-center pointer-events-none transition-all duration-300 rounded-2xl sm:rounded-3xl ${
                         effectiveSoldOut ? "blur-[3px] opacity-50 grayscale" : ""
                       }`}
                     />
@@ -559,7 +559,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
                       alt=""
                       fill
                       sizes="64px"
-                      className="object-cover object-center"
+                      className="object-cover object-center rounded-[10px]"
                     />
                   </button>
                 ))}
