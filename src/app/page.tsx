@@ -11,8 +11,7 @@ import HomeBundlesSection from "@/components/ui/HomeBundlesSection";
 import VintageArchiveSection from "@/components/ui/VintageArchiveSection";
 import DropCountdown from "@/components/ui/DropCountdown";
 import Footer from "@/components/layout/Footer";
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60; // ISR: edge-cached 60s; revalidatePath fires on purchases/edits so stock stays fresh
 
 const productInclude = { images: { orderBy: { position: 'asc' } }, variants: true } as const;
 

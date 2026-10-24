@@ -5,8 +5,7 @@ import CategoryPageSkeleton from "@/components/product/CategoryPageSkeleton";
 import { collectionMetadata } from "@/lib/seo";
 import { queryProducts } from "@/lib/products";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60; // ISR: edge-cached 60s; revalidatePath fires on purchases/edits so stock stays fresh
 
 export const metadata: Metadata = collectionMetadata({
   title: "Bottomwear: Pants & Cargos",

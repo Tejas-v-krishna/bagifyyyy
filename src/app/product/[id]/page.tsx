@@ -12,8 +12,7 @@ import Link from "next/link";
 
 type Props = { params: Promise<{ id: string }> };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60; // ISR: edge-cached 60s; revalidatePath fires on purchases/edits so stock stays fresh
 
 // Metadata + page both need the same product — share one DB hit per render
 // instead of querying twice.
