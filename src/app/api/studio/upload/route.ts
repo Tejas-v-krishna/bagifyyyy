@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import sharp from "sharp";
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
 import { isR2Configured, uploadToR2 } from '@/lib/r2';
 import {
@@ -11,7 +10,6 @@ import {
   extFromMime,
   sniffImageMime,
 } from '@/lib/imageFormats';
-import { isKeepPristineWebp, optimizeImageBuffer } from '@/lib/imageOptimize';
 
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
 
@@ -94,80 +92,20 @@ export async function POST(request: Request) {
 
     for (const file of filesToProcess) {
       const bytes = await file.arrayBuffer();
-      let buffer: Buffer = Buffer.from(bytes);
-      let ext = ".webp";
-      let contentType = "image/webp";
+      const buffer: Buffer = Buffer.from(bytes);
 
       const declaredMime = (file.type || "").toLowerCase().trim();
-      const nameLower = (file.name || "").toLowerCase();
-      const isGif = declaredMime === "image/gif" || nameLower.endsWith(".gif");
-      const isSvg = declaredMime === "image/svg+xml" || nameLower.endsWith(".svg");
-
-      if (isGif) {
-        // Keep animated GIFs pristine without flattening frames
-        ext = ".gif";
-        contentType = "image/gif";
-      } else if (isSvg) {
-        // Keep vector SVGs pristine without rasterizing
-        ext = ".svg";
-        contentType = "image/svg+xml";
-      } else {
-        try {
-          const originalSize = buffer.length;
-          const meta = await sharp(buffer).metadata();
-          const isAnimated = (meta.pages ?? 1) > 1;
-
-          if (isAnimated) {
-            // Keep animated uploads intact rather than flattening to frame one.
-            const detected = sniffImageMime(buffer.subarray(0, 32));
-            ext = resolveExtension(file.name, declaredMime, detected);
-            contentType = declaredMime || detected || 'image/webp';
-            console.log(
-              `[Server Studio Upload] Kept animated "${file.name}" untouched: ${(originalSize / 1024).toFixed(1)} KB`
-            );
-          } else if (isKeepPristineWebp(meta, originalSize)) {
-            // Already small client-side WebP (<= 1600px, <= 280 KB): store
-            // as-is to avoid a secondary lossy generation.
-            ext = ".webp";
-            contentType = "image/webp";
-            console.log(
-              `[Server Studio Upload] Kept pristine client-compressed WebP "${file.name}": ${(originalSize / 1024).toFixed(1)} KB`
-            );
-          } else {
-            const optimized = await optimizeImageBuffer(buffer);
-
-            if (optimized.buffer.length < originalSize) {
-              buffer = optimized.buffer;
-              ext = ".webp";
-              contentType = "image/webp";
-              console.log(
-                `[Server Studio Upload] Compressed "${file.name}": ${(originalSize / 1024).toFixed(1)} KB -> ${(buffer.length / 1024).toFixed(1)} KB (WebP q${optimized.quality})`
-              );
-            } else {
-              // The optimizer could not beat the stored bytes (tiny or exotic
-              // source) — keep the original under its true type rather than
-              // shipping a bigger file.
-              const detected = sniffImageMime(buffer.subarray(0, 32));
-              ext = resolveExtension(file.name, declaredMime, detected);
-              contentType = declaredMime || detected || "image/jpeg";
-              console.log(
-                `[Server Studio Upload] Kept original "${file.name}" (optimizer produced no smaller file): ${(originalSize / 1024).toFixed(1)} KB`
-              );
-            }
-          }
-        } catch (sharpErr) {
-          // sharp cannot decode this format (e.g. unsupported format) — store
-          // the original bytes under their TRUE extension instead of mislabelling.
-          console.warn("Server sharp compression fallback:", sharpErr);
-          const detected = sniffImageMime(buffer.subarray(0, 32));
-          ext = resolveExtension(file.name, declaredMime, detected);
-          contentType = declaredMime || detected || "image/jpeg";
-        }
-      }
+      const detected = sniffImageMime(buffer.subarray(0, 32));
+      const ext = resolveExtension(file.name, declaredMime, detected);
+      const contentType = declaredMime || detected || "image/jpeg";
 
       // Clean filename
       const cleanBaseName = path.basename(file.name, path.extname(file.name)).replace(/[^a-zA-Z0-9_-]/g, "_").toLowerCase();
       const uniqueFilename = `prod_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${cleanBaseName}${ext}`;
+
+      console.log(
+        `[Studio Upload] Storing original "${file.name}" without compression: ${(buffer.length / 1024).toFixed(1)} KB (${contentType})`
+      );
 
       if (useR2) {
         const r2Url = await uploadToR2({

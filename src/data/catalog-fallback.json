@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-10-24T16:44:53.113Z",
+  "capturedAt": "2026-10-24T16:54:53.163Z",
   "note": "Last-known catalogue captured before a database outage. Regenerate with: npx tsx --env-file=.env scripts/snapshot-catalog.ts",
   "products": [
     {
@@ -52,8 +52,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T15:06:05.759Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767956708_vyclx_img_1042-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767958984_xh7yk_img_1043-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767956708_vyclx_img_1042.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767958984_xh7yk_img_1043.webp"
       ]
     },
     {
@@ -70,8 +70,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T15:05:28.275Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767924244_ndxon_img_1029-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767926512_bkaqz_img_1030-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767924244_ndxon_img_1029.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767926512_bkaqz_img_1030.webp"
       ]
     },
     {
@@ -124,8 +124,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T15:02:59.146Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767768389_8o8il_img_0991-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767771022_hrznl_img_0992-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767768389_8o8il_img_0991.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767771022_hrznl_img_0992.webp"
       ]
     },
     {
@@ -175,11 +175,11 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:59:54.167Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767589209_j1q2l_img_1022-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767591582_5tfpv_img_1024-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767589209_j1q2l_img_1022.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767591582_5tfpv_img_1024.webp"
       ]
     },
     {
@@ -196,8 +196,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:59:15.662Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767541663_r7691_img_0996-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767544006_1rqxd_img_0997-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767541663_r7691_img_0996.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767544006_1rqxd_img_0997.webp"
       ]
     },
     {
@@ -214,8 +214,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:57:46.490Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767456795_tmrz8_img_1033-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767459407_skpbo_img_1034-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767456795_tmrz8_img_1033.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767459407_skpbo_img_1034.webp"
       ]
     },
     {
@@ -232,8 +232,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:54:37.002Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767266111_plewj_img_1019-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767272587_vqdkj_img_1021-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767266111_plewj_img_1019.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767272587_vqdkj_img_1021.webp"
       ]
     },
     {
@@ -250,8 +250,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:53:16.108Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767184801_u3eng_img_1004-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767190080_8dzmu_img_1005-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767184801_u3eng_img_1004.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767190080_8dzmu_img_1005.webp"
       ]
     },
     {
@@ -268,8 +268,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:52:20.885Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767125568_8xz8u_img_0999-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767133224_zsovd_img_1001-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767125568_8xz8u_img_0999.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767133224_zsovd_img_1001.webp"
       ]
     },
     {
@@ -286,8 +286,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:51:27.721Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767073508_rqr6h_img_1035-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767081446_z6e20_img_1036-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767073508_rqr6h_img_1035.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767081446_z6e20_img_1036.webp"
       ]
     },
     {
@@ -304,8 +304,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-23T14:49:34.675Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792766962685_n1zyd_img_1040-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792766971349_q3oa0_img_1041-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792766962685_n1zyd_img_1040.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792766971349_q3oa0_img_1041.webp"
       ]
     },
     {
@@ -322,9 +322,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:08:17.614Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681691145_hh710_img_0866-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681693313_ksgqg_img_0868-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681695588_zqkdf_img_0869-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681691145_hh710_img_0866.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681693313_ksgqg_img_0868.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681695588_zqkdf_img_0869.webp"
       ]
     },
     {
@@ -360,9 +360,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:07:12.348Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681625942_ynvlp_img_0893-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681628205_nq92c_img_0894-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681630439_7726d_img_0895-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681625942_ynvlp_img_0893.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681628205_nq92c_img_0894.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681630439_7726d_img_0895.webp"
       ]
     },
     {
@@ -379,9 +379,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:06:35.987Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681589504_7lqwi_img_0876-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681591654_szoqi_img_0877-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681593744_09k1r_img_0878-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681589504_7lqwi_img_0876.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681591654_szoqi_img_0877.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681593744_09k1r_img_0878.webp"
       ]
     },
     {
@@ -398,9 +398,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:05:42.337Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681536107_jwzsk_img_0886-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681538242_mihz4_img_0887-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681540354_cnl4f_img_0888-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681536107_jwzsk_img_0886.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681538242_mihz4_img_0887.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681540354_cnl4f_img_0888.webp"
       ]
     },
     {
@@ -417,9 +417,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:04:54.433Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681488389_s58or_img_0919-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681490662_gv3u7_img_0920-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681492789_texmz_img_0921-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681488389_s58or_img_0919.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681490662_gv3u7_img_0920.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681492789_texmz_img_0921.webp"
       ]
     },
     {
@@ -436,9 +436,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:04:00.033Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681433722_kaxs7_img_0906-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681435747_rngk8_img_0907-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681437901_bf9xs_img_0909-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681433722_kaxs7_img_0906.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681435747_rngk8_img_0907.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681437901_bf9xs_img_0909.webp"
       ]
     },
     {
@@ -455,9 +455,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:03:09.946Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681381764_289wd_img_0889-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681385422_ltd5d_img_0890-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681388326_wkb4a_img_0891-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681381764_289wd_img_0889.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681385422_ltd5d_img_0890.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681388326_wkb4a_img_0891.webp"
       ]
     },
     {
@@ -474,9 +474,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:02:30.283Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681343870_2oe2r_img_0870-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681345963_9g5so_img_0871-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681348127_hv0ey_img_0872-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681343870_2oe2r_img_0870.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681345963_9g5so_img_0871.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681348127_hv0ey_img_0872.webp"
       ]
     },
     {
@@ -493,9 +493,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:01:38.375Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681292221_1gefk_img_0879-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681294385_ceph2_img_0880-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681296523_3yh8i_img_0882-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681292221_1gefk_img_0879.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681294385_ceph2_img_0880.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681296523_3yh8i_img_0882.webp"
       ]
     },
     {
@@ -512,9 +512,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:00:48.228Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681239788_5b35t_img_0903-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681242051_zwufs_img_0904-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681244061_5dyaa_img_0905-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681239788_5b35t_img_0903.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681242051_zwufs_img_0904.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681244061_5dyaa_img_0905.webp"
       ]
     },
     {
@@ -531,9 +531,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T15:00:08.950Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681202895_g140p_img_0896-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681205088_l8kov_img_0897-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681207509_sb2u9_img_0898-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681202895_g140p_img_0896.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681205088_l8kov_img_0897.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681207509_sb2u9_img_0898.webp"
       ]
     },
     {
@@ -569,9 +569,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T14:54:28.994Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680860139_4etnf_img_0913-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680862418_2e1ir_img_0914-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680864702_w8zn1_img_0915-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680860139_4etnf_img_0913.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680862418_2e1ir_img_0914.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680864702_w8zn1_img_0915.webp"
       ]
     },
     {
@@ -588,9 +588,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T14:52:58.613Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680772166_a3swq_img_0861-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680774307_knwhw_img_0864-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680776354_vz357_img_0865-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680772166_a3swq_img_0861.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680774307_knwhw_img_0864.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680776354_vz357_img_0865.webp"
       ]
     },
     {
@@ -607,9 +607,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T14:51:05.659Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680656489_9ifr0_img_0883-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680658764_ufs9d_img_0884-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680661082_b47k5_img_0885-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680656489_9ifr0_img_0883.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680658764_ufs9d_img_0884.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680661082_b47k5_img_0885.webp"
       ]
     },
     {
@@ -645,9 +645,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T14:47:32.990Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680446533_ftmxf_img_0922-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680448843_efwjp_img_0924-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680451318_hpprn_img_0925-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680446533_ftmxf_img_0922.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680448843_efwjp_img_0924.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680451318_hpprn_img_0925.webp"
       ]
     },
     {
@@ -664,9 +664,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-22T14:44:58.993Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680290046_iy6mq_img_0916-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680293571_89udh_img_0917-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680297058_8sdjc_img_0918-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680290046_iy6mq_img_0916.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680293571_89udh_img_0917.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680297058_8sdjc_img_0918.webp"
       ]
     },
     {
@@ -683,8 +683,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:23:37.510Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599807485_nbmih_img_0710-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599810106_dhurn_img_0712-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599807485_nbmih_img_0710.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599810106_dhurn_img_0712.webp"
       ]
     },
     {
@@ -720,9 +720,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:21:17.655Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599670003_m91hn_img_0700-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599672744_m89cz_img_0702-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599675094_236wb_img_0703-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599670003_m91hn_img_0700.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599672744_m89cz_img_0702.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599675094_236wb_img_0703.webp"
       ]
     },
     {
@@ -739,9 +739,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:20:28.888Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599620009_cmnft_img_0727-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599622304_69j8x_img_0729-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599624872_1u2cn_img_0730-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599620009_cmnft_img_0727.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599622304_69j8x_img_0729.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599624872_1u2cn_img_0730.webp"
       ]
     },
     {
@@ -777,9 +777,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:17:45.322Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599454505_h5rum_img_0704-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599456995_e8w4r_img_0705-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599459563_dfsum_img_0706-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599454505_h5rum_img_0704.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599456995_e8w4r_img_0705.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599459563_dfsum_img_0706.webp"
       ]
     },
     {
@@ -796,9 +796,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:15:48.486Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599341373_q8797_img_0720-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599344106_n9p1k_img_0722-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599346427_56l36_img_0723-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599341373_q8797_img_0720.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599344106_n9p1k_img_0722.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599346427_56l36_img_0723.webp"
       ]
     },
     {
@@ -853,9 +853,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:11:58.227Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599100514_jga0y_img_0751-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599102809_68483_img_0753-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599104833_ugkmz_img_0754-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599100514_jga0y_img_0751.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599102809_68483_img_0753.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599104833_ugkmz_img_0754.webp"
       ]
     },
     {
@@ -891,9 +891,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:09:51.512Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598982296_nmifr_img_0717-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598984569_78h9r_img_0718-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598986752_jjzk1_img_0719-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598982296_nmifr_img_0717.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598984569_78h9r_img_0718.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598986752_jjzk1_img_0719.webp"
       ]
     },
     {
@@ -948,7 +948,7 @@
       "isSoldOut": false,
       "createdAt": "2026-10-21T16:02:10.727Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598505413_b1thq_img_0739-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598505413_b1thq_img_0739.webp"
       ]
     },
     {
@@ -1042,9 +1042,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T15:11:14.165Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336261515_1qjqh_img_0608-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336263882_v19sy_img_0609-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336266224_cm5k5_img_0610-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336261515_1qjqh_img_0608.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336263882_v19sy_img_0609.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336266224_cm5k5_img_0610.webp"
       ]
     },
     {
@@ -1061,9 +1061,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T15:09:11.731Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336099379_0ytaj_img_0618-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336105262_wxsrk_img_0619-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336111132_uwjeo_img_0620-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336099379_0ytaj_img_0618.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336105262_wxsrk_img_0619.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336111132_uwjeo_img_0620.webp"
       ]
     },
     {
@@ -1100,9 +1100,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T15:06:33.065Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335981883_qpksv_img_0642-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335986742_nt21q_img_0643-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335990818_hlg7e_img_0644-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335981883_qpksv_img_0642.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335986742_nt21q_img_0643.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335990818_hlg7e_img_0644.webp"
       ]
     },
     {
@@ -1158,9 +1158,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T15:03:55.472Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335820730_dom13_img_0562-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335823019_dlsim_img_0563-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335825983_2qla4_img_0564-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335820730_dom13_img_0562.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335823019_dlsim_img_0563.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335825983_2qla4_img_0564.webp"
       ]
     },
     {
@@ -1217,9 +1217,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T14:59:14.771Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335540066_yx7jr_img_0578-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335542532_vsa53_img_0579-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335544929_o6j07_img_0580-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335540066_yx7jr_img_0578.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335542532_vsa53_img_0579.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335544929_o6j07_img_0580.webp"
       ]
     },
     {
@@ -1295,9 +1295,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T14:51:55.630Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335108034_0bt2l_img_0633-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335110138_lklh7_img_0634-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335112199_wxx6l_img_0635-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335108034_0bt2l_img_0633.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335110138_lklh7_img_0634.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335112199_wxx6l_img_0635.webp"
       ]
     },
     {
@@ -1314,9 +1314,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T14:49:29.460Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334951944_9je43_img_0636-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334954788_3dwqk_img_0637-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334958705_ov9qm_img_0638-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334951944_9je43_img_0636.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334954788_3dwqk_img_0637.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334958705_ov9qm_img_0638.webp"
       ]
     },
     {
@@ -1352,11 +1352,11 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T14:46:34.158Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334767699_qa61x_img_0592-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334770052_oo5st_img_0593-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334773727_aosm4_img_0596-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334776291_ymib9_img_0594-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334778753_tvv1p_img_0595-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334767699_qa61x_img_0592.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334770052_oo5st_img_0593.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334773727_aosm4_img_0596.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334776291_ymib9_img_0594.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334778753_tvv1p_img_0595.webp"
       ]
     },
     {
@@ -1413,9 +1413,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T14:39:00.145Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334329996_7zb59_img_0575-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334332787_l87cn_img_0576-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334336447_200fd_img_0577-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334329996_7zb59_img_0575.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334332787_l87cn_img_0576.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334336447_200fd_img_0577.webp"
       ]
     },
     {
@@ -1559,8 +1559,8 @@
       "isSoldOut": false,
       "createdAt": "2026-10-18T13:59:23.521Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792331949009_yd2o8_img_0347-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792331951839_qx4yu_img_0348-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792331949009_yd2o8_img_0347.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792331951839_qx4yu_img_0348.webp"
       ]
     },
     {
@@ -1634,9 +1634,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-17T14:42:21.546Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792248136078_o86uu_img_0275-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792248137494_hznmv_img_0276-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792248139039_ic4w7_img_0277-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792248136078_o86uu_img_0275.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792248137494_hznmv_img_0276.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792248139039_ic4w7_img_0277.webp"
       ]
     },
     {
@@ -1865,9 +1865,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-17T14:30:49.123Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247431910_rclgt_img_0262-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247433989_hn0af_img_0263-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247435735_blilv_img_0264-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247431910_rclgt_img_0262.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247433989_hn0af_img_0263.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247435735_blilv_img_0264.webp"
       ]
     },
     {
@@ -1884,9 +1884,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-17T14:29:53.260Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247387574_8hpdv_img_0278-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247389178_4m99g_img_0279-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247390734_t6v01_img_0280-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247387574_8hpdv_img_0278.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247389178_4m99g_img_0279.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247390734_t6v01_img_0280.webp"
       ]
     },
     {
@@ -1922,9 +1922,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-17T14:28:11.576Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247282059_lamnd_img_0292-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247283797_ivf3m_img_0293-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247286139_u6fo1_img_0295-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247282059_lamnd_img_0292.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247283797_ivf3m_img_0293.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247286139_u6fo1_img_0295.webp"
       ]
     },
     {
@@ -1941,9 +1941,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-17T14:27:13.525Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247226859_m10ya_img_0312-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247229440_wwxle_img_0313-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247231211_lgtu9_img_0314-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247226859_m10ya_img_0312.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247229440_wwxle_img_0313.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247231211_lgtu9_img_0314.webp"
       ]
     },
     {
@@ -1960,9 +1960,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-15T14:49:31.774Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075766180_kvsvy_img_0097-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075767913_znjau_img_0099-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075769506_fvago_img_0100-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075766180_kvsvy_img_0097.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075767913_znjau_img_0099.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075769506_fvago_img_0100.webp"
       ]
     },
     {
@@ -2113,9 +2113,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-15T14:40:43.385Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075236999_tl4in_img_0162-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075239368_zf30d_img_0163-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075241390_45kuo_img_0164-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075236999_tl4in_img_0162.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075239368_zf30d_img_0163.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075241390_45kuo_img_0164.webp"
       ]
     },
     {
@@ -2132,9 +2132,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-15T14:39:57.222Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075189345_czqtn_img_0131-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075191289_z7fo0_img_0132-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075193255_t3wt8_img_0133-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075189345_czqtn_img_0131.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075191289_z7fo0_img_0132.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075193255_t3wt8_img_0133.webp"
       ]
     },
     {
@@ -2151,10 +2151,10 @@
       "isSoldOut": false,
       "createdAt": "2026-10-15T14:38:23.565Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075093202_5xo2s_img_0145-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075094879_i554g_img_0147-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075096769_ilcrn_img_0146-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075100403_o7bd5_img_0149-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075093202_5xo2s_img_0145.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075094879_i554g_img_0147.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075096769_ilcrn_img_0146.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075100403_o7bd5_img_0149.webp"
       ]
     },
     {
@@ -2648,9 +2648,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-14T14:36:40.319Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988593904_7wpmw_img_9904-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988595494_b4b92_img_9905-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988597084_ljfon_img_9906-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988593904_7wpmw_img_9904.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988595494_b4b92_img_9905.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988597084_ljfon_img_9906.webp"
       ]
     },
     {
@@ -2687,9 +2687,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-14T14:34:12.337Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988447443_tg7jr_img_9867-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988448901_bg4y4_img_9868-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988450775_dgy61_img_9869-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988447443_tg7jr_img_9867.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988448901_bg4y4_img_9868.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988450775_dgy61_img_9869.webp"
       ]
     },
     {
@@ -2727,9 +2727,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-14T14:32:21.795Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988335682_3voek_img_9891-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988338300_u1b6d_img_9892-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988339996_i4tor_img_9893-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988335682_3voek_img_9891.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988338300_u1b6d_img_9892.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988339996_i4tor_img_9893.webp"
       ]
     },
     {
@@ -2746,9 +2746,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-14T14:30:35.771Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988224005_zu5w7_img_9888-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988225535_7nvmf_img_9889-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988227288_zfqa7_img_9890-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988224005_zu5w7_img_9888.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988225535_7nvmf_img_9889.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988227288_zfqa7_img_9890.webp"
       ]
     },
     {
@@ -2765,9 +2765,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-14T14:28:55.337Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988085880_rjznz_img_9873-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988088210_2evwi_img_9874-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988090454_gcupv_img_9875-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988085880_rjznz_img_9873.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988088210_2evwi_img_9874.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988090454_gcupv_img_9875.webp"
       ]
     },
     {
@@ -2784,9 +2784,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-13T14:43:59.396Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902623195_o6q7c_img_9660-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902626064_hfnsy_img_9661-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902630247_7infn_img_9662-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902623195_o6q7c_img_9660.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902626064_hfnsy_img_9661.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902630247_7infn_img_9662.webp"
       ]
     },
     {
@@ -2822,9 +2822,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-13T14:41:17.104Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902468064_b9qyi_img_9643-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902471446_7gdrl_img_9644-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902473847_56cz2_img_9647-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902468064_b9qyi_img_9643.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902471446_7gdrl_img_9644.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902473847_56cz2_img_9647.webp"
       ]
     },
     {
@@ -2841,9 +2841,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-13T14:40:22.651Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902415787_c2jup_img_9651-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902418359_dxdkb_img_9652-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902420762_3072d_img_9653-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902415787_c2jup_img_9651.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902418359_dxdkb_img_9652.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902420762_3072d_img_9653.webp"
       ]
     },
     {
@@ -2993,9 +2993,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-13T14:32:11.564Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901922904_1tz2s_img_9629-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901925947_cnjpk_img_9630-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901929352_p1tms_img_9631-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901922904_1tz2s_img_9629.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901925947_cnjpk_img_9630.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901929352_p1tms_img_9631.webp"
       ]
     },
     {
@@ -3107,9 +3107,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-13T14:21:52.547Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901297244_wj0cs_img_9610-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901300155_mxtrh_img_9611-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901303036_u10m9_img_9613-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901297244_wj0cs_img_9610.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901300155_mxtrh_img_9611.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901303036_u10m9_img_9613.webp"
       ]
     },
     {
@@ -3145,9 +3145,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-13T14:18:38.164Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901098094_2azba_img_9601-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901101586_3uxmb_img_9602-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901105697_qawiu_img_9603-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901098094_2azba_img_9601.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901101586_3uxmb_img_9602.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901105697_qawiu_img_9603.webp"
       ]
     },
     {
@@ -3202,9 +3202,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:43:09.665Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816181611_e2x34_whatsapp_image_2026-10-12_at_8_12_19_pm__1_-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816179321_ulbxz_whatsapp_image_2026-10-12_at_8_12_18_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816184305_kiben_whatsapp_image_2026-10-12_at_8_12_19_pm-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816181611_e2x34_whatsapp_image_2026-10-12_at_8_12_19_pm__1_.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816179321_ulbxz_whatsapp_image_2026-10-12_at_8_12_18_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816184305_kiben_whatsapp_image_2026-10-12_at_8_12_19_pm.webp"
       ]
     },
     {
@@ -3374,9 +3374,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:36:13.062Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815768571_ny67n_whatsapp_image_2026-10-12_at_8_05_52_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815764072_mz5es_whatsapp_image_2026-10-12_at_8_05_51_pm__1_-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815766364_we9sf_whatsapp_image_2026-10-12_at_8_05_51_pm-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815768571_ny67n_whatsapp_image_2026-10-12_at_8_05_52_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815764072_mz5es_whatsapp_image_2026-10-12_at_8_05_51_pm__1_.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815766364_we9sf_whatsapp_image_2026-10-12_at_8_05_51_pm.webp"
       ]
     },
     {
@@ -3393,9 +3393,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:35:40.878Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815731485_ccizu_whatsapp_image_2026-10-12_at_8_05_09_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815733638_h1oiw_whatsapp_image_2026-10-12_at_8_05_10_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815729299_g8jj6_whatsapp_image_2026-10-12_at_8_05_09_pm__1_-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815731485_ccizu_whatsapp_image_2026-10-12_at_8_05_09_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815733638_h1oiw_whatsapp_image_2026-10-12_at_8_05_10_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815729299_g8jj6_whatsapp_image_2026-10-12_at_8_05_09_pm__1_.webp"
       ]
     },
     {
@@ -3431,9 +3431,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:33:24.727Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815597858_hhfyc_whatsapp_image_2026-10-12_at_8_02_15_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815593930_x5bf2_whatsapp_image_2026-10-12_at_8_02_14_pm__1_-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815595800_t0e6f_whatsapp_image_2026-10-12_at_8_02_14_pm-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815597858_hhfyc_whatsapp_image_2026-10-12_at_8_02_15_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815593930_x5bf2_whatsapp_image_2026-10-12_at_8_02_14_pm__1_.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815595800_t0e6f_whatsapp_image_2026-10-12_at_8_02_14_pm.webp"
       ]
     },
     {
@@ -3490,9 +3490,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:28:48.017Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815316662_48jbk_whatsapp_image_2026-10-12_at_7_58_13_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815314393_174lz_whatsapp_image_2026-10-12_at_7_58_13_pm__1_-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815319063_3a2ks_whatsapp_image_2026-10-12_at_7_58_14_pm-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815316662_48jbk_whatsapp_image_2026-10-12_at_7_58_13_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815314393_174lz_whatsapp_image_2026-10-12_at_7_58_13_pm__1_.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815319063_3a2ks_whatsapp_image_2026-10-12_at_7_58_14_pm.webp"
       ]
     },
     {
@@ -3586,9 +3586,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:22:20.728Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814929334_xeewb_whatsapp_image_2026-10-12_at_7_51_44_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814929944_f00z7_whatsapp_image_2026-10-12_at_7_51_45_pm__1_-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814930842_u2dq0_whatsapp_image_2026-10-12_at_7_51_45_pm-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814929334_xeewb_whatsapp_image_2026-10-12_at_7_51_44_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814929944_f00z7_whatsapp_image_2026-10-12_at_7_51_45_pm__1_.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814930842_u2dq0_whatsapp_image_2026-10-12_at_7_51_45_pm.webp"
       ]
     },
     {
@@ -3605,9 +3605,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-12T14:18:29.048Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814658844_pr69g_whatsapp_image_2026-10-12_at_7_46_45_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814660075_3jp4k_whatsapp_image_2026-10-12_at_7_46_46_pm-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814659440_4y33v_whatsapp_image_2026-10-12_at_7_46_46_pm__1_-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814658844_pr69g_whatsapp_image_2026-10-12_at_7_46_45_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814660075_3jp4k_whatsapp_image_2026-10-12_at_7_46_46_pm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814659440_4y33v_whatsapp_image_2026-10-12_at_7_46_46_pm__1_.webp"
       ]
     },
     {
@@ -4042,9 +4042,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-11T13:33:33.502Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754160263_isdjy_img_9362-1mwyxm4tnyxvso4qyf4l79feq48uqr-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754162329_3f9es_img_9368-pzbikczyszvkzbp1kslqfvn7fgh0b2-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754164304_a3us0_img_9369-6div7sni4vlpljefut5ixyag39alvc-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754160263_isdjy_img_9362-1mwyxm4tnyxvso4qyf4l79feq48uqr.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754162329_3f9es_img_9368-pzbikczyszvkzbp1kslqfvn7fgh0b2.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754164304_a3us0_img_9369-6div7sni4vlpljefut5ixyag39alvc.webp"
       ]
     },
     {
@@ -4099,9 +4099,9 @@
       "isSoldOut": false,
       "createdAt": "2026-10-11T13:28:06.403Z",
       "images": [
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754140122_6kkgr_img_9348-ep3wfn7nnydsb6tacfznth61mwx3yk-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754144541_8v0fi_img_9351-p0zhmrsmlvdmqyhovq2tuyz3s4ssmr-crisp.webp",
-        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754142102_3jyer_img_9350-oturhfh3yd8bgtwmqls67nmoyyvxz1-crisp.webp"
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754140122_6kkgr_img_9348-ep3wfn7nnydsb6tacfznth61mwx3yk.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754144541_8v0fi_img_9351-p0zhmrsmlvdmqyhovq2tuyz3s4ssmr.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754142102_3jyer_img_9350-oturhfh3yd8bgtwmqls67nmoyyvxz1.webp"
       ]
     }
   ]
