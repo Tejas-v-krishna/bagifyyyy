@@ -158,11 +158,13 @@ export default function Header() {
 
   // Studio/admin stay chromeless. /account keeps the navbar so first-time
   // members always have full navigation (shop, search, bag) — the inline
-  // "Back to shop" link alone wasn't discoverable enough.
+  // "Back to shop" link alone wasn't discoverable enough. /maintenance is a
+  // full takeover with its own wordmark, so the store nav must not stack on it.
   if (
     pathname?.startsWith("/studio") ||
     pathname?.startsWith("/admin") ||
-    pathname === "/login"
+    pathname === "/login" ||
+    pathname === "/maintenance"
   ) {
     return null;
   }

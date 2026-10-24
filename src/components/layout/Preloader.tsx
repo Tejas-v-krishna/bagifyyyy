@@ -19,11 +19,14 @@ export default function Preloader() {
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const setPreloaderFinished = useAppStore(state => state.setPreloaderFinished);
+  // /maintenance joins the chromeless routes: a holding page exists to be read
+  // immediately, so a 3.2s brand cover would only delay the message.
   const isDashboard =
     pathname?.startsWith("/studio") ||
     pathname?.startsWith("/admin") ||
     pathname === "/login" ||
-    pathname === "/account";
+    pathname === "/account" ||
+    pathname === "/maintenance";
   const isClient = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
   const prefersReducedMotion = isClient && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
