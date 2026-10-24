@@ -157,12 +157,17 @@ async function compressImage(file: File): Promise<File> {
  * Upload a single image file to /api/studio/upload, with direct-to-Blob fallback.
  */
 async function uploadSingleImage(file: File): Promise<string> {
-  let fileToSend: File;
-  try {
-    fileToSend = await compressImage(file);
-  } catch (compErr) {
-    console.warn("Client-side image compression failed, falling back to original file:", compErr);
-    fileToSend = file;
+  // For files <= 12MB, send the raw photo directly so the server's Sharp engine
+  // can perform high-order Lanczos3 resampling and clean WebP encoding without
+  // lossy HTML5 canvas downsampling.
+  let fileToSend: File = file;
+  if (file.size > 12 * 1024 * 1024) {
+    try {
+      fileToSend = await compressImage(file);
+    } catch (compErr) {
+      console.warn("Client-side image compression fallback to original:", compErr);
+      fileToSend = file;
+    }
   }
 
   let lastError: string | null = null;
