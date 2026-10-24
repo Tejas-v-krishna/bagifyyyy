@@ -3,12 +3,12 @@ import { queryProducts } from '@/lib/products';
 
 export const dynamic = 'force-dynamic';
 
-// Edge-cache listings for 60s: this is the highest-traffic route on the site
+// Edge-cache listings for 5m: this is the highest-traffic route on the site
 // and every miss is a full function run plus Turso round trips. Staleness is
 // safe — the buy button and checkout re-check live stock server-side, so a
-// just-sold piece can never be oversold from a 60s-old listing.
+// just-sold piece can never be oversold from a cached listing.
 const LISTING_CACHE_HEADERS = {
-  'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
 };
 
 export async function GET(request: Request) {

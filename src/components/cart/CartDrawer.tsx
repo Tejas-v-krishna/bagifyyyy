@@ -64,25 +64,30 @@ function CartUpsell({ closeCart }: { closeCart: () => void }) {
   const router = useRouter();
   const items = useCartStore((s) => s.items);
   const addItem = useCartStore((s) => s.addItem);
+  const [allUpsells, setAllUpsells] = useState<UpsellProduct[]>([]);
   const [products, setProducts] = useState<UpsellProduct[]>([]);
   const [addedId, setAddedId] = useState<string | null>(null);
   const railRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/products")
+    fetch("/api/products?take=12")
       .then((res) => (res.ok ? res.json() : []))
       .then((data: unknown) => {
         if (cancelled) return;
         const list: UpsellProduct[] = Array.isArray(data)
           ? data
           : (data as { products?: UpsellProduct[] }).products ?? [];
-        const inBag = new Set(items.map((i) => i.id));
-        setProducts(list.filter((p) => !inBag.has(p.id) && !p.isSoldOut).slice(0, 6));
+        setAllUpsells(list);
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [items]);
+  }, []);
+
+  useEffect(() => {
+    const inBag = new Set(items.map((i) => i.id));
+    setProducts(allUpsells.filter((p) => !inBag.has(p.id) && !p.isSoldOut).slice(0, 6));
+  }, [items, allUpsells]);
 
   if (products.length === 0) return null;
 
