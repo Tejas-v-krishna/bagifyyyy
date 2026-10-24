@@ -42,14 +42,14 @@ export default function CustomerReviews() {
         Community reviews
       </h2>
 
-      <div className="relative w-full overflow-hidden rounded-2xl bg-[#e9e9ec]">
+      <div className="relative mx-auto w-full max-w-[360px] overflow-hidden rounded-2xl bg-[#e9e9ec] sm:max-w-[420px]">
         <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full">
           <Image
             key={current.src}
             src={current.src}
             alt={current.alt || `Customer review ${index + 1}`}
             fill
-            sizes="100vw"
+            sizes="(max-width: 640px) 100vw, 420px"
             loading="lazy"
             draggable={false}
             className="h-full w-full object-cover object-top"

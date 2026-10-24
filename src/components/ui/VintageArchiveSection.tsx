@@ -12,6 +12,8 @@ export type VintageArchiveItem = {
   reserved?: boolean;
   sizes?: string[];
   colors?: string[];
+  /** Offline catalogue snapshot — browse only, no cart. */
+  fallback?: boolean;
 };
 
 export default function VintageArchiveSection({ items }: { items: VintageArchiveItem[] }) {
@@ -46,6 +48,7 @@ export default function VintageArchiveSection({ items }: { items: VintageArchive
                   reserved: item.reserved,
                   sizes: item.sizes,
                   colors: item.colors,
+                  fallback: item.fallback,
                 }}
               />
             ))}

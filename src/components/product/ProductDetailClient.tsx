@@ -312,7 +312,7 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
   }
 
   return (
-    <div className="w-full bg-white text-y2k-gunmetal min-h-screen pb-24">
+    <div className="w-full bg-white text-y2k-gunmetal min-h-screen">
       <div className="max-w-[1480px] mx-auto px-6 sm:px-10 lg:px-16 pt-0 lg:pt-8">
 
         {/* Back Button & Share Pill — desktop only, mobile uses gallery overlay */}
@@ -618,69 +618,9 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
               </p>
             )}
 
-            {/* Mobile size + CTA row (reference layout) */}
-            {!effectiveSoldOut && (
-              <div className="mt-4 flex gap-2 lg:hidden">
-                {product.sizes.length > 1 ? (
-                  <select
-                    value={selectedSize}
-                    onChange={(e) => handleSelectSize(e.target.value)}
-                    aria-label="Choose size"
-                    className="min-h-[52px] w-full max-w-[140px] appearance-none rounded-full border border-black/15 bg-white px-4 text-[12px] font-bold uppercase tracking-[0.1em] text-black outline-none"
-                  >
-                    {product.sizes.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => setIsShareOpen(true)}
-                      aria-label="Share this piece"
-                      className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-black transition active:scale-95 cursor-pointer"
-                    >
-                      <Share2 className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => toggleItem(id)}
-                      aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                      className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-black transition active:scale-95 cursor-pointer"
-                    >
-                      <Heart className={`h-4 w-4 ${wishlisted ? "fill-black" : ""}`} aria-hidden="true" />
-                    </button>
-                  </>
-                )}
-                {isHeld && heldByYou ? (
-                  <Button onClick={openCart} variant="dark" className="w-full flex-1 text-[11px] uppercase tracking-[0.14em]">
-                    <span>View bag</span>
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={(e) => handleAddToCart(e)}
-                    disabled={!canAddSelectedVariant}
-                    variant="dark"
-                    className="w-full flex-1 text-[11px] uppercase tracking-[0.14em]"
-                  >
-                    <span>{isHeld ? "On hold" : "Add to bag"}</span>
-                  </Button>
-                )}
-              </div>
-            )}
-            {effectiveSoldOut && (
-              <div className="mt-4 lg:hidden">
-                <button
-                  type="button"
-                  disabled
-                  className="w-full rounded-full border border-black/15 bg-black/[0.05] px-5 py-4 text-[11px] font-bold uppercase tracking-[0.16em] text-black/40 cursor-not-allowed"
-                >
-                  Sold out
-                </button>
-              </div>
-            )}
+            {/* The size + CTA row lives in the sticky bottom action bar
+                (see the end of this component) so share / wishlist /
+                ADD TO BAG stay reachable on every screen size. */}
 
             {/* Sizes: Only shown when 2 or more sizes are available — desktop */}
             {product.sizes.length > 1 && (
@@ -1059,8 +999,75 @@ export default function ProductDetailClient({ product }: { product: ProductForDi
 
       </div>
 
-      {/* Mobile sticky bar removed — the in-flow size + ADD TO BAG row above
-          is the single action, matching the reference layout. */}
+      {/* ── Sticky action bar ────────────────────────────────────────────────
+          Share / wishlist / ADD TO BAG (plus the size picker when the piece
+          has multiple sizes) stay pinned to the bottom of the viewport on
+          every screen size. It's `sticky` rather than `fixed` on purpose: it
+          holds the viewport bottom while browsing, then settles into the page
+          once the content ends, so the footer is never covered. */}
+      <div className="sticky bottom-0 z-40 border-t border-black/10 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_rgba(0,0,0,0.07)]">
+        <div className="mx-auto flex w-full max-w-[680px] items-center gap-2 px-4 py-3 sm:px-6">
+          {effectiveSoldOut ? (
+            <button
+              type="button"
+              disabled
+              className="w-full rounded-full border border-black/15 bg-black/[0.05] px-5 py-4 text-[11px] font-bold uppercase tracking-[0.16em] text-black/40 cursor-not-allowed"
+            >
+              Sold out
+            </button>
+          ) : (
+            <>
+              {product.sizes.length > 1 ? (
+                <select
+                  value={selectedSize}
+                  onChange={(e) => handleSelectSize(e.target.value)}
+                  aria-label="Choose size"
+                  className="min-h-[52px] w-full max-w-[140px] appearance-none rounded-full border border-black/15 bg-white px-4 text-[12px] font-bold uppercase tracking-[0.1em] text-black outline-none"
+                >
+                  {product.sizes.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsShareOpen(true)}
+                    aria-label="Share this piece"
+                    className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-black transition active:scale-95 cursor-pointer"
+                  >
+                    <Share2 className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleItem(id)}
+                    aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                    className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-black transition active:scale-95 cursor-pointer"
+                  >
+                    <Heart className={`h-4 w-4 ${wishlisted ? "fill-black" : ""}`} aria-hidden="true" />
+                  </button>
+                </>
+              )}
+              {isHeld && heldByYou ? (
+                <Button onClick={openCart} variant="dark" className="w-full flex-1 text-[11px] uppercase tracking-[0.14em]">
+                  <span>View bag</span>
+                </Button>
+              ) : (
+                <Button
+                  onClick={(e) => handleAddToCart(e)}
+                  disabled={!canAddSelectedVariant}
+                  variant="dark"
+                  className="w-full flex-1 text-[11px] uppercase tracking-[0.14em]"
+                >
+                  <span>{isHeld ? "On hold" : "Add to bag"}</span>
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Share Modal */}
       <ProductShareModal

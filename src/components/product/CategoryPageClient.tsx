@@ -10,6 +10,7 @@ import { LayoutGrid, List, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Spa
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
 import CustomDropdown, { DropdownOption } from "@/components/ui/CustomDropdown";
+import ArchiveModeNotice from "@/components/product/ArchiveModeNotice";
 import { getProductPath } from "@/lib/productSlug";
 
 const NO_PRODUCTS: Product[] = [];
@@ -24,6 +25,9 @@ function EditorialGridCard({ product }: { product: Product }) {
   if (product.isSoldOut || (product as { isArchived?: boolean }).isArchived) {
     return null;
   }
+  // Snapshot pieces are display-only: their stock was frozen when the DB
+  // became unreadable, so offering "add to bag" would sell a ghost.
+  const isArchivePiece = Boolean((product as { fallback?: boolean }).fallback);
   const [activeIdx, setActiveIdx] = useState(0);
   const timerRef = useRef<number | null>(null);
   const imageList = product.images && product.images.length > 0 ? product.images : [product.image];
@@ -95,7 +99,7 @@ function EditorialGridCard({ product }: { product: Product }) {
           </span>
         ) : null}
 
-        {!product.isSoldOut && !product.reserved && (
+        {!product.isSoldOut && !product.reserved && !isArchivePiece && (
           <div
             className="absolute bottom-3 right-3"
             onClick={(e) => e.preventDefault()}
@@ -216,6 +220,9 @@ export default function CategoryPageClient({
   const loading = !isCurrent;
   const loadFailed = isCurrent && result.failed;
   const products = isCurrent ? result.products : NO_PRODUCTS;
+  const isArchiveView = products.some(
+    (product) => (product as { fallback?: boolean }).fallback === true
+  );
 
   useEffect(() => {
     // Initial data already seeded from the server for this exact key.
@@ -571,6 +578,8 @@ export default function CategoryPageClient({
 
         {/* Main Content */}
         <div className="w-full pb-32">
+          {isArchiveView && <ArchiveModeNotice className="mb-6" />}
+
           {loading ? (
             <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 lg:gap-x-6">
               {[...Array(8)].map((_, i) => (

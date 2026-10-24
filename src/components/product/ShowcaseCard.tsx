@@ -16,6 +16,8 @@ export type ShowcaseCardProduct = {
   reserved?: boolean;
   sizes?: string[];
   colors?: string[];
+  /** Served from the offline catalogue snapshot — browse only, no cart. */
+  fallback?: boolean;
 };
 
 const ROTATE_MS = 1200;
@@ -39,6 +41,7 @@ export default function ShowcaseCard({
   const timerRef = useRef<number | null>(null);
   const dark = tone === "dark";
   const textColor = dark ? "text-white" : "text-black";
+  const isArchivePiece = Boolean(product.fallback);
 
   const stop = () => {
     if (timerRef.current) {
@@ -107,7 +110,7 @@ export default function ShowcaseCard({
           </span>
         ) : null}
 
-        {!product.isSoldOut && !product.reserved && (
+        {!product.isSoldOut && !product.reserved && !isArchivePiece && (
           <div
             className="absolute bottom-3 right-3"
             onClick={(e) => e.preventDefault()}

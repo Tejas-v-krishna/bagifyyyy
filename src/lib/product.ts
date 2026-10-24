@@ -8,6 +8,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
+import { findFallbackProduct } from '@/lib/catalogFallback';
 
 export type DisplayProduct = {
   id: string;
@@ -29,6 +30,8 @@ export type DisplayProduct = {
   colors: string[];
   sizes: string[];
   variants: ProductVariantForDisplay[];
+  /** Read from the offline snapshot because the database refused the read. */
+  fallback?: boolean;
 };
 
 export type ProductVariantForDisplay = {
@@ -71,6 +74,10 @@ export async function getProductForDisplay(
   id: string
 ): Promise<ProductForDisplay | null> {
   let product = null;
+  // True when the read itself failed (quota/outage) rather than the row simply
+  // not existing — those two cases must not be confused: one falls back to the
+  // snapshot, the other is a real 404.
+  let readFailed = false;
 
   // 1. Try exact match (handles full UUID)
   try {
@@ -82,25 +89,32 @@ export async function getProductForDisplay(
       },
     });
   } catch {
+    readFailed = true;
     product = null;
   }
 
   // 2. If not found, extract 8-hex identifier from end of slug or direct short ID
-  if (!product) {
+  if (!product && !readFailed) {
     const hexMatch = id.match(/[a-f0-9]{8}$/i) || id.match(/^[a-f0-9]{8}/i);
     if (hexMatch) {
-      product = await prisma.product.findFirst({
-        where: {
-          id: { startsWith: hexMatch[0] },
-        },
-        include: {
-          images: { orderBy: { position: 'asc' } },
-          variants: true,
-        },
-      });
+      try {
+        product = await prisma.product.findFirst({
+          where: {
+            id: { startsWith: hexMatch[0] },
+          },
+          include: {
+            images: { orderBy: { position: 'asc' } },
+            variants: true,
+          },
+        });
+      } catch {
+        readFailed = true;
+        product = null;
+      }
     }
   }
 
+  if (readFailed) return findFallbackProduct(id);
   if (!product || product.isArchived) return null;
 
   const colors = Array.from(new Set(product.variants.map((v) => v.color)));

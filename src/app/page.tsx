@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Asterisk, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { attachReservedFlags, availableProductWhere } from "@/lib/products";
+import { getFallbackHomeRails } from "@/lib/catalogFallback";
+import ArchiveModeNotice from "@/components/product/ArchiveModeNotice";
 import { getHeroContent, getTickerContent, getManifestoContent, sanityImageUrl } from "@/lib/sanity";
 import ShowcaseCard from "@/components/product/ShowcaseCard";
 import EditorialManifesto from "@/components/home/EditorialManifesto";
@@ -20,13 +22,14 @@ export default async function Home() {
   // lists, fetched optimistically so no query ever waits on another. Each
   // read degrades to an empty list instead of hanging the render on a slow
   // remote DB.
+  const fallbackRails = getFallbackHomeRails();
   const [newFlagged, priceTop, rawBundles, bestSellers] = await Promise.all([
     prisma.product
       .findMany({ where: { isNew: true, ...availableProductWhere }, orderBy: { createdAt: 'desc' }, include: productInclude })
-      .catch(() => []),
+      .catch(() => fallbackRails.newArrivals),
     prisma.product
       .findMany({ where: availableProductWhere, take: 20, orderBy: { price: 'desc' }, include: productInclude })
-      .catch(() => []),
+      .catch(() => fallbackRails.vintageArchive),
     prisma.bundle
       .findMany({
         include: {
@@ -44,8 +47,13 @@ export default async function Home() {
       .catch(() => []),
     prisma.product
       .findMany({ where: { isBestSeller: true, ...availableProductWhere }, take: 20, orderBy: { price: 'desc' }, include: productInclude })
-      .catch(() => []),
+      .catch(() => fallbackRails.vintageArchive),
   ]);
+
+  // Either rail landing on the snapshot proves the catalogue read failed.
+  const catalogDegraded = [newFlagged[0], priceTop[0], bestSellers[0]].some(
+    (product) => (product as { fallback?: boolean } | undefined)?.fallback === true
+  );
 
   // New Arrivals rail is new-flagged pieces only — older stock lives in the
   // catalogue pages, never on the landing rail.
@@ -226,6 +234,14 @@ export default async function Home() {
       {/* 1.6. Next-drop countdown (studio-set; hidden until scheduled) */}
       <DropCountdown />
 
+      {catalogDegraded && (
+        <section className="w-full bg-white px-4 pt-10 sm:px-6 lg:px-10">
+          <div className="mx-auto w-full max-w-[1700px]">
+            <ArchiveModeNotice />
+          </div>
+        </section>
+      )}
+
       {/* 2. New In — compact 2-up grid on phones (easy to scan, obvious
           there's more), liquid-glass carousel on larger screens.
           Hidden entirely when nothing is flagged new. */}
@@ -253,6 +269,7 @@ export default async function Home() {
                   reserved: p.reserved,
                   sizes: Array.from(new Set(p.variants.map((v) => v.size))),
                   colors: Array.from(new Set(p.variants.map((v) => v.color))),
+                  fallback: (p as { fallback?: boolean }).fallback,
                 }}
               />
             ))}
@@ -382,6 +399,7 @@ export default async function Home() {
           reserved: product.reserved,
           sizes: Array.from(new Set(product.variants.map((v) => v.size))),
           colors: Array.from(new Set(product.variants.map((v) => v.color))),
+          fallback: (product as { fallback?: boolean }).fallback,
         }))}
       />
 

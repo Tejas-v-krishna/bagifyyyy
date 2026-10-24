@@ -1,0 +1,291 @@
+{
+  "capturedAt": "2026-10-11T21:40:07.510Z",
+  "note": "Last-known catalogue captured before the Turso read quota blocked production reads. Regenerate with: npx tsx scripts/snapshot-catalog.ts",
+  "products": [
+    {
+      "id": "db11fd81-15e3-4831-9879-d6c796ec7c44",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 40\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T14:28:10.996+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754301993_h5b11_img_9316-hla6t8h24iyqvbayy8qi69qnt9uly2.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754306147_f0gib_img_9318-qbvh6yrzizutgjv0swqjg8ry1ygdut.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754303788_ln3yd_img_9319-vzbwooqilibi3axtqkcigmbllrsddt.webp"
+      ]
+    },
+    {
+      "id": "4f48aa4d-c088-4e8c-a8db-1cb368f0f7e5",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 40\nCondition - 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T14:26:38.099+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754289248_qr1sn_img_9292-3dbqbd3b91zhtwkjdzdlamxb9dfv2r.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754293769_5fzti_img_9293-msegz50kyexzncf6zw9cw6mzhkrkmj.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754291660_os4xc_img_9295-junygzaucsg0cjpvmm2x2dho2xbxnl.webp"
+      ]
+    },
+    {
+      "id": "632e90a6-9d44-4ba5-8512-0287527b545b",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 42\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T14:25:05.043+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754280793_2yqhg_img_9312-rpyg0o6jjluo3ghi0ttmc5cql3ryan.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754285453_hezew_img_9313-i3cicx1acqiezs1hbmhn8wdgumfwyg.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754283215_dpdws_img_9315-hfdsrytjmcw4vvr5jzb3sudyjn33bk.webp"
+      ]
+    },
+    {
+      "id": "ecdbfacc-414f-4656-a71b-1522b0e69765",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 42\nCondition - 10/10\nLeg open - 24 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T14:23:27.474+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754265879_e5151_img_9304-1e2rin4gemx3lpkgxzz2jyefvn0p1k.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754268229_ir4kt_img_9305-t5h76acihh1ixar3heeaznoeimofyk.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754270117_rl67s_img_9308-tfghuan9jhsdcyb1qv6cibpvuxurnu.webp"
+      ]
+    },
+    {
+      "id": "4ccfc802-c57a-44da-80c7-6f639e970bbb",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 39\nCondition - 10/10\nLeg open - 21 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T14:18:15.627+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754246356_m7y1g_img_9273-fr8afmvtx8pnlg1vyf7e2oymhcilc9.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754248703_j1u8c_img_9274-lauvbtrlebsupbqyvy9jqbfajpee9m.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754251287_qcg33_img_9276-atlh46xxodudtklyvz1iozasvdglzy.webp"
+      ]
+    },
+    {
+      "id": "0faa9063-c59a-4680-8881-e36578f08c8e",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -40\nCondition- 10/10\nLeg open - 20inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T14:15:54.627+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754236020_k8q5l_img_9263-uxcri1sukw51e6wm0cl2zccp9b6gfj.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754239287_l99xh_img_9264-cjxyodtirjizmxrkvsixen6uzcqcim.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754237811_5m6hg_img_9266-qwxw6avw7xfqwpfnytrhl5qvnnnzck.webp"
+      ]
+    },
+    {
+      "id": "ba272806-b56f-4ac7-955b-cdf8e974f60b",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:54:37.894+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754216728_tzhdr_img_9267-ytwaxufdj0dowho3hgdqpm520ffkd4.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754219071_iyhos_img_9268-zjwqjylu9ilgwhg3rmhlvtsxuyzvkj.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754221158_czs5d_img_9269-bebilyswse3trtyynjgwfshtizohmp.webp"
+      ]
+    },
+    {
+      "id": "b7dcdb6b-e086-4115-9704-b50788ffaae8",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 42\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:45:36.020+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754198196_5sfe1_img_9344-dh2nujflqqmvohejibtwz3fh6x3apc.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754202213_e9l5d_img_9347-g0gltbzboaxjnjsvrmd2b2wwdhmpz5.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754200611_1150e_img_9346-48qsi4xmga23zszpanoumy6z1so0hh.webp"
+      ]
+    },
+    {
+      "id": "d8ba792f-93c6-447a-9453-fe674b4bb6d4",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 38\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:43:11.819+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754180329_i3i9k_img_9323-wyjhww2tibarwy0s2prxhagxkuvifv.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754184430_7o990_img_9324-ov2vun3h6ledzf16kveqraccewtu9z.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754182674_qgfmt_img_9325-yi2a6kqooxvczv2glnd8vruuz3gxxx.webp"
+      ]
+    },
+    {
+      "id": "928a74af-6260-48ab-9570-1038ee0d5b3c",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 40\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:41:53.674+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754173628_8rb0g_img_9299-ickb23qvasnzjkjpc7eetiese9gygd.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754176287_ksvy4_img_9300-nxa3ewnxeleesqzk9m5x8xd1mnuiak.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754178620_5tc8a_img_9302-nj3prkmkevergiz98lonwnctmfprqp.webp"
+      ]
+    },
+    {
+      "id": "65b418f1-9402-4ef1-b130-2c0b82a4744e",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 39\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:34:26.375+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754166414_h2dza_img_9370-rotih85c8qcg6n2u1fgwkrpigvpwtf.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754171019_vo23d_img_9372-kggwdnsrx0irsailizrmh5v8vigy8q.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754168398_0xpuj_img_9373-ldyltedjavrdtndmemnvuhzqtzo0nw.webp"
+      ]
+    },
+    {
+      "id": "3d31d1b1-b693-41a8-8809-f5127f2daf5b",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 30/32\nLength - 40\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:33:33.502+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754160263_isdjy_img_9362-1mwyxm4tnyxvso4qyf4l79feq48uqr.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754162329_3f9es_img_9368-pzbikczyszvkzbp1kslqfvn7fgh0b2.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754164304_a3us0_img_9369-6div7sni4vlpljefut5ixyag39alvc.webp"
+      ]
+    },
+    {
+      "id": "079f8142-ee56-417a-b22a-5e1b8ea897c8",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 41\nCondition - 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:32:30.542+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754154069_q1ear_img_9352-glbkb46hca9zlkspj6ebuqyhd6yvxm.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754156313_cioq9_img_9355-f7q9ptmmczh8etgnkns5ehnblsp06m.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754158196_iywm3_img_9356-atdct6ohhknubiaahkoo5sw5d4usrt.webp"
+      ]
+    },
+    {
+      "id": "cd9375aa-2ae9-4524-afe7-5073e7735598",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 40\nCondition - 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:30:39.190+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754146757_xsz7g_img_9357-jn7ktlkxwbculfi7f45dphcqiqyydw.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754152102_px5xe_img_9360-chjysyixnhpn0txsj7iyngokl6l6sz.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754149632_okirl_img_9361-fduvhksglyjg3fpu4ydjrjft3wluuy.webp"
+      ]
+    },
+    {
+      "id": "fd03490c-f936-4d9e-8003-7df61784d1b4",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist - 28/30\nLength - 40\nCondition - 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-11T13:28:06.403+00:00",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754140122_6kkgr_img_9348-ep3wfn7nnydsb6tacfznth61mwx3yk.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754144541_8v0fi_img_9351-p0zhmrsmlvdmqyhovq2tuyz3s4ssmr.webp",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754142102_3jyer_img_9350-oturhfh3yd8bgtwmqls67nmoyyvxz1.webp"
+      ]
+    }
+  ]
+}

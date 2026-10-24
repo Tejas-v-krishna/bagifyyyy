@@ -7,6 +7,7 @@ import { categoryHref, categoryLabel } from "@/lib/categories";
 import { absoluteUrl, breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 import ProductDetailClient from "@/components/product/ProductDetailClient";
+import ArchiveProductPreview from "@/components/product/ArchiveProductPreview";
 
 import Link from "next/link";
 
@@ -50,6 +51,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical },
+    // Snapshot pages are a temporary stand-in for live stock — keep them out
+    // of the index so stale prices never become the search result.
+    robots: product.fallback ? { index: false, follow: true } : undefined,
     openGraph: {
       type: "website",
       title,
@@ -93,6 +97,10 @@ export default async function ProductDetailPage({ params }: Props) {
         </div>
       </main>
     );
+  }
+
+  if (product.fallback) {
+    return <ArchiveProductPreview product={product} />;
   }
 
   const crumbs = [

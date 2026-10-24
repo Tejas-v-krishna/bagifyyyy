@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { queryFallbackProducts } from '@/lib/catalogFallback';
 import type { Prisma } from '@prisma/client';
 
 export type CatalogProduct = {
@@ -19,6 +20,8 @@ export type CatalogProduct = {
   images: string[];
   colors: string[];
   sizes: string[];
+  /** Served from the offline catalogue snapshot because the DB read failed. */
+  fallback?: boolean;
 };
 
 /**
@@ -177,7 +180,11 @@ export async function queryProducts({
       };
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return [];
+    // Turso can refuse every read at once (quota/outage). Serving the frozen
+    // catalogue keeps the storefront — and its images — readable instead of
+    // collapsing to "no products"; the items are flagged so the UI can mark
+    // them archive-only.
+    console.error('Error fetching products, serving catalogue snapshot:', error);
+    return queryFallbackProducts({ category, filter, q, ids, take });
   }
 }
