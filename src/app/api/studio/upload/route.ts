@@ -3,6 +3,8 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { requireStudioAuth } from '@/lib/requireStudioAuth';
 import { isR2Configured, uploadToR2 } from '@/lib/r2';
+import { buildThumb } from '@/lib/imageThumb';
+import { thumbKeyFor } from '@/lib/imageVariants';
 import {
   IMAGE_MIME_TYPES,
   IMAGE_FORMATS_HINT,
@@ -107,6 +109,9 @@ export async function POST(request: Request) {
         `[Studio Upload] Storing original "${file.name}" without compression: ${(buffer.length / 1024).toFixed(1)} KB (${contentType})`
       );
 
+      const thumbKey = thumbKeyFor(uniqueFilename);
+      const thumb = await buildThumb(buffer);
+
       if (useR2) {
         const r2Url = await uploadToR2({
           buffer,
@@ -114,9 +119,18 @@ export async function POST(request: Request) {
           contentType,
         });
         uploadedUrls.push(r2Url);
+
+        await uploadToR2({
+          buffer: thumb?.buffer ?? buffer,
+          key: thumbKey,
+          contentType: thumb ? 'image/webp' : contentType,
+        }).catch((err) => {
+          console.warn('[Studio Upload] Thumbnail upload failed:', err);
+        });
       } else {
         const filePath = path.join(uploadsDir, uniqueFilename);
         await writeFile(filePath, buffer);
+        await writeFile(path.join(uploadsDir, thumbKey), thumb?.buffer ?? buffer);
         const publicUrl = `/uploads/${uniqueFilename}`;
         uploadedUrls.push(publicUrl);
       }

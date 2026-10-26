@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import AddToBagButton from "@/components/ui/AddToBagButton";
+import ThumbImage from "@/components/ui/ThumbImage";
 import { getProductPath } from "@/lib/productSlug";
 
 export type ShowcaseCardProduct = {
@@ -76,7 +76,7 @@ export default function ShowcaseCard({
         onBlur={reset}
       >
         {product.images.map((src, i) => (
-          <Image
+          <ThumbImage
             key={`${product.id}-${i}`}
             src={src || "/placeholder.jpg"}
             alt={i === 0 ? product.name : `${product.name} view ${i + 1}`}

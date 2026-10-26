@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Product } from "@/components/product/ProductCard";
 import AddToBagButton from "@/components/ui/AddToBagButton";
+import ThumbImage from "@/components/ui/ThumbImage";
 import { LayoutGrid, List, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Sparkles, ShoppingBag } from "lucide-react";
 import RecentlyViewed from "@/components/ui/RecentlyViewed";
 import FilterPopover, { DEFAULT_COLOR_SWATCHES } from "@/components/product/FilterPopover";
@@ -65,7 +65,7 @@ function EditorialGridCard({ product }: { product: Product }) {
         onBlur={reset}
       >
         {imageList.map((src, i) => (
-          <Image
+          <ThumbImage
             key={`${product.id}-${i}`}
             src={src || "/placeholder.jpg"}
             alt={i === 0 ? product.name : `${product.name} view ${i + 1}`}
@@ -701,7 +701,7 @@ export default function CategoryPageClient({
                             >
                               <span className="relative block h-20 w-16 shrink-0 overflow-hidden rounded-[12px] bg-[#e9e9ec] sm:h-24 sm:w-[4.75rem]">
                                 {product.image ? (
-                                  <Image
+                                  <ThumbImage
                                     src={product.image}
                                     alt=""
                                     fill

@@ -39,6 +39,19 @@ const LIMIT_FLAG = process.argv.indexOf('--limit');
 const LIMIT = LIMIT_FLAG !== -1 ? Math.max(0, Number(process.argv[LIMIT_FLAG + 1]) || 0) : 0;
 const CONCURRENCY = 4;
 const MIN_SAVINGS = 0.2;
+/**
+ * Safety gate.
+ *
+ * The studio upload route stores raw originals untouched (commit e1101f3), so
+ * this backfill is no longer part of the normal pipeline. Worse, the images
+ * currently in R2 were already produced by an earlier, far more aggressive
+ * version of this script (1600px cap + WebP q70 + a 5x5 median pass). Running
+ * it again would stack a second lossy generation on top and visibly soften
+ * every product photo.
+ *
+ * A real (writing) run therefore requires an explicit opt-in flag.
+ */
+const FORCE = process.argv.includes('--force-recompress');
 
 type Outcome = 'optimized' | 'dry-optimized' | 'skipped-pristine' | 'skipped-marginal' | 'skipped-animated' | 'failed';
 
@@ -71,6 +84,18 @@ async function main() {
 
   console.log(`Target R2 domain: ${domain}`);
   console.log(DRY_RUN ? 'Mode: DRY RUN (no uploads, no DB writes)\n' : 'Mode: REAL RUN (uploads optimized copies + updates DB)\n');
+
+  if (!DRY_RUN && !FORCE) {
+    console.error(
+      'Refusing to run.\n\n' +
+        'This script re-encodes live product images and will soften them further.\n' +
+        'Uploads have been stored untouched since commit e1101f3, so a quality\n' +
+        'backfill is no longer part of the pipeline.\n\n' +
+        '  - To inspect what it would do:  npm run images:optimize -- --dry-run\n' +
+        '  - To force a real run:          npm run images:optimize -- --force-recompress\n'
+    );
+    process.exit(1);
+  }
 
   // ── 1. Collect every candidate URL ──────────────────────────────────────
   const imageRows = await prisma.image.findMany({ select: { id: true, url: true } });

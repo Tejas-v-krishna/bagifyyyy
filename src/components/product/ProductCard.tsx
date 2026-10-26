@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import AddToBagButton from "@/components/ui/AddToBagButton";
+import ThumbImage from "@/components/ui/ThumbImage";
 import ProductMetaRow from "@/components/product/ProductMetaRow";
 import { getProductPath } from "@/lib/productSlug";
 
@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Base Product Image */}
         {product.image ? (
           <>
-            <Image
+            <ThumbImage
               src={product.image}
               alt={product.name}
               fill
@@ -59,7 +59,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
             {/* Hover Image (if available) */}
             {product.hoverImage && (
-              <Image
+              <ThumbImage
                 src={product.hoverImage}
                 alt={`${product.name} alternate view`}
                 fill
