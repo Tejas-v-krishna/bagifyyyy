@@ -12,9 +12,8 @@ import {
   sniffImageMime,
 } from '@/lib/imageFormats';
 
-// Raised from 2 MB: iPhone photos (especially HEIC) routinely exceed 2 MB, and
-// the image is resized to 400x400 WebP below anyway, so the input cap is generous.
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
+// Capped at 10 MB: generous enough for modern phone photos and DSLR shots
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 // POST: upload a profile picture from the device gallery.
 // Session-authed; stores under public/uploads/avatars and returns its URL.
@@ -30,7 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Choose an image from your gallery.' }, { status: 400 });
     }
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: 'Image must be 15 MB or smaller.' }, { status: 400 });
+      return NextResponse.json({ error: 'Image must be 10 MB or smaller.' }, { status: 400 });
     }
 
     // Accept any image/* MIME type or known extension; fall back to sniffing the

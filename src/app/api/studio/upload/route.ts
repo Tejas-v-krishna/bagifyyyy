@@ -13,7 +13,7 @@ import {
   sniffImageMime,
 } from '@/lib/imageFormats';
 
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB limit
 
 // Decoding + up to two WebP encodes + the R2 PUT needs more than the platform
 // default on slower instances. Vercel clamps this to the plan's own ceiling.
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "No valid image files provided." }, { status: 400 });
       }
       if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json({ error: "Each image must be 15 MB or smaller." }, { status: 400 });
+        return NextResponse.json({ error: "Each image must be 10 MB or smaller." }, { status: 400 });
       }
 
       // Fast path: a known MIME type or extension is enough.

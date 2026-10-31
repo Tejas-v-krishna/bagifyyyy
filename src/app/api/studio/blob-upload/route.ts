@@ -31,7 +31,7 @@ export async function POST(request: Request): Promise<Response> {
           // Full image registry — keeps iPhone HEIC/HEIF and every other
           // supported format working through the Blob fallback path too.
           allowedContentTypes: IMAGE_MIME_TYPES,
-          maximumSizeInBytes: 15 * 1024 * 1024,
+          maximumSizeInBytes: 10 * 1024 * 1024,
           addRandomSuffix: true,
           tokenPayload: JSON.stringify({ studio: true }),
         };
