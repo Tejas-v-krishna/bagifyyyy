@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
   // Barrel imports (lucide-react = hundreds of icons) resolve to only
   // the icons actually used, shrinking both server and client bundles.
   experimental: {
+    agentUpgrade: "security",
     optimizePackageImports: ["lucide-react", "framer-motion", "@gsap/react", "gsap", "animejs"],
   },
   // Exclude dev artifacts, CLI packages, and unused binaries from serverless function traces
