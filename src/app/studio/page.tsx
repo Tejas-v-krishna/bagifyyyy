@@ -79,6 +79,19 @@ interface BugReport {
   createdAt: string;
 }
 
+/** Whole-table aggregates from /api/studio/orders/stats. */
+interface OrderStats {
+  totalOrders: number;
+  totalRevenue: number;
+  processing: number;
+  shipped: number;
+  delivered: number;
+  cancelled: number;
+}
+
+/** The dashboard only renders the five most recent orders. */
+const RECENT_ORDERS_LIMIT = 5;
+
 function getProductImageUrl(image: ProductImage | undefined): string | null {
   if (typeof image === "string") {
     const url = image.trim();
@@ -186,10 +199,13 @@ export default function StudioDashboard() {
   const fetchData = useCallback(async (showLoading = true) => {
     if (showLoading) setLoading(true);
     try {
-      const [prodRes, orderRes, bugRes] = await Promise.allSettled([
-        fetch("/api/admin/products").then((r) => r.json()),
-        fetch("/api/studio/orders").then((r) => r.json()),
-        fetch("/api/admin/bug-reports").then((r) => r.json()),
+      const [prodRes, orderRes, bugRes, statsRes] = await Promise.allSettled([
+        fetch("/api/admin/products", { cache: "no-store" }).then((r) => r.json()),
+        // Only the recent rows are rendered; totals come from the aggregate
+        // endpoint so a paginated list can never truncate the revenue figure.
+        fetch(`/api/studio/orders?take=${RECENT_ORDERS_LIMIT}`, { cache: "no-store" }).then((r) => r.json()),
+        fetch("/api/admin/bug-reports", { cache: "no-store" }).then((r) => r.json()),
+        fetch("/api/studio/orders/stats", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)),
       ]);
 
       let allProducts: Product[] = [];
@@ -209,6 +225,11 @@ export default function StudioDashboard() {
         setOpenBugCount(bugRes.value.openCount ?? 0);
       }
 
+      const orderStats: OrderStats | null =
+        statsRes.status === "fulfilled" && statsRes.value?.totalOrders !== undefined
+          ? statsRes.value
+          : null;
+
       const categories: Record<string, number> = {};
       allProducts.forEach((p) => {
         categories[p.category] = (categories[p.category] || 0) + 1;
@@ -217,11 +238,10 @@ export default function StudioDashboard() {
       // Card orders count once the money is captured, cash on delivery counts
       // until it is cancelled. The old test was "paid OR not cancelled", which
       // booked every abandoned payment sheet as revenue.
-      const totalRevenue = fetchedOrders
+      const fallbackRevenue = fetchedOrders
         .filter(countsAsRevenue)
         .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-
-      const pendingOrders = fetchedOrders.filter(
+      const fallbackPending = fetchedOrders.filter(
         (o) => o.orderStatus === "PROCESSING"
       ).length;
 
@@ -230,9 +250,9 @@ export default function StudioDashboard() {
         soldOut: allProducts.filter((p) => p.isSoldOut).length,
         newArrivals: allProducts.filter((p) => p.isNew).length,
         categories,
-        totalOrders: fetchedOrders.length,
-        totalRevenue,
-        pendingOrders,
+        totalOrders: orderStats?.totalOrders ?? fetchedOrders.length,
+        totalRevenue: orderStats?.totalRevenue ?? fallbackRevenue,
+        pendingOrders: orderStats?.processing ?? fallbackPending,
       });
     } catch (err) {
       console.error(err);
@@ -360,7 +380,7 @@ export default function StudioDashboard() {
             className="bg-white border border-black/10 rounded-[0.35rem] text-black px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            <span>Orders ({orders.length})</span>
+            <span>Orders ({stats.totalOrders})</span>
           </Link>
           <Link
             href="/studio/products/new"
@@ -385,7 +405,7 @@ export default function StudioDashboard() {
           label="Total Orders"
           value={stats.totalOrders}
           icon={ShoppingBag}
-          subtitle={`${orders.length} in database`}
+          subtitle={`${stats.totalOrders} in database`}
         />
         <StatCard
           label="Processing"
@@ -405,7 +425,7 @@ export default function StudioDashboard() {
           <div className="flex items-center gap-3">
             <ShoppingBag className="w-4 h-4 text-black" />
             <h2 className="font-microgramma font-bold text-base uppercase tracking-tight text-black">
-              Recent Fulfillment Orders ({orders.length})
+              Recent Fulfillment Orders ({stats.totalOrders})
             </h2>
           </div>
           <Link

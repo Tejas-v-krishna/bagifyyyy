@@ -12,7 +12,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import ShippingLabelModal from "./ShippingLabelModal";
-import { AWAITING_PAYMENT, ORDER_STATUSES, orderStatusLabel } from "@/lib/orderStatus";
+import { AWAITING_PAYMENT, ORDER_STATUSES, countsAsRevenue, orderStatusLabel } from "@/lib/orderStatus";
 import MessageCustomerModal from "./MessageCustomerModal";
 import Image from "next/image";
 
@@ -88,38 +88,48 @@ export default function StudioOrdersPage() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     setUnauthorized(false);
+    const all: Order[] = [];
+    let skip = 0;
+    const take = 200;
     try {
-      const res = await fetch("/api/studio/orders");
-      if (res.status === 401) {
-        setUnauthorized(true);
-        setOrders([]);
-        return;
-      }
-      const data = await res.json();
-      if (data.orders) {
-        setOrders(data.orders);
-        const tracking: Record<string, string> = {};
-        const statuses: Record<string, string> = {};
-        const payments: Record<string, string> = {};
-        const phones: Record<string, string> = {};
-        const emails: Record<string, string> = {};
-
-        data.orders.forEach((o: Order) => {
-          tracking[o.id] = o.trackingId || "";
-          statuses[o.id] = o.orderStatus;
-          payments[o.id] = o.paymentStatus || "PENDING";
-          phones[o.id] = o.customerPhone || "";
-          emails[o.id] = o.customerEmail || "";
+      // The API is paginated (default 100). Walk every page so the KPI cards
+      // and the fulfilment queue show the real store totals instead of only
+      // the newest page.
+      while (true) {
+        const res = await fetch(`/api/studio/orders?take=${take}&skip=${skip}`, {
+          cache: "no-store",
         });
-
-        setTrackingInputs(tracking);
-        setStatusSelects(statuses);
-        setPaymentSelects(payments);
-        setPhoneInputs(phones);
-        setEmailInputs(emails);
-      } else if (data.error === "Unauthorized") {
-        setUnauthorized(true);
+        if (res.status === 401) {
+          setUnauthorized(true);
+          setOrders([]);
+          return;
+        }
+        const data = await res.json();
+        const batch: Order[] = Array.isArray(data.orders) ? data.orders : [];
+        all.push(...batch);
+        if (batch.length < take) break;
+        skip += take;
       }
+      setOrders(all);
+      const tracking: Record<string, string> = {};
+      const statuses: Record<string, string> = {};
+      const payments: Record<string, string> = {};
+      const phones: Record<string, string> = {};
+      const emails: Record<string, string> = {};
+
+      all.forEach((o) => {
+        tracking[o.id] = o.trackingId || "";
+        statuses[o.id] = o.orderStatus;
+        payments[o.id] = o.paymentStatus || "PENDING";
+        phones[o.id] = o.customerPhone || "";
+        emails[o.id] = o.customerEmail || "";
+      });
+
+      setTrackingInputs(tracking);
+      setStatusSelects(statuses);
+      setPaymentSelects(payments);
+      setPhoneInputs(phones);
+      setEmailInputs(emails);
     } catch (err) {
       console.error("Failed to load orders:", err);
     } finally {
@@ -196,8 +206,8 @@ export default function StudioOrdersPage() {
   };
 
   const totalRevenue = orders
-    .filter((o) => o.paymentStatus === "PAID" || o.orderStatus === "DELIVERED")
-    .reduce((sum, o) => sum + o.totalAmount, 0);
+    .filter(countsAsRevenue)
+    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
   const activeProcessing = orders.filter((o) => o.orderStatus === "PROCESSING").length;
   const inTransit = orders.filter((o) => o.orderStatus === "SHIPPED").length;
