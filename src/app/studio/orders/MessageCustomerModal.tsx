@@ -117,23 +117,23 @@ export default function MessageCustomerModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="editorial-panel bg-white border border-y2k-gunmetal/20 max-w-xl w-full p-6 space-y-4 animate-in zoom-in-95 duration-150">
+      <div className="editorial-panel bg-white border border-black/20 max-w-xl w-full p-6 space-y-4 animate-in zoom-in-95 duration-150">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="font-display font-medium text-lg uppercase text-y2k-gunmetal">
+            <h3 className="font-display font-medium text-lg uppercase text-black">
               Message customer
             </h3>
-            <p className="text-xs text-y2k-gunmetal/70 mt-1">
+            <p className="text-xs text-black/70 mt-1">
               Order #{order.orderNumber} · {order.customerPhone || order.customerEmail}
             </p>
           </div>
-          <button onClick={onClose} className="p-1.5 text-y2k-gunmetal/60 hover:text-black cursor-pointer">
+          <button onClick={onClose} className="p-1.5 text-black/60 hover:text-black cursor-pointer">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {loading ? (
-          <div className="py-10 text-center text-[10px] font-bold uppercase tracking-wider text-y2k-slate animate-pulse">
+          <div className="py-10 text-center text-[10px] font-bold uppercase tracking-wider text-black/50 animate-pulse">
             Loading…
           </div>
         ) : (
@@ -145,7 +145,7 @@ export default function MessageCustomerModal({
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border cursor-pointer ${
                   channel === "WHATSAPP"
                     ? "bg-emerald-600 text-white border-emerald-600"
-                    : "bg-white text-y2k-gunmetal/60 border-y2k-gunmetal/10"
+                    : "bg-white text-black/60 border-black/10"
                 }`}
               >
                 <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
@@ -156,7 +156,7 @@ export default function MessageCustomerModal({
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border cursor-pointer ${
                   channel === "SMS"
                     ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-y2k-gunmetal/60 border-y2k-gunmetal/10"
+                    : "bg-white text-black/60 border-black/10"
                 }`}
               >
                 <Smartphone className="w-3.5 h-3.5" /> SMS
@@ -173,12 +173,12 @@ export default function MessageCustomerModal({
             </div>
 
             <label className="flex flex-col gap-1">
-              <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">Message</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-black/50">Message</span>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={6}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-medium text-y2k-gunmetal outline-none focus:border-y2k-gunmetal resize-none"
+                className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-medium text-black outline-none focus:border-black resize-none"
               />
             </label>
 
@@ -193,11 +193,11 @@ export default function MessageCustomerModal({
               </div>
             )}
 
-            <div className="flex items-center justify-between gap-3 pt-2 border-t border-y2k-gunmetal/10">
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-black/10">
               <button
                 type="button"
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 hover:text-black px-3 py-2 cursor-pointer"
+                className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-black/70 hover:text-black px-3 py-2 cursor-pointer"
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 {copied ? "Copied" : "Copy"}
@@ -208,7 +208,7 @@ export default function MessageCustomerModal({
                     href={channel === "WHATSAPP" ? info.manualLinks.whatsapp : info.manualLinks.sms}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider border border-y2k-gunmetal/10 text-y2k-gunmetal hover:bg-y2k-gunmetal hover:text-white transition-colors cursor-pointer"
+                    className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider border border-black/10 text-black hover:bg-black hover:text-white transition-colors cursor-pointer"
                   >
                     Open link
                   </a>

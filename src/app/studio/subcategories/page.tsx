@@ -103,8 +103,8 @@ export default function StudioSubcategoriesPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Top Header ───────────────────────────────────────────────────────── */}
-      <div className="pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           Categories &amp; Fits
         </h1>
       </div>
@@ -119,7 +119,7 @@ export default function StudioSubcategoriesPage() {
               setSelectedCategory(cat.slug);
               setMessage(null);
             }}
-            className={`px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider rounded-[0.35rem] transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer whitespace-nowrap ${
               selectedCategory === cat.slug
                 ? "bg-black text-white"
                 : "bg-white text-black/60 border border-black/10 hover:text-black hover:bg-black/5"
@@ -133,7 +133,7 @@ export default function StudioSubcategoriesPage() {
       {/* Notification Banner */}
       {message && (
         <div
-          className={`p-3.5 rounded-sm text-xs flex items-center gap-2.5 font-medium border ${
+          className={`p-3.5 rounded-lg text-xs flex items-center gap-2.5 font-medium border ${
             message.type === "success"
               ? "bg-emerald-50 text-emerald-800 border-emerald-200"
               : "bg-red-50 text-red-800 border-red-200"
@@ -151,26 +151,26 @@ export default function StudioSubcategoriesPage() {
       {/* Main Grid: Add form + Subcategories list */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
         {/* Left: Add Subcategory Form */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 sm:p-6 shadow-xs h-fit">
+        <div className="bg-white border border-black/15 p-4 sm:p-6 shadow-xs h-fit">
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-black/10">
-            <Sparkles className="w-4 h-4 text-y2k-gunmetal" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
+            <Sparkles className="w-4 h-4 text-black" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-black">
               Add Fit / Subcategory
             </h2>
           </div>
 
           <form onSubmit={handleCreate} className="space-y-4">
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                 Target Category
               </label>
-              <div className="px-3 py-2 bg-y2k-ice/60 border border-y2k-gunmetal/10 text-xs font-bold uppercase text-y2k-gunmetal">
+              <div className="studio-control px-3 py-2 bg-[#efefec] border border-black/10 text-xs font-bold uppercase text-black">
                 {CATEGORIES.find((c) => c.slug === selectedCategory)?.label || selectedCategory}
               </div>
             </div>
 
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                 Subcategory Name *
               </label>
               <input
@@ -179,7 +179,7 @@ export default function StudioSubcategoriesPage() {
                 onChange={(e) => setNewSubcategoryName(e.target.value)}
                 placeholder="e.g. Baggy, Bootcut, Cargos, Flared"
                 required
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-black font-sans"
+                className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-sans"
               />
             </div>
 
@@ -199,26 +199,26 @@ export default function StudioSubcategoriesPage() {
         </div>
 
         {/* Right: Existing Subcategories List */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 sm:p-6 shadow-xs">
+        <div className="bg-white border border-black/15 p-4 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-black/10">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-black">
               Active In {CATEGORIES.find((c) => c.slug === selectedCategory)?.label} ({subcategories.length})
             </h2>
             <button
               onClick={() => fetchSubcategories()}
-              className="text-[10px] text-y2k-slate hover:text-black uppercase tracking-wider underline cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-black/60 hover:text-black cursor-pointer shrink-0"
             >
               Refresh
             </button>
           </div>
 
           {loading ? (
-            <div className="py-10 flex flex-col items-center justify-center text-y2k-slate gap-2">
+            <div className="py-10 flex flex-col items-center justify-center text-black/50 gap-2">
               <Loader2 className="w-5 h-5 animate-spin" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Loading fits…</span>
             </div>
           ) : subcategories.length === 0 ? (
-            <div className="py-10 text-center text-y2k-slate">
+            <div className="py-10 text-center text-black/50">
               <p className="text-xs font-medium">No fits added yet.</p>
             </div>
           ) : (
@@ -226,9 +226,9 @@ export default function StudioSubcategoriesPage() {
               {subcategories.map((item) => (
                 <div
                   key={item.id}
-                  className="py-3 flex items-center justify-between gap-3 hover:bg-black/[0.015] px-2 rounded-sm transition-colors"
+                  className="py-3 flex items-center justify-between gap-3 hover:bg-black/[0.015] px-2 rounded-lg transition-colors"
                 >
-                  <span className="inline-block px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide bg-black text-white rounded-[0.25rem] break-words">
+                  <span className="inline-block px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide bg-black text-white rounded-full break-words">
                     {item.name}
                   </span>
 
@@ -238,7 +238,7 @@ export default function StudioSubcategoriesPage() {
                     disabled={deletingId === item.id}
                     title={`Delete ${item.name}`}
                     aria-label={`Delete ${item.name}`}
-                    className="p-2 text-black/40 hover:text-red-600 transition-colors rounded-sm hover:bg-red-50 cursor-pointer disabled:opacity-50 shrink-0"
+                    className="p-2 text-black/40 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50 shrink-0"
                   >
                     {deletingId === item.id ? (
                       <Loader2 className="w-4 h-4 animate-spin text-red-600" />

@@ -25,6 +25,14 @@ export default function StudioCouponsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [now, setNow] = useState(0);
+
+  // Keep expiry badges fresh without calling Date.now() during render.
+  useEffect(() => {
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const [form, setForm] = useState({
     code: "",
@@ -157,8 +165,8 @@ export default function StudioCouponsPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Top Header ───────────────────────────────────────────────────────── */}
-      <div className="pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           Coupon Codes
         </h1>
       </div>
@@ -166,7 +174,7 @@ export default function StudioCouponsPage() {
       {/* Notification Banner */}
       {message && (
         <div
-          className={`p-3.5 rounded-sm text-xs flex items-center gap-2.5 font-medium border ${
+          className={`p-3.5 rounded-lg text-xs flex items-center gap-2.5 font-medium border ${
             message.type === "success"
               ? "bg-emerald-50 text-emerald-800 border-emerald-200"
               : "bg-red-50 text-red-800 border-red-200"
@@ -184,17 +192,17 @@ export default function StudioCouponsPage() {
       {/* Main Grid: Form + Coupon List */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.9fr] gap-6">
         {/* Left: Add Coupon Form */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs h-fit">
+        <div className="bg-white border border-black/15 p-6 shadow-xs h-fit">
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-black/10">
-            <Sparkles className="w-4 h-4 text-y2k-gunmetal" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
+            <Sparkles className="w-4 h-4 text-black" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-black">
               Create Coupon Code
             </h2>
           </div>
 
           <form onSubmit={handleCreate} className="space-y-4">
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                 Coupon Code *
               </label>
               <input
@@ -204,19 +212,19 @@ export default function StudioCouponsPage() {
                 onChange={handleChange}
                 placeholder="e.g. BAGIFY10, FREESHIP, Y2KVIP"
                 required
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-black"
+                className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-black outline-none focus:border-black"
               />
             </div>
 
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                 Discount Type *
               </label>
               <select
                 name="discountType"
                 value={form.discountType}
                 onChange={handleChange}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2.5 text-xs font-medium uppercase tracking-wider text-y2k-gunmetal outline-none focus:border-black cursor-pointer"
+                className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2.5 text-xs font-medium uppercase tracking-wider text-black outline-none focus:border-black cursor-pointer"
               >
                 <option value="PERCENTAGE">Percentage (% Off)</option>
                 <option value="FIXED">Fixed Amount (₹ Off)</option>
@@ -226,7 +234,7 @@ export default function StudioCouponsPage() {
 
             {form.discountType !== "FREE_SHIPPING" && (
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                   {form.discountType === "PERCENTAGE" ? "Discount Percentage (%) *" : "Discount Amount (₹) *"}
                 </label>
                 <input
@@ -239,14 +247,14 @@ export default function StudioCouponsPage() {
                   step="any"
                   required
                   placeholder={form.discountType === "PERCENTAGE" ? "10" : "200"}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2.5 text-xs font-mono text-y2k-gunmetal outline-none focus:border-black"
+                  className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2.5 text-xs font-mono text-black outline-none focus:border-black"
                 />
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+                <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                   Min Order (₹)
                 </label>
                 <input
@@ -256,13 +264,13 @@ export default function StudioCouponsPage() {
                   onChange={handleChange}
                   min="0"
                   placeholder="0"
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-black"
+                  className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black"
                 />
               </div>
 
               {form.discountType === "PERCENTAGE" ? (
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                     Max Cap (₹)
                   </label>
                   <input
@@ -272,12 +280,12 @@ export default function StudioCouponsPage() {
                     onChange={handleChange}
                     min="1"
                     placeholder="None"
-                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-black"
+                    className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black"
                   />
                 </div>
               ) : (
                 <div>
-                  <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+                  <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                     Usage Limit
                   </label>
                   <input
@@ -287,14 +295,14 @@ export default function StudioCouponsPage() {
                     onChange={handleChange}
                     min="1"
                     placeholder="Unlimited"
-                    className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-black"
+                    className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black"
                   />
                 </div>
               )}
             </div>
 
             <div>
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1.5">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/50 block mb-1.5">
                 Expiry Date (Optional)
               </label>
               <input
@@ -302,7 +310,7 @@ export default function StudioCouponsPage() {
                 name="expiresAt"
                 value={form.expiresAt}
                 onChange={handleChange}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/15 px-3 py-2 text-xs text-y2k-gunmetal outline-none focus:border-black cursor-pointer"
+                className="w-full bg-[#f5f5f2] border border-black/15 px-3 py-2 text-xs text-black outline-none focus:border-black cursor-pointer"
               />
             </div>
 
@@ -322,48 +330,48 @@ export default function StudioCouponsPage() {
         </div>
 
         {/* Right: Existing Coupons List */}
-        <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs">
+        <div className="bg-white border border-black/15 p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-black/10">
             <div className="flex items-center gap-2">
-              <TicketPercent className="w-4 h-4 text-y2k-gunmetal" />
-              <h2 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
+              <TicketPercent className="w-4 h-4 text-black" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-black">
                 Active Coupons ({coupons.length})
               </h2>
             </div>
             <button
               onClick={() => fetchCoupons()}
-              className="text-[10px] text-y2k-slate hover:text-black uppercase tracking-wider underline cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-black/60 hover:text-black cursor-pointer"
             >
               Refresh
             </button>
           </div>
 
           {loading ? (
-            <div className="py-12 flex flex-col items-center justify-center text-y2k-slate gap-2">
+            <div className="py-12 flex flex-col items-center justify-center text-black/50 gap-2">
               <Loader2 className="w-5 h-5 animate-spin" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Loading coupons…</span>
             </div>
           ) : coupons.length === 0 ? (
-            <div className="py-12 text-center text-y2k-slate">
+            <div className="py-12 text-center text-black/50">
               <p className="text-xs font-medium">No coupons created yet.</p>
               <p className="text-[10px] mt-1">Use the form on the left to set up promo codes like BAGIFY10 or FREESHIP.</p>
             </div>
           ) : (
             <div className="divide-y divide-black/5">
               {coupons.map((coupon) => {
-                const isExpired = coupon.expiresAt && new Date(coupon.expiresAt).getTime() < Date.now();
+                const isExpired = coupon.expiresAt && new Date(coupon.expiresAt).getTime() < now;
                 return (
                   <div
                     key={coupon.id}
-                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-black/[0.015] px-2 rounded-sm transition-colors"
+                    className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-black/[0.015] px-2 rounded-lg transition-colors"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2.5">
-                        <span className="inline-block px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-black text-white rounded-[0.25rem]">
+                        <span className="inline-block px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-black text-white rounded-full">
                           {coupon.code}
                         </span>
 
-                        <span className="text-xs font-semibold text-y2k-gunmetal">
+                        <span className="text-xs font-semibold text-black">
                           {coupon.discountType === "PERCENTAGE" && `${coupon.discountValue}% OFF`}
                           {coupon.discountType === "FIXED" && `₹${coupon.discountValue} OFF`}
                           {coupon.discountType === "FREE_SHIPPING" && "FREE SHIPPING (₹80 OFF)"}
@@ -384,7 +392,7 @@ export default function StudioCouponsPage() {
                         )}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-y2k-slate pt-1">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-black/50 pt-1">
                         {coupon.minOrderAmount > 0 && (
                           <span>Min Order: ₹{coupon.minOrderAmount.toLocaleString("en-IN")}</span>
                         )}
@@ -406,7 +414,7 @@ export default function StudioCouponsPage() {
                         onClick={() => handleToggle(coupon.id, coupon.isActive)}
                         disabled={togglingId === coupon.id}
                         title={coupon.isActive ? "Deactivate Coupon" : "Activate Coupon"}
-                        className="p-1 text-y2k-slate hover:text-black transition-colors cursor-pointer"
+                        className="p-1 text-black/50 hover:text-black transition-colors cursor-pointer"
                       >
                         {coupon.isActive ? (
                           <ToggleRight className="w-6 h-6 text-emerald-600" />
@@ -420,7 +428,7 @@ export default function StudioCouponsPage() {
                         onClick={() => handleDelete(coupon.id, coupon.code)}
                         disabled={deletingId === coupon.id}
                         title="Delete Coupon"
-                        className="p-1.5 text-black/40 hover:text-red-600 transition-colors rounded-sm hover:bg-red-50 cursor-pointer disabled:opacity-50"
+                        className="p-1.5 text-black/40 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50 cursor-pointer disabled:opacity-50"
                       >
                         {deletingId === coupon.id ? (
                           <Loader2 className="w-4 h-4 animate-spin text-red-600" />

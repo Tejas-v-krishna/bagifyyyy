@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import "./studio.css";
 
 const navItems = [
   { href: "/studio", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -75,7 +76,7 @@ function NavItem({
     <Link
       href={href}
       aria-current={isActive ? "page" : undefined}
-      className={`flex shrink-0 items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-wider transition-all rounded-[0.35rem] ${
+      className={`flex shrink-0 items-center justify-between px-4 py-3 text-[10px] font-bold uppercase tracking-wider transition-all rounded-lg ${
         isActive
           ? "text-white bg-black shadow-xs"
           : "text-black/60 hover:text-black hover:bg-black/5"
@@ -145,13 +146,13 @@ export default function StudioLayout({
 
   // If on studio/login, render without sidebar layout
   if (pathname === "/studio/login") {
-    return <div className="min-h-screen bg-[#f5f5f2] text-black font-sans">{children}</div>;
+    return <div className="studio-app min-h-screen bg-[#f5f5f2] text-black font-sans">{children}</div>;
   }
 
   const currentNav = navItems.find((n) => isNavActive(n, pathname));
 
   return (
-    <div className="min-h-screen bg-[#f5f5f2] text-black font-sans relative">
+    <div className="studio-app min-h-screen bg-[#f5f5f2] text-black font-sans relative">
       {/* Desktop sidebar; mobile keeps the same navigation in a horizontal rail. */}
       <aside className="hidden w-64 fixed top-0 left-0 bottom-0 h-screen z-50 lg:flex flex-col border-r border-black/15 bg-white shadow-xs select-none overflow-hidden">
         {/* Brand Studio Header */}
@@ -175,7 +176,7 @@ export default function StudioLayout({
           <Link
             href={storeUrl}
             target="_blank"
-            className="mt-4 flex items-center justify-between w-full bg-[#f5f5f2] border border-black/10 rounded-[0.35rem] px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all cursor-pointer shadow-xs"
+            className="mt-4 flex items-center justify-between w-full bg-[#f5f5f2] border border-black/10 rounded-lg px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all cursor-pointer shadow-xs"
           >
             <span>VIEW PUBLIC STORE</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -206,7 +207,7 @@ export default function StudioLayout({
             <button
               type="button"
               onClick={() => setMobileNavOpen(true)}
-              className="lg:hidden -ml-1 p-2 text-black hover:bg-black/5 rounded-[0.35rem] transition-colors cursor-pointer"
+              className="lg:hidden -ml-1 p-2 text-black hover:bg-black/5 rounded-lg transition-colors cursor-pointer"
               aria-label="Open studio menu"
               aria-expanded={mobileNavOpen}
             >
@@ -256,7 +257,7 @@ export default function StudioLayout({
                 <button
                   type="button"
                   onClick={() => setMobileNavOpen(false)}
-                  className="p-2 -mr-1 text-black/60 hover:text-black hover:bg-black/5 rounded-[0.35rem] transition-colors cursor-pointer"
+                  className="p-2 -mr-1 text-black/60 hover:text-black hover:bg-black/5 rounded-lg transition-colors cursor-pointer"
                   aria-label="Close studio menu"
                 >
                   <X className="h-5 w-5" />
@@ -277,7 +278,7 @@ export default function StudioLayout({
                 <Link
                   href={storeUrl}
                   target="_blank"
-                  className="flex items-center justify-between w-full bg-[#f5f5f2] border border-black/10 rounded-[0.35rem] px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all cursor-pointer"
+                  className="flex items-center justify-between w-full bg-[#f5f5f2] border border-black/10 rounded-lg px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all cursor-pointer"
                 >
                   <span>VIEW PUBLIC STORE</span>
                   <ExternalLink className="w-3.5 h-3.5" />

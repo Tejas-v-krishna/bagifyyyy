@@ -392,9 +392,9 @@ export default function StudioOrderLedgerPage() {
   if (unauthorized) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center font-sans">
-        <div className="editorial-panel bg-white border border-y2k-gunmetal/15 p-8 max-w-md w-full text-center text-y2k-gunmetal">
+        <div className="editorial-panel bg-white border border-black/15 p-8 max-w-md w-full text-center text-black">
           <h2 className="font-display font-medium text-lg uppercase tracking-tight mb-2">Studio auth required</h2>
-          <p className="text-xs text-y2k-gunmetal/70 mb-6">Please sign in to open the order ledger.</p>
+          <p className="text-xs text-black/70 mb-6">Please sign in to open the order ledger.</p>
           <a href="/studio/login?from=/studio/ledger" className="btn-bagify inline-block w-full py-3 text-xs font-bold uppercase tracking-wider">
             Sign in to Studio →
           </a>
@@ -405,19 +405,19 @@ export default function StudioOrderLedgerPage() {
 
   return (
     <div className="space-y-4 font-sans">
-      <div className="pb-3 border-b border-y2k-gunmetal/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="pb-3 border-b border-black/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
             Order Ledger
           </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
+          <p className="text-xs text-black/70 mt-0.5">
             {stats.orders} orders · ₹{stats.revenue.toLocaleString("en-IN")} recorded
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={fetchOrders}
-            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider bg-white border border-y2k-gunmetal/10 px-4 py-2.5 hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer"
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider bg-white border border-black/10 px-4 py-2.5 hover:bg-black hover:text-white transition-all shadow-2xs cursor-pointer"
           >
             <span>Refresh</span>
           </button>
@@ -432,28 +432,28 @@ export default function StudioOrderLedgerPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-y2k-gunmetal/10 p-3 flex flex-col gap-3">
+      <div className="bg-white border border-black/10 p-3 flex flex-col gap-3">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-y2k-gunmetal/40 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-black/40 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search anything: order #, name, phone, city, SKU, product, UPI ref…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 pl-9 pr-4 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40"
+              className="w-full bg-[#f5f5f2] border border-black/10 pl-9 pr-4 py-2 text-xs text-black outline-none focus:border-black font-medium placeholder:text-black/40"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-3.5 h-3.5 text-y2k-gunmetal/40 shrink-0" />
+            <Filter className="w-3.5 h-3.5 text-black/40 shrink-0" />
             {(["ALL", "WEBSITE", "INSTAGRAM"] as const).map((c) => (
               <button
                 key={c}
                 onClick={() => setChannel(c)}
                 className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider border transition-colors cursor-pointer ${
                   channel === c
-                    ? "bg-y2k-gunmetal text-white border-y2k-gunmetal"
-                    : "bg-white text-y2k-gunmetal/60 border-y2k-gunmetal/10 hover:text-black"
+                    ? "bg-black text-white border-black"
+                    : "bg-white text-black/60 border-black/10 hover:text-black"
                 }`}
               >
                 {c}
@@ -465,7 +465,7 @@ export default function StudioOrderLedgerPage() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-1.5 text-[10px] font-bold uppercase text-y2k-gunmetal cursor-pointer"
+            className="bg-[#f5f5f2] border border-black/10 px-3 py-1.5 text-[10px] font-bold uppercase text-black cursor-pointer"
           >
             {statuses.map((s) => (
               <option key={s} value={s}>
@@ -476,7 +476,7 @@ export default function StudioOrderLedgerPage() {
           <select
             value={payStatus}
             onChange={(e) => setPayStatus(e.target.value)}
-            className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-1.5 text-[10px] font-bold uppercase text-y2k-gunmetal cursor-pointer"
+            className="bg-[#f5f5f2] border border-black/10 px-3 py-1.5 text-[10px] font-bold uppercase text-black cursor-pointer"
           >
             <option value="ALL">PAY: ALL</option>
             <option value="PAID">PAID</option>
@@ -486,19 +486,19 @@ export default function StudioOrderLedgerPage() {
             <option value="REFUND_PENDING">REFUND_PENDING</option>
           </select>
           <div className="flex items-center gap-2">
-            <Calendar className="w-3.5 h-3.5 text-y2k-gunmetal/40" />
+            <Calendar className="w-3.5 h-3.5 text-black/40" />
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-2 py-1 text-[10px] text-y2k-gunmetal font-mono"
+              className="bg-[#f5f5f2] border border-black/10 px-2 py-1 text-[10px] text-black font-mono"
             />
-            <span className="text-[10px] text-y2k-gunmetal/40">to</span>
+            <span className="text-[10px] text-black/40">to</span>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-2 py-1 text-[10px] text-y2k-gunmetal font-mono"
+              className="bg-[#f5f5f2] border border-black/10 px-2 py-1 text-[10px] text-black font-mono"
             />
             {(fromDate || toDate) && (
               <button
@@ -516,25 +516,25 @@ export default function StudioOrderLedgerPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
+      <div className="bg-white border border-black/15 shadow-xs overflow-hidden">
         {loading ? (
-          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-wider text-y2k-slate animate-pulse">
+          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-wider text-black/50 animate-pulse">
             Loading ledger records…
           </div>
         ) : sorted.length === 0 ? (
-          <div className="py-20 text-center text-y2k-gunmetal/50 text-xs font-bold uppercase tracking-wider">
+          <div className="py-20 text-center text-black/50 text-xs font-bold uppercase tracking-wider">
             No matching records.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-max w-full border-collapse text-[11px]">
-              <thead className="bg-y2k-ice border-b border-y2k-gunmetal/15 sticky top-0 z-10">
+              <thead className="bg-[#f5f5f2] border-b border-black/15 sticky top-0 z-10">
                 <tr>
                   {ledgerColumns.map((col) => (
                     <th
                       key={col.key}
                       onClick={() => handleSort(col.key)}
-                      className={`px-2 py-2.5 text-left font-extrabold uppercase tracking-wider text-y2k-gunmetal whitespace-nowrap cursor-pointer select-none hover:bg-y2k-gunmetal/5 ${
+                      className={`px-2 py-2.5 text-left font-extrabold uppercase tracking-wider text-black whitespace-nowrap cursor-pointer select-none hover:bg-black/5 ${
                         col.align === "right" ? "text-right" : ""
                       }`}
                       style={{ minWidth: col.width }}
@@ -542,7 +542,7 @@ export default function StudioOrderLedgerPage() {
                       <span className="inline-flex items-center gap-1">
                         {col.label}
                         {sortKey === col.key ? (
-                          <span className="text-y2k-slate">{sortDir === "asc" ? "▲" : "▼"}</span>
+                          <span className="text-black/50">{sortDir === "asc" ? "▲" : "▼"}</span>
                         ) : null}
                       </span>
                     </th>
@@ -551,9 +551,9 @@ export default function StudioOrderLedgerPage() {
               </thead>
               <tbody>
                 {pageRows.map((row) => (
-                  <tr key={row.id} className="border-b border-y2k-gunmetal/10 odd:bg-white even:bg-[#fafafa] hover:bg-y2k-ice transition-colors">
+                  <tr key={row.id} className="border-b border-black/10 odd:bg-white even:bg-[#fafafa] hover:bg-[#f5f5f2] transition-colors">
                     <td className="px-2 py-1.5 font-mono whitespace-nowrap">{new Date(row.orderDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</td>
-                    <td className="px-2 py-1.5 font-mono font-bold text-y2k-gunmetal whitespace-nowrap">{row.orderNumber}</td>
+                    <td className="px-2 py-1.5 font-mono font-bold text-black whitespace-nowrap">{row.orderNumber}</td>
                     <td className="px-2 py-1.5 whitespace-nowrap">
                       <span
                         className={`text-[8px] font-bold uppercase px-2 py-0.5 border ${
@@ -574,7 +574,7 @@ export default function StudioOrderLedgerPage() {
                     <td className="px-2 py-1.5 font-mono whitespace-nowrap">{row.pincode}</td>
                     <td className="px-2 py-1.5 whitespace-nowrap">
                       {row.sku ? (
-                        <span className="text-[9px] font-mono font-bold text-black bg-black/5 px-1.5 py-0.5 border border-black/20">
+                        <span className="text-[9px] font-mono font-bold text-black bg-black/5 px-1.5 py-0.5 border border-black/20 rounded-full">
                           {row.sku}
                         </span>
                       ) : "—"}
@@ -589,7 +589,7 @@ export default function StudioOrderLedgerPage() {
                       {row.imageUrl ? (
                         <button
                           onClick={() => setPreviewImage(row.imageUrl)}
-                          className="w-8 h-10 relative overflow-hidden border border-y2k-gunmetal/15 bg-y2k-ice block cursor-pointer hover:border-y2k-gunmetal"
+                          className="w-8 h-10 relative overflow-hidden border border-black/15 rounded-lg bg-[#f5f5f2] block cursor-pointer hover:border-black"
                           title="Preview image"
                         >
                           <Image src={row.imageUrl} alt={row.productName} fill loader={passthroughLoader} unoptimized className="object-cover" />
@@ -600,7 +600,7 @@ export default function StudioOrderLedgerPage() {
                     </td>
                     <td className="px-2 py-1.5 font-mono whitespace-nowrap text-right">{row.discountAmount || ""}</td>
                     <td className="px-2 py-1.5 font-mono whitespace-nowrap text-right">{row.shippingAmount || ""}</td>
-                    <td className="px-2 py-1.5 font-mono font-bold text-y2k-gunmetal whitespace-nowrap text-right">₹{row.totalAmount}</td>
+                    <td className="px-2 py-1.5 font-mono font-bold text-black whitespace-nowrap text-right">₹{row.totalAmount}</td>
                     <td className="px-2 py-1.5 whitespace-nowrap">{row.paymentMethod === "MANUAL" ? "MANUAL" : row.paymentMethod}</td>
                     <td className="px-2 py-1.5 whitespace-nowrap">
                       <span
@@ -624,7 +624,7 @@ export default function StudioOrderLedgerPage() {
                             ? "border-emerald-300 bg-emerald-50 text-emerald-800"
                             : row.orderStatus === "CANCELLED"
                               ? "border-red-300 bg-red-50 text-red-800"
-                              : "border-y2k-gunmetal/10 bg-y2k-ice text-y2k-gunmetal"
+                              : "border-black/10 bg-[#f5f5f2] text-black"
                         }`}
                       >
                         {row.orderStatus}
@@ -639,7 +639,7 @@ export default function StudioOrderLedgerPage() {
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-wider text-black/60">
         <div>
           Showing {sorted.length === 0 ? 0 : page * pageSize + 1}–{Math.min((page + 1) * pageSize, sorted.length)} of {sorted.length} lines
         </div>
@@ -647,7 +647,7 @@ export default function StudioOrderLedgerPage() {
           <select
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
-            className="bg-white border border-y2k-gunmetal/10 px-2 py-1 text-[10px] cursor-pointer"
+            className="bg-white border border-black/10 px-2 py-1 text-[10px] cursor-pointer"
           >
             {PAGE_SIZES.map((s) => (
               <option key={s} value={s}>
@@ -658,7 +658,7 @@ export default function StudioOrderLedgerPage() {
           <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="p-1.5 border border-y2k-gunmetal/10 bg-white hover:bg-y2k-ice disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+            className="p-1.5 border border-black/10 bg-white hover:bg-[#f5f5f2] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
             aria-label="Previous page"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
@@ -669,7 +669,7 @@ export default function StudioOrderLedgerPage() {
           <button
             onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
             disabled={page >= pageCount - 1}
-            className="p-1.5 border border-y2k-gunmetal/10 bg-white hover:bg-y2k-ice disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+            className="p-1.5 border border-black/10 bg-white hover:bg-[#f5f5f2] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
             aria-label="Next page"
           >
             <ChevronRight className="w-3.5 h-3.5" />
@@ -683,10 +683,10 @@ export default function StudioOrderLedgerPage() {
           className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setPreviewImage(null)}
         >
-          <div className="bg-white border border-y2k-gunmetal/20 p-3 max-w-3xl w-full relative">
+          <div className="bg-white border border-black/20 p-3 max-w-3xl w-full relative">
             <button
               onClick={() => setPreviewImage(null)}
-              className="absolute -top-3 -right-3 w-8 h-8 bg-white border border-y2k-gunmetal/20 rounded-full flex items-center justify-center text-y2k-gunmetal shadow cursor-pointer"
+              className="absolute -top-3 -right-3 w-8 h-8 bg-white border border-black/20 rounded-full flex items-center justify-center text-black shadow cursor-pointer"
               aria-label="Close preview"
             >
               <X className="w-4 h-4" />
@@ -697,7 +697,7 @@ export default function StudioOrderLedgerPage() {
               href={previewImage}
               target="_blank"
               rel="noreferrer"
-              className="block text-center text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 hover:text-black mt-3"
+              className="block text-center text-[10px] font-bold uppercase tracking-wider text-black/70 hover:text-black mt-3"
             >
               Open in new tab →
             </a>

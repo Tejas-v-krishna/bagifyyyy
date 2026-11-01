@@ -85,19 +85,19 @@ function LoginForm() {
   };
 
   return (
-    <div className="editorial-page w-full min-h-screen bg-y2k-ice text-y2k-gunmetal flex flex-col items-center justify-center px-4 font-sans relative">
+    <div className="editorial-page w-full min-h-screen bg-[#f5f5f2] text-black flex flex-col items-center justify-center px-4 font-sans relative">
       {/* Return to Public Store link */}
       <Link
         href={process.env.NEXT_PUBLIC_APP_URL || "/"}
-        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-y2k-slate hover:text-black transition-colors"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black/50 hover:text-black transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Return to Public Store</span>
       </Link>
 
-      <div className="editorial-panel w-full max-w-sm bg-white border border-y2k-gunmetal/15 p-8 shadow-sm">
+      <div className="editorial-panel w-full max-w-sm bg-white border border-black/15 p-6 sm:p-8 shadow-sm">
         {/* Brand Header */}
-        <div className="text-center mb-8 pb-6 border-b border-y2k-gunmetal/15">
+        <div className="text-center mb-8 pb-6 border-b border-black/15">
           <Image
             src="/bagifyyyy-wordmark.webp"
             alt="Bagifyyyy Logo"
@@ -105,7 +105,7 @@ function LoginForm() {
             height={166}
             className="object-contain mx-auto mb-3"
           />
-          <div className="inline-flex items-center gap-1.5 bg-y2k-ice border border-y2k-gunmetal/15 px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal">
+          <div className="inline-flex items-center gap-1.5 bg-[#f5f5f2] border border-black/15 rounded-full px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-black">
             {step === "password" ? (
               <>
                 <ShieldCheck className="w-3.5 h-3.5" />
@@ -124,9 +124,9 @@ function LoginForm() {
         {step === "password" && (
           <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 flex items-center justify-between">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/70 flex items-center justify-between">
                 <span>Admin Access Password *</span>
-                <KeyRound className="w-3 h-3 text-y2k-gunmetal/40" />
+                <KeyRound className="w-3 h-3 text-black/40" />
               </label>
               <input
                 type="password"
@@ -135,12 +135,12 @@ function LoginForm() {
                 required
                 autoFocus
                 placeholder="Enter studio key"
-                className="bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-3 text-sm outline-none focus:border-y2k-gunmetal font-medium transition-colors placeholder:text-y2k-gunmetal/30"
+                className="bg-[#f5f5f2] border border-black/10 text-black px-4 py-3 text-sm outline-none focus:border-black font-medium transition-colors placeholder:text-black/30"
               />
             </div>
 
             {error && (
-              <p className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 p-2.5 border border-red-200">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 p-2.5 border border-red-200 rounded-lg">
                 {error}
               </p>
             )}
@@ -160,9 +160,9 @@ function LoginForm() {
         {step === "totp" && (
           <form onSubmit={handleTotpSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/70 flex items-center justify-between">
+              <label className="text-[9px] font-bold uppercase tracking-wider text-black/70 flex items-center justify-between">
                 <span>Google Authenticator 6-Digit Code *</span>
-                <Smartphone className="w-3 h-3 text-y2k-gunmetal/40" />
+                <Smartphone className="w-3 h-3 text-black/40" />
               </label>
               <input
                 type="text"
@@ -174,15 +174,15 @@ function LoginForm() {
                 required
                 autoFocus
                 placeholder="000000"
-                className="bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-3 text-lg font-mono text-center tracking-[0.3em] outline-none focus:border-y2k-gunmetal font-bold transition-colors placeholder:text-y2k-gunmetal/20"
+                className="bg-[#f5f5f2] border border-black/10 text-black px-4 py-3 text-lg font-mono text-center tracking-[0.3em] outline-none focus:border-black font-bold transition-colors placeholder:text-black/20"
               />
-              <p className="text-[9px] text-y2k-gunmetal/50 mt-1 leading-normal">
+              <p className="text-[9px] text-black/50 mt-1 leading-normal">
                 Enter the dynamic 6-digit code currently showing in your Google Authenticator app.
               </p>
             </div>
 
             {error && (
-              <p className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 p-2.5 border border-red-200">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 p-2.5 border border-red-200 rounded-lg">
                 {error}
               </p>
             )}
@@ -203,14 +203,14 @@ function LoginForm() {
                 setError("");
                 setTotpCode("");
               }}
-              className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 hover:text-black transition-colors text-center mt-1 py-1"
+              className="text-[9px] font-bold uppercase tracking-wider text-black/60 hover:text-black transition-colors text-center mt-1 py-1"
             >
               ← Back to Password
             </button>
           </form>
         )}
 
-        <p className="text-center text-[9px] uppercase tracking-wider text-y2k-gunmetal/40 mt-6 pt-4 border-t border-y2k-gunmetal/10">
+        <p className="text-center text-[9px] uppercase tracking-wider text-black/40 mt-6 pt-4 border-t border-black/10">
           Internal Restricted Control Interface
         </p>
       </div>
@@ -222,7 +222,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-y2k-ice flex items-center justify-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
+        <div className="min-h-screen bg-[#f5f5f2] flex items-center justify-center text-xs font-bold uppercase tracking-wider text-black">
           Loading Control Portal...
         </div>
       }

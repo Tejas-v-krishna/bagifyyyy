@@ -269,14 +269,14 @@ export default function MarketingStudioPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           Email Marketing
         </h1>
 
         <div className="flex items-center gap-3">
-          <div className="bg-white border border-y2k-gunmetal/10 px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-2 shadow-2xs">
-            <Users className="w-4 h-4 text-y2k-slate" />
+          <div className="bg-white border border-black/10 px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2 shadow-2xs">
+            <Users className="w-4 h-4 text-black/50" />
             <span>{stats.subscriberCount} Subscribers</span>
           </div>
         </div>
@@ -287,12 +287,12 @@ export default function MarketingStudioPage() {
         <div
           className={`p-4 border text-xs font-bold uppercase tracking-wider flex items-center gap-3 ${
             statusMessage.type === "success"
-              ? "bg-white border-y2k-gunmetal text-y2k-gunmetal"
+              ? "bg-white border-black text-black"
               : "bg-red-50 border-red-200 text-red-600"
           }`}
         >
           {statusMessage.type === "success" ? (
-            <CheckCircle2 className="w-5 h-5 text-y2k-gunmetal shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-black shrink-0" />
           ) : (
             <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
           )}
@@ -301,16 +301,16 @@ export default function MarketingStudioPage() {
       )}
 
       {/* Next-Drop Countdown control */}
-      <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 shadow-xs">
-        <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal mb-1 flex items-center gap-2 pb-3 border-b border-y2k-gunmetal/10">
-          <Eye className="w-4 h-4 text-y2k-gunmetal" /> Next-Drop Countdown
+      <div className="bg-white border border-black/15 p-6 sm:p-8 shadow-xs">
+        <h2 className="font-display text-base uppercase tracking-tight text-black mb-1 flex items-center gap-2 pb-3 border-b border-black/10">
+          <Eye className="w-4 h-4 text-black" /> Next-Drop Countdown
         </h2>
-        <p className="text-[11px] text-y2k-gunmetal/60 mb-5">
+        <p className="text-[11px] text-black/60 mb-5">
           Shows a Day / Hr / Min / Sec band on the homepage above New Arrivals. Empty schedule hides it automatically.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-end">
           <div>
-            <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+            <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
               Drop label
             </label>
             <input
@@ -319,18 +319,18 @@ export default function MarketingStudioPage() {
               onChange={(e) => setDropLabel(e.target.value)}
               placeholder="e.g. Drop 09 · Vintage Archive"
               maxLength={60}
-              className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+              className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-medium"
             />
           </div>
           <div>
-            <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+            <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
               Date &amp; time *
             </label>
             <input
               type="datetime-local"
               value={dropAt}
               onChange={(e) => setDropAt(e.target.value)}
-              className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+              className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-medium"
             />
           </div>
           <div className="flex gap-2">
@@ -338,7 +338,7 @@ export default function MarketingStudioPage() {
               type="button"
               onClick={saveDrop}
               disabled={dropSaving}
-              className="bg-y2k-gunmetal text-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+              className="bg-black text-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
             >
               {dropSaving ? "Saving…" : "Set live"}
             </button>
@@ -346,14 +346,14 @@ export default function MarketingStudioPage() {
               type="button"
               onClick={clearDrop}
               disabled={dropSaving}
-              className="border border-y2k-gunmetal/20 text-y2k-gunmetal px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal transition-colors cursor-pointer disabled:opacity-50"
+              className="border border-black/20 text-black px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:border-black transition-colors cursor-pointer disabled:opacity-50"
             >
               Clear
             </button>
           </div>
         </div>
         {dropStatus && (
-          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-y2k-gunmetal/70">
+          <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-black/70">
             {dropStatus}
           </p>
         )}
@@ -364,88 +364,88 @@ export default function MarketingStudioPage() {
         
         {/* Left Column: Drop Campaign Form */}
         <div className="space-y-6">
-          <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 shadow-xs">
-            <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal mb-6 flex items-center gap-2 pb-3 border-b border-y2k-gunmetal/10">
-              <Sparkles className="w-4 h-4 text-y2k-gunmetal" /> 1. COMPOSE DROP CAMPAIGN
+          <div className="bg-white border border-black/15 p-6 sm:p-8 shadow-xs">
+            <h2 className="font-display text-base uppercase tracking-tight text-black mb-6 flex items-center gap-2 pb-3 border-b border-black/10">
+              <Sparkles className="w-4 h-4 text-black" /> 1. COMPOSE DROP CAMPAIGN
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
                   Internal Campaign Name *
                 </label>
                 <input
                   type="text"
                   value={campaignTitle}
                   onChange={(e) => setCampaignTitle(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+                  className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-medium"
                   placeholder="e.g. Summer Drop Broadcast"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
                   Promo / Discount Badge *
                 </label>
                 <input
                   type="text"
                   value={promoBadge}
                   onChange={(e) => setPromoBadge(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-bold"
+                  className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-bold"
                   placeholder="e.g. 50–80% OFF"
                 />
               </div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+              <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
                 Email Subject Line (Inbox Headline) *
               </label>
               <input
                 type="text"
                 value={subjectLine}
                 onChange={(e) => setSubjectLine(e.target.value)}
-                className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+                className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-medium"
                 placeholder="✦ RIGHT TO FASHION: New Drop Live"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
                   Banner Headline *
                 </label>
                 <input
                   type="text"
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-bold uppercase"
+                  className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-bold uppercase"
                   placeholder="e.g. RIGHT TO FASHION DROP"
                 />
               </div>
 
               <div>
-                <label className="block text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1.5">
+                <label className="block text-[9px] font-bold uppercase tracking-wider text-black/50 mb-1.5">
                   Subheadline / Hook *
                 </label>
                 <input
                   type="text"
                   value={subheadline}
                   onChange={(e) => setSubheadline(e.target.value)}
-                  className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium"
+                  className="w-full bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-medium"
                   placeholder="e.g. Limited Archive Collection"
                 />
               </div>
             </div>
 
             {/* Product Selector */}
-            <div className="border-t border-y2k-gunmetal/15 pt-6">
+            <div className="border-t border-black/15 pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-2">
-                    <Tag className="w-3.5 h-3.5 text-y2k-gunmetal" /> Featured Pieces ({selectedProductIds.length} chosen)
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-2">
+                    <Tag className="w-3.5 h-3.5 text-black" /> Featured Pieces ({selectedProductIds.length} chosen)
                   </h3>
-                  <p className="text-[10px] text-y2k-gunmetal/60">Selected pieces will be formatted into the email showcase grid.</p>
+                  <p className="text-[10px] text-black/60">Selected pieces will be formatted into the email showcase grid.</p>
                 </div>
                 <button
                   type="button"
@@ -456,14 +456,14 @@ export default function MarketingStudioPage() {
                       setSelectedProductIds(products.map((p) => p.id));
                     }
                   }}
-                  className="text-[10px] font-bold uppercase tracking-wider text-y2k-slate hover:text-black underline cursor-pointer"
+                  className="text-[10px] font-bold uppercase tracking-wider text-black/50 hover:text-black underline cursor-pointer"
                 >
                   {selectedProductIds.length === products.length ? "Deselect All" : "Select All"}
                 </button>
               </div>
 
               {loading ? (
-                <div className="p-8 text-center text-xs text-y2k-slate font-bold uppercase tracking-wider">Loading catalog products…</div>
+                <div className="p-8 text-center text-xs text-black/50 font-bold uppercase tracking-wider">Loading catalog products…</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[320px] overflow-y-auto pr-1">
                   {products.map((prod) => {
@@ -474,11 +474,11 @@ export default function MarketingStudioPage() {
                         onClick={() => toggleProductSelection(prod.id)}
                         className={`p-2.5 border cursor-pointer transition-all flex items-center gap-3 ${
                           isSelected
-                            ? "bg-y2k-ice border-y2k-gunmetal text-y2k-gunmetal font-bold shadow-2xs"
-                            : "bg-white border-y2k-gunmetal/15 text-y2k-gunmetal/70 hover:border-y2k-gunmetal/40"
+                            ? "bg-[#f5f5f2] border-black text-black font-bold shadow-2xs"
+                            : "bg-white border-black/15 text-black/70 hover:border-black/40"
                         }`}
                       >
-                        <div className="relative w-10 h-12 bg-y2k-ice border border-y2k-gunmetal/10 overflow-hidden shrink-0">
+                        <div className="relative w-10 h-12 bg-[#f5f5f2] border border-black/10 overflow-hidden shrink-0">
                           <Image
                              src={prod.image || (typeof prod.images?.[0] === "string" ? prod.images[0] : prod.images?.[0]?.url) || "/placeholder.jpg"}
                              alt={prod.name}
@@ -490,9 +490,9 @@ export default function MarketingStudioPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[11px] font-bold truncate">{prod.name}</p>
-                          <p className="font-bold text-[10px] text-y2k-gunmetal/60">₹{prod.price}</p>
+                          <p className="font-bold text-[10px] text-black/60">₹{prod.price}</p>
                         </div>
-                        <div className={`w-4 h-4 border flex items-center justify-center text-[10px] font-bold ${isSelected ? "bg-y2k-gunmetal border-y2k-gunmetal text-white" : "border-y2k-gunmetal/15"}`}>
+                        <div className={`w-4 h-4 border flex items-center justify-center text-[10px] font-bold ${isSelected ? "bg-black border-black text-white" : "border-black/15"}`}>
                           {isSelected ? "✓" : ""}
                         </div>
                       </div>
@@ -504,7 +504,7 @@ export default function MarketingStudioPage() {
           </div>
 
           {/* Dispatch Control Bar */}
-          <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-white border border-black/15 p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Test Send */}
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <input
@@ -512,13 +512,13 @@ export default function MarketingStudioPage() {
                 placeholder="your.test@email.com"
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
-                className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium w-full sm:w-60"
+                className="bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs text-black outline-none focus:border-black font-medium w-full sm:w-60"
               />
               <button
                 type="button"
                 onClick={() => handleSendBroadcast(true)}
                 disabled={sending}
-                className="bg-white border border-y2k-gunmetal/10 hover:bg-y2k-ice text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-2xs"
+                className="bg-white border border-black/10 hover:bg-[#f5f5f2] text-black px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-2xs"
               >
                 Send Test
               </button>
@@ -539,18 +539,18 @@ export default function MarketingStudioPage() {
 
         {/* Right Column: Live Email Preview Frame */}
         <div className="space-y-4">
-          <div className="bg-white border border-y2k-gunmetal/15 p-4 flex items-center justify-between shadow-xs">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
-              <Eye className="w-4 h-4 text-y2k-gunmetal" /> Live Email Preview
+          <div className="bg-white border border-black/15 p-4 flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black">
+              <Eye className="w-4 h-4 text-black" /> Live Email Preview
             </div>
 
             {/* Device Switcher */}
-            <div className="flex items-center gap-1 bg-y2k-ice p-1 border border-y2k-gunmetal/15">
+            <div className="flex items-center gap-1 bg-[#f5f5f2] p-1 border border-black/15">
               <button
                 type="button"
                 onClick={() => setPreviewDevice("desktop")}
                 className={`p-1.5 text-xs transition-all cursor-pointer ${
-                  previewDevice === "desktop" ? "bg-y2k-gunmetal text-white" : "text-y2k-slate hover:text-black"
+                  previewDevice === "desktop" ? "bg-black text-white" : "text-black/50 hover:text-black"
                 }`}
                 title="Desktop View"
               >
@@ -560,7 +560,7 @@ export default function MarketingStudioPage() {
                 type="button"
                 onClick={() => setPreviewDevice("mobile")}
                 className={`p-1.5 text-xs transition-all cursor-pointer ${
-                  previewDevice === "mobile" ? "bg-y2k-gunmetal text-white" : "text-y2k-slate hover:text-black"
+                  previewDevice === "mobile" ? "bg-black text-white" : "text-black/50 hover:text-black"
                 }`}
                 title="Mobile View"
               >
@@ -570,9 +570,9 @@ export default function MarketingStudioPage() {
           </div>
 
           {/* Iframe Preview Container */}
-          <div className="bg-y2k-ice border border-y2k-gunmetal/15 p-4 flex justify-center min-h-[640px]">
+          <div className="bg-[#f5f5f2] border border-black/15 p-4 flex justify-center min-h-[640px]">
             <div
-              className={`transition-all duration-300 bg-white border border-y2k-gunmetal/15 shadow-xl overflow-hidden ${
+              className={`transition-all duration-300 bg-white border border-black/15 shadow-xl overflow-hidden ${
                 previewDevice === "mobile" ? "w-[375px] max-h-[680px]" : "w-full max-h-[680px]"
               }`}
             >
@@ -583,8 +583,8 @@ export default function MarketingStudioPage() {
                   className="w-full h-[680px] border-0"
                 />
               ) : (
-                <div className="p-12 text-center text-xs text-y2k-slate flex flex-col items-center justify-center h-full">
-                  <Loader2 className="w-6 h-6 animate-spin mb-2 text-y2k-gunmetal" />
+                <div className="p-12 text-center text-xs text-black/50 flex flex-col items-center justify-center h-full">
+                  <Loader2 className="w-6 h-6 animate-spin mb-2 text-black" />
                   Generating live drop preview…
                 </div>
               )}

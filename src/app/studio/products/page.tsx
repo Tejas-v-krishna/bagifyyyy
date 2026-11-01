@@ -80,20 +80,20 @@ function ConfirmDeleteModal({
 }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4 font-sans">
-      <div className="editorial-panel bg-white border border-y2k-gunmetal/10 p-8 max-w-sm w-full text-y2k-gunmetal">
+      <div className="editorial-panel bg-white border border-black/10 p-8 max-w-sm w-full text-black">
         <div className="flex items-center gap-3 mb-4">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
-          <h2 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal">
+          <h2 className="font-display font-medium text-lg uppercase tracking-tight text-black">
             Delete Product?
           </h2>
         </div>
-        <p className="text-y2k-gunmetal/70 text-xs mb-6 leading-relaxed">
-          Are you sure you want to delete <span className="font-bold text-y2k-gunmetal">&quot;{productName}&quot;</span>? This will permanently remove this item from your store catalog.
+        <p className="text-black/70 text-xs mb-6 leading-relaxed">
+          Are you sure you want to delete <span className="font-bold text-black">&quot;{productName}&quot;</span>? This will permanently remove this item from your store catalog.
         </p>
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal hover:bg-y2k-ice py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+            className="flex-1 bg-white border border-black/10 text-black hover:bg-[#f5f5f2] py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             Cancel
           </button>
@@ -232,15 +232,15 @@ export default function StudioProductsCatalogPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Page Header (Title matches sidebar nav link) ──────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           PRODUCTS &amp; CATALOG ({totalProducts})
         </h1>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => fetchProducts()}
-            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
+            className="bg-white border border-black/10 text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
             aria-label="Refresh catalog"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -258,40 +258,40 @@ export default function StudioProductsCatalogPage() {
       </div>
 
       {/* ── Summary Metric Badges ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
-        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-0.5">Total</p>
-          <p className="font-display text-xl sm:text-2xl font-bold text-y2k-gunmetal">{totalProducts}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+        <div className="bg-white border border-black/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-black/50 mb-0.5">Total</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-black">{totalProducts}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+        <div className="bg-white border border-black/15 p-3 sm:p-4 shadow-2xs">
           <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 mb-0.5">Live</p>
           <p className="font-display text-xl sm:text-2xl font-bold text-emerald-700">{activeCount}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-0.5">In Stock</p>
-          <p className="font-display text-xl sm:text-2xl font-bold text-y2k-gunmetal">{inStockCount}</p>
+        <div className="bg-white border border-black/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-black/50 mb-0.5">In Stock</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-black">{inStockCount}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-0.5">Sold Out</p>
+        <div className="bg-white border border-black/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-black/50 mb-0.5">Sold Out</p>
           <p className="font-display text-xl sm:text-2xl font-bold text-red-600">{soldOutCount}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+        <div className="bg-white border border-black/15 p-3 sm:p-4 shadow-2xs">
           <p className="text-[9px] font-bold uppercase tracking-wider text-amber-700 mb-0.5">Archived</p>
           <p className="font-display text-xl sm:text-2xl font-bold text-amber-700">{archivedCount}</p>
         </div>
       </div>
 
       {/* ── Filters & Search Row ─────────────────────────────────────────────── */}
-      <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="bg-white border border-black/15 p-3 sm:p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-y2k-gunmetal/40 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-black/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search products…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 pl-9 pr-4 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40"
+            className="w-full bg-[#f5f5f2] border border-black/10 pl-9 pr-4 py-2.5 text-xs text-black outline-none focus:border-black font-medium placeholder:text-black/40"
           />
         </div>
 
@@ -301,7 +301,7 @@ export default function StudioProductsCatalogPage() {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             aria-label="Filter by category"
-            className="w-full md:w-auto bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+            className="w-full md:w-auto bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs font-bold uppercase text-black outline-none focus:border-black cursor-pointer"
           >
             <option value="ALL">All Categories</option>
             {CATEGORIES.map((cat) => (
@@ -313,7 +313,7 @@ export default function StudioProductsCatalogPage() {
             value={stockFilter}
             onChange={(e) => setStockFilter(e.target.value)}
             aria-label="Filter by stock status"
-            className="w-full md:w-auto bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+            className="w-full md:w-auto bg-[#f5f5f2] border border-black/10 px-3 py-2.5 text-xs font-bold uppercase text-black outline-none focus:border-black cursor-pointer"
           >
             <option value="ALL">All Items ({totalProducts})</option>
             <option value="ACTIVE">Live Store ({activeCount})</option>
@@ -326,29 +326,29 @@ export default function StudioProductsCatalogPage() {
       </div>
 
       {/* ── Product List Table ────────────────────────────────────────────────── */}
-      <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-y2k-gunmetal/15 flex items-center justify-between bg-y2k-ice/30">
-          <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal">
+      <div className="bg-white border border-black/15 shadow-xs overflow-hidden">
+        <div className="px-4 sm:px-6 py-4 border-b border-black/15 flex items-center justify-between bg-[#f7f7f4]">
+          <h2 className="font-display text-base uppercase tracking-tight text-black">
             Catalog Items ({filteredProducts.length})
           </h2>
         </div>
 
         {loading ? (
-          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-wider text-y2k-slate animate-pulse">
+          <div className="py-20 text-center text-[10px] font-bold uppercase tracking-wider text-black/50 animate-pulse">
             Loading products…
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="py-16 text-center">
-            <Package className="w-8 h-8 text-y2k-slate/50 mx-auto mb-2" />
-            <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal mb-2">
+            <Package className="w-8 h-8 text-black/40 mx-auto mb-2" />
+            <p className="text-xs font-bold uppercase tracking-wider text-black mb-2">
               No products found
             </p>
-            <p className="text-xs text-y2k-slate max-w-sm mx-auto mb-4">
+            <p className="text-xs text-black/50 max-w-sm mx-auto mb-4">
               Try changing your search terms or category filters.
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-y2k-gunmetal/10">
+          <div className="divide-y divide-black/10">
             {filteredProducts.map((product) => {
               const imageUrl = getProductImageUrl(product.images?.[0]);
 
@@ -356,14 +356,14 @@ export default function StudioProductsCatalogPage() {
                 <div
                   key={product.id}
                   className={`px-3 sm:px-6 py-4 transition-colors group ${
-                    product.isArchived ? "bg-amber-50/20 hover:bg-amber-50/40" : "hover:bg-y2k-ice/30"
+                    product.isArchived ? "bg-amber-50/20 hover:bg-amber-50/40" : "hover:bg-[#f7f7f4]"
                   }`}
                 >
                   <div className="flex items-start gap-3 sm:gap-4">
                     {/* Thumbnail */}
                     <Link
                       href={`/studio/products/${product.id}`}
-                      className="w-16 h-20 sm:w-14 sm:h-16 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
+                      className="w-16 h-20 sm:w-14 sm:h-16 bg-[#f5f5f2] border border-black/15 rounded-lg shrink-0 relative overflow-hidden block"
                     >
                       {imageUrl && (
                         <Image
@@ -383,29 +383,29 @@ export default function StudioProductsCatalogPage() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <Link
                               href={`/studio/products/${product.id}`}
-                              className="text-sm font-bold text-y2k-gunmetal hover:underline break-words"
+                              className="text-sm font-bold text-black hover:underline break-words"
                             >
                               {product.name}
                             </Link>
                             {product.sku && (
-                              <span className="text-[9px] font-mono font-bold text-black/70 bg-black/5 px-1.5 py-0.5 border border-black/15">
+                              <span className="text-[9px] font-mono font-bold text-black/70 bg-black/5 px-1.5 py-0.5 border border-black/15 rounded-full">
                                 {product.sku}
                               </span>
                             )}
                           </div>
-                          <p className="text-[10px] uppercase tracking-wide text-y2k-slate mt-1">
+                          <p className="text-[10px] uppercase tracking-wide text-black/50 mt-1">
                             {product.category} · {product.brand || "BAGIFYYYY"}
                           </p>
-                          <p className="hidden sm:block text-[10px] text-y2k-gunmetal/60 line-clamp-1 mt-1">
+                          <p className="hidden sm:block text-[10px] text-black/60 line-clamp-1 mt-1">
                             {product.description}
                           </p>
-                          <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-mono font-bold text-y2k-gunmetal/70 mt-1.5">
-                            <Calendar className="w-3 h-3 text-y2k-slate shrink-0" />
+                          <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-mono font-bold text-black/70 mt-1.5">
+                            <Calendar className="w-3 h-3 text-black/50 shrink-0" />
                             <span>{formatUploadDate(product.createdAt)}</span>
                           </span>
                         </div>
 
-                        <p className="text-sm sm:text-base font-bold text-y2k-gunmetal shrink-0">
+                        <p className="text-sm sm:text-base font-bold text-black shrink-0">
                           ₹{product.price?.toLocaleString("en-IN")}
                         </p>
                       </div>
@@ -439,7 +439,7 @@ export default function StudioProductsCatalogPage() {
                             disabled={toggling === product.id + "isSoldOut"}
                             title={product.isSoldOut ? "Mark in stock" : "Mark sold out"}
                             aria-label={product.isSoldOut ? "Mark in stock" : "Mark sold out"}
-                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors cursor-pointer disabled:opacity-40"
+                            className="p-2 border border-black/15 text-black/50 hover:text-black hover:border-black transition-colors cursor-pointer disabled:opacity-40"
                           >
                             {product.isSoldOut ? (
                               <ToggleRight className="w-4 h-4 text-red-600" />
@@ -453,20 +453,20 @@ export default function StudioProductsCatalogPage() {
                             disabled={toggling === product.id + "isNew"}
                             title={product.isNew ? "Remove new badge" : "Add new badge"}
                             aria-label={product.isNew ? "Remove new badge" : "Add new badge"}
-                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors cursor-pointer disabled:opacity-40"
+                            className="p-2 border border-black/15 text-black/50 hover:text-black hover:border-black transition-colors cursor-pointer disabled:opacity-40"
                           >
-                            <Sparkles className={`w-4 h-4 ${product.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : ""}`} />
+                            <Sparkles className={`w-4 h-4 ${product.isNew ? "text-black fill-black" : ""}`} />
                           </button>
 
                           {product.isArchived ? (
-                            <span className="p-2 border border-y2k-gunmetal/10 text-y2k-slate/40" title="Hidden from store">
+                            <span className="p-2 border border-black/10 text-black/30" title="Hidden from store">
                               <EyeOff className="w-4 h-4" />
                             </span>
                           ) : (
                             <Link
                               href={`/product/${product.id}`}
                               target="_blank"
-                              className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors"
+                              className="p-2 border border-black/15 text-black/50 hover:text-black hover:border-black transition-colors"
                               title="View on store"
                               aria-label="View on store"
                             >
@@ -482,7 +482,7 @@ export default function StudioProductsCatalogPage() {
                             className={`p-2 border transition-colors cursor-pointer disabled:opacity-40 ${
                               product.isArchived
                                 ? "border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100"
-                                : "border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal"
+                                : "border-black/15 text-black/50 hover:text-black hover:border-black"
                             }`}
                           >
                             {product.isArchived ? (
@@ -494,7 +494,7 @@ export default function StudioProductsCatalogPage() {
 
                           <Link
                             href={`/studio/products/${product.id}`}
-                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors"
+                            className="p-2 border border-black/15 text-black/50 hover:text-black hover:border-black transition-colors"
                             title="Edit product"
                             aria-label="Edit product"
                           >
@@ -503,7 +503,7 @@ export default function StudioProductsCatalogPage() {
 
                           <button
                             onClick={() => setDeleteTarget(product)}
-                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-red-600 hover:border-red-600 transition-colors cursor-pointer"
+                            className="p-2 border border-black/15 text-black/50 hover:text-red-600 hover:border-red-600 transition-colors cursor-pointer"
                             title="Delete product"
                             aria-label="Delete product"
                           >

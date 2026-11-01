@@ -99,15 +99,15 @@ export default function StudioReviewsPage() {
 
   return (
     <div className="space-y-8 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           Community Reviews
         </h1>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/products"
             target="_blank"
-            className="flex items-center gap-2 border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal hover:bg-white transition-colors bg-transparent"
+            className="flex items-center gap-2 border border-black/10 text-black px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-black hover:bg-white transition-colors bg-transparent"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             View store
@@ -115,7 +115,7 @@ export default function StudioReviewsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-y2k-gunmetal text-white px-5 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 bg-black text-white px-5 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer disabled:opacity-50"
           >
             <Save className="w-3.5 h-3.5" />
             {saving ? "Saving…" : "Save reviews"}
@@ -127,7 +127,7 @@ export default function StudioReviewsPage() {
         <div
           className={`p-4 text-xs flex items-center gap-2 border bg-white ${
             message.type === "success"
-              ? "border-y2k-gunmetal text-y2k-gunmetal font-bold"
+              ? "border-black text-black font-bold"
               : "border-red-500 text-red-600"
           }`}
         >
@@ -140,7 +140,7 @@ export default function StudioReviewsPage() {
         </div>
       )}
 
-      <div className="bg-white border border-y2k-gunmetal/15 p-6">
+      <div className="bg-white border border-black/15 p-6">
         <input
           ref={fileInputRef}
           type="file"
@@ -179,7 +179,7 @@ export default function StudioReviewsPage() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((img, idx) => (
-            <div key={`${img.src}-${idx}`} className="bg-white border border-y2k-gunmetal/15 p-3">
+            <div key={`${img.src}-${idx}`} className="bg-white border border-black/15 p-3">
               <div className="relative h-48 w-full overflow-hidden bg-black">
                 <Image
                   src={img.src}
@@ -243,7 +243,7 @@ export default function StudioReviewsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-3 bg-y2k-gunmetal text-white px-8 py-4 text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+            className="flex items-center gap-3 bg-black text-white px-8 py-4 text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors shadow-md disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
             {saving ? "Saving…" : "Save reviews"}

@@ -234,8 +234,8 @@ export default function StudioBundlesPage() {
     <div className="space-y-8 font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           Bundles
         </h1>
 
@@ -243,14 +243,14 @@ export default function StudioBundlesPage() {
           <Link
             href="/bundles"
             target="_blank"
-            className="flex items-center justify-center gap-2 border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 sm:px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal hover:bg-white transition-colors"
+            className="flex items-center justify-center gap-2 border border-black/10 text-black px-3 sm:px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-black hover:bg-white transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             View Live
           </Link>
           <button
             onClick={openCreateModal}
-            className="flex items-center justify-center gap-2 bg-y2k-gunmetal text-white px-3 sm:px-5 py-2.5 text-[9px] font-black uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-black text-white px-3 sm:px-5 py-2.5 text-[9px] font-black uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             Create
@@ -259,53 +259,53 @@ export default function StudioBundlesPage() {
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        <div className="bg-white border border-y2k-gunmetal/15 p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <div className="bg-white border border-black/15 p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/50">Active Combos</span>
-            <Layers className="w-4 h-4 text-y2k-gunmetal" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-black/50">Active Combos</span>
+            <Layers className="w-4 h-4 text-black" />
           </div>
-          <p className="font-display text-3xl font-black">{bundles.length}</p>
+          <p className="font-display text-xl sm:text-2xl font-black">{bundles.length}</p>
         </div>
 
-        <div className="bg-white border border-y2k-gunmetal/15 p-5">
+        <div className="bg-white border border-black/15 p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/50">Average Savings</span>
-            <TrendingDown className="w-4 h-4 text-y2k-gunmetal" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-black/50">Average Savings</span>
+            <TrendingDown className="w-4 h-4 text-black" />
           </div>
-          <p className="font-display text-3xl font-black">
+          <p className="font-display text-xl sm:text-2xl font-black">
             {bundles.length > 0
               ? `${Math.round(bundles.reduce((acc, b) => acc + b.discount, 0) / bundles.length)}%`
               : "15%"}
           </p>
         </div>
 
-        <div className="bg-white border border-y2k-gunmetal/15 p-5">
+        <div className="bg-white border border-black/15 p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/50">Catalog Ready</span>
-            <Package className="w-4 h-4 text-y2k-gunmetal" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-black/50">Catalog Ready</span>
+            <Package className="w-4 h-4 text-black" />
           </div>
-          <p className="font-display text-3xl font-black">{catalogProducts.length}</p>
+          <p className="font-display text-xl sm:text-2xl font-black">{catalogProducts.length}</p>
         </div>
       </div>
 
       {/* Existing Bundles List */}
       {loading ? (
-        <div className="py-20 text-center text-xs font-bold uppercase tracking-wider text-y2k-gunmetal/60">
+        <div className="py-20 text-center text-xs font-bold uppercase tracking-wider text-black/60">
           Loading bundles…
         </div>
       ) : bundles.length === 0 ? (
-        <div className="bg-white border border-y2k-gunmetal/15 p-12 text-center">
-          <Layers className="w-10 h-10 text-y2k-gunmetal/30 mx-auto mb-4" />
-          <h3 className="text-sm font-bold uppercase tracking-wider text-y2k-gunmetal mb-1">
+        <div className="bg-white border border-black/15 p-12 text-center">
+          <Layers className="w-10 h-10 text-black/30 mx-auto mb-4" />
+          <h3 className="text-sm font-bold uppercase tracking-wider text-black mb-1">
             No bundles created yet
           </h3>
-          <p className="text-xs text-y2k-gunmetal/60 max-w-sm mx-auto mb-6">
+          <p className="text-xs text-black/60 max-w-sm mx-auto mb-6">
             Create combo packages (e.g. Jacket + Jeans + Belt) with special discounts to increase average order value.
           </p>
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 bg-y2k-gunmetal text-white px-6 py-2.5 text-[9px] font-black uppercase tracking-wider hover:bg-black transition-colors"
+            className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 text-[9px] font-black uppercase tracking-wider hover:bg-black transition-colors"
           >
             <Plus className="w-3.5 h-3.5" /> Create First Bundle
           </button>
@@ -315,26 +315,26 @@ export default function StudioBundlesPage() {
           {bundles.map((bundle) => (
             <div
               key={bundle.id}
-              className="bg-white border border-y2k-gunmetal/15 p-6 flex flex-col justify-between hover:shadow-lg transition-shadow group"
+              className="bg-white border border-black/15 p-6 flex flex-col justify-between hover:shadow-lg transition-shadow group"
             >
               <div>
                 {/* Header info */}
-                <div className="flex items-start justify-between gap-4 mb-5 pb-4 border-b border-y2k-gunmetal/10">
+                <div className="flex items-start justify-between gap-4 mb-5 pb-4 border-b border-black/10">
                   <div>
-                    <h3 className="font-display text-2xl uppercase tracking-tight text-y2k-gunmetal">
+                    <h3 className="font-display text-2xl uppercase tracking-tight text-black">
                       {bundle.name}
                     </h3>
-                    <p className="text-xs text-y2k-gunmetal/60 mt-1 line-clamp-2">
+                    <p className="text-xs text-black/60 mt-1 line-clamp-2">
                       {bundle.description || "Curated multi-piece outfit combo."}
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <span className="shrink-0 border border-y2k-gunmetal text-y2k-gunmetal text-[10px] font-bold uppercase px-3 py-1">
+                    <span className="shrink-0 border border-black text-black text-[10px] font-bold uppercase px-3 py-1">
                       {bundle.discount}% OFF
                     </span>
                     <button
                       onClick={() => openEditModal(bundle)}
-                      className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 hover:text-y2k-gunmetal flex items-center gap-1 transition-colors"
+                      className="text-[9px] font-bold uppercase tracking-wider text-black/60 hover:text-black flex items-center gap-1 transition-colors"
                     >
                       <Edit2 className="w-3 h-3" /> Edit Bundle
                     </button>
@@ -348,9 +348,9 @@ export default function StudioBundlesPage() {
                     return (
                       <div
                         key={item.id}
-                        className="bg-y2k-ice/30 border border-y2k-gunmetal/10 p-2 flex flex-col justify-between relative group/item"
+                        className="bg-[#f7f7f4] border border-black/10 p-2 flex flex-col justify-between relative group/item"
                       >
-                        <div className="aspect-[3/4] bg-y2k-ice relative overflow-hidden mb-2">
+                        <div className="aspect-[3/4] bg-[#f5f5f2] rounded-lg relative overflow-hidden mb-2">
                           <Image
                             src={item.image}
                             alt={item.name}
@@ -360,14 +360,14 @@ export default function StudioBundlesPage() {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <p className="text-[10px] font-bold text-y2k-gunmetal truncate">{item.name}</p>
-                        <p className="font-bold text-[10px] text-y2k-gunmetal/70 font-mono">₹{item.price.toLocaleString("en-IN")}</p>
+                        <p className="text-[10px] font-bold text-black truncate">{item.name}</p>
+                        <p className="font-bold text-[10px] text-black/70 font-mono">₹{item.price.toLocaleString("en-IN")}</p>
                         
                         {/* Quick edit product */}
                         {catalogProd && (
                           <button
                             onClick={() => openProductEdit(catalogProd)}
-                            className="absolute top-1 right-1 bg-white border border-y2k-gunmetal/10 p-1 opacity-0 group-hover/item:opacity-100 transition-opacity hover:bg-y2k-ice text-y2k-gunmetal shadow-sm"
+                            className="absolute top-1 right-1 bg-white border border-black/10 p-1 opacity-0 group-hover/item:opacity-100 transition-opacity hover:bg-[#f5f5f2] text-black shadow-sm"
                             title="Edit Product Price/Name"
                           >
                             <Edit2 className="w-3 h-3" />
@@ -380,17 +380,17 @@ export default function StudioBundlesPage() {
               </div>
 
               {/* Pricing & Actions Footer */}
-              <div className="pt-4 border-t border-y2k-gunmetal/10 flex items-center justify-between">
+              <div className="pt-4 border-t border-black/10 flex items-center justify-between">
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="font-bold font-display text-xl font-black text-y2k-gunmetal">
+                    <span className="font-bold font-display text-xl font-black text-black">
                       ₹{bundle.bundlePrice.toLocaleString("en-IN")}
                     </span>
-                    <span className="font-bold text-xs text-y2k-gunmetal/50 line-through font-mono">
+                    <span className="font-bold text-xs text-black/50 line-through font-mono">
                       ₹{bundle.originalTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-gunmetal mt-0.5">
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-black mt-0.5">
                     SAVINGS: ₹{bundle.savings.toLocaleString("en-IN")}
                   </p>
                 </div>
@@ -399,13 +399,13 @@ export default function StudioBundlesPage() {
                   <Link
                     href="/bundles"
                     target="_blank"
-                    className="p-2 border border-y2k-gunmetal/15 text-y2k-gunmetal/60 hover:text-y2k-gunmetal hover:border-y2k-gunmetal/40 transition-colors bg-white"
+                    className="p-2 border border-black/15 text-black/60 hover:text-black hover:border-black/40 transition-colors bg-white"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </Link>
                   <button
                     onClick={() => setDeleteTarget(bundle)}
-                    className="p-2 border border-y2k-gunmetal/15 text-y2k-gunmetal/60 hover:text-red-600 hover:border-red-600/40 transition-colors bg-white"
+                    className="p-2 border border-black/15 text-black/60 hover:text-red-600 hover:border-red-600/40 transition-colors bg-white"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -420,10 +420,10 @@ export default function StudioBundlesPage() {
       {/* EDIT PRODUCT INLINE MODAL                                             */}
       {/* ===================================================================== */}
       {editingProduct && (
-        <div className="fixed inset-0 bg-y2k-gunmetal/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="bg-white border border-y2k-gunmetal/15 p-6 max-w-md w-full shadow-2xl">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-white border border-black/15 p-6 max-w-md w-full shadow-2xl">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-y2k-gunmetal">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-black">
                 Edit Product Name & Price
               </h3>
               <button onClick={() => setEditingProduct(null)}><X className="w-4 h-4" /></button>
@@ -431,7 +431,7 @@ export default function StudioBundlesPage() {
             
             <form onSubmit={handleSaveProduct} className="space-y-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-black/60 block mb-1">
                   Product Name
                 </label>
                 <input
@@ -439,11 +439,11 @@ export default function StudioBundlesPage() {
                   required
                   value={prodName}
                   onChange={(e) => setProdName(e.target.value)}
-                  className="w-full bg-y2k-ice border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-3 py-2 outline-none focus:border-y2k-gunmetal"
+                  className="w-full bg-[#f5f5f2] border border-black/10 text-black text-xs px-3 py-2 outline-none focus:border-black"
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-black/60 block mb-1">
                   Price (₹)
                 </label>
                 <input
@@ -452,12 +452,12 @@ export default function StudioBundlesPage() {
                   min="0"
                   value={prodPrice}
                   onChange={(e) => setProdPrice(Number(e.target.value))}
-                  className="w-full bg-y2k-ice border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-3 py-2 outline-none focus:border-y2k-gunmetal font-mono"
+                  className="w-full bg-[#f5f5f2] border border-black/10 text-black text-xs px-3 py-2 outline-none focus:border-black font-mono"
                 />
               </div>
               <div className="pt-4 flex justify-end gap-2">
                 <button type="button" onClick={() => setEditingProduct(null)} className="px-4 py-2 text-[10px] font-bold uppercase">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-y2k-gunmetal text-white text-[10px] font-bold uppercase">Save Changes</button>
+                <button type="submit" className="px-4 py-2 bg-black text-white text-[10px] font-bold uppercase">Save Changes</button>
               </div>
             </form>
           </div>
@@ -468,25 +468,25 @@ export default function StudioBundlesPage() {
       {/* CREATE / EDIT BUNDLE MODAL                                            */}
       {/* ===================================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-y2k-gunmetal/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-y2k-gunmetal/15 max-w-4xl w-full text-y2k-gunmetal shadow-2xl flex flex-col max-h-[92vh]">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-black/15 max-w-4xl w-full text-black shadow-2xl flex flex-col max-h-[92vh]">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-y2k-gunmetal/15 shrink-0 bg-y2k-ice">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-black/15 shrink-0 bg-[#f5f5f2]">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold">
                   {editingBundleId ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-y2k-gunmetal">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-black">
                     {editingBundleId ? "Edit Outfit Bundle" : "Create New Outfit Bundle"}
                   </h2>
-                  <p className="text-[10px] text-y2k-gunmetal/60">Manage bundle details, discount, and pieces</p>
+                  <p className="text-[10px] text-black/60">Manage bundle details, discount, and pieces</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-y2k-gunmetal/60 hover:text-y2k-gunmetal transition-colors"
+                className="p-2 text-black/60 hover:text-black transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -504,7 +504,7 @@ export default function StudioBundlesPage() {
               {/* Step 1: Info */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div className="sm:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-black/60 block mb-1.5">
                     Bundle Name *
                   </label>
                   <input
@@ -513,12 +513,12 @@ export default function StudioBundlesPage() {
                     placeholder="e.g. Complete Cyber Skater Combo"
                     value={bundleName}
                     onChange={(e) => setBundleName(e.target.value)}
-                    className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-3.5 py-3 outline-none focus:border-y2k-gunmetal"
+                    className="w-full bg-[#f5f5f2] border border-black/10 text-black text-xs px-3.5 py-3 outline-none focus:border-black"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-black/60 block mb-1.5">
                     Discount Percentage ({discountPercent}%) *
                   </label>
                   <div className="flex flex-col gap-2">
@@ -530,7 +530,7 @@ export default function StudioBundlesPage() {
                         step={1}
                         value={discountPercent}
                         onChange={(e) => setDiscountPercent(Number(e.target.value))}
-                        className="w-full accent-y2k-gunmetal cursor-pointer"
+                        className="w-full accent-black cursor-pointer"
                       />
                       <input
                         type="number"
@@ -538,10 +538,10 @@ export default function StudioBundlesPage() {
                         max="100"
                         value={discountPercent}
                         onChange={(e) => setDiscountPercent(Number(e.target.value))}
-                        className="w-14 bg-y2k-ice/50 border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-2 py-1 outline-none text-center font-mono font-bold"
+                        className="w-14 bg-[#f5f5f2] border border-black/10 text-black text-xs px-2 py-1 outline-none text-center font-mono font-bold"
                       />
                     </div>
-                    <p className="text-[9px] text-y2k-gunmetal/50 leading-tight">
+                    <p className="text-[9px] text-black/50 leading-tight">
                       Adjust the percentage to control the final price below.
                     </p>
                   </div>
@@ -549,7 +549,7 @@ export default function StudioBundlesPage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 block mb-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-black/60 block mb-1.5">
                   Styling Description
                 </label>
                 <input
@@ -557,12 +557,12 @@ export default function StudioBundlesPage() {
                   placeholder="e.g. Pair our 14.5oz Raw Selvedge Trucker with Acid Wash Cargos..."
                   value={bundleDesc}
                   onChange={(e) => setBundleDesc(e.target.value)}
-                  className="w-full bg-y2k-ice/50 border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs px-3.5 py-3 outline-none focus:border-y2k-gunmetal"
+                  className="w-full bg-[#f5f5f2] border border-black/10 text-black text-xs px-3.5 py-3 outline-none focus:border-black"
                 />
               </div>
 
               {/* Step 2: Live Price Preview Bar */}
-              <div className="p-5 bg-y2k-gunmetal text-white border border-y2k-gunmetal flex flex-wrap items-center justify-between gap-4 shadow-sm">
+              <div className="p-5 bg-black text-white border border-black flex flex-wrap items-center justify-between gap-4 shadow-sm">
                 <div>
                   <span className="text-[9px] font-bold uppercase tracking-wider text-white/50 block">
                     Selected Items ({selectedIds.length})
@@ -576,7 +576,7 @@ export default function StudioBundlesPage() {
                     </span>
                   </div>
                 </div>
-                <div className="font-bold text-right bg-white text-y2k-gunmetal px-4 py-2 border border-white">
+                <div className="font-bold text-right bg-white text-black px-4 py-2 border border-white">
                   <span className="text-[10px] uppercase tracking-wider font-bold block">
                     TOTAL SAVINGS: ₹{calculatedSavings.toLocaleString("en-IN")} ({discountPercent}% OFF)
                   </span>
@@ -586,26 +586,26 @@ export default function StudioBundlesPage() {
               {/* Step 3: Product Selector */}
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-black/60">
                     Select Products to Include ({selectedIds.length} Selected)
                   </label>
                   
                   <div className="flex items-center gap-2">
                     <div className="relative">
-                      <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-y2k-gunmetal/40" />
+                      <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-black/40" />
                       <input
                         type="text"
                         placeholder="Filter catalog…"
                         value={catalogSearch}
                         onChange={(e) => setCatalogSearch(e.target.value)}
-                        className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal text-xs pl-8 pr-3 py-2 outline-none focus:border-y2k-gunmetal w-40 sm:w-48"
+                        className="bg-white border border-black/10 text-black text-xs pl-8 pr-3 py-2 outline-none focus:border-black w-40 sm:w-48"
                       />
                     </div>
                     {categories.length > 0 && (
                       <select
                         value={catalogCategory}
                         onChange={(e) => setCatalogCategory(e.target.value)}
-                        className="bg-y2k-ice border border-y2k-gunmetal/10 text-y2k-gunmetal text-[10px] font-bold uppercase px-2.5 py-2 outline-none cursor-pointer"
+                        className="bg-[#f5f5f2] border border-black/10 text-black text-[10px] font-bold uppercase px-2.5 py-2 outline-none cursor-pointer"
                       >
                         <option value="all">All Categories</option>
                         {categories.map((cat) => (
@@ -618,7 +618,7 @@ export default function StudioBundlesPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-72 overflow-y-auto p-2 border border-y2k-gunmetal/10 bg-y2k-ice/30">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-72 overflow-y-auto p-2 border border-black/10 bg-[#f7f7f4]">
                   {filteredCatalog.map((prod) => {
                     const isSelected = selectedIds.includes(prod.id);
                     const imgUrl = prod.images?.[0]?.url || "/placeholder.jpg";
@@ -629,12 +629,12 @@ export default function StudioBundlesPage() {
                         onClick={() => toggleSelectProduct(prod.id)}
                         className={`p-2.5 border transition-all cursor-pointer select-none flex flex-col justify-between ${
                           isSelected
-                            ? "bg-white border-y2k-gunmetal shadow-md scale-[1.02]"
-                            : "bg-white border-y2k-gunmetal/10 hover:border-y2k-gunmetal/40 hover:bg-y2k-ice"
+                            ? "bg-white border-black shadow-md scale-[1.02]"
+                            : "bg-white border-black/10 hover:border-black/40 hover:bg-[#f5f5f2]"
                         }`}
                       >
                         <div>
-                          <div className="aspect-[3/4] bg-y2k-ice relative overflow-hidden mb-2">
+                          <div className="aspect-[3/4] bg-[#f5f5f2] rounded-lg relative overflow-hidden mb-2">
                             <Image
                               src={imgUrl}
                               alt={prod.name}
@@ -644,15 +644,15 @@ export default function StudioBundlesPage() {
                               className="w-full h-full object-cover"
                             />
                             {isSelected && (
-                              <div className="absolute top-1.5 right-1.5 bg-y2k-gunmetal text-white p-1 rounded-full shadow-md">
+                              <div className="absolute top-1.5 right-1.5 bg-black text-white p-1 rounded-full shadow-md">
                                 <Check className="w-3 h-3 stroke-[3]" />
                               </div>
                             )}
                           </div>
-                          <p className="text-[10px] font-bold text-y2k-gunmetal truncate">{prod.name}</p>
-                          <p className="font-bold text-[8px] uppercase tracking-wider text-y2k-gunmetal/50">{prod.category}</p>
+                          <p className="text-[10px] font-bold text-black truncate">{prod.name}</p>
+                          <p className="font-bold text-[8px] uppercase tracking-wider text-black/50">{prod.category}</p>
                         </div>
-                        <p className="text-xs font-mono font-bold text-y2k-gunmetal mt-1">
+                        <p className="text-xs font-mono font-bold text-black mt-1">
                           ₹{prod.price.toLocaleString("en-IN")}
                         </p>
                       </div>
@@ -662,18 +662,18 @@ export default function StudioBundlesPage() {
               </div>
 
               {/* Modal Footer Controls */}
-              <div className="pt-4 border-t border-y2k-gunmetal/15 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-black/15 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-3 border border-y2k-gunmetal/10 text-y2k-gunmetal/60 hover:text-y2k-gunmetal hover:bg-y2k-ice text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                  className="px-5 py-3 border border-black/10 text-black/60 hover:text-black hover:bg-[#f5f5f2] text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting || selectedIds.length < 2}
-                  className="flex items-center gap-2 bg-y2k-gunmetal text-white px-8 py-3 text-[10px] font-black uppercase tracking-wider hover:bg-black transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 disabled:opacity-40 cursor-pointer"
+                  className="flex items-center gap-2 bg-black text-white px-8 py-3 text-[10px] font-black uppercase tracking-wider hover:bg-black transition-colors shadow-[4px_4px_0px_rgba(0,0,0,0.1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 disabled:opacity-40 cursor-pointer"
                 >
                   {isSubmitting ? "Saving…" : (editingBundleId ? "Save Changes" : "Publish Bundle")}
                 </button>
@@ -687,18 +687,18 @@ export default function StudioBundlesPage() {
       {/* DELETE CONFIRM MODAL                                                  */}
       {/* ===================================================================== */}
       {deleteTarget && (
-        <div className="fixed inset-0 bg-y2k-gunmetal/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-          <div className="bg-white border border-y2k-gunmetal/15 p-8 max-w-md w-full text-y2k-gunmetal shadow-2xl">
-            <h3 className="font-display text-2xl uppercase tracking-wider text-y2k-gunmetal mb-2">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+          <div className="bg-white border border-black/15 p-8 max-w-md w-full text-black shadow-2xl">
+            <h3 className="font-display text-2xl uppercase tracking-wider text-black mb-2">
               Delete Bundle?
             </h3>
-            <p className="text-sm text-y2k-gunmetal/60 leading-relaxed mb-8">
+            <p className="text-sm text-black/60 leading-relaxed mb-8">
               Are you sure you want to remove <b>{deleteTarget.name}</b>? Individual products will remain in the catalog.
             </p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="px-5 py-2 border border-y2k-gunmetal/10 text-y2k-gunmetal text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-ice"
+                className="px-5 py-2 border border-black/10 text-black text-[10px] font-bold uppercase tracking-wider hover:bg-[#f5f5f2]"
               >
                 Cancel
               </button>

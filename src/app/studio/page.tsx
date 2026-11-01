@@ -128,13 +128,13 @@ function ConfirmModal({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 bg-white border border-black/10 rounded-[0.35rem] text-black hover:bg-black/5 py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+            className="flex-1 bg-white border border-black/10 rounded-lg text-black hover:bg-black/5 py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-red-600 hover:bg-red-700 rounded-[0.35rem] text-white py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
+            className="flex-1 bg-red-600 hover:bg-red-700 rounded-lg text-white py-3 text-[10px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-xs"
           >
             Delete
           </button>
@@ -358,14 +358,14 @@ export default function StudioDashboard() {
         <div className="grid grid-cols-2 sm:flex items-center gap-2">
           <Link
             href="/studio/bundles"
-            className="bg-white border border-black/10 rounded-[0.35rem] text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+            className="bg-white border border-black/10 rounded-lg text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
           >
             <Layers className="w-3.5 h-3.5 shrink-0" />
             <span>Bundles</span>
           </Link>
           <Link
             href="/studio/orders"
-            className="bg-white border border-black/10 rounded-[0.35rem] text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+            className="bg-white border border-black/10 rounded-lg text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
           >
             <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
             <span>Orders ({stats.totalOrders})</span>
@@ -435,7 +435,7 @@ export default function StudioDashboard() {
                 className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-black/[0.03] transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                  <div className="w-12 h-14 sm:w-10 sm:h-12 bg-[#f2f2f2] shrink-0 overflow-hidden relative border border-black/10 rounded-md">
+                  <div className="w-12 h-14 sm:w-10 sm:h-12 bg-[#f2f2f2] shrink-0 overflow-hidden relative border border-black/10 rounded-lg">
                     <Image
                       src={order.items?.[0]?.image || "/placeholder.jpg"}
                       alt={order.items?.[0]?.name || "Order item"}
@@ -481,7 +481,7 @@ export default function StudioDashboard() {
                       <button
                         type="button"
                         onClick={() => setPrintingOrder(order)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-black/15 rounded-[0.35rem] hover:bg-black hover:text-white text-black text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-black/15 rounded-lg hover:bg-black hover:text-white text-black text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer shadow-2xs"
                         title="Print Shipping Label Sticker"
                       >
                       <Printer className="w-3 h-3" />
@@ -553,7 +553,7 @@ export default function StudioDashboard() {
                   <button
                     type="button"
                     onClick={() => handleResolveBug(bug.id, isOpen ? "RESOLVED" : "OPEN")}
-                    className={`shrink-0 px-3 py-1.5 rounded-[0.35rem] text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer border ${isOpen ? "bg-black text-white border-black hover:bg-black/80" : "bg-white text-black/50 border-black/15 hover:text-black hover:border-black"}`}
+                    className={`shrink-0 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer border ${isOpen ? "bg-black text-white border-black hover:bg-black/80" : "bg-white text-black/50 border-black/15 hover:text-black hover:border-black"}`}
                   >
                     {isOpen ? "Resolve" : "Reopen"}
                   </button>
@@ -572,7 +572,7 @@ export default function StudioDashboard() {
           </h2>
           <div className="flex flex-wrap gap-3">
             {Object.entries(stats.categories).map(([cat, count]) => (
-              <div key={cat} className="flex items-center gap-2 border border-black/10 rounded-[0.35rem] bg-[#f5f5f2] px-3 py-1.5">
+              <div key={cat} className="flex items-center gap-2 border border-black/10 rounded-lg bg-[#f5f5f2] px-3 py-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-black">
                   {cat}
                 </span>
@@ -639,7 +639,7 @@ export default function StudioDashboard() {
                   {/* Thumbnail */}
                   <Link
                     href={`/studio/products/${product.id}`}
-                    className="w-12 h-14 bg-[#f2f2f2] border border-black/10 rounded-md shrink-0 relative overflow-hidden block"
+                    className="w-12 h-14 bg-[#f2f2f2] border border-black/10 rounded-lg shrink-0 relative overflow-hidden block"
                   >
                     {imageUrl && (
                       <Image
@@ -664,7 +664,7 @@ export default function StudioDashboard() {
                       {product.name}
                     </Link>
                     {product.createdAt && (
-                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-black bg-black/5 px-1.5 py-0.5 rounded">
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-black bg-black/5 px-1.5 py-0.5 rounded-full">
                         <Calendar className="w-2.5 h-2.5 text-black/60 shrink-0" />
                         <span>
                           {new Date(product.createdAt).toLocaleDateString("en-IN", {

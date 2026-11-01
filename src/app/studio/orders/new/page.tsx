@@ -199,8 +199,8 @@ export default function StudioNewOfflineOrderPage() {
 
   return (
     <div className="space-y-6 font-sans">
-      <div className="pb-4 border-b border-y2k-gunmetal/15">
-        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+      <div className="pb-4 border-b border-black/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-black">
           Add Offline Order
         </h1>
       </div>
@@ -219,28 +219,28 @@ export default function StudioNewOfflineOrderPage() {
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-2xs">
+          <div className="bg-white border border-black/15 p-5 shadow-2xs">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/50">
                 Items sold ({lines.length})
               </span>
               <button
                 type="button"
                 onClick={addLine}
-                className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border border-y2k-gunmetal/10 px-3 py-1.5 hover:bg-black hover:text-white transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider border border-black/10 px-3 py-1.5 hover:bg-black hover:text-white transition-colors cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> Add line
               </button>
             </div>
 
             <div className="relative mb-4">
-              <Search className="w-4 h-4 text-y2k-gunmetal/40 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-black/40 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder={loadingProducts ? "Loading catalog…" : "Search product to add…"}
                 value={productQuery}
                 onChange={(e) => setProductQuery(e.target.value)}
-                className="w-full bg-white border border-y2k-gunmetal/10 pl-9 pr-4 py-2 text-xs outline-none focus:border-y2k-gunmetal placeholder:text-y2k-gunmetal/40"
+                className="w-full bg-white border border-black/10 pl-9 pr-4 py-2 text-xs outline-none focus:border-black placeholder:text-black/40"
               />
             </div>
 
@@ -248,11 +248,11 @@ export default function StudioNewOfflineOrderPage() {
               {lines.map((line) => {
                 const product = productById.get(line.productId);
                 return (
-                  <div key={line.key} className="border border-y2k-gunmetal/10 p-3 grid grid-cols-1 sm:grid-cols-12 gap-2">
+                  <div key={line.key} className="border border-black/10 p-3 grid grid-cols-1 sm:grid-cols-12 gap-2">
                     <select
                       value={line.productId}
                       onChange={(e) => pickProduct(line.key, e.target.value)}
-                      className="sm:col-span-5 bg-y2k-ice/40 border border-y2k-gunmetal/10 px-2 py-2 text-xs font-medium outline-none focus:border-y2k-gunmetal cursor-pointer"
+                      className="sm:col-span-5 bg-[#f5f5f2] border border-black/10 px-2 py-2 text-xs font-medium outline-none focus:border-black cursor-pointer"
                       required
                     >
                       <option value="">Select product…</option>
@@ -269,7 +269,7 @@ export default function StudioNewOfflineOrderPage() {
                         const [size, color] = e.target.value.split("|||");
                         setLine(line.key, { size: size || "", color: color || "" });
                       }}
-                      className="sm:col-span-5 bg-y2k-ice/40 border border-y2k-gunmetal/10 px-2 py-2 text-xs outline-none focus:border-y2k-gunmetal cursor-pointer"
+                      className="sm:col-span-5 bg-[#f5f5f2] border border-black/10 px-2 py-2 text-xs outline-none focus:border-black cursor-pointer"
                     >
                       <option value="">Size / color…</option>
                       {product?.variants.map((v) => (
@@ -285,7 +285,7 @@ export default function StudioNewOfflineOrderPage() {
                         max={10}
                         value={line.quantity}
                         onChange={(e) => setLine(line.key, { quantity: Number(e.target.value) })}
-                        className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 px-2 py-2 text-xs font-mono outline-none focus:border-y2k-gunmetal"
+                        className="w-full bg-[#f5f5f2] border border-black/10 px-2 py-2 text-xs font-mono outline-none focus:border-black"
                       />
                       <button
                         type="button"
@@ -297,7 +297,7 @@ export default function StudioNewOfflineOrderPage() {
                       </button>
                     </div>
                     {product && (
-                      <p className="sm:col-span-12 text-[10px] text-y2k-gunmetal/60 font-mono">
+                      <p className="sm:col-span-12 text-[10px] text-black/60 font-mono">
                         {imageUrl(product) !== "/placeholder.jpg" ? "" : "No image on file. "}
                         Line total: ₹{(product.price * (line.quantity || 0)).toLocaleString("en-IN")}
                       </p>
@@ -308,84 +308,84 @@ export default function StudioNewOfflineOrderPage() {
             </div>
           </div>
 
-          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-2xs">
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-4">
+          <div className="bg-white border border-black/15 p-5 shadow-2xs">
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/50 block mb-4">
               Buyer & delivery
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Full name *
-                <input value={fullName} onChange={(e) => setFullName(e.target.value)} required className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-medium normal-case text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={fullName} onChange={(e) => setFullName(e.target.value)} required className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-medium normal-case text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Phone *
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} required className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} required className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Instagram handle
-                <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@handle" className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={handle} onChange={(e) => setHandle(e.target.value)} placeholder="@handle" className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Email (optional)
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Used for receipt if given" className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs normal-case text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Used for receipt if given" className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs normal-case text-black outline-none focus:border-black" />
               </label>
-              <label className="sm:col-span-2 flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="sm:col-span-2 flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Street address *
-                <input value={street} onChange={(e) => setStreet(e.target.value)} required className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-medium normal-case text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={street} onChange={(e) => setStreet(e.target.value)} required className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-medium normal-case text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 City
-                <input value={city} onChange={(e) => setCity(e.target.value)} className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={city} onChange={(e) => setCity(e.target.value)} className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 State
-                <input value={state} onChange={(e) => setState(e.target.value)} className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={state} onChange={(e) => setState(e.target.value)} className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Pincode *
-                <input value={pincode} onChange={(e) => setPincode(e.target.value)} required inputMode="numeric" placeholder="6 digits" className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={pincode} onChange={(e) => setPincode(e.target.value)} required inputMode="numeric" placeholder="6 digits" className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black" />
               </label>
             </div>
           </div>
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white border border-y2k-gunmetal/15 p-5 shadow-2xs space-y-3">
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block">
+          <div className="bg-white border border-black/15 p-5 shadow-2xs space-y-3">
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/50 block">
               Payment (UPI paid)
             </span>
-            <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+            <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
               UPI reference
-              <input value={upiRef} onChange={(e) => setUpiRef(e.target.value)} placeholder="UPI txn id" className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+              <input value={upiRef} onChange={(e) => setUpiRef(e.target.value)} placeholder="UPI txn id" className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black" />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Shipping ₹
-                <input type="number" min={0} value={shippingAmount} onChange={(e) => setShippingAmount(e.target.value)} className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input type="number" min={0} value={shippingAmount} onChange={(e) => setShippingAmount(e.target.value)} className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black" />
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Discount ₹
-                <input type="number" min={0} value={discountAmount} onChange={(e) => setDiscountAmount(e.target.value)} className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input type="number" min={0} value={discountAmount} onChange={(e) => setDiscountAmount(e.target.value)} className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-mono text-black outline-none focus:border-black" />
               </label>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Status
-                <select value={orderStatus} onChange={(e) => setOrderStatus(e.target.value)} className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase outline-none focus:border-y2k-gunmetal cursor-pointer">
+                <select value={orderStatus} onChange={(e) => setOrderStatus(e.target.value)} className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-bold uppercase outline-none focus:border-black cursor-pointer">
                   {ORDER_STATUSES.map((s) => (
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-y2k-slate">
+              <label className="flex flex-col gap-1 text-[9px] font-bold uppercase tracking-wider text-black/50">
                 Tracking (optional)
-                <input value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="IN…" className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-mono uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal" />
+                <input value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="IN…" className="bg-[#f5f5f2] border border-black/10 px-3 py-2 text-xs font-mono uppercase text-black outline-none focus:border-black" />
               </label>
             </div>
-            <div className="pt-2 border-t border-y2k-gunmetal/10 text-xs text-y2k-gunmetal/70 space-y-1">
+            <div className="pt-2 border-t border-black/10 text-xs text-black/70 space-y-1">
               <div className="flex justify-between"><span>Subtotal</span><span className="font-mono">₹{subtotal.toLocaleString("en-IN")}</span></div>
-              <div className="flex justify-between font-bold text-y2k-gunmetal"><span>Total to record</span><span className="font-mono">₹{total.toLocaleString("en-IN")}</span></div>
-              <p className="text-[10px] text-y2k-gunmetal/50">Prices come from the catalog. Server re-prices on save.</p>
+              <div className="flex justify-between font-bold text-black"><span>Total to record</span><span className="font-mono">₹{total.toLocaleString("en-IN")}</span></div>
+              <p className="text-[10px] text-black/50">Prices come from the catalog. Server re-prices on save.</p>
             </div>
           </div>
 
@@ -403,7 +403,7 @@ export default function StudioNewOfflineOrderPage() {
             <RefreshCw className={`w-4 h-4 ${submitting ? "animate-spin" : "hidden"}`} />
             {submitting ? "Saving…" : "Save offline order"}
           </button>
-          <Link href="/studio/orders" className="block text-center text-[10px] font-bold uppercase tracking-wider text-y2k-gunmetal/60 hover:text-black">
+          <Link href="/studio/orders" className="block text-center text-[10px] font-bold uppercase tracking-wider text-black/60 hover:text-black">
             Back to orders
           </Link>
         </div>

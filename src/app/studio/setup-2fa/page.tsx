@@ -99,14 +99,14 @@ export default function Setup2FAPage() {
       </div>
 
       {loading ? (
-        <div className="border border-black/10 bg-white p-12 text-center rounded-sm">
+        <div className="border border-black/10 bg-white p-12 text-center rounded-lg">
           <RefreshCw className="w-6 h-6 animate-spin mx-auto text-black/40 mb-3" />
           <p className="text-xs font-bold uppercase tracking-widest text-black/60">
             Initializing Cryptographic Key...
           </p>
         </div>
       ) : errorMessage ? (
-        <div className="border border-red-200 bg-red-50 p-6 text-center rounded-sm">
+        <div className="border border-red-200 bg-red-50 p-6 text-center rounded-lg">
           <p className="text-xs text-red-600 font-bold uppercase tracking-wider">{errorMessage}</p>
         </div>
       ) : (
@@ -114,7 +114,7 @@ export default function Setup2FAPage() {
           {/* Steps 1 & 2 Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Step 1: Scan QR Code */}
-            <div className="bg-white border border-black/15 p-6 flex flex-col items-center text-center shadow-xs rounded-sm">
+            <div className="bg-white border border-black/15 p-6 flex flex-col items-center text-center shadow-xs rounded-lg">
               <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/60 block mb-4">
                 Step 1: Scan with Authenticator App
               </span>
@@ -140,7 +140,7 @@ export default function Setup2FAPage() {
             </div>
 
             {/* Step 2: Manual Key */}
-            <div className="bg-white border border-black/15 p-6 flex flex-col justify-between shadow-xs rounded-sm">
+            <div className="bg-white border border-black/15 p-6 flex flex-col justify-between shadow-xs rounded-lg">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/60 block mb-4">
                   Step 2: Or Enter Key Manually
@@ -188,7 +188,7 @@ export default function Setup2FAPage() {
           </div>
 
           {/* Step 3: Test Sync */}
-          <div className="bg-white border border-black/15 p-6 sm:p-8 shadow-xs rounded-sm">
+          <div className="bg-white border border-black/15 p-6 sm:p-8 shadow-xs rounded-lg">
             <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/60 block mb-2">
               Step 3: Verify Live Code Sync
             </span>
@@ -218,21 +218,21 @@ export default function Setup2FAPage() {
             </div>
 
             {testResult === "success" && (
-              <div className="mt-4 p-3.5 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 rounded-sm">
+              <div className="mt-4 p-3.5 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold uppercase tracking-wider flex items-center gap-2 rounded-lg">
                 <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Success! Your Google Authenticator app is generating synchronized, valid codes.</span>
               </div>
             )}
 
             {testResult === "failure" && (
-              <div className="mt-4 p-3.5 bg-red-50 border border-red-300 text-red-700 text-xs font-semibold uppercase tracking-wider rounded-sm">
+              <div className="mt-4 p-3.5 bg-red-50 border border-red-300 text-red-700 text-xs font-semibold uppercase tracking-wider rounded-lg">
                 Code does not match. Please verify that the key is entered accurately and your phone time is set to automatic.
               </div>
             )}
           </div>
 
           {/* Step 4: Environment Variable */}
-          <div className="bg-white border border-black/15 p-6 sm:p-8 shadow-xs rounded-sm">
+          <div className="bg-white border border-black/15 p-6 sm:p-8 shadow-xs rounded-lg">
             <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/60 block mb-2 flex items-center gap-2">
               <Lock className="w-3.5 h-3.5 text-black" />
               <span>Step 4: Lock in Environment Variables</span>
@@ -241,7 +241,7 @@ export default function Setup2FAPage() {
               To enforce this 2FA requirement for every login on <strong>admin.bagifyyyy.in</strong>, add this variable to your <strong>Vercel Project Settings → Environment Variables</strong>:
             </p>
 
-            <div className="bg-[#111] border border-black/20 p-4 font-mono text-xs text-emerald-400 flex items-center justify-between gap-4 rounded-sm">
+            <div className="bg-[#111] border border-black/20 p-4 font-mono text-xs text-emerald-400 flex items-center justify-between gap-4 rounded-lg">
               <span className="break-all font-semibold">ADMIN_TOTP_SECRET=&quot;{data?.secret}&quot;</span>
               <button
                 type="button"

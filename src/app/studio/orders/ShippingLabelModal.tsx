@@ -165,24 +165,24 @@ export default function ShippingLabelModal({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto font-sans">
       {/* Container */}
-      <div className="bg-white border border-y2k-gunmetal/10 max-w-2xl w-full text-y2k-gunmetal shadow-2xl flex flex-col max-h-[94vh]">
+      <div className="bg-white border border-black/10 max-w-2xl w-full text-black shadow-2xl flex flex-col max-h-[94vh]">
         
         {/* Modal Top Header (Screen Only) */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-y2k-gunmetal/15 shrink-0 bg-y2k-ice print:hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-black/15 shrink-0 bg-[#f5f5f2] print:hidden">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-y2k-gunmetal text-white flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold">
               <Printer className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">Thermal Shipping Sticker</h2>
-              <p className="text-[10px] text-y2k-gunmetal/60">Order #{order.orderNumber} • Standard 100% Black &amp; White Sticker Format</p>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-black">Thermal Shipping Sticker</h2>
+              <p className="text-[10px] text-black/60">Order #{order.orderNumber} • Standard 100% Black &amp; White Sticker Format</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopyAddress}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-y2k-gunmetal/10 hover:bg-y2k-gunmetal hover:text-white text-y2k-gunmetal text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-black/10 hover:bg-black hover:text-white text-black text-[9px] font-bold uppercase tracking-wider transition-colors cursor-pointer"
               title="Copy delivery address to clipboard"
             >
               {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -197,7 +197,7 @@ export default function ShippingLabelModal({
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-y2k-gunmetal/60 hover:text-black transition-colors ml-1 cursor-pointer"
+              className="p-2 text-black/60 hover:text-black transition-colors ml-1 cursor-pointer"
               title="Close (Esc)"
             >
               <X className="w-5 h-5" />
