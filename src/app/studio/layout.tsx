@@ -17,7 +17,9 @@ import {
   ExternalLink,
   ShieldCheck,
   Tags,
-  TicketPercent
+  TicketPercent,
+  Menu,
+  X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -37,6 +39,20 @@ const navItems = [
   { href: "/studio/setup-2fa", label: "Security & 2FA", icon: ShieldCheck },
 ];
 
+function isNavActive(
+  item: { href: string; exact?: boolean; parentOfNew?: boolean },
+  pathname: string
+): boolean {
+  if (item.exact) return pathname === item.href;
+  if (item.parentOfNew) {
+    return (
+      pathname === item.href ||
+      (pathname.startsWith(`${item.href}/`) && !pathname.startsWith(`${item.href}/new`))
+    );
+  }
+  return pathname.startsWith(item.href);
+}
+
 function NavItem({
   href,
   label,
@@ -53,11 +69,7 @@ function NavItem({
   const pathname = usePathname();
   // The "new" form lives under /products but gets its own pill, so the
   // parent stays lit only for the list and edit screens — never two blacks.
-  const isActive = exact
-    ? pathname === href
-    : parentOfNew
-      ? pathname === href || (pathname.startsWith(`${href}/`) && !pathname.startsWith(`${href}/new`))
-      : pathname.startsWith(href);
+  const isActive = isNavActive({ href, exact, parentOfNew }, pathname);
 
   return (
     <Link
@@ -104,6 +116,16 @@ export default function StudioLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileNavOpen]);
 
   // The storefront lives on the bare domain while the studio sits on an
   // admin./studio. subdomain (or a secret path). A bare "/" on the admin
@@ -126,7 +148,7 @@ export default function StudioLayout({
     return <div className="min-h-screen bg-[#f5f5f2] text-black font-sans">{children}</div>;
   }
 
-  const currentNav = navItems.find((n) => (n.exact ? pathname === n.href : pathname.startsWith(n.href)));
+  const currentNav = navItems.find((n) => isNavActive(n, pathname));
 
   return (
     <div className="min-h-screen bg-[#f5f5f2] text-black font-sans relative">
@@ -179,25 +201,36 @@ export default function StudioLayout({
       {/* ── Main Studio Workspace ───────────────────────────────────────────── */}
       <div className="min-h-screen flex flex-col min-w-0 lg:pl-64">
         {/* Sticky Top Control Bar */}
-        <header className="h-16 border-b border-black/15 bg-white px-8 flex items-center justify-between sticky top-0 z-40 shadow-2xs">
-          <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-black">
-            <Link href="/studio" className="lg:hidden text-black" aria-label="Studio dashboard">
-              <LayoutDashboard className="h-4 w-4" />
-            </Link>
-            <span className="text-black/50">ADMIN</span>
-            <span className="text-black/30">/</span>
-            <span className="text-black">{currentNav?.label || "DASHBOARD"}</span>
+        <header className="h-14 lg:h-16 border-b border-black/15 bg-white px-3 sm:px-4 lg:px-8 flex items-center justify-between gap-3 sticky top-0 z-40 shadow-2xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              className="lg:hidden -ml-1 p-2 text-black hover:bg-black/5 rounded-[0.35rem] transition-colors cursor-pointer"
+              aria-label="Open studio menu"
+              aria-expanded={mobileNavOpen}
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <span className="hidden lg:inline text-black/50">ADMIN</span>
+            <span className="hidden lg:inline text-black/30">/</span>
+            <span className="truncate text-[11px] lg:text-xs font-bold uppercase tracking-wider text-black">
+              {currentNav?.label || "DASHBOARD"}
+            </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-wider text-black/80">
-            <div className="flex items-center gap-2 bg-[#f5f5f2] border border-black/10 rounded-full px-3 py-1.5">
+          <div className="flex items-center gap-2 sm:gap-4 text-[10px] font-bold uppercase tracking-wider text-black/80 shrink-0">
+            <div
+              className="hidden sm:flex items-center gap-1.5 bg-[#f5f5f2] border border-black/10 rounded-full px-2 sm:px-3 py-1.5"
+              title="System online"
+            >
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span>SYSTEM ONLINE</span>
             </div>
             <Link
               href={storeUrl}
               target="_blank"
-              className="hidden sm:flex items-center gap-1.5 text-black/50 hover:text-black transition-colors"
+              className="hidden lg:flex items-center gap-1.5 text-black/50 hover:text-black transition-colors"
             >
               <span>View Store Front</span>
               <ExternalLink className="w-3 h-3" />
@@ -205,13 +238,57 @@ export default function StudioLayout({
           </div>
         </header>
 
-        {/* Page Content */}
-        <nav className="flex gap-1 overflow-x-auto border-b border-black/15 bg-white px-3 py-2 lg:hidden" aria-label="Studio navigation">
-          {navItems.map((item) => (
-            <NavItem key={item.href} {...item} />
-          ))}
-        </nav>
-        <main className="flex-1 bg-[#f5f5f2] p-4 sm:p-6 lg:p-8">{children}</main>
+        {/* Mobile navigation drawer */}
+        {mobileNavOpen && (
+          <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Studio navigation">
+            <button
+              type="button"
+              className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
+              onClick={() => setMobileNavOpen(false)}
+              aria-label="Close studio menu"
+            />
+            <div className="relative h-full w-[86vw] max-w-xs bg-white border-r border-black/15 shadow-2xl flex flex-col">
+              <div className="flex items-center justify-between px-4 py-4 border-b border-black/15">
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/50">BAGIFYYYY</p>
+                  <p className="font-microgramma font-bold text-lg uppercase tracking-[-0.03em] leading-tight">ADMIN PANEL</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileNavOpen(false)}
+                  className="p-2 -mr-1 text-black/60 hover:text-black hover:bg-black/5 rounded-[0.35rem] transition-colors cursor-pointer"
+                  aria-label="Close studio menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <nav
+                className="flex-1 min-h-0 overflow-y-auto px-2 py-3 space-y-0.5"
+                aria-label="Studio navigation"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                {navItems.map((item) => (
+                  <NavItem key={item.href} {...item} />
+                ))}
+              </nav>
+
+              <div className="border-t border-black/15 p-2 bg-white space-y-1">
+                <Link
+                  href={storeUrl}
+                  target="_blank"
+                  className="flex items-center justify-between w-full bg-[#f5f5f2] border border-black/10 rounded-[0.35rem] px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-black hover:bg-black hover:text-white transition-all cursor-pointer"
+                >
+                  <span>VIEW PUBLIC STORE</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+                <LogoutButton />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <main className="flex-1 bg-[#f5f5f2] p-3 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

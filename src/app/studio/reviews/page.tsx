@@ -99,19 +99,11 @@ export default function StudioReviewsPage() {
 
   return (
     <div className="space-y-8 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            Product pages
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            Community reviews
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-            DM screenshots shown on every product page. No user-written reviews.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Community Reviews
+        </h1>
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/products"
             target="_blank"

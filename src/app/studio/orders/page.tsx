@@ -278,52 +278,44 @@ export default function StudioOrdersPage() {
       )}
 
       {/* ── Page Header ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-y2k-gunmetal/15 gap-4">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            FULFILLMENT &amp; LOGISTICS
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            ORDERS MANAGEMENT
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-            Manage customer orders, update tracking barcodes, print thermal labels, and remove archived test orders.
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-y2k-gunmetal/15 gap-3">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Orders Management
+        </h1>
         <button
           onClick={fetchOrders}
           className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider bg-white border border-y2k-gunmetal/10 px-4 py-2.5 hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer self-start sm:self-auto"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-          <span>Refresh Data</span>
+          <span>Refresh</span>
         </button>
       </div>
 
       {/* ── KPI Summary Cards ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-y2k-gunmetal/10 p-4 shadow-2xs">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+        <div className="bg-white border border-y2k-gunmetal/10 p-3 sm:p-4 shadow-2xs">
           <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate block mb-1">
-            TOTAL ORDERS
+            Total Orders
           </span>
-          <span className="font-display text-2xl font-bold text-y2k-gunmetal">{orders.length}</span>
+          <span className="font-display text-xl sm:text-2xl font-bold text-y2k-gunmetal">{orders.length}</span>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/10 p-4 shadow-2xs">
+        <div className="bg-white border border-y2k-gunmetal/10 p-3 sm:p-4 shadow-2xs">
           <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 block mb-1">
-            TO PACK (PROCESSING)
+            Processing
           </span>
-          <span className="font-display text-2xl font-bold text-amber-800">{activeProcessing}</span>
+          <span className="font-display text-xl sm:text-2xl font-bold text-amber-800">{activeProcessing}</span>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/10 p-4 shadow-2xs">
+        <div className="bg-white border border-y2k-gunmetal/10 p-3 sm:p-4 shadow-2xs">
           <span className="text-[9px] font-bold uppercase tracking-wider text-blue-700 block mb-1">
-            IN TRANSIT (SHIPPED)
+            Shipped
           </span>
-          <span className="font-display text-2xl font-bold text-blue-800">{inTransit}</span>
+          <span className="font-display text-xl sm:text-2xl font-bold text-blue-800">{inTransit}</span>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/10 p-4 shadow-2xs">
+        <div className="bg-white border border-y2k-gunmetal/10 p-3 sm:p-4 shadow-2xs">
           <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
-            SETTLED REVENUE
+            Revenue
           </span>
-          <span className="font-display text-2xl font-bold text-emerald-800">
+          <span className="font-display text-xl sm:text-2xl font-bold text-emerald-800">
             ₹{totalRevenue.toLocaleString("en-IN")}
           </span>
         </div>
@@ -332,12 +324,12 @@ export default function StudioOrdersPage() {
       {/* ── Filter Tabs & Search Row ────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Tabs */}
-        <div className="flex items-center gap-1 border-b border-y2k-gunmetal/15 pb-0 overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-1 border-b border-y2k-gunmetal/15 pb-0">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setFilterTab(tab)}
-              className={`px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-2.5 sm:px-4 py-2.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                 filterTab === tab
                   ? "border-y2k-gunmetal text-y2k-gunmetal bg-white"
                   : "border-transparent text-y2k-gunmetal/60 hover:text-black hover:bg-white/50"
@@ -383,10 +375,10 @@ export default function StudioOrdersPage() {
                   {/* Summary Bar */}
                   <div
                     onClick={() => setExpandedId(isExpanded ? null : order.id)}
-                    className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-y2k-ice/40 transition-colors"
+                    className="p-3 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 cursor-pointer hover:bg-y2k-ice/40 transition-colors"
                   >
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-10 h-12 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 overflow-hidden relative">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                      <div className="w-12 h-14 sm:w-10 sm:h-12 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 overflow-hidden relative">
                         <Image
                           src={order.items?.[0]?.image || "/placeholder.jpg"}
                           alt={order.items?.[0]?.name || "Item"}
@@ -500,7 +492,7 @@ export default function StudioOrdersPage() {
 
                   {/* Expanded Detail Panel */}
                   {isExpanded && (
-                    <div className="bg-y2k-ice/50 border-t border-y2k-gunmetal/10 p-6 space-y-6">
+                    <div className="bg-y2k-ice/50 border-t border-y2k-gunmetal/10 p-3 sm:p-6 space-y-4 sm:space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Delivery Address & Customer Details */}
                         <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs space-y-3">
@@ -600,10 +592,10 @@ export default function StudioOrdersPage() {
                             </div>
                           </div>
 
-                          <div className="pt-3 border-t border-y2k-gunmetal/10 flex items-center justify-between text-xs font-medium text-y2k-gunmetal/70">
-                            <span>Shipping: ₹{order.shippingAmount} | Discount: ₹{order.discountAmount}</span>
+                          <div className="pt-3 border-t border-y2k-gunmetal/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-medium text-y2k-gunmetal/70">
+                            <span>Shipping ₹{order.shippingAmount} · Discount ₹{order.discountAmount}</span>
                             <span className="font-bold font-mono text-sm text-y2k-gunmetal">
-                              Total: ₹{order.totalAmount}
+                              Total ₹{order.totalAmount}
                             </span>
                           </div>
                         </div>
@@ -669,11 +661,11 @@ export default function StudioOrdersPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3 self-end">
+                        <div className="flex flex-col-reverse sm:flex-row sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
                           <button
                             type="button"
                             onClick={() => setDeleteConfirmOrder(order)}
-                            className="px-4 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 text-[10px] font-bold uppercase tracking-wider cursor-pointer flex items-center gap-1.5 transition-colors"
+                            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 text-[10px] font-bold uppercase tracking-wider cursor-pointer flex items-center gap-1.5 transition-colors"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Delete Order</span>
@@ -683,7 +675,7 @@ export default function StudioOrdersPage() {
                             type="button"
                             onClick={() => handleSaveOrder(order.id)}
                             disabled={saving === order.id}
-                            className="btn-bagify px-6 py-2.5 text-[10px] font-bold uppercase tracking-wider cursor-pointer disabled:opacity-50"
+                            className="btn-bagify w-full sm:w-auto justify-center px-6 py-2.5 text-[10px] font-bold uppercase tracking-wider cursor-pointer disabled:opacity-50"
                           >
                             {saving === order.id ? "Saving…" : "Save Changes"}
                           </button>

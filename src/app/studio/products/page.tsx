@@ -233,30 +233,23 @@ export default function StudioProductsCatalogPage() {
     <div className="space-y-6 font-sans">
       {/* ── Page Header (Title matches sidebar nav link) ──────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            CATALOG MANAGEMENT
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            PRODUCTS &amp; CATALOG ({totalProducts})
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-            Manage all products, clothes, and accessories in your store.
-          </p>
-        </div>
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          PRODUCTS &amp; CATALOG ({totalProducts})
+        </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => fetchProducts()}
-            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
+            className="bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-y2k-gunmetal hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-2"
+            aria-label="Refresh catalog"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>Refresh</span>
+            <span className="hidden sm:inline">Refresh</span>
           </button>
 
           <Link
             href="/studio/products/new"
-            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+            className="btn-bagify px-4 sm:px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Product</span>
@@ -265,37 +258,37 @@ export default function StudioProductsCatalogPage() {
       </div>
 
       {/* ── Summary Metric Badges ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">Total Items</p>
-          <p className="font-display text-2xl font-bold text-y2k-gunmetal">{totalProducts}</p>
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
+        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-0.5">Total</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-y2k-gunmetal">{totalProducts}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Live On Store</p>
-          <p className="font-display text-2xl font-bold text-emerald-700">{activeCount}</p>
+        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 mb-0.5">Live</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-emerald-700">{activeCount}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">In Stock</p>
-          <p className="font-display text-2xl font-bold text-y2k-gunmetal">{inStockCount}</p>
+        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-0.5">In Stock</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-y2k-gunmetal">{inStockCount}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-1">Sold Out</p>
-          <p className="font-display text-2xl font-bold text-red-600">{soldOutCount}</p>
+        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate mb-0.5">Sold Out</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-red-600">{soldOutCount}</p>
         </div>
-        <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-2xs">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-amber-700 mb-1">Archived</p>
-          <p className="font-display text-2xl font-bold text-amber-700">{archivedCount}</p>
+        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-2xs">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-amber-700 mb-0.5">Archived</p>
+          <p className="font-display text-xl sm:text-2xl font-bold text-amber-700">{archivedCount}</p>
         </div>
       </div>
 
       {/* ── Filters & Search Row ─────────────────────────────────────────────── */}
-      <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-y2k-gunmetal/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search by product name, category, or brand…"
+            placeholder="Search products…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-y2k-ice/40 border border-y2k-gunmetal/10 pl-9 pr-4 py-2.5 text-xs text-y2k-gunmetal outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40"
@@ -303,48 +296,41 @@ export default function StudioProductsCatalogPage() {
         </div>
 
         {/* Category & Status Dropdowns */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">Category:</span>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
-            >
-              <option value="ALL">All Categories</option>
-              {CATEGORIES.map((cat) => (
-                <option key={cat.slug} value={cat.slug}>{cat.label}</option>
-              ))}
-            </select>
-          </div>
+        <div className="grid grid-cols-2 md:flex items-center gap-2 sm:gap-3">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Filter by category"
+            className="w-full md:w-auto bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+          >
+            <option value="ALL">All Categories</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+            ))}
+          </select>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-y2k-slate">Status:</span>
-            <select
-              value={stockFilter}
-              onChange={(e) => setStockFilter(e.target.value)}
-              className="bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
-            >
-              <option value="ALL">All Items ({totalProducts})</option>
-              <option value="ACTIVE">Live Store ({activeCount})</option>
-              <option value="IN_STOCK">In Stock Only ({inStockCount})</option>
-              <option value="SOLD_OUT">Sold Out Only ({soldOutCount})</option>
-              <option value="NEW_DROP">New Tagged Only ({newDropCount})</option>
-              <option value="ARCHIVED">Archived Items ({archivedCount})</option>
-            </select>
-          </div>
+          <select
+            value={stockFilter}
+            onChange={(e) => setStockFilter(e.target.value)}
+            aria-label="Filter by stock status"
+            className="w-full md:w-auto bg-y2k-ice/40 border border-y2k-gunmetal/10 px-3 py-2.5 text-xs font-bold uppercase text-y2k-gunmetal outline-none focus:border-y2k-gunmetal cursor-pointer"
+          >
+            <option value="ALL">All Items ({totalProducts})</option>
+            <option value="ACTIVE">Live Store ({activeCount})</option>
+            <option value="IN_STOCK">In Stock ({inStockCount})</option>
+            <option value="SOLD_OUT">Sold Out ({soldOutCount})</option>
+            <option value="NEW_DROP">New Tagged ({newDropCount})</option>
+            <option value="ARCHIVED">Archived ({archivedCount})</option>
+          </select>
         </div>
       </div>
 
       {/* ── Product List Table ────────────────────────────────────────────────── */}
       <div className="bg-white border border-y2k-gunmetal/15 shadow-xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-y2k-gunmetal/15 flex items-center justify-between bg-y2k-ice/30">
+        <div className="px-4 sm:px-6 py-4 border-b border-y2k-gunmetal/15 flex items-center justify-between bg-y2k-ice/30">
           <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal">
-            Catalog Items ({filteredProducts.length} showing)
+            Catalog Items ({filteredProducts.length})
           </h2>
-          <span className="text-[10px] text-y2k-slate font-bold uppercase tracking-wider">
-            Hover over icons for quick action tooltips
-          </span>
         </div>
 
         {loading ? (
@@ -363,199 +349,170 @@ export default function StudioProductsCatalogPage() {
           </div>
         ) : (
           <div className="divide-y divide-y2k-gunmetal/10">
-            {filteredProducts.map((product, index) => {
+            {filteredProducts.map((product) => {
               const imageUrl = getProductImageUrl(product.images?.[0]);
-              const itemNumber = index + 1;
 
               return (
                 <div
                   key={product.id}
-                  className={`flex items-center gap-4 px-6 py-4 transition-colors group ${
+                  className={`px-3 sm:px-6 py-4 transition-colors group ${
                     product.isArchived ? "bg-amber-50/20 hover:bg-amber-50/40" : "hover:bg-y2k-ice/30"
                   }`}
                 >
-                  {/* Item Number (#01 .. #50) */}
-                  <div className="w-8 shrink-0 text-center font-mono text-xs font-bold text-y2k-slate/70 group-hover:text-y2k-gunmetal transition-colors">
-                    <span className="text-[10px] bg-y2k-ice px-1.5 py-0.5 border border-y2k-gunmetal/10 font-bold">
-                      #{itemNumber < 10 ? `0${itemNumber}` : itemNumber}
-                    </span>
-                  </div>
-
-                  {/* Thumbnail */}
-                  <Link
-                    href={`/studio/products/${product.id}`}
-                    className="w-14 h-16 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
-                  >
-                    {imageUrl && (
-                      <Image
-                        src={imageUrl}
-                        alt={product.name}
-                        fill
-                        loader={({ src }) => src}
-                        unoptimized
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </Link>
-
-                {/* Product Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    {/* Thumbnail */}
                     <Link
                       href={`/studio/products/${product.id}`}
-                      className="text-xs font-bold text-y2k-gunmetal hover:underline truncate block"
+                      className="w-16 h-20 sm:w-14 sm:h-16 bg-y2k-ice border border-y2k-gunmetal/15 shrink-0 relative overflow-hidden block"
                     >
-                      {product.name}
+                      {imageUrl && (
+                        <Image
+                          src={imageUrl}
+                          alt={product.name}
+                          fill
+                          loader={({ src }) => src}
+                          unoptimized
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                     </Link>
-                    {/* Badge number: trace any Sheet/Instagram sale back here */}
-                    {product.sku && (
-                      <span className="text-[9px] font-mono font-bold text-black bg-black/5 px-2 py-0.5 border border-black/20">
-                        {product.sku}
-                      </span>
-                    )}
-                    {/* Clear Upload Date Tag */}
-                    <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-y2k-gunmetal bg-y2k-ice px-2 py-0.5 border border-y2k-gunmetal/20 shadow-2xs">
-                      <Calendar className="w-3 h-3 text-y2k-slate shrink-0" />
-                      <span>{formatUploadDate(product.createdAt)}</span>
-                    </span>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Link
+                              href={`/studio/products/${product.id}`}
+                              className="text-sm font-bold text-y2k-gunmetal hover:underline break-words"
+                            >
+                              {product.name}
+                            </Link>
+                            {product.sku && (
+                              <span className="text-[9px] font-mono font-bold text-black/70 bg-black/5 px-1.5 py-0.5 border border-black/15">
+                                {product.sku}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] uppercase tracking-wide text-y2k-slate mt-1">
+                            {product.category} · {product.brand || "BAGIFYYYY"}
+                          </p>
+                          <p className="hidden sm:block text-[10px] text-y2k-gunmetal/60 line-clamp-1 mt-1">
+                            {product.description}
+                          </p>
+                          <span className="hidden sm:inline-flex items-center gap-1 text-[9px] font-mono font-bold text-y2k-gunmetal/70 mt-1.5">
+                            <Calendar className="w-3 h-3 text-y2k-slate shrink-0" />
+                            <span>{formatUploadDate(product.createdAt)}</span>
+                          </span>
+                        </div>
+
+                        <p className="text-sm sm:text-base font-bold text-y2k-gunmetal shrink-0">
+                          ₹{product.price?.toLocaleString("en-IN")}
+                        </p>
+                      </div>
+
+                      <div className="mt-2.5 flex items-center justify-between gap-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {product.isArchived ? (
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-1 bg-amber-500 text-black border border-amber-600">
+                              Archived
+                            </span>
+                          ) : product.isSoldOut ? (
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-1 bg-red-600 text-white border border-red-700">
+                              Sold Out
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-1 bg-emerald-600 text-white border border-emerald-700">
+                              In Stock
+                            </span>
+                          )}
+                          {!product.isArchived && product.isNew && (
+                            <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-1 bg-black text-white border border-black flex items-center gap-1">
+                              <Sparkles className="w-2.5 h-2.5 fill-white text-white" />
+                              <span>New Drop</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1 sm:gap-1.5">
+                          <button
+                            onClick={() => handleToggle(product, "isSoldOut")}
+                            disabled={toggling === product.id + "isSoldOut"}
+                            title={product.isSoldOut ? "Mark in stock" : "Mark sold out"}
+                            aria-label={product.isSoldOut ? "Mark in stock" : "Mark sold out"}
+                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors cursor-pointer disabled:opacity-40"
+                          >
+                            {product.isSoldOut ? (
+                              <ToggleRight className="w-4 h-4 text-red-600" />
+                            ) : (
+                              <ToggleLeft className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => handleToggle(product, "isNew")}
+                            disabled={toggling === product.id + "isNew"}
+                            title={product.isNew ? "Remove new badge" : "Add new badge"}
+                            aria-label={product.isNew ? "Remove new badge" : "Add new badge"}
+                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors cursor-pointer disabled:opacity-40"
+                          >
+                            <Sparkles className={`w-4 h-4 ${product.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : ""}`} />
+                          </button>
+
+                          {product.isArchived ? (
+                            <span className="p-2 border border-y2k-gunmetal/10 text-y2k-slate/40" title="Hidden from store">
+                              <EyeOff className="w-4 h-4" />
+                            </span>
+                          ) : (
+                            <Link
+                              href={`/product/${product.id}`}
+                              target="_blank"
+                              className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors"
+                              title="View on store"
+                              aria-label="View on store"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+                          )}
+
+                          <button
+                            onClick={() => handleToggle(product, "isArchived")}
+                            disabled={toggling === product.id + "isArchived"}
+                            title={product.isArchived ? "Unarchive product" : "Archive product"}
+                            aria-label={product.isArchived ? "Unarchive product" : "Archive product"}
+                            className={`p-2 border transition-colors cursor-pointer disabled:opacity-40 ${
+                              product.isArchived
+                                ? "border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                                : "border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal"
+                            }`}
+                          >
+                            {product.isArchived ? (
+                              <ArchiveRestore className="w-4 h-4" />
+                            ) : (
+                              <Archive className="w-4 h-4" />
+                            )}
+                          </button>
+
+                          <Link
+                            href={`/studio/products/${product.id}`}
+                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors"
+                            title="Edit product"
+                            aria-label="Edit product"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Link>
+
+                          <button
+                            onClick={() => setDeleteTarget(product)}
+                            className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-red-600 hover:border-red-600 transition-colors cursor-pointer"
+                            title="Delete product"
+                            aria-label="Delete product"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-[9px] uppercase tracking-wider text-y2k-slate mt-0.5">
-                    Category: {product.category} • Brand: {product.brand || "BAGIFYYYY"}
-                  </p>
-                  <p className="text-[10px] text-y2k-gunmetal/70 line-clamp-1 mt-1 font-sans">
-                    {product.description}
-                  </p>
-                </div>
-
-                {/* Price */}
-                <div className="font-bold w-24 text-right shrink-0">
-                  <p className="text-sm font-bold text-y2k-gunmetal">
-                    ₹{product.price?.toLocaleString("en-IN")}
-                  </p>
-                </div>
-
-                {/* High-Contrast Emphasized Status Badges */}
-                <div className="flex flex-col sm:flex-row flex-wrap gap-1.5 w-36 shrink-0 justify-center items-center">
-                  {product.isArchived ? (
-                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 bg-amber-500 text-black border border-amber-600 shadow-xs">
-                      ARCHIVED
-                    </span>
-                  ) : product.isSoldOut ? (
-                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 bg-red-600 text-white border border-red-700 shadow-xs">
-                      SOLD OUT
-                    </span>
-                  ) : (
-                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 bg-emerald-600 text-white border border-emerald-700 shadow-xs">
-                      IN STOCK
-                    </span>
-                  )}
-                  {!product.isArchived && product.isNew && (
-                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 bg-black text-white border border-black shadow-xs flex items-center gap-1">
-                      <Sparkles className="w-2.5 h-2.5 fill-white text-white" />
-                      <span>NEW DROP</span>
-                    </span>
-                  )}
-                </div>
-
-                {/* Quick Toggle Controls with Hover Tooltips */}
-                <div className="flex items-center gap-2 shrink-0 border-l border-r border-y2k-gunmetal/10 px-3">
-                  <button
-                    onClick={() => handleToggle(product, "isSoldOut")}
-                    disabled={toggling === product.id + "isSoldOut"}
-                    title={product.isSoldOut ? "Mark In Stock" : "Mark Sold Out"}
-                    className="p-1.5 text-y2k-slate hover:text-black transition-colors cursor-pointer disabled:opacity-40 flex items-center gap-1 text-[9px] font-bold uppercase relative group/tooltip"
-                  >
-                    {product.isSoldOut ? (
-                      <ToggleRight className="w-5 h-5 text-red-600" />
-                    ) : (
-                      <ToggleLeft className="w-5 h-5 text-y2k-slate" />
-                    )}
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                      {product.isSoldOut ? "Mark In Stock" : "Mark Sold Out"}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => handleToggle(product, "isNew")}
-                    disabled={toggling === product.id + "isNew"}
-                    title={product.isNew ? "Remove New badge" : "Add New badge"}
-                    className="p-1.5 text-y2k-slate hover:text-black transition-colors cursor-pointer disabled:opacity-40 flex items-center gap-1 text-[9px] font-bold uppercase relative group/tooltip"
-                  >
-                    <Sparkles className={`w-4 h-4 ${product.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                      {product.isNew ? "Remove New Badge" : "Add New Badge"}
-                    </span>
-                  </button>
-                </div>
-
-                {/* Action Buttons with Hover Tooltips */}
-                <div className="flex items-center gap-2 shrink-0">
-                  {product.isArchived ? (
-                    <span
-                      className="p-2 border border-y2k-gunmetal/10 text-y2k-slate/40 cursor-not-allowed relative group/tooltip"
-                      title="Archived - Hidden from store website"
-                    >
-                      <EyeOff className="w-4 h-4" />
-                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                        Hidden From Store
-                      </span>
-                    </span>
-                  ) : (
-                    <Link
-                      href={`/product/${product.id}`}
-                      target="_blank"
-                      className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors relative group/tooltip"
-                      title="View on store website"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                        View on Store
-                      </span>
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={() => handleToggle(product, "isArchived")}
-                    disabled={toggling === product.id + "isArchived"}
-                    title={product.isArchived ? "Unarchive Product (Make visible on storefront)" : "Archive Product (Hide from storefront)"}
-                    className={`p-2 border transition-colors cursor-pointer relative group/tooltip ${
-                      product.isArchived
-                        ? "border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100"
-                        : "border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal"
-                    }`}
-                  >
-                    {product.isArchived ? (
-                      <ArchiveRestore className="w-4 h-4 text-amber-700" />
-                    ) : (
-                      <Archive className="w-4 h-4" />
-                    )}
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                      {product.isArchived ? "Unarchive (Publish)" : "Archive (Hide)"}
-                    </span>
-                  </button>
-
-                  <Link
-                    href={`/studio/products/${product.id}`}
-                    className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-black hover:border-y2k-gunmetal transition-colors relative group/tooltip"
-                    title="Edit Product"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-y2k-gunmetal text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                      Edit Product
-                    </span>
-                  </Link>
-
-                  <button
-                    onClick={() => setDeleteTarget(product)}
-                    className="p-2 border border-y2k-gunmetal/15 text-y2k-slate hover:text-red-600 hover:border-red-600 transition-colors cursor-pointer relative group/tooltip"
-                    title="Delete Product"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover/tooltip:block bg-red-600 text-white text-[8px] font-bold uppercase px-2 py-1 whitespace-nowrap z-50 shadow-md">
-                      Delete Product
-                    </span>
-                  </button>
-                </div>
                 </div>
               );
             })}

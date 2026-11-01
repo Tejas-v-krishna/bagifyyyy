@@ -424,80 +424,77 @@ export default function StudioEditProduct() {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Top Header & Mode Switcher ────────────────────────────────────────── */}
-      <div className="bg-white border border-y2k-gunmetal/15 p-4 shadow-xs sticky top-16 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-4 shadow-xs sticky top-14 lg:top-16 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/studio/products"
-            className="text-y2k-slate hover:text-black transition-colors"
-            title="Return to Catalog"
+            className="text-y2k-slate hover:text-black transition-colors shrink-0 p-1 -ml-1"
+            title="Return to catalog"
+            aria-label="Return to catalog"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate">
-                PRODUCT STUDIO
-              </span>
-            </div>
-            <h1 className="font-display font-medium text-lg uppercase tracking-tight text-y2k-gunmetal truncate max-w-xs sm:max-w-md">
-              {form.name || product.name}
-            </h1>
-          </div>
+          <h1 className="font-display font-medium text-base sm:text-lg uppercase tracking-tight text-y2k-gunmetal truncate">
+            {form.name || product.name}
+          </h1>
         </div>
 
         {/* View Mode Toggle & Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Mode Switcher Tabs */}
           <div className="flex items-center bg-y2k-ice p-1 border border-y2k-gunmetal/15">
             <button
               type="button"
               onClick={() => setActiveTab("editor")}
-              className={`px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === "editor"
                   ? "bg-y2k-gunmetal text-white shadow-2xs"
                   : "text-y2k-slate hover:text-black"
               }`}
             >
-              Studio Editor
+              Editor
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("preview")}
-              className={`px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === "preview"
                   ? "bg-y2k-gunmetal text-white shadow-2xs"
                   : "text-y2k-slate hover:text-black"
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
-              <span>Store Preview</span>
+              <span>Preview</span>
             </button>
           </div>
 
           <Link
             href={`/product/${id}`}
             target="_blank"
-            className="flex items-center gap-1.5 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide hover:bg-y2k-ice transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 bg-white border border-y2k-gunmetal/10 text-y2k-gunmetal px-2.5 sm:px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide hover:bg-y2k-ice transition-colors cursor-pointer shadow-2xs"
+            title="View live product"
+            aria-label="View live product"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>View Live</span>
+            <span className="hidden sm:inline">View Live</span>
           </Link>
 
           <button
             type="button"
             onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white px-2.5 sm:px-3.5 py-2 text-[10px] font-bold uppercase tracking-wide transition-colors cursor-pointer shadow-2xs"
+            title="Delete product"
+            aria-label="Delete product"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Delete</span>
+            <span className="hidden sm:inline">Delete</span>
           </button>
 
           <button
             type="button"
             onClick={() => handleSave()}
             disabled={saving}
-            className="btn-bagify px-6 py-2 text-[10px] font-bold uppercase tracking-wide flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+            className="btn-bagify px-4 sm:px-6 py-2 text-[10px] font-bold uppercase tracking-wide flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -506,7 +503,7 @@ export default function StudioEditProduct() {
             ) : (
               <Save className="w-3.5 h-3.5" />
             )}
-            <span>{saving ? "Saving…" : saved ? "Saved Changes!" : "Save Changes"}</span>
+            <span>{saving ? "Saving…" : saved ? "Saved" : "Save"}</span>
           </button>
         </div>
       </div>
@@ -527,17 +524,14 @@ export default function StudioEditProduct() {
           TAB 1: STUDIO INLINE EDITOR
          ──────────────────────────────────────────────────────────────────────── */}
       {activeTab === "editor" && (
-        <div className="bg-white border border-y2k-gunmetal/15 p-6 sm:p-8 lg:p-10 shadow-xs text-y2k-gunmetal">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1.7fr_1.15fr] gap-8 lg:gap-10 xl:gap-14">
+        <div className="bg-white border border-y2k-gunmetal/15 p-3 sm:p-8 lg:p-10 shadow-xs text-y2k-gunmetal">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1.7fr_1.15fr] gap-6 sm:gap-8 lg:gap-10 xl:gap-14">
             
             {/* ── Column 1: Left Details (Title, Description, Specs) ─────────────── */}
-            <div className="flex flex-col space-y-6">
-              <div className="border-b border-y2k-gunmetal/15 pb-4">
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-                  PRODUCT SPECIFICATIONS
-                </span>
+            <div className="flex flex-col space-y-5 sm:space-y-6">
+              <div className="border-b border-y2k-gunmetal/15 pb-3">
                 <h2 className="font-display text-lg uppercase tracking-tight text-y2k-gunmetal">
-                  Details &amp; Information
+                  Details
                 </h2>
               </div>
 
@@ -633,31 +627,14 @@ export default function StudioEditProduct() {
                   placeholder="Describe garment cut, fit, chest/waist measurements, and styling..."
                 />
               </div>
-
-              {/* Features & Shipping Badges */}
-              <div className="space-y-2 pt-4 border-t border-y2k-gunmetal/15 text-[11px] text-y2k-gunmetal/80">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-y2k-gunmetal shrink-0" />
-                  <span>Heavyweight Construction Standard</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Truck className="font-bold w-4 h-4 text-y2k-gunmetal shrink-0" />
-                  <span>Standard India Post Shipping (₹80)</span>
-                </div>
-              </div>
             </div>
 
             {/* ── Column 2: Center Image Showcase & Gallery (Interactive) ───────── */}
             <div className="flex flex-col items-center">
-              <div className="w-full border-b border-y2k-gunmetal/15 pb-4 mb-4 flex items-center justify-between">
-                <div>
-                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-                    GALLERY SHOWCASE
-                  </span>
-                  <h2 className="font-display text-lg uppercase tracking-tight text-y2k-gunmetal">
-                    Product Photos ({images.length})
-                  </h2>
-                </div>
+              <div className="w-full border-b border-y2k-gunmetal/15 pb-3 mb-4 flex items-center justify-between gap-3">
+                <h2 className="font-display text-lg uppercase tracking-tight text-y2k-gunmetal">
+                  Photos ({images.length})
+                </h2>
 
                 {images.length > 1 && (
                   <span className="text-[10px] font-mono text-y2k-slate font-bold">
@@ -681,7 +658,7 @@ export default function StudioEditProduct() {
 
                     {/* Previous / Next Arrow Controls */}
                     {images.length > 1 && (
-                      <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute inset-0 flex items-center justify-between p-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         <button
                           type="button"
                           onClick={(e) => {
@@ -716,8 +693,7 @@ export default function StudioEditProduct() {
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-y2k-slate text-xs uppercase tracking-wide p-6 text-center">
                     <ImageIcon className="w-10 h-10 mb-2 opacity-40" />
-                    <span>No product image uploaded yet</span>
-                    <p className="text-[10px] text-y2k-slate/70 mt-1 lowercase">Select a photo from your device below</p>
+                    <span>No photo yet</span>
                   </div>
                 )}
               </div>
@@ -725,16 +701,13 @@ export default function StudioEditProduct() {
               {/* Interactive Thumbnails Selector */}
               {images.length > 0 && (
                 <div className="w-full mt-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate">
-                      Drag, use arrows, or click to preview:
-                    </span>
-                    {orderSaving && (
+                  {orderSaving && (
+                    <div className="flex justify-end mb-2">
                       <span className="text-[9px] font-bold uppercase tracking-wide text-y2k-slate/70">
                         Saving order…
                       </span>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-4 sm:grid-cols-5 gap-2.5">
                     {images.map((img, idx) => {
@@ -790,7 +763,7 @@ export default function StudioEditProduct() {
                           />
 
                           {/* Arrange arrows */}
-                          <div className="absolute bottom-1 right-1 flex gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                          <div className="absolute bottom-1 right-1 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover/item:opacity-100 transition-opacity">
                             <button
                               type="button"
                               disabled={idx === 0}
@@ -827,7 +800,7 @@ export default function StudioEditProduct() {
                               handleDeleteImage(img.id);
                             }}
                             disabled={deletingImageId === img.id}
-                            className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white opacity-0 group-hover/item:opacity-100 flex items-center justify-center transition-opacity shadow-sm hover:bg-red-700 cursor-pointer"
+                            className="absolute top-1 right-1 w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center transition-opacity shadow-sm hover:bg-red-700 cursor-pointer opacity-100 sm:opacity-0 sm:group-hover/item:opacity-100"
                             title="Delete image"
                           >
                             {deletingImageId === img.id ? (
@@ -849,15 +822,6 @@ export default function StudioEditProduct() {
 
               {/* ── Device File Upload Zone ───────────────────────────────────────── */}
               <div className="w-full mt-6 space-y-3 pt-4 border-t border-y2k-gunmetal/15">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block">
-                    ADD PHOTOS TO PRODUCT
-                  </span>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 border border-emerald-200">
-                    ⚡ Auto-Compressed to WebP
-                  </span>
-                </div>
-
                 {uploadSuccessMessage && (
                   <div className="p-3 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold tracking-wide flex items-center gap-2 animate-in fade-in">
                     <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
@@ -897,52 +861,47 @@ export default function StudioEditProduct() {
                     <div className="flex flex-col items-center gap-2 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
                       <Loader2 className="w-6 h-6 animate-spin text-y2k-gunmetal" />
                       <span>
-                        Compressing &amp; uploading photo
+                        Uploading
                         {uploadProgress ? ` (${uploadProgress.current}/${uploadProgress.total})` : "…"}
-                      </span>
-                      <span className="text-[10px] text-y2k-slate font-medium normal-case">
-                        Optimizing to 1600px max and converting to lightweight WebP
                       </span>
                     </div>
                   ) : (
                     <>
                       <Upload className="w-6 h-6 text-y2k-gunmetal mb-2" />
                       <p className="text-xs font-bold uppercase tracking-wider text-y2k-gunmetal">
-                        Upload from Device / File Explorer
+                        Upload Photos
                       </p>
                       <p className="text-[10px] text-y2k-slate mt-1">
-                        Drag &amp; drop photos here or click to browse (auto-compressed to high-speed WebP)
+                        Tap to choose from your device
                       </p>
                     </>
                   )}
                 </div>
 
                 {/* Optional: Add via Image URL */}
-                <div className="pt-2">
-                  <span className="text-[8px] font-bold uppercase tracking-wide text-y2k-slate block mb-1">
-                    Or Paste Public Image URL:
-                  </span>
+                <div className="pt-1">
                   <div className="flex gap-2">
                     <input
                       type="url"
                       value={newImageUrl}
                       onChange={(e) => setNewImageUrl(e.target.value)}
-                      placeholder="https://..."
+                      placeholder="Paste image URL"
+                      aria-label="Image URL"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault();
                           handleAddImageUrl();
                         }
                       }}
-                      className="flex-1 bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/30"
+                      className="flex-1 min-w-0 bg-y2k-ice/40 border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 py-2 text-xs outline-none focus:border-y2k-gunmetal font-medium placeholder:text-y2k-gunmetal/40"
                     />
                     <button
                       type="button"
                       onClick={handleAddImageUrl}
                       disabled={uploadingFiles || !newImageUrl.trim()}
-                      className="bg-y2k-gunmetal text-white px-4 py-2 text-[10px] font-bold uppercase tracking-wide disabled:opacity-40 transition-colors cursor-pointer shadow-2xs"
+                      className="bg-y2k-gunmetal text-white px-3 sm:px-4 py-2 text-[10px] font-bold uppercase tracking-wide disabled:opacity-40 transition-colors cursor-pointer shadow-2xs shrink-0"
                     >
-                      + Add URL
+                      Add
                     </button>
                   </div>
                 </div>
@@ -950,13 +909,10 @@ export default function StudioEditProduct() {
             </div>
 
             {/* ── Column 3: Right Pricing, Status & Quick Controls ──────────────── */}
-            <div className="flex flex-col space-y-6">
-              <div className="border-b border-y2k-gunmetal/15 pb-4">
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-                  PRICING &amp; INVENTORY
-                </span>
+            <div className="flex flex-col space-y-5 sm:space-y-6">
+              <div className="border-b border-y2k-gunmetal/15 pb-3">
                 <h2 className="font-display text-lg uppercase tracking-tight text-y2k-gunmetal">
-                  Live Store Pricing
+                  Pricing
                 </h2>
               </div>
 
@@ -1009,12 +965,11 @@ export default function StudioEditProduct() {
               </div>
 
               {/* Inventory Status & Flags */}
-              <div className="bg-y2k-ice/40 border border-y2k-gunmetal/15 p-5 space-y-4">
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block">
-                  STOCK AVAILABILITY &amp; BADGES
-                </span>
+              <div className="bg-y2k-ice/40 border border-y2k-gunmetal/15 p-4 sm:p-5 space-y-3">
+                <h2 className="font-display text-base uppercase tracking-tight text-y2k-gunmetal">
+                  Availability
+                </h2>
 
-                {/* Stock Status Toggle */}
                 {/* Stock Status Toggle */}
                 <button
                   type="button"
@@ -1023,18 +978,13 @@ export default function StudioEditProduct() {
                     e.stopPropagation();
                     setForm((prev) => ({ ...prev, isSoldOut: !prev.isSoldOut }));
                   }}
-                  className="w-full text-left flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
+                  className="w-full text-left flex items-center justify-between gap-3 p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
                 >
-                  <div>
-                    <p className="text-xs font-bold uppercase text-y2k-gunmetal">Stock Availability</p>
-                    <p className="text-[9px] text-y2k-slate mt-0.5">
-                      {form.isSoldOut ? "Item is marked as SOLD OUT" : "Item is IN STOCK & Purchasable"}
-                    </p>
-                  </div>
+                  <p className="text-xs font-bold uppercase text-y2k-gunmetal">Stock Availability</p>
                   {form.isSoldOut ? (
-                    <ToggleRight className="w-6 h-6 text-red-600" />
+                    <ToggleRight className="w-6 h-6 text-red-600 shrink-0" />
                   ) : (
-                    <ToggleLeft className="w-6 h-6 text-y2k-slate" />
+                    <ToggleLeft className="w-6 h-6 text-y2k-slate shrink-0" />
                   )}
                 </button>
 
@@ -1046,15 +996,10 @@ export default function StudioEditProduct() {
                     e.stopPropagation();
                     setForm((prev) => ({ ...prev, isNew: !prev.isNew }));
                   }}
-                  className="w-full text-left flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
+                  className="w-full text-left flex items-center justify-between gap-3 p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
                 >
-                  <div>
-                    <p className="text-xs font-bold uppercase text-y2k-gunmetal">New Arrival Tag</p>
-                    <p className="text-[9px] text-y2k-slate mt-0.5">
-                      {form.isNew ? "New Drop Badge ACTIVE" : "New Drop Badge Inactive"}
-                    </p>
-                  </div>
-                  <Sparkles className={`w-5 h-5 ${form.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
+                  <p className="text-xs font-bold uppercase text-y2k-gunmetal">New Arrival Tag</p>
+                  <Sparkles className={`w-5 h-5 shrink-0 ${form.isNew ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
                 </button>
 
                 {/* Best Seller Badge Toggle */}
@@ -1065,15 +1010,10 @@ export default function StudioEditProduct() {
                     e.stopPropagation();
                     setForm((prev) => ({ ...prev, isBestSeller: !prev.isBestSeller }));
                   }}
-                  className="w-full text-left flex items-center justify-between p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
+                  className="w-full text-left flex items-center justify-between gap-3 p-3.5 bg-white border border-y2k-gunmetal/15 cursor-pointer hover:bg-y2k-ice/60 transition-colors shadow-2xs"
                 >
-                  <div>
-                    <p className="text-xs font-bold uppercase text-y2k-gunmetal">Best Seller Badge</p>
-                    <p className="text-[9px] text-y2k-slate mt-0.5">
-                      {form.isBestSeller ? "Best Seller Badge ACTIVE" : "Standard Catalog Item"}
-                    </p>
-                  </div>
-                  <Star className={`w-5 h-5 ${form.isBestSeller ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
+                  <p className="text-xs font-bold uppercase text-y2k-gunmetal">Best Seller Badge</p>
+                  <Star className={`w-5 h-5 shrink-0 ${form.isBestSeller ? "text-y2k-gunmetal fill-y2k-gunmetal" : "text-y2k-slate"}`} />
                 </button>
 
                 {/* Archive Status Toggle */}
@@ -1084,31 +1024,17 @@ export default function StudioEditProduct() {
                     e.stopPropagation();
                     setForm((prev) => ({ ...prev, isArchived: !prev.isArchived }));
                   }}
-                  className={`w-full text-left flex items-center justify-between p-3.5 border cursor-pointer transition-colors shadow-2xs ${
+                  className={`w-full text-left flex items-center justify-between gap-3 p-3.5 border cursor-pointer transition-colors shadow-2xs ${
                     form.isArchived
                       ? "bg-amber-50/70 border-amber-300 hover:bg-amber-100/70"
                       : "bg-white border-y2k-gunmetal/15 hover:bg-y2k-ice/60"
                   }`}
                 >
-                  <div>
-                    <p className="text-xs font-bold uppercase text-y2k-gunmetal flex items-center gap-1.5">
-                      <span>Archive Status</span>
-                      {form.isArchived && (
-                        <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 bg-amber-200 text-amber-800">
-                          Archived
-                        </span>
-                      )}
-                    </p>
-                    <p className="text-[9px] text-y2k-slate mt-0.5">
-                      {form.isArchived
-                        ? "Archived: hidden from storefront & catalogue listings"
-                        : "Active: publicly visible and searchable on store"}
-                    </p>
-                  </div>
+                  <p className="text-xs font-bold uppercase text-y2k-gunmetal">Archive Status</p>
                   {form.isArchived ? (
-                    <ArchiveRestore className="w-5 h-5 text-amber-700" />
+                    <ArchiveRestore className="w-5 h-5 text-amber-700 shrink-0" />
                   ) : (
-                    <Archive className="w-5 h-5 text-y2k-slate" />
+                    <Archive className="w-5 h-5 text-y2k-slate shrink-0" />
                   )}
                 </button>
               </div>
@@ -1253,7 +1179,7 @@ export default function StudioEditProduct() {
                       />
 
                       {images.length > 1 && (
-                        <div className="absolute inset-0 flex items-center justify-between p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute inset-0 flex items-center justify-between p-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                           <button
                             type="button"
                             onClick={() => setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}

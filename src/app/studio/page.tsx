@@ -149,30 +149,23 @@ function StatCard({
   value,
   icon: Icon,
   accent,
-  subtitle,
 }: {
   label: string;
   value: number | string;
    icon: LucideIcon;
   accent?: string;
-  subtitle?: string;
 }) {
   return (
-    <div className="bg-white border border-black/10 rounded-xl p-6 flex flex-col justify-between shadow-xs">
-      <div className="flex items-center justify-between mb-3">
+    <div className="bg-white border border-black/10 rounded-xl p-4 sm:p-6 flex flex-col justify-between shadow-xs">
+      <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
         <p className="text-[9px] font-bold uppercase tracking-wider text-black/50">
           {label}
         </p>
-        <Icon className={`w-4 h-4 ${accent || "text-black/50"}`} />
+        <Icon className={`w-4 h-4 shrink-0 ${accent || "text-black/50"}`} />
       </div>
-      <div>
-        <p className={`text-2xl lg:text-3xl font-microgramma font-bold tracking-tight ${accent || "text-black"}`}>
-          {value}
-        </p>
-        {subtitle && (
-          <p className="text-[9px] text-black/45 mt-1 uppercase tracking-wider font-sans">{subtitle}</p>
-        )}
-      </div>
+      <p className={`text-xl sm:text-2xl lg:text-3xl font-microgramma font-bold tracking-tight ${accent || "text-black"}`}>
+        {value}
+      </p>
     </div>
   );
 }
@@ -358,81 +351,73 @@ export default function StudioDashboard() {
     <div className="space-y-8 font-sans">
       {/* ── Page Header (Title matches sidebar nav link) ──────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/10">
-        <div>
-          <h1 className="font-microgramma font-bold text-3xl uppercase tracking-[-0.03em] text-black">
-            DASHBOARD
-          </h1>
-          <p className="text-xs text-black/70 mt-0.5">
-            Store performance and recent customer orders.
-          </p>
-        </div>
+        <h1 className="font-microgramma font-bold text-3xl uppercase tracking-[-0.03em] text-black">
+          DASHBOARD
+        </h1>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-2 sm:flex items-center gap-2">
           <Link
             href="/studio/bundles"
-            className="bg-white border border-black/10 rounded-[0.35rem] text-black px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+            className="bg-white border border-black/10 rounded-[0.35rem] text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
           >
-            <Layers className="w-3.5 h-3.5" />
-            <span>Bundles ({stats.total})</span>
+            <Layers className="w-3.5 h-3.5 shrink-0" />
+            <span>Bundles</span>
           </Link>
           <Link
             href="/studio/orders"
-            className="bg-white border border-black/10 rounded-[0.35rem] text-black px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+            className="bg-white border border-black/10 rounded-[0.35rem] text-black px-3 sm:px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
           >
-            <ShoppingBag className="w-3.5 h-3.5" />
+            <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
             <span>Orders ({stats.totalOrders})</span>
           </Link>
           <Link
             href="/studio/products/new"
-            className="btn-bagify px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+            className="col-span-2 sm:col-span-1 btn-bagify px-4 sm:px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5 shrink-0" />
             <span>Add Product</span>
           </Link>
         </div>
       </div>
 
       {/* ── Metric Cards ─────────────────────────────────────────────────────── */}
-      <div className="font-bold grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="font-bold grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
         <StatCard
           label="Total Revenue"
           value={`₹${stats.totalRevenue.toLocaleString("en-IN")}`}
           icon={ShoppingBag}
           accent="text-black font-bold"
-          subtitle="Gross sales"
         />
         <StatCard
           label="Total Orders"
           value={stats.totalOrders}
           icon={ShoppingBag}
-          subtitle={`${stats.totalOrders} in database`}
         />
         <StatCard
           label="Processing"
           value={stats.pendingOrders}
           icon={Clock}
           accent={stats.pendingOrders > 0 ? "text-black font-bold" : "text-black/50"}
-          subtitle="Pending fulfillment"
         />
-        <StatCard label="Total Catalog" value={stats.total} icon={Package} subtitle="Active products" />
-        <StatCard label="Sold Out" value={stats.soldOut} icon={AlertCircle} accent="text-red-600" subtitle="Out of stock" />
-        <StatCard label="New Items" value={stats.newArrivals} icon={Sparkles} accent="text-black font-bold" subtitle="New badges" />
+        <StatCard label="Total Catalog" value={stats.total} icon={Package} />
+        <StatCard label="Sold Out" value={stats.soldOut} icon={AlertCircle} accent="text-red-600" />
+        <StatCard label="New Items" value={stats.newArrivals} icon={Sparkles} accent="text-black font-bold" />
       </div>
 
       {/* ── Recent Orders Table (Entire Box Area is Clickable to Open Orders) ── */}
       <div className="bg-white border border-black/10 rounded-xl shadow-xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-black/10 flex items-center justify-between bg-black/[0.02]">
-          <div className="flex items-center gap-3">
-            <ShoppingBag className="w-4 h-4 text-black" />
-            <h2 className="font-microgramma font-bold text-base uppercase tracking-tight text-black">
-              Recent Fulfillment Orders ({stats.totalOrders})
+        <div className="px-4 sm:px-6 py-4 border-b border-black/10 flex items-center justify-between gap-3 bg-black/[0.02]">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <ShoppingBag className="w-4 h-4 text-black shrink-0" />
+            <h2 className="font-microgramma font-bold text-sm sm:text-base uppercase tracking-tight text-black">
+              Recent Orders <span className="text-black/40">({stats.totalOrders})</span>
             </h2>
           </div>
           <Link
             href="/studio/orders"
-            className="text-[10px] font-bold uppercase tracking-wider text-black/50 hover:text-black flex items-center gap-1 transition-colors"
+            className="text-[10px] font-bold uppercase tracking-wider text-black/50 hover:text-black flex items-center gap-1 transition-colors shrink-0"
           >
-            <span>View All Orders</span>
+            <span>View All</span>
             <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
@@ -447,10 +432,10 @@ export default function StudioDashboard() {
               <Link
                 key={order.id}
                 href="/studio/orders"
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-black/[0.03] transition-colors cursor-pointer group"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-4 hover:bg-black/[0.03] transition-colors cursor-pointer group"
               >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-10 h-12 bg-[#f2f2f2] shrink-0 overflow-hidden relative border border-black/10 rounded-md">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                  <div className="w-12 h-14 sm:w-10 sm:h-12 bg-[#f2f2f2] shrink-0 overflow-hidden relative border border-black/10 rounded-md">
                     <Image
                       src={order.items?.[0]?.image || "/placeholder.jpg"}
                       alt={order.items?.[0]?.name || "Order item"}
@@ -513,8 +498,8 @@ export default function StudioDashboard() {
 
       {/* ── User Bug Reports (notifications) ─────────────────────────────── */}
       <div className="bg-white border border-black/10 rounded-xl shadow-xs overflow-hidden">
-        <div className="px-6 py-4 border-b border-black/10 flex items-center justify-between bg-black/[0.02]">
-          <div className="flex items-center gap-3">
+        <div className="px-4 sm:px-6 py-4 border-b border-black/10 flex items-center justify-between bg-black/[0.02]">
+          <div className="flex items-center gap-2.5">
             <span className="relative inline-flex">
               <Bug className="w-4 h-4 text-black" aria-hidden="true" />
               {openBugCount > 0 && (
@@ -523,15 +508,15 @@ export default function StudioDashboard() {
                 </span>
               )}
             </span>
-            <h2 className="font-microgramma font-bold text-base uppercase tracking-tight text-black">
-              User Bug Reports ({bugReports.length})
+            <h2 className="font-microgramma font-bold text-sm sm:text-base uppercase tracking-tight text-black">
+              Bug Reports ({bugReports.length})
             </h2>
           </div>
         </div>
 
         {bugReports.length === 0 ? (
-          <div className="py-12 text-center text-black/40 text-xs uppercase tracking-wider">
-            No bug reports. Shoppers are happy
+          <div className="py-10 text-center text-black/40 text-xs uppercase tracking-wider">
+            No bug reports.
           </div>
         ) : (
           <div className="divide-y divide-black/10">
@@ -581,10 +566,10 @@ export default function StudioDashboard() {
 
       {/* ── Category Spread ───────────────────────────────────────────────── */}
       {Object.keys(stats.categories).length > 0 && (
-        <div className="bg-white border border-black/10 rounded-xl p-6 shadow-xs">
-          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/50 mb-3">
-            PRODUCTS BY CATEGORY
-          </p>
+        <div className="bg-white border border-black/10 rounded-xl p-4 sm:p-6 shadow-xs">
+          <h2 className="font-microgramma font-bold text-sm uppercase tracking-tight text-black mb-3">
+            Catalog by category
+          </h2>
           <div className="flex flex-wrap gap-3">
             {Object.entries(stats.categories).map(([cat, count]) => (
               <div key={cat} className="flex items-center gap-2 border border-black/10 rounded-[0.35rem] bg-[#f5f5f2] px-3 py-1.5">
@@ -597,11 +582,18 @@ export default function StudioDashboard() {
               </div>
             ))}
           </div>
+          <Link
+            href="/studio/products"
+            className="lg:hidden mt-4 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-black/60 hover:text-black"
+          >
+            <span>Manage catalog</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
         </div>
       )}
 
       {/* ── Products List with Icon Tooltips ──────────────────────────────── */}
-      <div className="bg-white border border-black/10 rounded-xl shadow-xs overflow-hidden">
+      <div className="hidden lg:block bg-white border border-black/10 rounded-xl shadow-xs overflow-hidden">
         <div className="px-6 py-4 border-b border-black/10 flex items-center justify-between bg-black/[0.02]">
           <h2 className="font-microgramma font-bold text-base uppercase tracking-tight text-black">
             Catalog Items ({stats.total})

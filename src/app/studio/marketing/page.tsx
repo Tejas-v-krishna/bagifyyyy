@@ -269,20 +269,15 @@ export default function MarketingStudioPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            PROMOTIONS
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            EMAIL MARKETING
-          </h1>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Email Marketing
+        </h1>
 
         <div className="flex items-center gap-3">
-          <div className="bg-white border border-y2k-gunmetal/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-2 shadow-2xs">
+          <div className="bg-white border border-y2k-gunmetal/10 px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-y2k-gunmetal flex items-center gap-2 shadow-2xs">
             <Users className="w-4 h-4 text-y2k-slate" />
-            <span>{stats.subscriberCount} Active Subscribers</span>
+            <span>{stats.subscriberCount} Subscribers</span>
           </div>
         </div>
       </div>

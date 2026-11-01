@@ -200,16 +200,9 @@ export default function StudioNewOfflineOrderPage() {
   return (
     <div className="space-y-6 font-sans">
       <div className="pb-4 border-b border-y2k-gunmetal/15">
-        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-          Instagram / UPI sales
-        </span>
-        <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-          Add offline order
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Add Offline Order
         </h1>
-        <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-          Records as a paid <span className="font-mono font-bold">IG-xxxxxx</span> order, decrements variant stock, and
-          auto-marks the product sold out when the last piece goes.
-        </p>
       </div>
 
       {created && (

@@ -405,16 +405,13 @@ export default function StudioOrderLedgerPage() {
 
   return (
     <div className="space-y-4 font-sans">
-      <div className="pb-3 border-b border-y2k-gunmetal/15 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+      <div className="pb-3 border-b border-y2k-gunmetal/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            SPREADSHEET VIEW
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            ORDER LEDGER
+          <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+            Order Ledger
           </h1>
           <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-            {stats.orders} orders · {stats.lines} line items · ₹{stats.revenue.toLocaleString("en-IN")} recorded. Drag to scroll, click any column to sort.
+            {stats.orders} orders · ₹{stats.revenue.toLocaleString("en-IN")} recorded
           </p>
         </div>
         <div className="flex items-center gap-2">

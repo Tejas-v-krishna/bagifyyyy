@@ -234,34 +234,26 @@ export default function StudioBundlesPage() {
     <div className="space-y-8 font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            PRODUCT SETS
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            BUNDLES
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-            Create multi-piece outfit sets with custom discounts.
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Bundles
+        </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3">
           <Link
             href="/bundles"
             target="_blank"
-            className="flex items-center gap-2 border border-y2k-gunmetal/10 text-y2k-gunmetal px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal hover:bg-white transition-colors"
+            className="flex items-center justify-center gap-2 border border-y2k-gunmetal/10 text-y2k-gunmetal px-3 sm:px-4 py-2.5 text-[9px] font-bold uppercase tracking-wider hover:border-y2k-gunmetal hover:bg-white transition-colors"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            View Live Bundles
+            View Live
           </Link>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 bg-y2k-gunmetal text-white px-5 py-2.5 text-[9px] font-black uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-y2k-gunmetal text-white px-3 sm:px-5 py-2.5 text-[9px] font-black uppercase tracking-wider hover:bg-black transition-colors shadow-sm cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            Create Bundle
+            Create
           </button>
         </div>
       </div>

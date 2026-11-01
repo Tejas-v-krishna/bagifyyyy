@@ -165,20 +165,12 @@ export default function StudioInstagramPage() {
     <div className="space-y-8 font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-y2k-gunmetal/15">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-0.5">
-            SOCIAL MEDIA
-          </span>
-          <h1 className="font-display font-medium text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
-            INSTAGRAM FEED
-          </h1>
-          <p className="text-xs text-y2k-gunmetal/70 mt-0.5">
-            Curate and update the featured Instagram posts on your homepage.
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-y2k-gunmetal/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Instagram Feed
+        </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             href="/#instagram"
             target="_blank"

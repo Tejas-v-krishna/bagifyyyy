@@ -157,18 +157,10 @@ export default function StudioCouponsPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* ── Top Header ───────────────────────────────────────────────────────── */}
-      <div className="bg-white border border-y2k-gunmetal/15 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-y2k-slate block mb-1">
-            DISCOUNTS &amp; PROMOTIONS
-          </span>
-          <h1 className="font-display font-medium text-xl uppercase tracking-tight text-y2k-gunmetal">
-            Coupon Codes Manager
-          </h1>
-          <p className="text-xs text-y2k-slate mt-1">
-            Create and manage promotional discount codes (e.g. BAGIFY10, FREESHIP, FLAT200) for shoppers to redeem in cart and checkout.
-          </p>
-        </div>
+      <div className="pb-4 border-b border-y2k-gunmetal/15">
+        <h1 className="font-display font-medium text-2xl sm:text-3xl uppercase tracking-[-0.03em] text-y2k-gunmetal">
+          Coupon Codes
+        </h1>
       </div>
 
       {/* Notification Banner */}
