@@ -1,7 +1,2233 @@
 {
-  "capturedAt": "2026-10-24T16:54:53.163Z",
+  "capturedAt": "2026-11-10T17:42:23.790Z",
   "note": "Last-known catalogue captured before a database outage. Regenerate with: npx tsx --env-file=.env scripts/snapshot-catalog.ts",
   "products": [
+    {
+      "id": "b8782fab-da9d-4cc0-87e9-356b24e0d6d3",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/32\nLength -44\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:34:22.764Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910847590_dikha_img_2325.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910850386_zlb6x_img_2326.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910853200_emg2p_img_2327.jpg"
+      ]
+    },
+    {
+      "id": "120deff7-71f8-4e2a-8bdf-f41d11a977cf",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -38\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:33:46.107Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910813537_z1p6g_img_2348.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910816464_13mwh_img_2350.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910819723_oz4sj_img_2349.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910822505_l9epu_img_2351.jpg"
+      ]
+    },
+    {
+      "id": "4dbd8cbd-16c5-45ae-a219-7e90fdfd7942",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -41\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:33:02.009Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910771901_ippx0_img_2335.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910774938_9cqrw_img_2336.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910777727_b5ffa_img_2337.jpg"
+      ]
+    },
+    {
+      "id": "2721dd84-acca-42a7-9abf-8dc5f7f556d3",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 21 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:32:18.814Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910727966_zz36n_img_2352.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910730941_0uvue_img_2353.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910733877_lbbow_img_2354.jpg"
+      ]
+    },
+    {
+      "id": "bd773b10-e188-4950-8e55-3746e4065857",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -40\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:31:28.376Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910678805_g0p64_img_2355.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910682324_liccj_img_2356.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910685500_pzz6e_img_2357.jpg"
+      ]
+    },
+    {
+      "id": "9dd24894-1280-42a2-a64d-f62c45c443ad",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -38\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:30:37.123Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910625407_kds7b_img_2359.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910629468_enrhs_img_2360.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910632633_ofa0x_img_2361.jpg"
+      ]
+    },
+    {
+      "id": "4ef20348-4d88-47ce-95e4-65c4ed368b94",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:29:44.220Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910570671_0edmo_img_2341.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910573809_fm9bw_img_2342.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910577081_bwjpn_img_2343.jpg"
+      ]
+    },
+    {
+      "id": "4ffa75d0-0997-4e91-9e7e-81e6c9a51a67",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28\nLength -44\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:28:35.347Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910485427_3xfyx_img_2332.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910489527_2ifpm_img_2333.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793910492525_c0yoj_img_2334.jpg"
+      ]
+    },
+    {
+      "id": "26d73676-1713-4c8a-9a84-63445f346c38",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:18:13.684Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909838444_lmytd_img_2328.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909841199_bjxpb_img_2329.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909844306_rdw2b_img_2330.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909847220_8ffl9_img_2331.jpg"
+      ]
+    },
+    {
+      "id": "d63afbd8-916b-4469-a0d2-cf9cd64281e0",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:16:14.524Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909762561_s8kj5_img_2344.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909765289_jtjnr_img_2345.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909768179_amgmo_img_2346.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909771525_gwv2q_img_2347.jpg"
+      ]
+    },
+    {
+      "id": "958ff1bf-f236-425b-9f44-d077b83ed6c1",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T20:10:59.171Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909441536_su40o_img_2338.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909445007_94tju_img_2339.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793909449066_ikn36_img_2340.jpg"
+      ]
+    },
+    {
+      "id": "47800192-b60b-4c47-baa2-cdac76310e89",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:27:46.511Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892460152_s48hf_img_2507.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892463265_1gbz2_img_2508.jpg"
+      ]
+    },
+    {
+      "id": "96ebcf54-b521-4860-9973-1b957a5c2720",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-44\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:27:00.300Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892414702_8r5ip_img_2534.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892416995_o41wd_img_2535.jpeg"
+      ]
+    },
+    {
+      "id": "e45e0734-5bb5-4c72-8f12-4447a5310df7",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:26:25.806Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892380536_4ad60_img_2528.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892383104_1m1tr_img_2529.jpg"
+      ]
+    },
+    {
+      "id": "203d1341-8040-4779-ad49-961ae338d837",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:25:55.849Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892350557_ew7x8_img_2551.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892352674_kpznl_img_2552.jpeg"
+      ]
+    },
+    {
+      "id": "60372548-b59c-46f2-bb42-89f0b19692d9",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:25:23.198Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892314934_h0qcf_img_2549.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892317139_4z1zi_img_2550.jpeg"
+      ]
+    },
+    {
+      "id": "0d7dd075-dc85-4b38-a826-99d3b7112afa",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-38\nLength-23\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:24:39.847Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892268646_2dfkz_img_2526.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892272047_iluzq_img_2527.jpg"
+      ]
+    },
+    {
+      "id": "3d244b7e-f303-4b9b-89cd-3529352e1dd3",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-26\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:23:58.589Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892231713_x8cv6_img_2503.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892234388_hwzw4_img_2504.jpg"
+      ]
+    },
+    {
+      "id": "7452343f-251c-44a9-b94f-b0936cc52203",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:23:27.670Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892201090_zurpp_img_2501.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892203983_1vqy0_img_2502.jpg"
+      ]
+    },
+    {
+      "id": "8faab8b1-ea7f-4191-b864-b3506d2558e0",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-40\nLength-25\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:22:23.237Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892136166_ab9hg_img_2509.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892138930_0ddm1_img_2510.jpg"
+      ]
+    },
+    {
+      "id": "c49cf8a5-1992-416d-9dfd-c97f0583846b",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-44\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:21:40.177Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892092344_dw369_img_2519.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892095345_snza9_img_2520.jpg"
+      ]
+    },
+    {
+      "id": "c02b2259-9d33-46e3-8172-1e77cb647152",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:20:52.700Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892038412_bdaf0_img_2525.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793892041149_cdqqj_img_2524.jpg"
+      ]
+    },
+    {
+      "id": "ff20c4bc-b166-496e-afb3-970918f021de",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-44\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:20:02.985Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891995890_fvt2b_img_2521.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891998887_weotc_img_2522.jpg"
+      ]
+    },
+    {
+      "id": "f7a22f2e-c465-4066-add2-d3f3cb8c6609",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-47\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:19:16.320Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891941336_ailrx_img_2517.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891944093_d05pq_img_2518.jpg"
+      ]
+    },
+    {
+      "id": "2d33b318-d32b-4460-bc42-df3243eed12d",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-38\nLength-24\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:18:31.921Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891901402_trh2l_img_2542.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891903425_26op4_img_2544.jpeg"
+      ]
+    },
+    {
+      "id": "233f293c-e270-4fe8-a352-837584e5df95",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-22\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:17:47.921Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891862789_jtnb6_img_2536.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891865458_n4r12_img_2537.jpg"
+      ]
+    },
+    {
+      "id": "ef94ca97-8662-463a-ae3f-54e0e718e189",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:15:55.408Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891749906_c30a7_img_2532.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891752160_utozd_img_2533.jpeg"
+      ]
+    },
+    {
+      "id": "33eca03f-3e59-40fa-9f91-31fd4ca04767",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-44\nLength-26\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:14:58.136Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891688309_x3h4e_img_2538.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891691331_1226l_img_2539.jpg"
+      ]
+    },
+    {
+      "id": "b3fc67fe-3141-47cd-8935-8df279cbf2f0",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-42\nLength-25\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:14:12.719Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891643515_8m5vc_img_2505.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891646278_7j7tq_img_2506.jpg"
+      ]
+    },
+    {
+      "id": "a515ff88-5654-4251-b341-d4ee53a4daf3",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-44\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:13:17.992Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891582795_h4xbw_img_2511.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891585690_jcp5t_img_2512.jpg"
+      ]
+    },
+    {
+      "id": "45cedea4-dcde-48c3-a9fb-4a0f4c92ba8e",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:11:59.848Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891513217_1yqbx_img_2547.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891516262_v0qt1_img_2548.jpg"
+      ]
+    },
+    {
+      "id": "2c043485-66e7-4d45-9ac9-e23410f8a22f",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:09:36.291Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891366439_8t9nk_img_2545.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891369283_mabtg_img_2546.jpg"
+      ]
+    },
+    {
+      "id": "405f47d0-fae1-45e8-be1e-bff74b267b9e",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:08:37.555Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891306575_6soob_img_2540.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891308678_ydm3g_img_2541.jpeg"
+      ]
+    },
+    {
+      "id": "5af825ad-742d-4269-a1ca-3c9728bf0112",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:07:07.671Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891219675_7s391_img_2515.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891222283_8zhet_img_2516.jpg"
+      ]
+    },
+    {
+      "id": "906bc8d8-c290-4449-8185-6136b6a338d0",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-44\nLength-26\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:06:25.021Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891169518_t1ids_img_2499.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891172491_u2str_img_2500.jpg"
+      ]
+    },
+    {
+      "id": "c7711de0-a457-487c-b56d-130e0d777784",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-40\nLength-24\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:04:41.426Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891070793_fvymw_img_2497.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891073489_2mvjq_img_2498.jpg"
+      ]
+    },
+    {
+      "id": "ab3f35d1-b4b8-4ee0-9932-d51a851486c4",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-40\nLength-26\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-05T15:03:49.524Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891020848_3lyr8_img_2495.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793891023870_d57bm_img_2496.jpg"
+      ]
+    },
+    {
+      "id": "1edec070-ef65-405c-9523-e2ec3ab217ab",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:02:07.295Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793890921513_oganv_img_2530.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793890924318_xpfeh_img_2531.jpg"
+      ]
+    },
+    {
+      "id": "dabb96c6-5ba8-43d9-9778-47f521177410",
+      "name": "Vintage Jacket🔥",
+      "description": "Chest-46\nLength-26\nCondition- 10/10",
+      "price": 399,
+      "compareAtPrice": 699,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T15:00:55.530Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793890843382_pfpgk_img_2513.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793890846033_or3sy_img_2514.jpg"
+      ]
+    },
+    {
+      "id": "910e51ce-f09e-4412-a51d-a38e676ff9c5",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-40\nLength-26\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-05T14:59:34.769Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793890763513_w48gu_img_2553.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793890767475_2hh92_img_2554.jpg"
+      ]
+    },
+    {
+      "id": "556973bf-9f14-41c8-b7e4-4cdb7096226e",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-40\nLength-23\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-04T15:05:16.051Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804704443_cgz5h_img_2167.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804709154_a6x0p_img_2168.jpg"
+      ]
+    },
+    {
+      "id": "be6ff7ce-e440-4adc-ba9e-943ebc037be4",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-26\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-04T15:04:36.195Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804667890_9aqwu_img_2076.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804671125_vmvi3_img_2077.jpg"
+      ]
+    },
+    {
+      "id": "5988ff1f-1f3d-4b6e-811e-9c97ee47bfc3",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-43\nLength-25\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T15:03:39.355Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804609928_ltxx5_img_2392.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804611245_f8ztu_img_2392.jpeg"
+      ]
+    },
+    {
+      "id": "d1233959-f37a-46bd-bfc3-0797f5a30e10",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-38\nLength-24\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T15:02:52.301Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804566175_7f983_img_2143.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804568910_8ohff_img_2144.jpg"
+      ]
+    },
+    {
+      "id": "2e9f7d1c-cf66-4afd-9182-47dc2ae04f18",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-42\nLength-24\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-04T15:02:10.044Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804522995_aobv4_img_2378.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804524286_brzbc_img_2379.jpeg"
+      ]
+    },
+    {
+      "id": "1648bf50-c487-4657-a743-af99a9a1c14b",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T15:01:30.397Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804477913_kkzi7_img_2197.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804481238_3jhcw_img_2198.jpeg"
+      ]
+    },
+    {
+      "id": "330f2650-0dfd-414e-a080-b15108aa826e",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-44\nLength-26\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T15:00:48.006Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804441835_pdpw3_img_2364.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804443076_97mck_img_2367.jpeg"
+      ]
+    },
+    {
+      "id": "af6476d3-89f2-471d-9fd0-453f976f475b",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T15:00:09.433Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804400907_7v6ns_img_2124.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793804405633_vkhtx_img_2125.jpeg"
+      ]
+    },
+    {
+      "id": "08550b1a-cc8b-47f6-b226-4b11b05511e6",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-42\nLength-25\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:51:32.597Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803882666_j805l_img_2083.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803885626_j7428_img_2084.jpeg"
+      ]
+    },
+    {
+      "id": "d050c5e3-3847-4f0f-b089-933a35af7b35",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:49:56.991Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803789331_vbvfj_img_2182.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803793558_0oh32_img_2183.jpg"
+      ]
+    },
+    {
+      "id": "1ff3a88c-d966-44d4-a72c-0846a3c75a11",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-28\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:49:03.230Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803726349_ynq68_img_2195.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803730023_cha2o_img_2196.jpg"
+      ]
+    },
+    {
+      "id": "f2a0ced6-35a5-4fd2-85cd-ff92bcc74216",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-26\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:46:43.726Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803594702_f87o4_img_2109.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803598566_diu9n_img_2110.jpg"
+      ]
+    },
+    {
+      "id": "1f40e30c-35d8-41fe-92cb-c2cfeeb42f47",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:45:36.122Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803529582_pyrbu_img_2191.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803532893_4veuo_img_2192.jpg"
+      ]
+    },
+    {
+      "id": "0e7238a5-9115-45f3-9f68-ecac4dd5d373",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-42\nLength-29\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-04T14:44:29.494Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803458953_mnljc_img_2037.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803460877_5varb_img_2038.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803464000_x4ffo_img_2040.jpg"
+      ]
+    },
+    {
+      "id": "d52edc83-ab77-4302-8870-c4dbf4f94ebe",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-38\nLength-24\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:42:23.602Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803338149_o4de8_img_2069.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803340639_uqezg_img_2070.jpeg"
+      ]
+    },
+    {
+      "id": "86cd3745-fdcf-4ef1-8632-2f4fed4e918f",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-40\nLength-24\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:41:18.932Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803270171_nyvqs_img_2053.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803272476_ipil8_img_2054.jpeg"
+      ]
+    },
+    {
+      "id": "c4144d49-65b2-4398-85f7-01012df47d81",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-40\nLength-26\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:39:51.687Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803180700_9vo37_img_2137.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803184592_i7kv9_img_2138.jpg"
+      ]
+    },
+    {
+      "id": "85fedf82-237f-49a2-98e8-38fab4fcc97f",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:38:59.411Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803127529_zcddl_img_2380.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803128914_3gdw1_img_2381.jpeg"
+      ]
+    },
+    {
+      "id": "d4f82b65-2f48-4fda-8410-feb8d4dee72a",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-38\nLength-24\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:37:09.943Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803022664_nn4i7_img_2159.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793803025231_ykiyc_img_2160.jpeg"
+      ]
+    },
+    {
+      "id": "5b06a4ee-a962-45a0-a9f8-0ce5268a2d8b",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:36:05.282Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802948354_eubtz_img_2187.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802950973_oe4jx_img_2188.jpeg"
+      ]
+    },
+    {
+      "id": "8f88908e-6d5a-43dd-8973-4592a5503995",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-46\nLength-27\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:34:44.195Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802876088_qhwmf_img_2402.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802877372_hconl_img_2403.jpeg"
+      ]
+    },
+    {
+      "id": "2a36e664-1f0f-4b73-a4fd-a46fc3064065",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-34\nLength-23\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:33:29.419Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802790198_hjgm5_b137c342-e286-4132-bb36-5a2522883979.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802793218_mn4ue_c2a2de9c-66fe-4ccb-8a89-756f9b59256d.jpeg"
+      ]
+    },
+    {
+      "id": "385b2536-8aec-4c83-8ead-e52b77dbf9d6",
+      "name": "Leather Jacket🔥",
+      "description": "Chest-38\nLength-25\nCondition- 10/10",
+      "price": 999,
+      "compareAtPrice": 1999,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-04T14:27:43.256Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802382970_a7mm0_img_2131.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793802387306_nhbxk_img_2132.jpeg"
+      ]
+    },
+    {
+      "id": "314c2b74-b0fd-4b3c-ac3f-9410abf227e1",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:10:04.199Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632183745_gt48r_img_2117.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632187161_bmcjb_img_2118.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632190496_hg72q_img_2119.jpg"
+      ]
+    },
+    {
+      "id": "1c242bb2-de43-4771-a22f-f9bb2ca86cf1",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/28\nLength -43\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:09:13.659Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632134042_qdtc0_img_2066.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632138355_2086f_img_2067.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632150466_8h8mo_img_2068.jpg"
+      ]
+    },
+    {
+      "id": "1fbb4836-5d28-4f58-bacb-e0d7ee230eda",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/32\nLength -40\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:07:59.978Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632060041_q50z4_img_2120.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632066036_tjzjq_img_2122.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632069666_g5mh7_img_2121.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632072656_jeyyq_img_2123.jpg"
+      ]
+    },
+    {
+      "id": "04d4f11b-c067-45de-949f-9ff47a0341a9",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/32\nLength -44\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:07:03.835Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632005876_tfmbc_img_2042.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632012244_mgx3f_img_2043.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632016408_oe6vg_img_2044.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793632020008_3mlyy_img_2045.jpg"
+      ]
+    },
+    {
+      "id": "43e7a5ef-dbe4-4d3b-ad4a-621199b5b0ed",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -41\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:05:19.853Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631893147_e034x_img_2097.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631900340_tda4t_img_2098.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631905385_a12y6_img_2099.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631909409_ahtna_img_2100.jpg"
+      ]
+    },
+    {
+      "id": "7b8deb9f-483e-4d2a-a5a2-ee582b93144d",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:03:54.369Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631816359_3azb9_img_2035.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631822031_hd257_img_2036.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631826196_hhr1c_img_2039.jpg"
+      ]
+    },
+    {
+      "id": "7080ed7e-43a5-4ae6-879b-5a0dc74d4e0b",
+      "name": "Vintage Baggy denim🔥",
+      "description": "Waist -28/30\nLength -40\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "baggy",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:02:45.576Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631749460_prk9e_img_2050.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631754519_ft4qj_img_2051.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631758425_v3rgt_img_2052.jpg"
+      ]
+    },
+    {
+      "id": "ac80ebbc-036d-434d-8bdd-547a8bc7cb4f",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T15:00:03.059Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631578081_ywc6g_img_2072.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631582696_ms2b6_img_2073.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631586244_jur5x_img_2074.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631589539_vy4j4_img_2075.jpg"
+      ]
+    },
+    {
+      "id": "6cb09453-82d0-47ea-ada7-bbccc865cc9d",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:58:46.890Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631509282_moref_img_2079.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631513039_7x561_img_2081.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631516767_tm3el_img_2080.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631519992_2bg2z_img_2082.jpg"
+      ]
+    },
+    {
+      "id": "61ccd551-2dd6-4a9c-9047-56e251c6c9c9",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 18 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-02T14:57:07.754Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631402418_qq24e_img_2114.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631407035_qlj3k_img_2115.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631410651_ozwic_img_2116.jpg"
+      ]
+    },
+    {
+      "id": "4680b7df-ebb3-4a09-96ee-fbf4c700df62",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -41\nCondition- 10/10\nLeg open - 18 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:55:18.366Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631299882_r8su2_img_2056.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631303359_lgkds_img_2057.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631307000_mh7fl_img_2058.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631310345_jt4up_img_2059.jpg"
+      ]
+    },
+    {
+      "id": "6df775bd-64b3-43f5-a389-b8fff86262fd",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -39\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:53:56.116Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631199856_nxknn_img_2088.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631204522_wpbaa_img_2089.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631211397_525ka_img_2091.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631208070_wu9ow_img_2090.jpg"
+      ]
+    },
+    {
+      "id": "7fc34814-dcd6-4335-bc4b-c7ef20f4fffc",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:52:34.202Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631137048_bztsv_img_2127.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631141088_ze71i_img_2128.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631145189_d83hi_img_2129.jpg"
+      ]
+    },
+    {
+      "id": "7a6a34ad-df2a-475c-b020-8a8db0cee82a",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/32\nLength -44\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:50:47.665Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631030860_h28ie_img_2133.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631035036_sglb4_img_2134.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631039405_9fasc_img_2135.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793631042760_bk2z6_img_2136.jpg"
+      ]
+    },
+    {
+      "id": "e1a715e6-5771-4eb2-9a99-91ea96b9d1df",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:49:52.762Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630979314_jmkwl_img_2140.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630982668_72rm7_img_2141.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630986233_y1rh6_img_2142.jpg"
+      ]
+    },
+    {
+      "id": "4681409a-7b3f-4784-a32a-88e8257e243c",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:48:41.704Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630911252_85l15_img_2146.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630915202_z9kxi_img_2147.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630919203_qd5hp_img_2148.jpg"
+      ]
+    },
+    {
+      "id": "1f1e9b92-9185-4261-9729-1e3d2281c3e7",
+      "name": "Vintage Baggy denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:47:22.333Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630819921_0o6um_img_2155.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630823528_o1ck0_img_2157.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630827271_bg1yw_img_2156.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630830951_dr2ql_img_2158.jpg"
+      ]
+    },
+    {
+      "id": "76f37794-3fa1-406b-a2f0-0ad406fa11a8",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:46:14.554Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630757280_c9pen_img_2163.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630762849_oajxt_img_2164.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630767276_g320x_img_2165.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630771174_665hp_img_2166.jpg"
+      ]
+    },
+    {
+      "id": "36e54722-32bd-4095-ae71-4d59ee2240ee",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:44:37.022Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630662046_li8ri_img_2170.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630666700_m2pup_img_2171.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630672250_rollb_img_2173.jpg"
+      ]
+    },
+    {
+      "id": "7c9e80ec-cf46-4116-af83-296039455a05",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -40\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-02T14:43:35.345Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630575642_e19hv_img_2179.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630580911_01u1h_img_2180.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630584958_9odqo_img_2181.jpg"
+      ]
+    },
+    {
+      "id": "8bf98fb8-7a83-47ad-933a-d807032ab126",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -30/32\nLength -42\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-02T14:39:30.683Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630355493_syp5b_img_2106.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630360274_rv1kw_img_2107.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793630364329_jmnv8_img_2108.jpg"
+      ]
+    },
+    {
+      "id": "57106579-e243-4f83-afc2-ee7d35849d58",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:46:15.426Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529964869_ol2fd_img_1858.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529966697_imh1x_img_1859.jpeg"
+      ]
+    },
+    {
+      "id": "f843e9ad-cbf3-4f6b-bc6c-ceefd07eb1bc",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-40\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:45:45.994Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529939412_o6fwy_img_1847.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529941210_b62up_img_1848.jpeg"
+      ]
+    },
+    {
+      "id": "4e8237a5-abf9-490b-9094-43d0e7308e16",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-40\nLength-24\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:45:16.024Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529908192_q1lky_img_1855.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529909745_36k4j_img_1854.jpeg"
+      ]
+    },
+    {
+      "id": "8dce3f3e-28aa-43a3-a057-17f380176adc",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-38\nLength-24\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-01T10:44:36.519Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529870150_9mn02_img_1866.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529871906_stw6y_img_1867.jpeg"
+      ]
+    },
+    {
+      "id": "b0b60b0c-a624-40a9-b56e-a2e36fa7d0da",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:43:08.730Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529779518_0cmt4_img_1838.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529781032_pi81p_img_1837.jpeg"
+      ]
+    },
+    {
+      "id": "7121c78e-ff9c-42d3-9ad6-1527ed7a0a3d",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-38\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:40:58.530Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529647741_e9gyx_img_1849.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529649262_5g41t_img_1850.jpeg"
+      ]
+    },
+    {
+      "id": "94b6e54b-d0b3-4b5c-9836-567ebdacd82c",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-39\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:40:01.015Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529596750_72i1h_img_1860.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529598497_jsx4g_img_1861.jpeg"
+      ]
+    },
+    {
+      "id": "97f59fbd-583c-405d-8314-3705395cbb92",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-40\nLength-24\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:39:14.862Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529550450_2jgez_img_1878.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529552797_fujkv_img_1879.jpeg"
+      ]
+    },
+    {
+      "id": "f5a35503-93a8-4f04-b20d-9d2aec48df7f",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-28\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:38:22.773Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529494946_hqbs8_img_1856.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529496387_2e0u6_img_1857.jpeg"
+      ]
+    },
+    {
+      "id": "34f3e433-2aae-4d98-adc2-6aa4e2d67a12",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-42\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-01T10:37:05.822Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529417895_w52sw_img_1865.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529419986_a763h_img_1863.jpeg"
+      ]
+    },
+    {
+      "id": "b987c12b-6ea4-450c-a4b2-7b3802c20022",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-38\nLength-24\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:33:37.301Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529212990_k6264_img_1872.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529214948_67iji_img_1873.jpeg"
+      ]
+    },
+    {
+      "id": "06767cec-1453-40bf-98eb-16177ad60fb5",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-40\nLength-24\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:32:59.235Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529170989_6vg7g_img_1845.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529172744_o5c90_img_1846.jpeg"
+      ]
+    },
+    {
+      "id": "d40fbb9f-3d44-45b5-8bdb-97d4cfdcf385",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-26\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:31:52.120Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529103285_7nuf3_img_1868.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529105368_rxvi8_img_1869.jpeg"
+      ]
+    },
+    {
+      "id": "2008dcbf-b501-4d1f-8046-52f9844f437d",
+      "name": "Vintage denim 🔥",
+      "description": "Chest-44\nLength-28\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-01T10:30:49.583Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529041408_4rg1j_img_1843.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793529042941_doeeb_img_1844.jpeg"
+      ]
+    },
+    {
+      "id": "4810fd07-2fcb-4d8f-9c54-334fe167f9c6",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-40\nLength-25\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-11-01T10:27:30.913Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528845740_3boll_img_1851.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528847758_kp9au_img_1852.jpeg"
+      ]
+    },
+    {
+      "id": "3344ae5f-f956-4667-9137-cdaa95c2dad5",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-26\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-01T10:26:51.374Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528802276_t7s3v_img_1876.jpeg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528804181_w05he_img_1877.jpeg"
+      ]
+    },
+    {
+      "id": "5bdf8c3f-3696-4633-8029-6cec13f44a37",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-28\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-01T10:25:42.866Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528739425_wi1an_img_1874.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528740966_f53rb_img_1875.jpeg"
+      ]
+    },
+    {
+      "id": "22db4ee7-b458-4e63-a18f-7d8a3003cebf",
+      "name": "Vintage denim Jacket🔥",
+      "description": "Chest-44\nLength-26\nCondition- 10/10",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "topwears",
+      "subcategory": null,
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-11-01T10:25:04.069Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528696790_2p0ch_img_1870.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793528698840_5xvu8_img_1871.jpeg"
+      ]
+    },
+    {
+      "id": "dc04717a-d90c-4bf8-9825-d13532b5abb9",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T13:31:44.514Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453480854_xqgeb_img_1560.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453484014_relnx_img_1561.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453499694_2z8ie_img_1562.jpg"
+      ]
+    },
+    {
+      "id": "bb0ae3cf-77c1-40b0-8c6b-2e6a4785d5d8",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -41\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T13:30:57.723Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453448674_dd8a2_img_1563.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453451876_iq9qd_img_1564.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453455357_y2ogw_img_1565.jpg"
+      ]
+    },
+    {
+      "id": "a676d22f-b953-4598-9129-a1b1eb0fe6e8",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -43\nCondition- 10/10\nLeg open - 24 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T13:30:06.607Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453397033_s7bh5_img_1570.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453400075_2y4wl_img_1571.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453403354_1wutt_img_1572.jpg"
+      ]
+    },
+    {
+      "id": "ed672535-bc27-434b-98a6-bd65a427a256",
+      "name": "Vintage Baggy denim🔥",
+      "description": "Waist -30/32\nLength -37\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "baggy",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-31T13:27:32.830Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453231295_s7bym_img_1567.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453234474_fxdmn_img_1568.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793453237864_lanio_img_1569.jpg"
+      ]
+    },
+    {
+      "id": "9618f0dd-e321-45cf-aee6-ee07e20a7469",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/32\nLength -44\nCondition- 10/10\nLeg open - 26 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": false,
+      "createdAt": "2026-10-31T13:02:16.942Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451701595_hq2yt_img_1604.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451723859_qoq3v_img_1605.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451727608_48gj0_img_1606.jpg"
+      ]
+    },
+    {
+      "id": "b0beb3a2-d63d-40cd-b20e-5d17012815fa",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 24 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T13:00:53.345Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451633176_zxcyc_img_1613.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451649749_2mlwr_img_1615.jpg"
+      ]
+    },
+    {
+      "id": "5554a548-9881-497d-9213-cd776d58e0c9",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:59:30.109Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451524059_237g8_img_1610.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451543978_n2kdt_img_1611.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451565881_ni6qw_img_1612.jpg"
+      ]
+    },
+    {
+      "id": "124106ff-44e6-4d2e-8b98-a712bab88d37",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -30/32\nLength -42\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:56:18.705Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451353745_a5xuu_img_1601.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451358411_c9ver_img_1602.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451371985_6ilwd_img_1603.jpg"
+      ]
+    },
+    {
+      "id": "db3c2779-23c3-4d54-a57b-5c447eaa1038",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:53:51.706Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451183497_nhb6p_img_1607.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451216078_uauss_img_1608.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451229123_csa6u_img_1609.jpg"
+      ]
+    },
+    {
+      "id": "f4937721-76ea-4bea-93db-3f5f936eb471",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -32/34\nLength -44\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:52:27.040Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451137943_dczqx_img_1598.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451141279_w6g8h_img_1599.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451144458_8ejmx_img_1600.jpg"
+      ]
+    },
+    {
+      "id": "cbf33cdf-131c-444d-86c9-98c55d547f7c",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -42\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:51:21.991Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451073221_fn4rb_img_1594.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451076597_duj34_img_1595.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451079859_1ouwc_img_1596.jpg"
+      ]
+    },
+    {
+      "id": "19507fac-04f0-4210-8ab0-aa06af5dcabd",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:50:34.399Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450994459_o66lb_img_1590.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451007021_mhtj1_img_1592.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451015878_oczt8_img_1591.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793451021548_301rd_img_1593.jpg"
+      ]
+    },
+    {
+      "id": "28b577c5-69f5-4a5b-b8ec-9e201eee4ecf",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 22 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:48:54.254Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450893339_buyjj_img_1576.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450896459_172qj_img_1577.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450899366_4ownz_img_1579.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450925959_ao2nh_img_1578.jpg"
+      ]
+    },
+    {
+      "id": "5cc438a6-ee02-42e4-b2d5-46c7ed763e88",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28\nLength -41\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:47:19.430Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450830323_nmkix_img_1616.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450833560_syd3x_img_1617.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450836705_ottw3_img_1618.jpg"
+      ]
+    },
+    {
+      "id": "464c2e6a-5e3e-4121-99b9-d698139ed67d",
+      "name": "Vintage Regular denim🔥",
+      "description": "Waist -28/30\nLength -44\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "regular",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:45:36.411Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450715378_6kpi8_img_1584.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450720988_l7ikq_img_1585.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450734241_2wtej_img_1586.jpg"
+      ]
+    },
+    {
+      "id": "a569b495-8c17-47a7-ab3d-c12170c8ccfc",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -39\nCondition- 10/10\nLeg open - 18 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:44:08.907Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450636919_h9ggc_img_1587.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450640642_ur2zx_img_1588.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450643724_tg2zn_img_1589.jpg"
+      ]
+    },
+    {
+      "id": "28e93e01-72da-4022-8ffe-5bcac2e416c6",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -41\nCondition- 10/10\nLeg open - 19 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:42:22.934Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450517638_ni2k4_img_1580.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450521160_hy5px_img_1581.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450524422_8mzcy_img_1582.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450539781_xxr5e_img_1583.jpg"
+      ]
+    },
+    {
+      "id": "73f9ca00-86f3-4028-bb2b-a0f4780fe78e",
+      "name": "Vintage bootcut denim🔥",
+      "description": "Waist -28/30\nLength -40\nCondition- 10/10\nLeg open - 20 inch",
+      "price": 499,
+      "compareAtPrice": 799,
+      "brand": "BAGIFYYYY",
+      "category": "bottomwears",
+      "subcategory": "bootcut",
+      "isNew": true,
+      "isBestSeller": false,
+      "isSoldOut": true,
+      "createdAt": "2026-10-31T12:40:02.860Z",
+      "images": [
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450388662_ye39r_img_1573.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450391353_9pi95_img_1574.jpg",
+        "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1793450393531_i4rnt_img_1575.jpg"
+      ]
+    },
     {
       "id": "f1e1c72e-c206-4e63-a55f-45f14e83c3bc",
       "name": "Vintage jacket 🔥",
@@ -49,7 +2275,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T15:06:05.759Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767956708_vyclx_img_1042.webp",
@@ -67,7 +2293,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T15:05:28.275Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767924244_ndxon_img_1029.webp",
@@ -121,7 +2347,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T15:02:59.146Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767768389_8o8il_img_0991.webp",
@@ -193,7 +2419,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:59:15.662Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767541663_r7691_img_0996.webp",
@@ -211,7 +2437,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:57:46.490Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767456795_tmrz8_img_1033.webp",
@@ -247,7 +2473,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:53:16.108Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767184801_u3eng_img_1004.webp",
@@ -265,7 +2491,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:52:20.885Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767125568_8xz8u_img_0999.webp",
@@ -283,7 +2509,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:51:27.721Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792767073508_rqr6h_img_1035.webp",
@@ -301,7 +2527,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-23T14:49:34.675Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792766962685_n1zyd_img_1040.webp",
@@ -319,7 +2545,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:08:17.614Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681691145_hh710_img_0866.webp",
@@ -357,7 +2583,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:07:12.348Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681625942_ynvlp_img_0893.webp",
@@ -376,7 +2602,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:06:35.987Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681589504_7lqwi_img_0876.webp",
@@ -395,7 +2621,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:05:42.337Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681536107_jwzsk_img_0886.webp",
@@ -452,7 +2678,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:03:09.946Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681381764_289wd_img_0889.webp",
@@ -471,7 +2697,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:02:30.283Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681343870_2oe2r_img_0870.webp",
@@ -528,7 +2754,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T15:00:08.950Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792681202895_g140p_img_0896.webp",
@@ -566,7 +2792,7 @@
       "subcategory": "regular",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T14:54:28.994Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680860139_4etnf_img_0913.webp",
@@ -585,7 +2811,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T14:52:58.613Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680772166_a3swq_img_0861.webp",
@@ -642,7 +2868,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T14:47:32.990Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680446533_ftmxf_img_0922.webp",
@@ -661,7 +2887,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-22T14:44:58.993Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792680290046_iy6mq_img_0916.webp",
@@ -680,7 +2906,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-21T16:23:37.510Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599807485_nbmih_img_0710.webp",
@@ -717,7 +2943,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-21T16:21:17.655Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599670003_m91hn_img_0700.webp",
@@ -736,7 +2962,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-21T16:20:28.888Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599620009_cmnft_img_0727.webp",
@@ -793,7 +3019,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-21T16:15:48.486Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599341373_q8797_img_0720.webp",
@@ -850,7 +3076,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-21T16:11:58.227Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792599100514_jga0y_img_0751.webp",
@@ -888,7 +3114,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-21T16:09:51.512Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792598982296_nmifr_img_0717.webp",
@@ -1058,7 +3284,7 @@
       "subcategory": "regular",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-18T15:09:11.731Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792336099379_0ytaj_img_0618.webp",
@@ -1097,7 +3323,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-18T15:06:33.065Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335981883_qpksv_img_0642.webp",
@@ -1155,7 +3381,7 @@
       "subcategory": "regular",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-18T15:03:55.472Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335820730_dom13_img_0562.webp",
@@ -1214,7 +3440,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-18T14:59:14.771Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792335540066_yx7jr_img_0578.webp",
@@ -1410,7 +3636,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-18T14:39:00.145Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792334329996_7zb59_img_0575.webp",
@@ -1556,7 +3782,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-18T13:59:23.521Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792331949009_yd2o8_img_0347.webp",
@@ -1862,7 +4088,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-17T14:30:49.123Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247431910_rclgt_img_0262.webp",
@@ -1881,7 +4107,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-17T14:29:53.260Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247387574_8hpdv_img_0278.webp",
@@ -1919,7 +4145,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-17T14:28:11.576Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247282059_lamnd_img_0292.webp",
@@ -1938,7 +4164,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-17T14:27:13.525Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792247226859_m10ya_img_0312.webp",
@@ -1957,7 +4183,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-15T14:49:31.774Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075766180_kvsvy_img_0097.webp",
@@ -2110,7 +4336,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-15T14:40:43.385Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075236999_tl4in_img_0162.webp",
@@ -2129,7 +4355,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-15T14:39:57.222Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075189345_czqtn_img_0131.webp",
@@ -2148,7 +4374,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-15T14:38:23.565Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1792075093202_5xo2s_img_0145.webp",
@@ -2645,7 +4871,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-14T14:36:40.319Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988593904_7wpmw_img_9904.webp",
@@ -2684,7 +4910,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-14T14:34:12.337Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988447443_tg7jr_img_9867.webp",
@@ -2743,7 +4969,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-14T14:30:35.771Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791988224005_zu5w7_img_9888.webp",
@@ -2819,7 +5045,7 @@
       "subcategory": "regular",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-13T14:41:17.104Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902468064_b9qyi_img_9643.webp",
@@ -2838,7 +5064,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-13T14:40:22.651Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791902415787_c2jup_img_9651.webp",
@@ -2990,7 +5216,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-13T14:32:11.564Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901922904_1tz2s_img_9629.webp",
@@ -3142,7 +5368,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-13T14:18:38.164Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791901098094_2azba_img_9601.webp",
@@ -3199,7 +5425,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-12T14:43:09.665Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791816181611_e2x34_whatsapp_image_2026-10-12_at_8_12_19_pm__1_.webp",
@@ -3390,7 +5616,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-12T14:35:40.878Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815731485_ccizu_whatsapp_image_2026-10-12_at_8_05_09_pm.webp",
@@ -3487,7 +5713,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-12T14:28:48.017Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791815316662_48jbk_whatsapp_image_2026-10-12_at_7_58_13_pm.webp",
@@ -3583,7 +5809,7 @@
       "subcategory": "baggy",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-12T14:22:20.728Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814929334_xeewb_whatsapp_image_2026-10-12_at_7_51_44_pm.webp",
@@ -3602,7 +5828,7 @@
       "subcategory": null,
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-12T14:18:29.048Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/prod_1791814658844_pr69g_whatsapp_image_2026-10-12_at_7_46_45_pm.webp",
@@ -4039,7 +6265,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-11T13:33:33.502Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754160263_isdjy_img_9362-1mwyxm4tnyxvso4qyf4l79feq48uqr.webp",
@@ -4096,7 +6322,7 @@
       "subcategory": "bootcut",
       "isNew": true,
       "isBestSeller": false,
-      "isSoldOut": false,
+      "isSoldOut": true,
       "createdAt": "2026-10-11T13:28:06.403Z",
       "images": [
         "https://pub-ed35bff2af374ece8b91c607c15b8a26.r2.dev/migrated_1791754140122_6kkgr_img_9348-ep3wfn7nnydsb6tacfznth61mwx3yk.webp",
